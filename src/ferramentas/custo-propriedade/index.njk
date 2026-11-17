@@ -6,15 +6,17 @@ title: "Calculadora de Custo Total de Propriedade (TCO)"
 description: "Calcule o TCO completo do equipamento: aquisição, depreciação, juros, seguro, manutenção, combustível, operador, rastreamento. Compare comprar vs alugar vs terceirizar. Inclui VPL e TIR."
 ---
 
-<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
+<header class="tema-hero">
+<div class="container" style="max-width:1100px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de TCO</div>
 <h1 class="page-title">Calculadora de Custo Total de Propriedade (TCO)</h1>
-<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Avalie o custo real de manter um ativo na frota. Inclui todos os custos diretos e indiretos ao longo da vida útil. Compare: Comprar novo, Comprar usado, Alugar (rental), Terceirizar operação completa.</p>
-</section>
+<p>Avalie o custo real de manter um ativo na frota. Inclui todos os custos diretos e indiretos ao longo da vida útil. Compare: Comprar novo, Comprar usado, Alugar (rental), Terceirizar operação completa.</p>
+</div>
+</header>
 
-<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:1100px">
 
-<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Dados do Equipamento</h2>
 
@@ -176,38 +178,38 @@ description: "Calcule o TCO completo do equipamento: aquisição, depreciação,
 <h2 class="section-title section-title-h3" style="margin:0 0 20px;color:var(--texto-escuro)">Resultado — <span id="resCodTco">EXC-001</span></h2>
 
 <!-- Cards principais -->
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:16px;margin-bottom:24px">
 <div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">TCO Total (Vida Útil)</div>
-<div id="resTcoTotal" style="font-family:var(--font-titulo);font-size:30px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
+<div id="resTcoTotal" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.875rem);font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">VPL dos custos ao longo da vida</p>
 </div>
 <div style="background:#f59e0b;border-radius:12px;padding:20px;color:var(--texto-escuro)">
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a5a08;margin-bottom:8px">Custo/Hora Próprio</div>
-<div id="resCustoHoraProprio" style="font-family:var(--font-titulo);font-size:30px;font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0/h</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5c4406;margin-bottom:8px">Custo/Hora Próprio</div>
+<div id="resCustoHoraProprio" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.875rem);font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0/h</div>
 <p style="margin:8px 0 0;color:var(--texto-secundario);font-size:13px">TCO / Horas totais</p>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">Melhor Opção</div>
-<div id="resMelhorOpcao" style="font-family:var(--font-titulo);font-size:26px;font-weight:600;color:var(--azul-petroleo);line-height:1.1">—</div>
+<div id="resMelhorOpcao" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.625rem);font-weight:600;color:var(--azul-petroleo);line-height:1.1">—</div>
 </div>
 </div>
 
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:12px;margin-bottom:24px">
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resVpl" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">R$ 0</div>
+<div id="resVpl" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">R$ 0</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">VPL (Custos)</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resTir" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0%</div>
+<div id="resTir" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0%</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">TIR Equivalente</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resPaybackTco" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0 anos</div>
+<div id="resPaybackTco" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0 anos</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Payback vs Aluguel</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resAnosVida" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0</div>
+<div id="resAnosVida" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Anos de Vida Restante</div>
 </div>
 </div>
@@ -221,7 +223,7 @@ description: "Calcule o TCO completo do equipamento: aquisição, depreciação,
 <tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
 <th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--texto-escuro)">Item</th>
 <th style="padding:10px 12px;text-align:right;font-weight:600;color:var(--azul-petroleo)">Comprar (VPL)</th>
-<th style="padding:10px 12px;text-align:right;font-weight:600;color:#f59e0b">Alugar (Rental)</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#b45309">Alugar (Rental)</th>
 <th style="padding:10px 12px;text-align:right;font-weight:600;color:#9a3412">Terceirizar</th>
 </tr>
 </thead>
@@ -562,11 +564,11 @@ function calcular() {
 
   const tb = document.getElementById('tbodyComparativo');
   tb.innerHTML = `
-    <tr style="border-bottom:1px solid #f0efe9"><td style="padding:10px 12px;font-weight:600;color:var(--texto-escuro)">VPL Total Custos</td><td style="padding:10px 12px;text-align:right;color:var(--azul-petroleo);font-weight:600">${fmtBRL(tcoTotal)}</td><td style="padding:10px 12px;text-align:right;color:#f59e0b;font-weight:600">${fmtBRL(vplRental)}</td><td style="padding:10px 12px;text-align:right;color:#9a3412;font-weight:600">${fmtBRL(vplTerc)}</td></tr>
-    <tr style="border-bottom:1px solid #f0efe9"><td style="padding:10px 12px;color:var(--texto-escuro)">Custo/Hora Equiv.</td><td style="padding:10px 12px;text-align:right;color:var(--azul-petroleo)">${fmtBRL2(custoHora)}/h</td><td style="padding:10px 12px;text-align:right;color:#f59e0b">${fmtBRL2(vplRental/horasTotais)}/h</td><td style="padding:10px 12px;text-align:right;color:#9a3412">${fmtBRL2(vplTerc/horasTotais)}/h</td></tr>
-    <tr style="border-bottom:1px solid #f0efe9"><td style="padding:10px 12px;color:var(--texto-escuro)">CAPEX Inicial</td><td style="padding:10px 12px;text-align:right;color:#9a3412">${fmtBRL(v.precoCompra)}</td><td style="padding:10px 12px;text-align:right;color:#f59e0b">R$ 0</td><td style="padding:10px 12px;text-align:right;color:#9a3412">R$ 0</td></tr>
-    <tr style="border-bottom:1px solid #f0efe9"><td style="padding:10px 12px;color:var(--texto-escuro)">Flexibilidade</td><td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">Baixa</td><td style="padding:10px 12px;text-align:right;color:#f59e0b">Alta</td><td style="padding:10px 12px;text-align:right;color:#9a3412">Muito Alta</td></tr>
-    <tr><td style="padding:10px 12px;color:var(--texto-escuro)">Risco Obsolescência</td><td style="padding:10px 12px;text-align:right;color:#9a3412">Alto</td><td style="padding:10px 12px;text-align:right;color:#f59e0b">Baixo</td><td style="padding:10px 12px;text-align:right;color:#9a3412">Nulo</td></tr>
+    <tr style="border-bottom:1px solid #f0efe9"><td style="padding:10px 12px;font-weight:600;color:var(--texto-escuro)">VPL Total Custos</td><td style="padding:10px 12px;text-align:right;color:var(--azul-petroleo);font-weight:600">${fmtBRL(tcoTotal)}</td><td style="padding:10px 12px;text-align:right;color:#b45309;font-weight:600">${fmtBRL(vplRental)}</td><td style="padding:10px 12px;text-align:right;color:#9a3412;font-weight:600">${fmtBRL(vplTerc)}</td></tr>
+    <tr style="border-bottom:1px solid #f0efe9"><td style="padding:10px 12px;color:var(--texto-escuro)">Custo/Hora Equiv.</td><td style="padding:10px 12px;text-align:right;color:var(--azul-petroleo)">${fmtBRL2(custoHora)}/h</td><td style="padding:10px 12px;text-align:right;color:#b45309">${fmtBRL2(vplRental/horasTotais)}/h</td><td style="padding:10px 12px;text-align:right;color:#9a3412">${fmtBRL2(vplTerc/horasTotais)}/h</td></tr>
+    <tr style="border-bottom:1px solid #f0efe9"><td style="padding:10px 12px;color:var(--texto-escuro)">CAPEX Inicial</td><td style="padding:10px 12px;text-align:right;color:#9a3412">${fmtBRL(v.precoCompra)}</td><td style="padding:10px 12px;text-align:right;color:#b45309">R$ 0</td><td style="padding:10px 12px;text-align:right;color:#9a3412">R$ 0</td></tr>
+    <tr style="border-bottom:1px solid #f0efe9"><td style="padding:10px 12px;color:var(--texto-escuro)">Flexibilidade</td><td style="padding:10px 12px;text-align:right;color:var(--texto-secundario)">Baixa</td><td style="padding:10px 12px;text-align:right;color:#b45309">Alta</td><td style="padding:10px 12px;text-align:right;color:#9a3412">Muito Alta</td></tr>
+    <tr><td style="padding:10px 12px;color:var(--texto-escuro)">Risco Obsolescência</td><td style="padding:10px 12px;text-align:right;color:#9a3412">Alto</td><td style="padding:10px 12px;text-align:right;color:#b45309">Baixo</td><td style="padding:10px 12px;text-align:right;color:#9a3412">Nulo</td></tr>
   `;
 
   const tb2 = document.getElementById('tbodyFluxoAnual');
@@ -574,7 +576,7 @@ function calcular() {
     <tr style="border-bottom:1px solid #f0efe9">
       <td style="padding:8px 10px;color:var(--texto-escuro)">${f.ano}</td>
       <td style="padding:8px 10px;text-align:right;color:#9a3412">${fmtBRL(f.capex)}</td>
-      <td style="padding:8px 10px;text-align:right;color:#f59e0b">${fmtBRL(f.finTotal)}</td>
+      <td style="padding:8px 10px;text-align:right;color:#b45309">${fmtBRL(f.finTotal)}</td>
       <td style="padding:8px 10px;text-align:right;color:var(--azul-petroleo)">${fmtBRL(f.custoOpAnual)}</td>
       <td style="padding:8px 10px;text-align:right;color:var(--texto-secundario)">${fmtBRL(f.dep)}</td>
       <td style="padding:8px 10px;text-align:right;color:var(--texto-secundario)">${fmtBRL(f.custoCapital)}</td>

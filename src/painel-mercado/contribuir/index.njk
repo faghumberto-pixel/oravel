@@ -6,11 +6,13 @@ title: "Contribuir com Dados — Painel do Mercado"
 description: "Contribua anonimamente com os KPIs da sua locadora e receba seu benchmarking personalizado (P25/P50/P75 por segmento). Leva 3 minutos."
 ---
 
-<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:720px">
+<header class="tema-hero">
+<div class="container" style="max-width:720px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/painel-mercado/">Painel do Mercado</a> / Contribuir</div>
 <h1 class="page-title">Contribuir com Dados</h1>
-<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Suas respostas são <strong>100% anônimas</strong>. Nenhum dado identifica sua empresa. Você recebe de volta seu posicionamento (P25/P50/P75) no seu segmento (porte × região × categoria).</p>
-</section>
+<p>Suas respostas são <strong>100% anônimas</strong>. Nenhum dado identifica sua empresa. Você recebe de volta seu posicionamento (P25/P50/P75) no seu segmento (porte × região × categoria).</p>
+</div>
+</header>
 
 <section class="container" style="padding-top:24px;padding-bottom:80px;max-width:720px">
 
@@ -306,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p style="margin:0 0 16px;color:var(--texto-escuro)">Obrigado! Seus dados foram registrados anonimamente.</p>
           <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:8px;padding:16px;margin-bottom:16px">
             <strong style="color:var(--texto-escuro)">Seu Benchmarking Preliminar (simulado):</strong>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px;font-size:14px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px;margin-top:12px;font-size:14px">
               <div style="text-align:center;padding:12px;background:#fbfaf6;border-radius:8px">
                 <div style="font-family:var(--font-titulo);font-size:20px;font-weight:600;color:var(--azul-petroleo)">${benchmark.diariaP50}</div>
                 <div style="font-size:12px;color:var(--texto-secundario)">Diária P50 do seu segmento</div>

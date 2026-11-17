@@ -6,15 +6,17 @@ title: "Calculadora de Disponibilidade de Equipamentos"
 description: "Calcule a disponibilidade física e operacional da frota: MTBF, MTTR, tempo parado por manutenção, inspeção, logística. Veja o impacto financeiro da indisponibilidade na receita."
 ---
 
-<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
+<header class="tema-hero">
+<div class="container" style="max-width:1100px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de Disponibilidade</div>
 <h1 class="page-title">Calculadora de Disponibilidade de Equipamentos</h1>
-<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Meça a disponibilidade real de cada ativo ou da frota. Insira falhas, tempos de reparo, inspeções e logística. Veja: Disponibilidade Física, Operacional, MTBF, MTTR, horas paradas/mês e receita perdida.</p>
-</section>
+<p>Meça a disponibilidade real de cada ativo ou da frota. Insira falhas, tempos de reparo, inspeções e logística. Veja: Disponibilidade Física, Operacional, MTBF, MTTR, horas paradas/mês e receita perdida.</p>
+</div>
+</header>
 
-<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:1100px">
 
-<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Dados do Equipamento / Frota</h2>
 
@@ -162,39 +164,39 @@ description: "Calcule a disponibilidade física e operacional da frota: MTBF, MT
 <h2 class="section-title section-title-h3" style="margin:0 0 20px;color:var(--texto-escuro)">Resultado — <span id="resCodDisp">EXC-001</span></h2>
 
 <!-- Cards principais -->
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:16px;margin-bottom:24px">
 <div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Disponibilidade Física</div>
-<div id="resDispFisica" style="font-family:var(--font-titulo);font-size:36px;font-weight:600;color:#fff;line-height:1.1">0%</div>
+<div id="resDispFisica" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2.25rem);font-weight:600;color:#fff;line-height:1.1">0%</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">(Horas período - Total parado) / Horas período</p>
 </div>
 <div style="background:#f59e0b;border-radius:12px;padding:20px;color:var(--texto-escuro)">
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a5a08;margin-bottom:8px">Disponibilidade Operacional</div>
-<div id="resDispOper" style="font-family:var(--font-titulo);font-size:36px;font-weight:600;color:var(--texto-escuro);line-height:1.1">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5c4406;margin-bottom:8px">Disponibilidade Operacional</div>
+<div id="resDispOper" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2.25rem);font-weight:600;color:var(--texto-escuro);line-height:1.1">0%</div>
 <p style="margin:8px 0 0;color:var(--texto-secundario);font-size:13px">Física × Taxa de ocupação</p>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">Receita Perdida no Mês</div>
-<div id="resReceitaPerdida" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:#9a3412;line-height:1.1">R$ 0</div>
+<div id="resReceitaPerdida" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2rem);font-weight:600;color:#9a3412;line-height:1.1">R$ 0</div>
 <p class="muted-sm" style="margin:8px 0 0">Oportunidade não realizada</p>
 </div>
 </div>
 
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:12px;margin-bottom:24px">
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resMTBF" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0 h</div>
+<div id="resMTBF" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0 h</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">MTBF</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resMTTR" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0 h</div>
+<div id="resMTTR" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0 h</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">MTTR</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resHorasParadas" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:#9a3412">0 h</div>
+<div id="resHorasParadas" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:#9a3412">0 h</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Total Horas Paradas</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resConfiabilidade" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0%</div>
+<div id="resConfiabilidade" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0%</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Confiabilidade</div>
 </div>
 </div>
@@ -214,17 +216,17 @@ description: "Calcule a disponibilidade física e operacional da frota: MTBF, MT
 <!-- Benchmark -->
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px;margin-bottom:20px">
 <h3 style="font-family:var(--font-titulo);font-size:16px;font-weight:600;margin:0 0 16px;color:var(--texto-escuro)">Benchmark de Mercado (Painel do Mercado Oravel)</h3>
-<div id="benchmarkDisp" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center">
+<div id="benchmarkDisp" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:16px;text-align:center">
 <div style="padding:16px;background:#e7f1ef;border-radius:10px">
-<div id="benchP25" style="font-family:var(--font-titulo);font-size:28px;font-weight:600;color:var(--azul-petroleo)">—</div>
+<div id="benchP25" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.75rem);font-weight:600;color:var(--azul-petroleo)">—</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">P25 (mín. competitivo)</div>
 </div>
 <div style="padding:16px;background:#f0efe9;border-radius:10px">
-<div id="benchP50" style="font-family:var(--font-titulo);font-size:28px;font-weight:600;color:#f59e0b">—</div>
+<div id="benchP50" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.75rem);font-weight:600;color:#b45309">—</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">P50 (mediana)</div>
 </div>
 <div style="padding:16px;background:#e7f1ef;border-radius:10px">
-<div id="benchP75" style="font-family:var(--font-titulo);font-size:28px;font-weight:600;color:var(--azul-petroleo)">—</div>
+<div id="benchP75" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.75rem);font-weight:600;color:var(--azul-petroleo)">—</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">P75 (topo de mercado)</div>
 </div>
 </div>

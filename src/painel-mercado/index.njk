@@ -6,11 +6,13 @@ title: "Painel do Mercado de Locação"
 description: "Indicadores reais do setor: diária média, utilização, disponibilidade, custo de manutenção, maturidade digital. Dados anônimos declarados por locadoras, agregados por porte, região e categoria."
 ---
 
-<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:1200px">
+<header class="tema-hero">
+<div class="container" style="max-width:1200px">
 <div class="breadcrumb"><a href="/">Início</a> / Painel do Mercado</div>
 <h1 class="page-title">Painel do Mercado de Locação</h1>
-<p style="margin:16px 0 0;font-size:20px;color:var(--texto-secundario);max-width:64ch;line-height:1.6">Benchmarks anônimos, declarados por donos e gestores de locadoras. Atualizado mensal. Use para calibrar sua operação, negociar contratos e planejar investimentos.</p>
-</section>
+<p>Benchmarks anônimos, declarados por donos e gestores de locadoras. Atualizado mensal. Use para calibrar sua operação, negociar contratos e planejar investimentos.</p>
+</div>
+</header>
 
 <section class="container" style="padding-top:24px;padding-bottom:80px;max-width:1200px">
 
@@ -316,10 +318,10 @@ function renderKPIs() {
   container.innerHTML = PAINEL_DATA.kpis.map(kpi => `
     <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:8px">
       <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:28px">${kpi.icon}</span>
+        <span style="font-size:clamp(1.25rem,2.4vw,1.75rem)">${kpi.icon}</span>
         <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario)">${kpi.label}</span>
       </div>
-      <div style="font-family:var(--font-titulo);font-size:36px;font-weight:600;color:var(--texto-escuro);line-height:1.1">${kpi.value}</div>
+      <div style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2.25rem);font-weight:600;color:var(--texto-escuro);line-height:1.1">${kpi.value}</div>
       <div style="font-size:13.5px;color:var(--texto-secundario)">${kpi.sub}</div>
     </div>
   `).join('');

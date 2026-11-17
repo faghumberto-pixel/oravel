@@ -6,15 +6,17 @@ title: "Calculadora de Margem por Equipamento"
 description: "Veja a margem real de cada ativo da frota: receita gerada menos custo total de posse (depreciação, manutenção, seguro, rastreamento, capital). Identifique equipamentos que drenam caixa."
 ---
 
-<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
+<header class="tema-hero">
+<div class="container" style="max-width:1100px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de Margem por Equipamento</div>
 <h1 class="page-title">Calculadora de Margem por Equipamento</h1>
-<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Analise a rentabilidade individual de cada máquina. Insira os dados do equipamento e veja: margem bruta, margem líquida, payback, ROI anual e se vale manter, substituir ou vender.</p>
-</section>
+<p>Analise a rentabilidade individual de cada máquina. Insira os dados do equipamento e veja: margem bruta, margem líquida, payback, ROI anual e se vale manter, substituir ou vender.</p>
+</div>
+</header>
 
-<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:1100px">
 
-<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Dados do Equipamento</h2>
 
@@ -171,31 +173,31 @@ description: "Veja a margem real de cada ativo da frota: receita gerada menos cu
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">Margem Bruta Mensal</div>
-<div id="resMargemBruta" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0</div>
+<div id="resMargemBruta" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2rem);font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0</div>
 <p class="muted-sm" style="margin:8px 0 0">Receita - Custos variáveis (combustível + operador)</p>
 </div>
 <div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Margem Líquida Mensal</div>
-<div id="resMargemLiquida" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
+<div id="resMargemLiquida" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2rem);font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Após todos os custos + depreciação + capital</p>
 </div>
 </div>
 
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:12px;margin-bottom:24px">
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resMargemPct" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0%</div>
+<div id="resMargemPct" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0%</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">% Margem Líquida</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resPayback" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0</div>
+<div id="resPayback" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Payback (meses)</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resROIAnual" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0%</div>
+<div id="resROIAnual" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0%</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">ROI Anual</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resVidaRestante" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0</div>
+<div id="resVidaRestante" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Vida Restante (%)</div>
 </div>
 </div>

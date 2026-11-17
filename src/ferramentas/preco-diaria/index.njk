@@ -6,16 +6,18 @@ title: "Calculadora de Preço da Diária"
 description: "Calcule o preço mínimo e sugerido da diária do seu equipamento. Insira custo de aquisição, vida útil, utilização, manutenção, seguro, rastreamento, custo de capital e margem desejada."
 ---
 
-<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
+<header class="tema-hero">
+<div class="container" style="max-width:1100px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de Preço da Diária</div>
 <h1 class="page-title">Calculadora de Preço da Diária</h1>
-<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Descubra quanto cobrar por dia para cobrir todos os custos e ter a margem que você quer. Baseada em custo total de posse (TCO) por hora disponível.</p>
-</section>
+<p>Descubra quanto cobrar por dia para cobrir todos os custos e ter a margem que você quer. Baseada em custo total de posse (TCO) por hora disponível.</p>
+</div>
+</header>
 
-<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:1100px">
 
 <!-- Inputs -->
-<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Parâmetros do Equipamento</h2>
 
@@ -118,28 +120,28 @@ description: "Calcule o preço mínimo e sugerido da diária do seu equipamento.
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">Preço MÍNIMO da Diária (8h)</div>
-<div id="resultadoPrecoMinimo" style="font-family:var(--font-titulo);font-size:36px;font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0,00</div>
+<div id="resultadoPrecoMinimo" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2.25rem);font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0,00</div>
 <p class="muted-sm" style="margin:8px 0 0">Cobre todos os custos, margem = 0%</p>
 </div>
 <div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Preço SUGERIDO da Diária (8h)</div>
-<div id="resultadoPrecoSugerido" style="font-family:var(--font-titulo);font-size:36px;font-weight:600;color:#fff;line-height:1.1">R$ 0,00</div>
+<div id="resultadoPrecoSugerido" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2.25rem);font-weight:600;color:#fff;line-height:1.1">R$ 0,00</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Com sua margem de <span id="margemDisplay">0</span>%</p>
 </div>
 </div>
 
 <!-- Métricas auxiliares -->
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px;margin-bottom:24px">
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="metricCustoHora" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">R$ 0,00</div>
+<div id="metricCustoHora" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">R$ 0,00</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Custo/hora disponível</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="metricPontoEquilibrio" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0</div>
+<div id="metricPontoEquilibrio" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Dias/mês p/ equilíbrio</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="metricPaybackMeses" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0</div>
+<div id="metricPaybackMeses" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Payback (meses)</div>
 </div>
 </div>

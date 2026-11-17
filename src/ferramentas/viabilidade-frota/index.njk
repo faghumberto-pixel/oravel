@@ -6,15 +6,17 @@ title: "Calculadora de Viabilidade de Nova Frota"
 description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de pagamento, ponto de equilíbrio. Compare cenários de compra, aluguel ou consórcio. Inclui análise de sensibilidade e stress test."
 ---
 
-<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
+<header class="tema-hero">
+<div class="container" style="max-width:1100px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Viabilidade de Nova Frota</div>
 <h1 class="page-title">Calculadora de Viabilidade de Nova Frota</h1>
-<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Projetar a aquisição de novos equipamentos: quantas unidades, qual categoria, qual modalidade. Veja VPL, TIR, payback, DSCR (capacidade de pagamento), ponto de equilíbrio e stress test de cenários adversos.</p>
-</section>
+<p>Projetar a aquisição de novos equipamentos: quantas unidades, qual categoria, qual modalidade. Veja VPL, TIR, payback, DSCR (capacidade de pagamento), ponto de equilíbrio e stress test de cenários adversos.</p>
+</div>
+</header>
 
-<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:1100px">
 
-<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Projeto de Expansão</h2>
 
@@ -170,39 +172,39 @@ description: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de paga
 <h2 class="section-title section-title-h3" style="margin:0 0 20px;color:var(--texto-escuro)">Resultado — Viabilidade <span id="resQtdFrota">3</span> <span id="resCatFrota">Escavadeiras</span></h2>
 
 <!-- Cards principais -->
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:16px;margin-bottom:24px">
 <div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">VPL (Valor Presente Líquido)</div>
-<div id="resVplFrota" style="font-family:var(--font-titulo);font-size:30px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
+<div id="resVplFrota" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.875rem);font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Positivo = projeto cria valor</p>
 </div>
 <div style="background:#f59e0b;border-radius:12px;padding:20px;color:var(--texto-escuro)">
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a5a08;margin-bottom:8px">TIR (Taxa Interna de Retorno)</div>
-<div id="resTirFrota" style="font-family:var(--font-titulo);font-size:30px;font-weight:600;color:var(--texto-escuro);line-height:1.1">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5c4406;margin-bottom:8px">TIR (Taxa Interna de Retorno)</div>
+<div id="resTirFrota" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.875rem);font-weight:600;color:var(--texto-escuro);line-height:1.1">0%</div>
 <p style="margin:8px 0 0;color:var(--texto-secundario);font-size:13px">Deve ser > WACC ({{ 14.5 }}%)</p>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">Payback Descontado</div>
-<div id="resPaybackFrota" style="font-family:var(--font-titulo);font-size:30px;font-weight:600;color:var(--texto-escuro);line-height:1.1">0 anos</div>
+<div id="resPaybackFrota" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,1.875rem);font-weight:600;color:var(--texto-escuro);line-height:1.1">0 anos</div>
 <p class="muted-sm" style="margin:8px 0 0">Tempo para recuperar investimento a VPL</p>
 </div>
 </div>
 
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:12px;margin-bottom:24px">
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resDscrFrota" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0.00</div>
+<div id="resDscrFrota" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0.00</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">DSCR Médio</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resPontoEquil" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0%</div>
+<div id="resPontoEquil" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0%</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Ocupação Break-even</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resInvestTotal" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">R$ 0</div>
+<div id="resInvestTotal" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">R$ 0</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Investimento Total</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resFluxoCaixaLivre" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--azul-petroleo)">R$ 0</div>
+<div id="resFluxoCaixaLivre" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--azul-petroleo)">R$ 0</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">FCL Médio/Ano</div>
 </div>
 </div>
@@ -578,7 +580,7 @@ function calcular() {
       <td style="padding:8px 10px;color:var(--texto-escuro)">${f.ano}</td>
       <td style="padding:8px 10px;text-align:right;color:var(--azul-petroleo)">${fmtBRL(f.receita)}</td>
       <td style="padding:8px 10px;text-align:right;color:#9a3412">${fmtBRL(f.custoOp)}</td>
-      <td style="padding:8px 10px;text-align:right;color:#f59e0b">${fmtBRL(f.finTotal)}</td>
+      <td style="padding:8px 10px;text-align:right;color:#b45309">${fmtBRL(f.finTotal)}</td>
       <td style="padding:8px 10px;text-align:right;color:var(--texto-secundario)">${fmtBRL(f.depreciacao)}</td>
       <td style="padding:8px 10px;text-align:right;color:var(--texto-escuro);font-weight:600">${fmtBRL(f.ebitda)}</td>
       <td style="padding:8px 10px;text-align:right;color:#9a3412">${fmtBRL(f.ir)}</td>

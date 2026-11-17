@@ -6,15 +6,17 @@ title: "Calculadora de ROI de Manutenção"
 description: "Compare preventiva vs corretiva: calcule o ROI de investir em manutenção preventiva, preditiva ou RCM. Veja redução de falhas, ganho de disponibilidade, economia com peças e payback do programa."
 ---
 
-<section class="container" style="padding-top:56px;padding-bottom:24px;max-width:900px">
+<header class="tema-hero">
+<div class="container" style="max-width:1100px">
 <div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de ROI de Manutenção</div>
 <h1 class="page-title">Calculadora de ROI de Manutenção</h1>
-<p style="margin:16px 0 0;font-size:19px;color:var(--texto-secundario);max-width:64ch">Avalie se vale a pena migrar de corretiva para preventiva/preditiva. Insira custos atuais, proposta de programa e veja: economia anual, redução de falhas, ganho de disponibilidade, payback e NPV do investimento.</p>
-</section>
+<p>Avalie se vale a pena migrar de corretiva para preventiva/preditiva. Insira custos atuais, proposta de programa e veja: economia anual, redução de falhas, ganho de disponibilidade, payback e NPV do investimento.</p>
+</div>
+</header>
 
-<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:900px">
+<section class="container" style="padding-top:24px;padding-bottom:80px;max-width:1100px">
 
-<div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:32px;align-items:start">
 <div>
 <h2 class="section-title section-title-h3" style="margin-bottom:20px">Cenário Atual (Baseline)</h2>
 
@@ -155,39 +157,39 @@ description: "Compare preventiva vs corretiva: calcule o ROI de investir em manu
 <h2 class="section-title section-title-h3" style="margin:0 0 20px;color:var(--texto-escuro)">Resultado — ROI Manutenção</h2>
 
 <!-- Cards principais -->
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:16px;margin-bottom:24px">
 <div style="background:var(--azul-petroleo);border-radius:12px;padding:20px;color:#fff">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Economia Líquida Anual</div>
-<div id="resEconomiaAnual" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
+<div id="resEconomiaAnual" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2rem);font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
 <p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Após custos do programa</p>
 </div>
 <div style="background:#f59e0b;border-radius:12px;padding:20px;color:var(--texto-escuro)">
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a5a08;margin-bottom:8px">Payback</div>
-<div id="resPaybackRoi" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:var(--texto-escuro);line-height:1.1">0 meses</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5c4406;margin-bottom:8px">Payback</div>
+<div id="resPaybackRoi" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2rem);font-weight:600;color:var(--texto-escuro);line-height:1.1">0 meses</div>
 <p style="margin:8px 0 0;color:var(--texto-secundario);font-size:13px">Tempo para recuperar CAPEX</p>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:20px">
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-bottom:8px">NPV (5 anos)</div>
-<div id="resNpv" style="font-family:var(--font-titulo);font-size:32px;font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0</div>
+<div id="resNpv" style="font-family:var(--font-titulo);font-size:clamp(1.25rem,2.4vw,2rem);font-weight:600;color:var(--texto-escuro);line-height:1.1">R$ 0</div>
 <p class="muted-sm" style="margin:8px 0 0">Valor presente líquido</p>
 </div>
 </div>
 
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:12px;margin-bottom:24px">
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resROI" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro)">0%</div>
+<div id="resROI" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0%</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">ROI Anualizado</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resDispGanho" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--azul-petroleo)">0%</div>
+<div id="resDispGanho" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--azul-petroleo)">0%</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Ganho Disponibilidade</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resFalhasEvitadas" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:#9a3412">0</div>
+<div id="resFalhasEvitadas" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:#9a3412">0</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Falhas Evitadas/Ano</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
-<div id="resVidaUtilGanho" style="font-family:var(--font-titulo);font-size:24px;font-weight:600;color:#f59e0b">0%</div>
+<div id="resVidaUtilGanho" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:#b45309">0%</div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">Extensão Vida Útil</div>
 </div>
 </div>

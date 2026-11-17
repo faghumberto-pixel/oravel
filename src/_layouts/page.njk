@@ -2,14 +2,16 @@
 layout: base.njk
 pagefind: true
 ---
-<section class="container" style="padding-top:48px;padding-bottom:16px">
+<header class="tema-hero">
+<div class="container">
 <div class="breadcrumb"><a href="/">Início</a> / {{ title }}</div>
-<h1 class="section-title" style="font-size:clamp(2rem,4vw,3.25rem);line-height:1.1;letter-spacing:-0.02em;max-width:20ch">{{ title }}</h1>
-<p style="margin:20px 0 0;font-size:20px;color:var(--texto-secundario);max-width:64ch">{{ description }}</p>
-</section>
+<h1 class="page-title">{{ title }}</h1>
+<p>{{ description }}</p>
+</div>
+</header>
 
-<section class="container" style="padding-top:24px;padding-bottom:72px;display:flex;flex-wrap:wrap;gap:48px;align-items:flex-start">
-<main style="flex:999 1 640px;min-width:0">
+<section class="container prosa-wrap">
+<div class="post-body prosa">
 {{ content | safe }}
-</main>
+</div>
 </section>

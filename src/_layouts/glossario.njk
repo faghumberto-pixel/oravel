@@ -2,37 +2,34 @@
 layout: base.njk
 pagefind: true
 ---
-<section class="container" style="padding-top:48px;padding-bottom:16px">
+<header class="tema-hero">
+<div class="container">
 <div class="breadcrumb"><a href="/">Início</a> / Glossário</div>
-<h1 class="section-title" style="font-size:clamp(2rem,4vw,3.25rem);line-height:1.1;letter-spacing:-0.02em;max-width:20ch">Glossário da locação</h1>
-<p style="margin:20px 0 0;font-size:20px;color:var(--texto-secundario);max-width:64ch">Definições curtas em português simples para os termos mais usados no dia a dia da locação de equipamentos. Cada verbete indica a fonte; nos de prática de mercado, a origem é descrita como prática do setor.</p>
-</section>
+<h1 class="page-title">Glossário da locação</h1>
+<p>Definições curtas em português simples para os termos mais usados no dia a dia da locação de equipamentos. Cada verbete indica a fonte; nos de prática de mercado, a origem é descrita como prática do setor.</p>
+</div>
+</header>
 
-<section class="container" style="padding-top:32px;padding-bottom:48px">
-<article class="card">
-<h2 class="section-title" style="font-size:32px;line-height:1.1;letter-spacing:-0.01em;margin-bottom:28px">Termos operacionais</h2>
-
-<dl style="margin:0;display:grid;gap:24px">
+<section class="container glossario">
+<h2 class="section-title glossario__titulo">Termos operacionais</h2>
+<dl class="glossario__lista">
 {% for term in glossary %}
-<div>
-<dt style="font-weight:700;font-size:18px;color:var(--texto-escuro)">{{ term.term }}</dt>
-<dd style="margin:8px 0 0;color:var(--texto-secundario)">{{ term.definition }}</dd>
-{% if term.source %}<dd style="margin:8px 0 0;font-size:13px;color:var(--texto-secundario)">Fonte: {{ term.source | safe }}</dd>{% endif %}
+<div class="glossario__item">
+<dt>{{ term.term }}</dt>
+<dd>{{ term.definition }}</dd>
+{% if term.source %}<dd class="glossario__fonte">Fonte: {{ term.source | safe }}</dd>{% endif %}
 </div>
 {% endfor %}
 </dl>
-</article>
 
-<div style="margin-top:28px" class="card">
-<div style="font-weight:700;font-size:18px">Como usar este glossário</div>
-<p style="margin:8px 0 0;color:var(--texto-secundario)">Os verbetes acima servem como referência rápida para alinhar a linguagem entre equipe comercial, operacional e jurídica. Se você tem uma referência melhor para algum termo (norma, manual do fabricante, publicação do setor), envie (norma, manual do fabricante, publicação do setor) para <a href="mailto:contato@oravel.org" style="color:var(--azul-petroleo)">contato@oravel.org</a>.</p>
+<div class="glossario__nota">
+<h3>Como usar este glossário</h3>
+<p>Os verbetes acima servem como referência rápida para alinhar a linguagem entre equipe comercial, operacional e jurídica. Se você tem uma referência melhor para algum termo (norma, manual do fabricante, publicação do setor), envie (norma, manual do fabricante, publicação do setor) para <a href="mailto:contato@oravel.org">contato@oravel.org</a>.</p>
 </div>
 
-<div style="margin-top:28px;padding:8px 4px;color:var(--texto-secundario);font-size:14px;line-height:1.9">
-<b style="color:var(--texto-escuro);font-size:16px">Fontes principais</b><br>
-{% for source in glossarySources %}
-<a href="{{ source.url }}">{{ source.title }}</a>{% if not loop.last %} · {% endif %}
-{% endfor %}
-<div style="margin-top:10px;color:var(--texto-secundario)">Resumo em português feito a partir das fontes acima. Verbetes de prática de mercado, sem fonte pública única, indicam a origem como prática do setor.</div>
+<div class="glossario__fontes">
+<strong>Fontes principais</strong>
+<p>{% for source in glossarySources %}<a href="{{ source.url }}">{{ source.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
+<p class="muted-sm">Resumo em português feito a partir das fontes acima. Verbetes de prática de mercado, sem fonte pública única, indicam a origem como prática do setor.</p>
 </div>
 </section>
