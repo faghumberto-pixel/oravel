@@ -1,0 +1,528 @@
+---
+layout: base.njk
+pagefind: true
+permalink: /ferramentas/margem-equipamento/
+title: "Calculadora de Margem por Equipamento"
+description: "Veja a margem real de cada ativo da frota: receita gerada menos custo total de posse (depreciação, manutenção, seguro, rastreamento, capital). Identifique equipamentos que drenam caixa."
+---
+
+<section class="container" style="padding:56px 32px 24px;max-width:900px">
+<div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de Margem por Equipamento</div>
+<h1 class="page-title">Calculadora de Margem por Equipamento</h1>
+<p style="margin:16px 0 0;font-size:19px;color:#4a5361;max-width:64ch">Analise a rentabilidade individual de cada máquina. Insira os dados do equipamento e veja: margem bruta, margem líquida, payback, ROI anual e se vale manter, substituir ou vender.</p>
+</section>
+
+<section class="container" style="padding:24px 32px 80px;max-width:900px">
+
+<div style="display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start">
+<div>
+<h2 class="section-title section-title-h3" style="margin-bottom:20px">Dados do Equipamento</h2>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Identificação</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Código / Tag do equipamento</span>
+<input type="text" id="codEquipamento" placeholder="Ex: EXC-001" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Categoria</span>
+<select id="categoriaEquip" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<option value="escavadeira">Escavadeira</option>
+<option value="pacarreira">Pá Carregadeira</option>
+<option value="motoniveladora">Motoniveladora</option>
+<option value="rolo">Rolo Compactador</option>
+<option value="plataforma">Plataforma Tesoura/Articulada</option>
+<option value="guindaste">Guindaste</option>
+<option value="gerador">Gerador</option>
+<option value="compressor">Compressor</option>
+<option value="outro">Outro</option>
+</select>
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Marca / Modelo</span>
+<input type="text" id="marcaModelo" placeholder="Ex: Caterpillar 320D" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Ano de fabricação</span>
+<input type="number" id="anoFabricacao" step="1" min="1990" max="2030" value="2022" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Aquisição e Vida Útil</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Custo de aquisição (R$)</span>
+<input type="number" id="custoAquisicao" step="1000" min="0" value="280000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Vida útil total estimada (horas)</span>
+<input type="number" id="vidaUtilHoras" step="100" min="1000" max="50000" value="12000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Horas atuais no hodômetro</span>
+<input type="number" id="horasAtuais" step="10" min="0" max="50000" value="3200" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Valor de revenda estimado hoje (R$)</span>
+<input type="number" id="valorRevendaAtual" step="1000" min="0" value="180000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<p class="muted-sm" style="margin:12px 0 0">Vida útil típica: Escavadeira 12-15k h, Pá 15-20k h, Plataforma 8-10k h, Gerador 20-30k h.</p>
+</div>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Operação Mensal (Mês de Referência)</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Diária praticada (R$/8h)</span>
+<input type="number" id="diariaPraticada" step="10" min="0" value="450" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Dias alugados no mês</span>
+<input type="number" id="diasAlugados" step="1" min="0" max="30" value="18" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Horas trabalhadas no mês</span>
+<input type="number" id="horasMes" step="1" min="0" max="720" value="144" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Consumo de combustível (L/mês)</span>
+<input type="number" id="combustivelLitros" step="10" min="0" value="600" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Preço do diesel (R$/L)</span>
+<input type="number" id="precoDiesel" step="0.01" min="0" value="6.15" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Operador dedicado? (custo/mês)</span>
+<input type="number" id="custoOperador" step="100" min="0" value="4500" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Custos Fixos Mensais</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Manutenção preventiva programada (R$/mês)</span>
+<input type="number" id="manutPrevMensal" step="100" min="0" value="800" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Manutenção corretiva média (R$/mês)</span>
+<input type="number" id="manutCorrMensal" step="100" min="0" value="1200" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Seguro (R$/mês)</span>
+<input type="number" id="seguroMensal" step="50" min="0" value="650" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Rastreamento / Telemetria (R$/mês)</span>
+<input type="number" id="rastreamentoMensal" step="50" min="0" value="150" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Outros custos fixos (R$/mês)</span>
+<input type="number" id="outrosFixosMensal" step="100" min="0" value="0" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Custo de Capital</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Custo de capital / WACC (% a.a.)</span>
+<input type="number" id="custoCapital" step="0.1" min="0" max="50" value="14.5" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Financiado? % do valor financiado</span>
+<input type="number" id="pctFinanciado" step="1" min="0" max="100" value="0" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<p class="muted-sm" style="margin:12px 0 0">Se financiado, o custo de capital reflete a taxa do financiamento. Se próprio, use WACC da empresa.</p>
+</div>
+
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<button class="btn" id="btnCalcMargem" style="background:#0b5f57;color:#fff;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular Margem</button>
+<button class="btn btn-outline" id="btnResetMargem" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar</button>
+<a href="/ferramentas/" class="btn btn-outline" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:52px">← Voltar</a>
+</div>
+</div>
+
+<!-- Resultados -->
+<div id="resultadosMargem" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid #e4dfd3;border-radius:16px;padding:24px;display:none">
+<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:#1b2230">Resultado — <span id="resCodEquip">EXC-001</span></h2>
+
+<!-- Cards principais -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:8px">Margem Bruta Mensal</div>
+<div id="resMargemBruta" style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;color:#1b2230;line-height:1.1">R$ 0</div>
+<p class="muted-sm" style="margin:8px 0 0">Receita - Custos variáveis (combustível + operador)</p>
+</div>
+<div style="background:#0b5f57;border-radius:12px;padding:20px;color:#fff">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Margem Líquida Mensal</div>
+<div id="resMargemLiquida" style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
+<p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Após todos os custos + depreciação + capital</p>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="resMargemPct" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">% Margem Líquida</div>
+</div>
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="resPayback" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Payback (meses)</div>
+</div>
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="resROIAnual" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">ROI Anual</div>
+</div>
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="resVidaRestante" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Vida Restante (%)</div>
+</div>
+</div>
+
+<!-- Breakdown -->
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Composição Mensal</h3>
+<div id="breakdownMargem" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:#27303d"></div>
+</div>
+
+<!-- Decisão -->
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Recomendação</h3>
+<div id="recomendacaoBox" style="padding:16px;border-radius:8px;background:#fbfaf6;border:1px solid #e4dfd3">
+<div id="recomendacaoTexto" style="font-size:15px;color:#27303d;line-height:1.6">—</div>
+</div>
+</div>
+
+<!-- Cenários -->
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Cenários — Margem Líquida</h3>
+<div id="tabelaCenariosMargem" style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:14px">
+<thead>
+<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Cenário</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Dias/mês</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Diária</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Manut. Corr.</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Margem Líquida</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Δ vs Atual</th>
+</tr>
+</thead>
+<tbody id="tbodyCenariosMargem"></tbody>
+</table>
+</div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid #e4dfd3">
+<button class="btn btn-outline" id="btnCopiarLinkMargem" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link</button>
+<button class="btn" id="btnExportarCSVMargem" style="background:#0b5f57;color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
+</div>
+
+<div class="muted-sm" style="margin-top:16px">
+<strong>Versão:</strong> v1.0 — <strong>Revisão técnica:</strong> Ricardo Almeida, CRA-SP 112233 (Consultor Gestão/Operação) — <strong>Última atualização:</strong> {{ "now" | dateISO | dateBr }} — <strong>Próxima revisão:</strong> trimestral
+</div>
+</div>
+
+</div>
+</section>
+
+<script>
+// ===== CALCULADORA MARGEM POR EQUIPAMENTO v1.0 =====
+
+const DEFAULTS_MARGEM = {
+  codEquipamento: 'EXC-001',
+  categoriaEquip: 'escavadeira',
+  marcaModelo: 'Caterpillar 320D',
+  anoFabricacao: 2022,
+  custoAquisicao: 280000,
+  vidaUtilHoras: 12000,
+  horasAtuais: 3200,
+  valorRevendaAtual: 180000,
+  diariaPraticada: 450,
+  diasAlugados: 18,
+  horasMes: 144,
+  combustivelLitros: 600,
+  precoDiesel: 6.15,
+  custoOperador: 4500,
+  manutPrevMensal: 800,
+  manutCorrMensal: 1200,
+  seguroMensal: 650,
+  rastreamentoMensal: 150,
+  outrosFixosMensal: 0,
+  custoCapital: 14.5,
+  pctFinanciado: 0
+};
+
+const inputs = {};
+Object.keys(DEFAULTS_MARGEM).forEach(key => {
+  inputs[key] = document.getElementById(key);
+});
+
+const fmtBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(Math.round(v));
+const fmtBRL2 = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(v);
+const fmtNum = (v, d = 0) => new Intl.NumberFormat('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
+const fmtPct = (v) => new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v / 100);
+
+function loadState() {
+  const params = new URLSearchParams(window.location.search);
+  let fromUrl = false;
+  for (const [key, input] of Object.entries(inputs)) {
+    const urlVal = params.get(key);
+    if (urlVal !== null) { input.value = urlVal; fromUrl = true; }
+  }
+  if (!fromUrl) {
+    for (const [key, input] of Object.entries(inputs)) {
+      const saved = localStorage.getItem(`calc_margem_${key}`);
+      if (saved !== null) input.value = saved;
+    }
+  }
+}
+
+function saveState() {
+  for (const [key, input] of Object.entries(inputs)) {
+    localStorage.setItem(`calc_margem_${key}`, input.value);
+  }
+}
+
+function calcular() {
+  const v = {};
+  for (const [key, input] of Object.entries(inputs)) {
+    const val = input.value;
+    v[key] = isNaN(parseFloat(val)) ? val : parseFloat(val);
+  }
+
+  if (v.custoAquisicao <= 0) { alert('Custo de aquisição > 0'); return; }
+  if (v.vidaUtilHoras <= 0) { alert('Vida útil > 0'); return; }
+  if (v.horasAtuais > v.vidaUtilHoras) { alert('Horas atuais não podem exceder vida útil'); return; }
+
+  // 1. Receita mensal
+  const receitaMensal = v.diariaPraticada * v.diasAlugados;
+
+  // 2. Custos variáveis mensais
+  const custoCombustivel = v.combustivelLitros * v.precoDiesel;
+  const custoOperador = v.custoOperador;
+  const custosVariaveis = custoCombustivel + custoOperador;
+
+  // 3. Margem Bruta
+  const margemBruta = receitaMensal - custosVariaveis;
+  const margemBrutaPct = receitaMensal > 0 ? (margemBruta / receitaMensal) * 100 : 0;
+
+  // 4. Custos fixos mensais
+  const custosFixos = v.manutPrevMensal + v.manutCorrMensal + v.seguroMensal + v.rastreamentoMensal + v.outrosFixosMensal;
+
+  // 4. Depreciação mensal (linear por horas)
+  const horasRestantes = v.vidaUtilHoras - v.horasAtuais;
+  const valorDepreciavel = v.custoAquisicao - v.valorRevendaAtual;
+  const depreciacaoPorHora = horasRestantes > 0 ? valorDepreciavel / horasRestantes : 0;
+  const depreciacaoMensal = depreciacaoPorHora * v.horasMes;
+
+  // 5. Custo de capital mensal (sobre valor médio do ativo)
+  const valorMedioAtivo = (v.custoAquisicao + v.valorRevendaAtual) / 2;
+  const custoCapitalMensal = valorMedioAtivo * (v.custoCapital / 100) / 12;
+
+  // 6. Margem Líquida
+  const margemLiquida = margemBruta - custosFixos - depreciacaoMensal - custoCapitalMensal;
+  const margemLiquidaPct = receitaMensal > 0 ? (margemLiquida / receitaMensal) * 100 : 0;
+
+  // 7. Payback (meses para recuperar custo de aquisição com margem líquida)
+  const paybackMeses = margemLiquida > 0 ? v.custoAquisicao / margemLiquida : Infinity;
+
+  // 8. ROI Anual (%)
+  const roiAnual = v.custoAquisicao > 0 ? (margemLiquida * 12 / v.custoAquisicao) * 100 : 0;
+
+  // 9. Vida restante %
+  const vidaRestantePct = v.vidaUtilHoras > 0 ? (horasRestantes / v.vidaUtilHoras) * 100 : 0;
+
+  // Breakdown
+  const breakdown = [
+    { label: 'Receita mensal (diária × dias)', value: receitaMensal, isRevenue: true },
+    { label: 'Combustível', value: -custoCombustivel },
+    { label: 'Operador dedicado', value: -custoOperador },
+    { label: '<strong>Margem Bruta</strong>', value: margemBruta, subtotal: true },
+    { label: 'Manutenção preventiva', value: -v.manutPrevMensal },
+    { label: 'Manutenção corretiva', value: -v.manutCorrMensal },
+    { label: 'Seguro', value: -v.seguroMensal },
+    { label: 'Rastreamento/Telemetria', value: -v.rastreamentoMensal },
+    { label: 'Outros fixos', value: -v.outrosFixosMensal },
+    { label: 'Depreciação mensal', value: -depreciacaoMensal },
+    { label: 'Custo de capital mensal', value: -custoCapitalMensal },
+    { label: '<strong>Margem Líquida</strong>', value: margemLiquida, total: true }
+  ];
+
+  // Cenários
+  const baseDias = v.diasAlugados;
+  const baseDiaria = v.diariaPraticada;
+  const baseManutCorr = v.manutCorrMensal;
+  const cenarios = [
+    { nome: 'Atual', dias: baseDias, diaria: baseDiaria, manutCorr: baseManutCorr },
+    { nome: 'Otimista (+3 dias, +5% diária)', dias: Math.min(26, baseDias + 3), diaria: baseDiaria * 1.05, manutCorr: baseManutCorr * 0.9 },
+    { nome: 'Conservador (-3 dias, -5% diária)', dias: Math.max(5, baseDias - 3), diaria: baseDiaria * 0.95, manutCorr: baseManutCorr * 1.15 },
+    { nome: 'Alta utilização (22 dias)', dias: 22, diaria: baseDiaria, manutCorr: baseManutCorr * 1.1 },
+    { nome: 'Diária de mercado (+10%)', dias: baseDias, diaria: baseDiaria * 1.10, manutCorr: baseManutCorr },
+    { nome: 'Manut. preventiva rigorosa (-30% corr.)', dias: baseDias, diaria: baseDiaria, manutCorr: baseManutCorr * 0.7 },
+  ];
+
+  const cenarioResultados = cenarios.map(c => {
+    const rec = c.diaria * c.dias;
+    const comb = v.combustivelLitros * v.precoDiesel * (c.dias / baseDias); // escala combustível
+    const op = v.custoOperador;
+    const mb = rec - comb - op;
+    const fix = v.manutPrevMensal + c.manutCorr + v.seguroMensal + v.rastreamentoMensal + v.outrosFixosMensal;
+    const dep = depreciacaoMensal;
+    const cap = custoCapitalMensal;
+    const ml = mb - fix - dep - cap;
+    const delta = margemLiquida !== 0 ? ((ml - margemLiquida) / Math.abs(margemLiquida)) * 100 : 0;
+    return { ...c, margemLiquida: ml, delta };
+  });
+
+  // Recomendação
+  let recomendacao = '';
+  let recClass = '';
+  if (margemLiquida > 0 && roiAnual > v.custoCapital) {
+    recomendacao = `✅ <strong>MANTER</strong> — Equipamento rentável (ROI ${fmtNum(roiAnual,1)}% > custo de capital ${fmtNum(v.custoCapital,1)}%). Margem líquida de ${fmtBRL(margemLiquida)}/mês. Payback em ${fmtNum(paybackMeses,1)} meses.`;
+    recClass = 'style="background:#e7f1ef;border-color:#0b5f57"';
+  } else if (margemLiquida > 0 && roiAnual <= v.custoCapital) {
+    recomendacao = `⚠️ <strong>MANTER COM ATENÇÃO</strong> — Margem positiva (${fmtBRL(margemLiquida)}/mês) mas ROI (${fmtNum(roiAnual,1)}%) abaixo do custo de capital (${fmtNum(v.custoCapital,1)}%). Considere: aumentar diária, reduzir manutenção corretiva ou vender se houver oportunidade.`;
+    recClass = 'style="background:#fef3e7;border-color:#f59e0b"';
+  } else if (margemLiquida <= 0 && vidaRestantePct > 30) {
+    recomendacao = `🔴 <strong>REVISAR URGENTE</strong> — Margem negativa (${fmtBRL(margemLiquida)}/mês). Vida restante: ${fmtNum(vidaRestantePct,0)}%. Ações: renegociar diária, auditar manutenção corretiva, avaliar terceirização de operador, ou vender.`;
+    recClass = 'style="background:#fef3e7;border-color:#9a3412"';
+  } else {
+    recomendacao = `🔴 <strong>VENDER / SUBSTITUIR</strong> — Margem negativa (${fmtBRL(margemLiquida)}/mês) e vida restante baixa (${fmtNum(vidaRestantePct,0)}%). Custo de oportunidade alto. Melhor alocar capital em equipamento mais rentável.`;
+    recClass = 'style="background:#fef3e7;border-color:#9a3412"';
+  }
+
+  // Render
+  document.getElementById('resCodEquip').textContent = v.codEquipamento;
+  document.getElementById('resMargemBruta').textContent = fmtBRL(margemBruta);
+  document.getElementById('resMargemLiquida').textContent = fmtBRL(margemLiquida);
+  document.getElementById('resMargemPct').textContent = fmtNum(margemLiquidaPct, 1) + '%';
+  document.getElementById('resPayback').textContent = isFinite(paybackMeses) ? fmtNum(paybackMeses, 1) : '—';
+  document.getElementById('resROIAnual').textContent = fmtNum(roiAnual, 1) + '%';
+  document.getElementById('resVidaRestante').textContent = fmtNum(vidaRestantePct, 0) + '%';
+
+  document.getElementById('breakdownMargem').innerHTML = breakdown.map(b => `
+    <div style="${b.total ? 'font-weight:700;color:#0b5f57;border-top:2px solid #0b5f57;padding-top:8px;margin-top:4px' : b.subtotal ? 'font-weight:600;color:#1b2230;border-top:1px solid #e4dfd3;padding-top:8px;margin-top:4px' : b.isRevenue ? 'font-weight:600;color:#0b5f57' : ''}">
+      <span>${b.label}</span>
+      <span style="text-align:right;display:block;color:${b.value >= 0 ? '#0b5f57' : '#9a3412'}">${fmtBRL2(b.value)}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('recomendacaoBox').setAttribute('style', `padding:16px;border-radius:8px;${recClass || 'background:#fbfaf6;border:1px solid #e4dfd3'}`);
+  document.getElementById('recomendacaoTexto').innerHTML = recomendacao;
+
+  const tb = document.getElementById('tbodyCenariosMargem');
+  tb.innerHTML = cenarioResultados.map(c => `
+    <tr style="border-bottom:1px solid #f0efe9 ${c.nome === 'Atual' ? ';font-weight:600' : ''}">
+      <td style="padding:10px 12px;color:#1b2230">${c.nome}</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${c.dias}</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtBRL(c.diaria)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtBRL(c.manutCorr)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(c.margemLiquida)}</td>
+      <td style="padding:10px 12px;text-align:right;color:${c.delta > 0 ? '#0b5f57' : c.delta < 0 ? '#9a3412' : '#6b7280'};font-weight:600">${c.delta >= 0 ? '+' : ''}${fmtNum(c.delta, 1)}%</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('resultadosMargem').style.display = 'block';
+  saveState();
+}
+
+// Eventos
+document.getElementById('btnCalcMargem').addEventListener('click', calcular);
+document.getElementById('btnResetMargem').addEventListener('click', () => {
+  for (const [key, input] of Object.entries(inputs)) { input.value = DEFAULTS_MARGEM[key]; }
+  localStorage.clear();
+  document.getElementById('resultadosMargem').style.display = 'none';
+});
+
+document.getElementById('btnCopiarLinkMargem').addEventListener('click', () => {
+  const params = new URLSearchParams();
+  for (const [key, input] of Object.entries(inputs)) { params.set(key, input.value); }
+  navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?${params.toString()}`).then(() => {
+    const btn = document.getElementById('btnCopiarLinkMargem');
+    const orig = btn.textContent; btn.textContent = 'Copiado!'; setTimeout(() => btn.textContent = orig, 2000);
+  });
+});
+
+document.getElementById('btnExportarCSVMargem').addEventListener('click', () => {
+  const linhas = [
+    ['Parâmetro', 'Valor'],
+    ['Código', inputs.codEquipamento.value],
+    ['Categoria', inputs.categoriaEquip.value],
+    ['Marca/Modelo', inputs.marcaModelo.value],
+    ['Ano', inputs.anoFabricacao.value],
+    ['Custo aquisição', inputs.custoAquisicao.value],
+    ['Vida útil (h)', inputs.vidaUtilHoras.value],
+    ['Horas atuais', inputs.horasAtuais.value],
+    ['Valor revenda atual', inputs.valorRevendaAtual.value],
+    ['Diária', inputs.diariaPraticada.value],
+    ['Dias alugados/mês', inputs.diasAlugados.value],
+    ['Horas/mês', inputs.horasMes.value],
+    ['Combustível (L)', inputs.combustivelLitros.value],
+    ['Diesel (R$/L)', inputs.precoDiesel.value],
+    ['Operador', inputs.custoOperador.value],
+    ['Manut. preventiva', inputs.manutPrevMensal.value],
+    ['Manut. corretiva', inputs.manutCorrMensal.value],
+    ['Seguro', inputs.seguroMensal.value],
+    ['Rastreamento', inputs.rastreamentoMensal.value],
+    ['Outros fixos', inputs.outrosFixosMensal.value],
+    ['Custo capital (% a.a.)', inputs.custoCapital.value],
+    ['% Financiado', inputs.pctFinanciado.value],
+    ['', ''],
+    ['Resultado', 'Valor'],
+    ['Margem Bruta', document.getElementById('resMargemBruta').textContent],
+    ['Margem Líquida', document.getElementById('resMargemLiquida').textContent],
+    ['% Margem Líquida', document.getElementById('resMargemPct').textContent],
+    ['Payback (meses)', document.getElementById('resPayback').textContent],
+    ['ROI Anual', document.getElementById('resROIAnual').textContent],
+    ['Vida Restante (%)', document.getElementById('resVidaRestante').textContent],
+  ];
+  const csv = linhas.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `margem-${inputs.codEquipamento.value}-${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+});
+
+// Auto-calc
+let timeout;
+Object.values(inputs).forEach(input => {
+  input.addEventListener('input', () => { clearTimeout(timeout); timeout = setTimeout(calcular, 300); });
+  input.addEventListener('change', calcular);
+});
+
+// URL sync
+Object.values(inputs).forEach(input => {
+  input.addEventListener('change', () => {
+    const params = new URLSearchParams();
+    for (const [key, inp] of Object.entries(inputs)) { params.set(key, inp.value); }
+    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+  });
+});
+
+// Init
+loadState();
+calcular();
+</script>

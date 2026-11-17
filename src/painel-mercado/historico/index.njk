@@ -1,0 +1,246 @@
+---
+layout: base.njk
+pagefind: true
+permalink: /painel-mercado/historico/
+title: "Histórico e Changelog — Painel do Mercado"
+description: "Histórico de publicações, mudanças metodológicas, correções e evolução do Painel do Mercado Oravel."
+---
+
+<section class="container" style="padding:56px 32px 24px;max-width:800px">
+<div class="breadcrumb"><a href="/">Início</a> / <a href="/painel-mercado/">Painel do Mercado</a> / Histórico</div>
+<h1 class="page-title">Histórico do Painel do Mercado</h1>
+<p style="margin:16px 0 0;font-size:20px;color:#4a5361;line-height:1.6;font-weight:500">Todas as publicações mensais, mudanças metodológicas, correções e evoluções. Transparência total.</p>
+</section>
+
+<section class="container" style="padding:24px 32px 80px;max-width:800px">
+
+<article class="post-body" style="font-size:17.5px;line-height:1.85;color:#27303d">
+
+<h2 style="font-family:'Newsreader',Georgia,serif;font-size:28px;line-height:1.25;font-weight:600;border-left:4px solid #0b5f57;border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:#1b2230">Publicações Mensais</h2>
+
+<div id="publicacoesMensais" style="display:flex;flex-direction:column;gap:16px">
+<!-- Preenchido via JS -->
+</div>
+
+<h2 style="font-family:'Newsreader',Georgia,serif;font-size:28px;line-height:1.25;font-weight:600;border-left:4px solid #0b5f57;border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:#1b2230">Changelog Metodológico</h2>
+
+<div id="changelogMetodologico" style="display:flex;flex-direction:column;gap:16px">
+<!-- Preenchido via JS -->
+</div>
+
+<h2 style="font-family:'Newsreader',Georgia,serif;font-size:28px;line-height:1.25;font-weight:600;border-left:4px solid #0b5f57;border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:#1b2230">Correções e Retificações</h2>
+
+<div id="correcoes" style="display:flex;flex-direction:column;gap:16px">
+<!-- Preenchido via JS -->
+</div>
+
+<h2 style="font-family:'Newsreader',Georgia,serif;font-size:28px;line-height:1.25;font-weight:600;border-left:4px solid #0b5f57;border-radius:0 8px 8px 0;padding:12px 20px;margin:2.5em 0 1em;background:#e7f1ef;color:#1b2230">Evolução da Amostra</h2>
+
+<div class="card" style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-top:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:20px;font-weight:600;margin:0 0 16px;color:#1b2230">Crescimento do n total por mês</h3>
+<div style="height:250px;position:relative"><canvas id="chartEvolucaoAmostra"></canvas></div>
+<p class="muted-sm" style="margin:12px 0 0;font-size:12px">Fonte: Painel do Mercado Oravel • Atualizado mensalmente</p>
+</div>
+
+<div style="margin-top:24px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:20px;font-weight:600;margin:0 0 16px;color:#1b2230">Cobertura por célula (porte × região × categoria)</h3>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:14px" id="tabelaCobertura">
+<thead>
+<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Mês</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Células com n≥10</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Células com n≥30</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Total células ativas</th>
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Cobertura % (n≥10)</th>
+</tr>
+</thead>
+<tbody id="tbodyCobertura"></tbody>
+</table>
+</div>
+</div>
+
+</article>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+// ===== DADOS DO HISTÓRICO (simulados para demo) =====
+const HISTORICO_DATA = {
+  publicacoes: [
+    { mes: '2026-11', label: 'Novembro 2026', dataPub: '2026-11-15', nTotal: 127, nCelulas10: 34, nCelulas30: 12, status: 'published', observacoes: 'Lançamento oficial do Painel v1.0' },
+    { mes: '2026-10', label: 'Outubro 2026', dataPub: '2026-10-15', nTotal: 98, nCelulas10: 28, nCelulas30: 9, status: 'published', observacoes: 'Beta fechado com membros fundadores da Rede Oravel' },
+    { mes: '2026-09', label: 'Setembro 2026', dataPub: '2026-09-15', nTotal: 67, nCelulas10: 19, nCelulas30: 5, status: 'published', observacoes: 'Piloto interno — validação de formulário e agregação' },
+    { mes: '2026-08', label: 'Agosto 2026', dataPub: null, nTotal: 34, nCelulas10: 8, nCelulas30: 2, status: 'internal', observacoes: 'Teste alpha — apenas equipe editorial' }
+  ],
+  changelog: [
+    { data: '2026-11-01', versao: 'v1.0', tipo: 'Lançamento', descricao: 'Painel do Mercado v1.0 publicado com 7 indicadores, 6 gráficos, ranking de dores, maturidade digital. Metodologia documentada em /metodologia/. Regra de supressão n≥10.' },
+    { data: '2026-10-15', versao: 'v0.9-beta', tipo: 'Feature', descricao: 'Adicionado formulário de contribuição (/contribuir/) com benchmarking personalizado por e-mail. Validações automáticas de consistência.' },
+    { data: '2026-10-01', versao: 'v0.8-beta', tipo: 'Feature', descricao: 'Inclusão de maturidade digital (modelo 5 níveis adaptado do CMMI) e adoção de tecnologias (8 itens).' },
+    { data: '2026-09-15', versao: 'v0.7-alpha', tipo: 'Feature', descricao: 'Ranking de dores do setor baseado em enquete mensal na Rede Oravel. Link para artigo relacionado em cada dor.' },
+    { data: '2026-09-01', versao: 'v0.6-alpha', tipo: 'Metodologia', descricao: 'Definição da regra de supressão n≥10 por célula. Agregação por mediana (P50) + P25/P75. Célula = Porte × Região × Categoria.' },
+    { data: '2026-08-15', versao: 'v0.5-alpha', tipo: 'Infra', descricao: 'Pipeline de rebuild automático via GitHub Actions: coleta Firestore → JSON estático → Eleventy build → Firebase Deploy.' },
+    { data: '2026-08-01', versao: 'v0.4-alpha', tipo: 'Metodologia', descricao: 'Validações pós-coleta: outliers (IQR), consistência temporal (>50% MoM), duplicidade por e-mail/mês.' },
+    { data: '2026-07-15', versao: 'v0.3-alpha', tipo: 'Feature', descricao: 'Formulário inicial com 12 KPIs obrigatórios + 6 tecnologias opcionais + maturidade 1-5.' },
+    { data: '2026-07-01', versao: 'v0.2-alpha', tipo: 'Design', descricao: 'Wireframes dos 6 gráficos principais + KPIs cards + tabela de dores. Definição de cores e tipografia.' },
+    { data: '2026-06-15', versao: 'v0.1-alpha', tipo: 'Concepção', descricao: 'Definição do escopo: 7 indicadores iniciais. Benchmarks ARA/ERA como referência metodológica. LGPD by design.' }
+  ],
+  correcoes: [
+    { data: '2026-11-20', versao: 'v1.0.1', tipo: 'Correção', descricao: 'Ajuste no cálculo de "Custo Manutenção/Receita" — estava usando receita do mês corrente em vez do mês de referência. Impacto: -0,3pp na mediana nacional. Corrigido no rebuild de 20/11.' },
+    { data: '2026-10-22', versao: 'v0.9.1', tipo: 'Correção', descricao: 'Duplicidade detectada: 3 respondentes enviaram 2x no mesmo mês (browser back button). Removidas duplicatas mantendo a mais recente. n total ajustou de 101 para 98.' }
+  ],
+  evolucaoAmostra: {
+    labels: ['Ago/26', 'Set/26', 'Out/26', 'Nov/26'],
+    datasets: [{
+      label: 'n Total (locadoras)',
+      data: [34, 67, 98, 127],
+      borderColor: '#0b5f57',
+      backgroundColor: 'rgba(11, 95, 87, 0.1)',
+      borderWidth: 3,
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: '#0b5f57'
+    }, {
+      label: 'Células n≥10',
+      data: [8, 19, 28, 34],
+      borderColor: '#f59e0b',
+      backgroundColor: 'rgba(245, 158, 11, 0.1)',
+      borderWidth: 3,
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: '#f59e0b'
+    }, {
+      label: 'Células n≥30',
+      data: [2, 5, 9, 12],
+      borderColor: '#9a3412',
+      backgroundColor: 'rgba(154, 52, 18, 0.1)',
+      borderWidth: 3,
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: '#9a3412'
+    }]
+  },
+  cobertura: [
+    { mes: 'Nov/2026', celulas10: 34, celulas30: 12, totalAtivas: 48, cobertura: 71 },
+    { mes: 'Out/2026', celulas10: 28, celulas30: 9, totalAtivas: 42, cobertura: 67 },
+    { mes: 'Set/2026', celulas10: 19, celulas30: 5, totalAtivas: 35, cobertura: 54 },
+    { mes: 'Ago/2026', celulas10: 8, celulas30: 2, totalAtivas: 22, cobertura: 36 }
+  ]
+};
+
+// ===== RENDER =====
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+function renderPublicacoes() {
+  const container = document.getElementById('publicacoesMensais');
+  container.innerHTML = HISTORICO_DATA.publicacoes.map(p => `
+    <div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+      <div style="flex:1 1 200px;min-width:0">
+        <div style="font-family:'Newsreader',Georgia,serif;font-size:22px;font-weight:600;color:#1b2230">${p.label}</div>
+        <div style="margin-top:4px;color:#6b7280;font-size:14px">Publicado em ${fmtDate(p.dataPub)}</div>
+      </div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:14px;color:#4a5361">
+        <div><strong>n total:</strong> ${p.nTotal}</div>
+        <div><strong>Células n≥10:</strong> ${p.nCelulas10}</div>
+        <div><strong>Células n≥30:</strong> ${p.nCelulas30}</div>
+      </div>
+      <div style="flex:1 1 100%;margin-top:8px;padding-top:8px;border-top:1px solid #f0efe9;color:#4a5361;font-size:14.5px">
+        ${p.observacoes}
+      </div>
+      <div style="margin-top:8px">
+        <span style="display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;${p.status === 'published' ? 'background:#e7f1ef;color:#0b5f57' : 'background:#fef3e7;color:#9a3412'}">${p.status === 'published' ? 'Publicado' : 'Interno'}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderChangelog() {
+  const container = document.getElementById('changelogMetodologico');
+  container.innerHTML = HISTORICO_DATA.changelog.map(c => `
+    <div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;border-left:4px solid ${c.tipo === 'Metodologia' ? '#9a3412' : c.tipo === 'Correção' ? '#9a3412' : c.tipo === 'Feature' ? '#0b5f57' : '#f59e0b'}">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px">
+        <span style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;color:#1b2230">${c.versao}</span>
+        <span style="color:#6b7280;font-size:14px">${fmtDate(c.data)}</span>
+        <span style="background:#e7f1ef;color:#0b5f57;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700">${c.tipo}</span>
+      </div>
+      <p style="margin:0;color:#4a5361;line-height:1.6">${c.descricao}</p>
+    </div>
+  `).join('');
+}
+
+function renderCorrecoes() {
+  const container = document.getElementById('correcoes');
+  container.innerHTML = HISTORICO_DATA.correcoes.map(c => `
+    <div style="background:#fef3e7;border:1px solid #fde8c7;border-radius:12px;padding:20px;border-left:4px solid #9a3412">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px">
+        <span style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;color:#1b2230">${c.versao}</span>
+        <span style="color:#6b7280;font-size:14px">${fmtDate(c.data)}</span>
+        <span style="background:#fef3e7;color:#9a3412;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700">${c.tipo}</span>
+      </div>
+      <p style="margin:0;color:#4a5361;line-height:1.6">${c.descricao}</p>
+    </div>
+  `).join('');
+}
+
+function renderEvolucaoAmostra() {
+  const ctx = document.getElementById('chartEvolucaoAmostra');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: HISTORICO_DATA.evolucaoAmostra.labels,
+      datasets: HISTORICO_DATA.evolucaoAmostra.datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { color: '#4a5361', font: { size: 12 } } },
+        tooltip: { backgroundColor: '#1b2230', titleColor: '#fff', bodyColor: '#e8f1ef', padding: 12, cornerRadius: 8 }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#6b7280', font: { size: 12 } } },
+        y: { grid: { color: '#f0efe9' }, ticks: { color: '#6b7280', font: { size: 12 } }, beginAtZero: true }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
+}
+
+function renderCobertura() {
+  const tbody = document.getElementById('tbodyCobertura');
+  tbody.innerHTML = HISTORICO_DATA.cobertura.map(c => `
+    <tr style="border-bottom:1px solid #f0efe9">
+      <td style="padding:10px 12px;font-weight:600;color:#1b2230">${c.mes}</td>
+      <td style="padding:10px 12px;text-align:right;color:#0b5f57;font-weight:600">${c.celulas10}</td>
+      <td style="padding:10px 12px;text-align:right;color:#f59e0b;font-weight:600">${c.celulas30}</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${c.totalAtivas}</td>
+      <td style="padding:10px 12px;text-align:left">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;height:8px;background:#e4dfd3;border-radius:4px;overflow:hidden">
+            <div style="width:${c.cobertura}%;height:100%;background:linear-gradient(90deg,#f59e0b,#0b5f57);border-radius:4px;transition:width .3s"></div>
+          </div>
+          <span style="font-weight:600;color:#1b2230;white-space:nowrap">${c.cobertura}%</span>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  renderPublicacoes();
+  renderChangelog();
+  renderCorrecoes();
+  renderEvolucaoAmostra();
+  renderCobertura();
+});
+</script>

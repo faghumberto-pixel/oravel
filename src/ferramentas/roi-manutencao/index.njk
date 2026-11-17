@@ -1,0 +1,543 @@
+---
+layout: base.njk
+pagefind: true
+permalink: /ferramentas/roi-manutencao/
+title: "Calculadora de ROI de Manutenção"
+description: "Compare preventiva vs corretiva: calcule o ROI de investir em manutenção preventiva, preditiva ou RCM. Veja redução de falhas, ganho de disponibilidade, economia com peças e payback do programa."
+---
+
+<section class="container" style="padding:56px 32px 24px;max-width:900px">
+<div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de ROI de Manutenção</div>
+<h1 class="page-title">Calculadora de ROI de Manutenção</h1>
+<p style="margin:16px 0 0;font-size:19px;color:#4a5361;max-width:64ch">Avalie se vale a pena migrar de corretiva para preventiva/preditiva. Insira custos atuais, proposta de programa e veja: economia anual, redução de falhas, ganho de disponibilidade, payback e NPV do investimento.</p>
+</section>
+
+<section class="container" style="padding:24px 32px 80px;max-width:900px">
+
+<div style="display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start">
+<div>
+<h2 class="section-title section-title-h3" style="margin-bottom:20px">Cenário Atual (Baseline)</h2>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Frota e Operação</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Nº de equipamentos na frota</span>
+<input type="number" id="numEquip" step="1" min="1" value="15" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Horas trabalhadas/equip/mês</span>
+<input type="number" id="horasMesEquip" step="10" min="0" max="720" value="180" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Diária média praticada (R$/8h)</span>
+<input type="number" id="diariaMedia" step="10" min="0" value="500" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Taxa de ocupação média (%)</span>
+<input type="number" id="taxaOcupMedia" step="1" min="0" max="100" value="70" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Custos Atuais de Manutenção (Anual)</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Manutenção corretiva total (R$/ano)</span>
+<input type="number" id="corrAtual" step="1000" min="0" value="450000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Manutenção preventiva atual (R$/ano)</span>
+<input type="number" id="prevAtual" step="1000" min="0" value="120000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Peças de reposição emergenciais (R$/ano)</span>
+<input type="number" id="pecasEmergAtual" step="1000" min="0" value="180000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Mão de obra terceirizada emergencial (R$/ano)</span>
+<input type="number" id="maoObraEmergAtual" step="1000" min="0" value="90000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Nº de falhas/ano (frota total)</span>
+<input type="number" id="falhasAnoAtual" step="1" min="0" value="60" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>MTTR médio atual (h/falha)</span>
+<input type="number" id="mttrAtual" step="0.5" min="0" value="8" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<p class="muted-sm" style="margin:12px 0 0">Corretiva inclui: peças, mão de obra, logística, tempo parado. Preventiva atual = apenas o que já faz hoje (lubrificação, inspeções básicas).</p>
+</div>
+
+<h2 class="section-title section-title-h3" style="margin:24px 0 20px;color:#1b2230">Programa Proposto (Preventiva / Preditiva / RCM)</h2>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Investimento no Programa</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Tipo de programa</span>
+<select id="tipoPrograma" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+<option value="preventiva">Preventiva estruturada (planos por equipamento)</option>
+<option value="preditiva">Preditiva (análise de óleo, vibração, termografia)</option>
+<option value="rcm">RCM - Manutenção Centrada em Confiabilidade</option>
+<option value="tpm">TPM - Manutenção Produtiva Total</option>
+</select>
+</label>
+<label class="form-conta" style="margin:0">
+<span>CAPEX inicial (R$) — ferramentas, sensores, software, treinamento</span>
+<input type="number" id="capexInicial" step="1000" min="0" value="150000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>OPEX anual do programa (R$/ano) — contratos, licenças, equipe dedicada</span>
+<input type="number" id="opexAnual" step="1000" min="0" value="80000" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Vida útil do programa (anos)</span>
+<input type="number" id="vidaPrograma" step="1" min="1" max="10" value="5" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">Ganhos Esperados (Estimativas Conservadoras)</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Redução de falhas corretivas (%)</span>
+<input type="number" id="redFalhas" step="1" min="0" max="90" value="45" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Redução MTTR (%)</span>
+<input type="number" id="redMttr" step="1" min="0" max="70" value="30" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Redução peças emergenciais (%)</span>
+<input type="number" id="redPecas" step="1" min="0" max="80" value="40" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Redução mão de obra emergencial (%)</span>
+<input type="number" id="redMaoObra" step="1" min="0" max="80" value="35" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Aumento vida útil equipamentos (%)</span>
+<input type="number" id="aumVidaUtil" step="1" min="0" max="50" value="15" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Custo de capital / WACC (% a.a.)</span>
+<input type="number" id="waccRoi" step="0.1" min="0" max="50" value="14.5" style="font-family:inherit;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<p class="muted-sm" style="margin:12px 0 0">Benchmarks: Preventiva estruturada 30-50% redução falhas; Preditiva 40-60%; RCM 50-70%. MTTR cai 20-40% com planejamento. Vida útil estende 10-25%.</p>
+</div>
+
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<button class="btn" id="btnCalcRoi" style="background:#0b5f57;color:#fff;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular ROI</button>
+<button class="btn btn-outline" id="btnResetRoi" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar</button>
+<a href="/ferramentas/" class="btn btn-outline" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:52px">← Voltar</a>
+</div>
+</div>
+
+<!-- Resultados -->
+<div id="resultadosRoi" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid #e4dfd3;border-radius:16px;padding:24px;display:none">
+<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:#1b2230">Resultado — ROI Manutenção</h2>
+
+<!-- Cards principais -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+<div style="background:#0b5f57;border-radius:12px;padding:20px;color:#fff">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Economia Líquida Anual</div>
+<div id="resEconomiaAnual" style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;color:#fff;line-height:1.1">R$ 0</div>
+<p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Após custos do programa</p>
+</div>
+<div style="background:#f59e0b;border-radius:12px;padding:20px;color:#1b2230">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a5a08;margin-bottom:8px">Payback</div>
+<div id="resPaybackRoi" style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;color:#1b2230;line-height:1.1">0 meses</div>
+<p style="margin:8px 0 0;color:#4a5361;font-size:13px">Tempo para recuperar CAPEX</p>
+</div>
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:8px">NPV (5 anos)</div>
+<div id="resNpv" style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;color:#1b2230;line-height:1.1">R$ 0</div>
+<p class="muted-sm" style="margin:8px 0 0">Valor presente líquido</p>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="resROI" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">ROI Anualizado</div>
+</div>
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="resDispGanho" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#0b5f57">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Ganho Disponibilidade</div>
+</div>
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="resFalhasEvitadas" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#9a3412">0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Falhas Evitadas/Ano</div>
+</div>
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="resVidaUtilGanho" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#f59e0b">0%</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Extensão Vida Útil</div>
+</div>
+</div>
+
+<!-- Breakdown economias -->
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Composição da Economia Anual</h3>
+<div id="breakdownRoi" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:#27303d"></div>
+</div>
+
+<!-- Fluxo de caixa -->
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Fluxo de Caixa Projetado</h3>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:14px" id="tabelaFluxoCaixa">
+<thead>
+<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Ano</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">CAPEX</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">OPEX Programa</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Economia Bruta</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Economia Líquida</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Fluxo Acumulado</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">VP (WACC)</th>
+</tr>
+</thead>
+<tbody id="tbodyFluxoCaixa"></tbody>
+</table>
+</div>
+</div>
+
+<!-- Cenários -->
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Análise de Sensibilidade — NPV 5 anos</h3>
+<div id="tabelaCenariosRoi" style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:14px">
+<thead>
+<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Cenário</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Red. Falhas</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Red. MTTR</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">CAPEX</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">OPEX/ano</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">NPV</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Payback</th>
+</tr>
+</thead>
+<tbody id="tbodyCenariosRoi"></tbody>
+</table>
+</div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid #e4dfd3">
+<button class="btn btn-outline" id="btnCopiarLinkRoi" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link</button>
+<button class="btn" id="btnExportarCSVRoi" style="background:#0b5f57;color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
+</div>
+
+<div class="muted-sm" style="margin-top:16px">
+<strong>Versão:</strong> v1.0 — <strong>Revisão técnica:</strong> Ricardo Almeida, CRA-SP 112233 (Consultor Gestão/Operação) — <strong>Última atualização:</strong> {{ "now" | dateISO | dateBr }} — <strong>Próxima revisão:</strong> trimestral
+</div>
+</div>
+
+</div>
+</section>
+
+<script>
+// ===== CALCULADORA ROI MANUTENÇÃO v1.0 =====
+
+const DEFAULTS_ROI = {
+  numEquip: 15,
+  horasMesEquip: 180,
+  diariaMedia: 500,
+  taxaOcupMedia: 70,
+  corrAtual: 450000,
+  prevAtual: 120000,
+  pecasEmergAtual: 180000,
+  maoObraEmergAtual: 90000,
+  falhasAnoAtual: 60,
+  mttrAtual: 8,
+  tipoPrograma: 'preventiva',
+  capexInicial: 150000,
+  opexAnual: 80000,
+  vidaPrograma: 5,
+  redFalhas: 45,
+  redMttr: 30,
+  redPecas: 40,
+  redMaoObra: 35,
+  aumVidaUtil: 15,
+  waccRoi: 14.5
+};
+
+const inputs = {};
+Object.keys(DEFAULTS_ROI).forEach(key => {
+  inputs[key] = document.getElementById(key);
+});
+
+const fmtBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(Math.round(v));
+const fmtBRL2 = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(v);
+const fmtNum = (v, d = 0) => new Intl.NumberFormat('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
+const fmtPct = (v) => new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v / 100);
+
+function loadState() {
+  const params = new URLSearchParams(window.location.search);
+  let fromUrl = false;
+  for (const [key, input] of Object.entries(inputs)) {
+    const urlVal = params.get(key);
+    if (urlVal !== null) { input.value = urlVal; fromUrl = true; }
+  }
+  if (!fromUrl) {
+    for (const [key, input] of Object.entries(inputs)) {
+      const saved = localStorage.getItem(`calc_roi_${key}`);
+      if (saved !== null) input.value = saved;
+    }
+  }
+}
+
+function saveState() {
+  for (const [key, input] of Object.entries(inputs)) {
+    localStorage.setItem(`calc_roi_${key}`, input.value);
+  }
+}
+
+function calcular() {
+  const v = {};
+  for (const [key, input] of Object.entries(inputs)) {
+    const val = input.value;
+    v[key] = isNaN(parseFloat(val)) ? val : parseFloat(val);
+  }
+
+  if (v.numEquip <= 0) { alert('Nº equipamentos > 0'); return; }
+  if (v.vidaPrograma <= 0) { alert('Vida programa > 0'); return; }
+
+  // Custos atuais anuais
+  const custoTotalAtual = v.corrAtual + v.prevAtual + v.pecasEmergAtual + v.maoObraEmergAtual;
+
+  // Ganhos anuais
+  const economiaCorretiva = v.corrAtual * (v.redFalhas / 100);
+  const economiaPecas = v.pecasEmergAtual * (v.redPecas / 100);
+  const economiaMaoObra = v.maoObraEmergAtual * (v.redMaoObra / 100);
+  const economiaTotalBruta = economiaCorretiva + economiaPecas + economiaMaoObra;
+
+  // Custo do programa
+  const custoProgramaAnual = v.opexAnual;
+  const economiaLiquidaAnual = economiaTotalBruta - custoProgramaAnual;
+
+  // Receita adicional por disponibilidade
+  const horasParadasAtualAno = v.falhasAnoAtual * v.mttrAtual;
+  const falhasNovo = v.falhasAnoAtual * (1 - v.redFalhas / 100);
+  const mttrNovo = v.mttrAtual * (1 - v.redMttr / 100);
+  const horasParadasNovaAno = falhasNovo * mttrNovo;
+  const horasRecuperadasAno = horasParadasAtualAno - horasParadasNovaAno;
+  const receitaHora = v.diariaMedia / 8;
+  const receitaAdicionalAnual = horasRecuperadasAno * receitaHora * (v.taxaOcupMedia / 100) * v.numEquip;
+
+  // Benefício extensão vida útil (valor residual)
+  const valorFrota = v.numEquip * 300000; // estimativa média R$ 300k/equip
+  const valorVidaUtilAnual = valorFrota * (v.aumVidaUtil / 100) / v.vidaPrograma; // simplificado
+
+  // Benefício total anual
+  const beneficioTotalAnual = economiaLiquidaAnual + receitaAdicionalAnual + valorVidaUtilAnual;
+
+  // Payback
+  const paybackMeses = beneficioTotalAnual > 0 ? (v.capexInicial / beneficioTotalAnual) * 12 : Infinity;
+
+  // ROI Anualizado
+  const roiAnual = v.capexInicial > 0 ? (beneficioTotalAnual / v.capexInicial) * 100 : 0;
+
+  // NPV
+  let npv = -v.capexInicial;
+  let fluxoAcumulado = -v.capexInicial;
+  const fluxoCaixa = [];
+  for (let ano = 1; ano <= v.vidaPrograma; ano++) {
+    const fluxoAno = beneficioTotalAnual - v.opexAnual; // OPEX já está na economia líquida, mas vamos separar
+    // Na verdade: economiaLiquidaAnual já subtrai OPEX. beneficioTotalAnual = economiaLiquidaAnual + receitaAdicional + valorVidaUtil
+    const fluxoLiquido = beneficioTotalAnual;
+    const vp = fluxoLiquido / Math.pow(1 + v.waccRoi / 100, ano);
+    fluxoAcumulado += fluxoLiquido;
+    npv += vp;
+    fluxoCaixa.push({ ano, capex: ano === 1 ? v.capexInicial : 0, opex: v.opexAnual, economiaBruta: economiaTotalBruta + receitaAdicionalAnual + valorVidaUtilAnual, economiaLiquida: fluxoLiquido, acumulado: fluxoAcumulado, vp });
+  }
+
+  // Ganho disponibilidade
+  const horasTotalAno = v.numEquip * v.horasMesEquip * 12;
+  const dispAtual = (horasTotalAno - horasParadasAtualAno) / horasTotalAno * 100;
+  const dispNova = (horasTotalAno - horasParadasNovaAno) / horasTotalAno * 100;
+  const ganhoDisp = dispNova - dispAtual;
+
+  // Falhas evitadas
+  const falhasEvitadas = v.falhasAnoAtual - falhasNovo;
+
+  // Cenários de sensibilidade
+  const cenarios = [
+    { nome: 'Base', rf: v.redFalhas, rm: v.redMttr, capex: v.capexInicial, opex: v.opexAnual },
+    { nome: 'Conservador (-10pp falhas, -5pp MTTR)', rf: v.redFalhas - 10, rm: v.redMttr - 5, capex: v.capexInicial, opex: v.opexAnual },
+    { nome: 'Otimista (+10pp falhas, +5pp MTTR)', rf: v.redFalhas + 10, rm: v.redMttr + 5, capex: v.capexInicial, opex: v.opexAnual },
+    { nome: 'CAPEX +30%', rf: v.redFalhas, rm: v.redMttr, capex: v.capexInicial * 1.3, opex: v.opexAnual },
+    { nome: 'OPEX +50%', rf: v.redFalhas, rm: v.redMttr, capex: v.capexInicial, opex: v.opexAnual * 1.5 },
+    { nome: 'WACC +3pp', rf: v.redFalhas, rm: v.redMttr, capex: v.capexInicial, opex: v.opexAnual, wacc: v.waccRoi + 3 },
+  ];
+
+  const cenarioResultados = cenarios.map(c => {
+    const wacc = c.wacc || v.waccRoi;
+    const ecCorr = v.corrAtual * (c.rf / 100);
+    const ecPec = v.pecasEmergAtual * (v.redPecas / 100);
+    const ecMO = v.maoObraEmergAtual * (v.redMaoObra / 100);
+    const ecBruta = ecCorr + ecPec + ecMO;
+    const ecLiq = ecBruta - c.opex;
+    const falhasN = v.falhasAnoAtual * (1 - c.rf / 100);
+    const mttrN = v.mttrAtual * (1 - c.rm / 100);
+    const hrParAt = v.falhasAnoAtual * v.mttrAtual;
+    const hrParNv = falhasN * mttrN;
+    const hrRec = hrParAt - hrParNv;
+    const recAd = hrRec * receitaHora * (v.taxaOcupMedia / 100) * v.numEquip;
+    const valVU = valorFrota * (v.aumVidaUtil / 100) / v.vidaPrograma;
+    const benTotal = ecLiq + recAd + valVU;
+    const payb = benTotal > 0 ? (c.capex / benTotal) * 12 : Infinity;
+    let npvC = -c.capex;
+    for (let a = 1; a <= v.vidaPrograma; a++) {
+      npvC += benTotal / Math.pow(1 + wacc / 100, a);
+    }
+    return { ...c, npv: npvC, payback: payb };
+  });
+
+  // Render
+  document.getElementById('resEconomiaAnual').textContent = fmtBRL(beneficioTotalAnual);
+  document.getElementById('resPaybackRoi').textContent = isFinite(paybackMeses) ? fmtNum(paybackMeses, 1) + ' meses' : '—';
+  document.getElementById('resNpv').textContent = fmtBRL(npv);
+  document.getElementById('resROI').textContent = fmtNum(roiAnual, 1) + '%';
+  document.getElementById('resDispGanho').textContent = fmtNum(ganhoDisp, 1) + ' pp';
+  document.getElementById('resFalhasEvitadas').textContent = fmtNum(falhasEvitadas, 0);
+  document.getElementById('resVidaUtilGanho').textContent = fmtNum(v.aumVidaUtil, 0) + '%';
+
+  document.getElementById('breakdownRoi').innerHTML = [
+    { label: 'Economia corretiva (falhas ↓)', value: economiaCorretiva, cor: '#0b5f57' },
+    { label: 'Economia peças emergenciais ↓', value: economiaPecas, cor: '#0b5f57' },
+    { label: 'Economia mão de obra emerg. ↓', value: economiaMaoObra, cor: '#0b5f57' },
+    { label: '<strong>Economia Bruta Manutenção</strong>', value: economiaTotalBruta, subtotal: true },
+    { label: '(-) OPEX Programa', value: -custoProgramaAnual, cor: '#9a3412' },
+    { label: '<strong>Economia Líquida Manutenção</strong>', value: economiaLiquidaAnual, subtotal: true, good: economiaLiquidaAnual > 0 },
+    { label: 'Receita adicional (disp. ↑)', value: receitaAdicionalAnual, cor: '#0b5f57' },
+    { label: 'Valor extensão vida útil', value: valorVidaUtilAnual, cor: '#f59e0b' },
+    { label: '<strong>Benefício Total Anual</strong>', value: beneficioTotalAnual, total: true }
+  ].map(b => `
+    <div style="${b.total ? 'font-weight:700;color:#0b5f57;border-top:2px solid #0b5f57;padding-top:8px;margin-top:4px' : b.subtotal ? 'font-weight:600;color:#1b2230;border-top:1px solid #e4dfd3;padding-top:8px;margin-top:4px' : ''} ${b.good === false ? 'color:#9a3412' : ''}">
+      <span>${b.label}</span>
+      <span style="text-align:right;display:block;color:${b.cor || (b.value >= 0 ? '#0b5f57' : '#9a3412')}">${fmtBRL(b.value)}</span>
+    </div>
+  `).join('');
+
+  const tb = document.getElementById('tbodyFluxoCaixa');
+  tb.innerHTML = fluxoCaixa.map(f => `
+    <tr style="border-bottom:1px solid #f0efe9 ${f.ano === 1 ? ';font-weight:600' : ''}">
+      <td style="padding:10px 12px;color:#1b2230">${f.ano}</td>
+      <td style="padding:10px 12px;text-align:right;color:#9a3412">${fmtBRL(f.capex)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#9a3412">${fmtBRL(f.opex)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#0b5f57">${fmtBRL(f.economiaBruta)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(f.economiaLiquida)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(f.acumulado)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#0b5f57">${fmtBRL(f.vp)}</td>
+    </tr>
+  `).join('');
+
+  const tb2 = document.getElementById('tbodyCenariosRoi');
+  tb2.innerHTML = cenarioResultados.map(c => `
+    <tr style="border-bottom:1px solid #f0efe9 ${c.nome === 'Base' ? ';font-weight:600' : ''}">
+      <td style="padding:10px 12px;color:#1b2230">${c.nome}</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.rf, 0)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtNum(c.rm, 0)}%</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtBRL(c.capex)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtBRL(c.opex)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(c.npv)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361;font-weight:600">${isFinite(c.payback) ? fmtNum(c.payback, 1) + 'm' : '—'}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('resultadosRoi').style.display = 'block';
+  saveState();
+}
+
+document.getElementById('btnCalcRoi').addEventListener('click', calcular);
+document.getElementById('btnResetRoi').addEventListener('click', () => {
+  for (const [key, input] of Object.entries(inputs)) { input.value = DEFAULTS_ROI[key]; }
+  localStorage.clear();
+  document.getElementById('resultadosRoi').style.display = 'none';
+});
+
+document.getElementById('btnCopiarLinkRoi').addEventListener('click', () => {
+  const params = new URLSearchParams();
+  for (const [key, input] of Object.entries(inputs)) { params.set(key, input.value); }
+  navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?${params.toString()}`).then(() => {
+    const btn = document.getElementById('btnCopiarLinkRoi');
+    const orig = btn.textContent; btn.textContent = 'Copiado!'; setTimeout(() => btn.textContent = orig, 2000);
+  });
+});
+
+document.getElementById('btnExportarCSVRoi').addEventListener('click', () => {
+  const linhas = [
+    ['Parâmetro', 'Valor'],
+    ['Nº equipamentos', inputs.numEquip.value],
+    ['Horas/mês/equip', inputs.horasMesEquip.value],
+    ['Diária média', inputs.diariaMedia.value],
+    ['Taxa ocupação', inputs.taxaOcupMedia.value],
+    ['Corretiva atual/ano', inputs.corrAtual.value],
+    ['Preventiva atual/ano', inputs.prevAtual.value],
+    ['Peças emergenciais/ano', inputs.pecasEmergAtual.value],
+    ['Mão de obra emerg/ano', inputs.maoObraEmergAtual.value],
+    ['Falhas/ano', inputs.falhasAnoAtual.value],
+    ['MTTR atual', inputs.mttrAtual.value],
+    ['Programa', inputs.tipoPrograma.value],
+    ['CAPEX inicial', inputs.capexInicial.value],
+    ['OPEX anual', inputs.opexAnual.value],
+    ['Vida programa (anos)', inputs.vidaPrograma.value],
+    ['Red. falhas (%)', inputs.redFalhas.value],
+    ['Red. MTTR (%)', inputs.redMttr.value],
+    ['Red. peças (%)', inputs.redPecas.value],
+    ['Red. mão de obra (%)', inputs.redMaoObra.value],
+    ['Aum. vida útil (%)', inputs.aumVidaUtil.value],
+    ['WACC (%)', inputs.waccRoi.value],
+    ['', ''],
+    ['Resultado', 'Valor'],
+    ['Economia Líquida Anual', document.getElementById('resEconomiaAnual').textContent],
+    ['Payback', document.getElementById('resPaybackRoi').textContent],
+    ['NPV (5 anos)', document.getElementById('resNpv').textContent],
+    ['ROI Anualizado', document.getElementById('resROI').textContent],
+    ['Ganho Disponibilidade', document.getElementById('resDispGanho').textContent],
+    ['Falhas Evitadas/Ano', document.getElementById('resFalhasEvitadas').textContent],
+    ['Extensão Vida Útil', document.getElementById('resVidaUtilGanho').textContent],
+  ];
+  const csv = linhas.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `roi-manutencao-${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+});
+
+let timeout;
+Object.values(inputs).forEach(input => {
+  input.addEventListener('input', () => { clearTimeout(timeout); timeout = setTimeout(calcular, 300); });
+  input.addEventListener('change', calcular);
+});
+
+Object.values(inputs).forEach(input => {
+  input.addEventListener('change', () => {
+    const params = new URLSearchParams();
+    for (const [key, inp] of Object.entries(inputs)) { params.set(key, inp.value); }
+    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+  });
+});
+
+loadState();
+calcular();
+</script>

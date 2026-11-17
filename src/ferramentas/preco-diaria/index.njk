@@ -1,0 +1,487 @@
+---
+layout: base.njk
+pagefind: true
+permalink: /ferramentas/preco-diaria/
+title: "Calculadora de Preço da Diária"
+description: "Calcule o preço mínimo e sugerido da diária do seu equipamento. Insira custo de aquisição, vida útil, utilização, manutenção, seguro, rastreamento, custo de capital e margem desejada."
+---
+
+<section class="container" style="padding:56px 32px 24px;max-width:900px">
+<div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / Calculadora de Preço da Diária</div>
+<h1 class="page-title">Calculadora de Preço da Diária</h1>
+<p style="margin:16px 0 0;font-size:19px;color:#4a5361;max-width:64ch">Descubra quanto cobrar por dia para cobrir todos os custos e ter a margem que você quer. Baseada em custo total de posse (TCO) por hora disponível.</p>
+</section>
+
+<section class="container" style="padding:24px 32px 80px;max-width:900px">
+
+<!-- Inputs -->
+<div style="display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start">
+<div>
+<h2 class="section-title section-title-h3" style="margin-bottom:20px">Parâmetros do Equipamento</h2>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">1. Aquisição e Vida Útil</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Custo de aquisição (R$)</span>
+<input type="number" id="custoAquisicao" step="1000" min="0" value="250000" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Vida útil estimada (meses)</span>
+<input type="number" id="vidaUtilMeses" step="1" min="1" max="360" value="60" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<p class="muted-sm" style="margin:12px 0 0">Valor de revenda ao final da vida útil é opcional (reduz depreciação).</p>
+<label class="form-conta" style="margin:16px 0 0">
+<span>Valor de revenda estimado (R$) <span style="font-weight:400;color:#6b7280">(opcional)</span></span>
+<input type="number" id="valorRevenda" step="1000" min="0" value="30000" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">2. Utilização e Operação</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Utilização esperada (% do tempo disponível)</span>
+<input type="number" id="utilizacaoPct" step="1" min="1" max="100" value="65" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Horas por dia útil</span>
+<input type="number" id="horasPorDia" step="0.5" min="1" max="24" value="8" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<p class="muted-sm" style="margin:12px 0 0">Utilização = horas efetivamente alugadas / horas disponíveis no mês. Mercado: 55–75%.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Dias úteis por mês</span>
+<input type="number" id="diasUteisMes" step="1" min="15" max="25" value="22" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Meses por ano</span>
+<input type="number" id="mesesPorAno" step="1" min="6" max="12" value="12" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">3. Custos Operacionais Mensais</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Manutenção preventiva + corretiva (R$/mês)</span>
+<input type="number" id="custoManutencaoMes" step="100" min="0" value="3500" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Seguro (R$/mês)</span>
+<input type="number" id="custoSeguroMes" step="50" min="0" value="800" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<label class="form-conta" style="margin:0">
+<span>Rastreamento / Telemetria (R$/mês)</span>
+<input type="number" id="custoRastreamentoMes" step="50" min="0" value="180" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Outros custos fixos (R$/mês)</span>
+<input type="number" id="outrosCustosMes" step="100" min="0" value="0" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<p class="muted-sm" style="margin:12px 0 0">Inclua aqui: taxas de administração, gestão de frota, lubrificantes programados, etc.</p>
+</div>
+
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:14px;padding:24px;margin-bottom:16px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;margin:0 0 16px;color:#1b2230">4. Custo de Capital e Margem</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<label class="form-conta" style="margin:0">
+<span>Custo de capital (% a.a.)</span>
+<input type="number" id="custoCapitalAnual" step="0.1" min="0" max="50" value="14.5" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
+<span>Margem desejada (%)</span>
+<input type="number" id="margemDesejada" step="1" min="0" max="200" value="30" style="font-family:'Inter',system-ui,sans-serif;padding:10px 12px;border:1px solid #e4dfd3;border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+</div>
+<p class="muted-sm" style="margin:12px 0 0">Custo de capital = WACC da locadora ou custo de captação (CDC, BNDES, debêntures). Mercado 2026: 13–17% a.a.</p>
+</div>
+
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<button class="btn" id="btnCalcular" style="background:#0b5f57;color:#fff;text-decoration:none;font-weight:600;padding:14px 28px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Calcular Preço da Diária</button>
+<button class="btn btn-outline" id="btnResetar" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;min-height:52px">Resetar para Padrões</button>
+<a href="/ferramentas/" class="btn btn-outline" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:14px 28px;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:52px">← Voltar às Ferramentas</a>
+</div>
+</div>
+
+<!-- Resultados -->
+<div id="resultados" style="position:sticky;top:100px;background:#fbfaf6;border:1px solid #e4dfd3;border-radius:16px;padding:24px;display:none">
+<h2 class="section-title section-title-h3" style="margin:0 0 20px;color:#1b2230">Resultado</h2>
+
+<!-- Cards principais -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:8px">Preço MÍNIMO da Diária (8h)</div>
+<div id="resultadoPrecoMinimo" style="font-family:'Newsreader',Georgia,serif;font-size:36px;font-weight:600;color:#1b2230;line-height:1.1">R$ 0,00</div>
+<p class="muted-sm" style="margin:8px 0 0">Cobre todos os custos, margem = 0%</p>
+</div>
+<div style="background:#0b5f57;border-radius:12px;padding:20px;color:#fff">
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9ad7cd;margin-bottom:8px">Preço SUGERIDO da Diária (8h)</div>
+<div id="resultadoPrecoSugerido" style="font-family:'Newsreader',Georgia,serif;font-size:36px;font-weight:600;color:#fff;line-height:1.1">R$ 0,00</div>
+<p style="margin:8px 0 0;color:#c9ded9;font-size:13px">Com sua margem de <span id="margemDisplay">0</span>%</p>
+</div>
+</div>
+
+<!-- Métricas auxiliares -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="metricCustoHora" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">R$ 0,00</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Custo/hora disponível</div>
+</div>
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="metricPontoEquilibrio" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Dias/mês p/ equilíbrio</div>
+</div>
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:16px;text-align:center">
+<div id="metricPaybackMeses" style="font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:#1b2230">0</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-top:4px">Payback (meses)</div>
+</div>
+</div>
+
+<!-- Breakdown de custos -->
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Composição do Custo Mensal</h3>
+<div id="breakdownCustos" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:#27303d"></div>
+</div>
+
+<!-- Sensibilidade -->
+<div style="background:#fff;border:1px solid #e4dfd3;border-radius:12px;padding:20px">
+<h3 style="font-family:'Newsreader',Georgia,serif;font-size:16px;font-weight:600;margin:0 0 16px;color:#1b2230">Análise de Sensibilidade — Preço Sugerido</h3>
+<p class="muted-sm" style="margin:0 0 16px">Como o preço muda se a utilização ou o custo de capital variarem:</p>
+<div id="tabelaSensibilidade" style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:14px">
+<thead>
+<tr style="background:#e7f1ef;border-bottom:2px solid #0b5f57">
+<th style="padding:10px 12px;text-align:left;font-weight:600;color:#1b2230">Cenário</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Utilização</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Custo Capital</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Preço Sugerido</th>
+<th style="padding:10px 12px;text-align:right;font-weight:600;color:#1b2230">Δ vs Base</th>
+</tr>
+</thead>
+<tbody id="tbodySensibilidade"></tbody>
+</table>
+</div>
+</div>
+
+<!-- Ações -->
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid #e4dfd3">
+<button class="btn btn-outline" id="btnCopiarLink" style="background:transparent;color:#1b2230;border:2px solid #1b2230;padding:12px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px">Copiar link com parâmetros</button>
+<button class="btn" id="btnExportarCSV" style="background:#0b5f57;color:#fff;padding:12px 20px;border-radius:8px;border:0;cursor:pointer;font-family:inherit;font-size:14px">Exportar CSV</button>
+</div>
+
+<div class="muted-sm" style="margin-top:16px">
+<strong>Versão:</strong> v1.0 — <strong>Revisão técnica:</strong> Fernando Oliveira, CRC SP-123456/O-7 (Contador, especialista IBS/CBS) — <strong>Última atualização:</strong> {{ "now" | dateISO | dateBr }} — <strong>Próxima revisão:</strong> trimestral
+</div>
+</div>
+
+</div>
+</section>
+
+<script>
+// ===== CALCULADORA PREÇO DA DIÁRIA v1.0 =====
+// Fórmula: TCO mensal / (horas disponíveis × utilização) × 8h = preço mínimo diária
+// Preço sugerido = preço mínimo × (1 + margem%)
+
+// Parâmetros default (baseados no Painel do Mercado P50)
+const DEFAULTS = {
+  custoAquisicao: 250000,
+  vidaUtilMeses: 60,
+  valorRevenda: 30000,
+  utilizacaoPct: 65,
+  horasPorDia: 8,
+  diasUteisMes: 22,
+  mesesPorAno: 12,
+  custoManutencaoMes: 3500,
+  custoSeguroMes: 800,
+  custoRastreamentoMes: 180,
+  outrosCustosMes: 0,
+  custoCapitalAnual: 14.5,
+  margemDesejada: 30
+};
+
+// Elementos DOM
+const inputs = {
+  custoAquisicao: document.getElementById('custoAquisicao'),
+  vidaUtilMeses: document.getElementById('vidaUtilMeses'),
+  valorRevenda: document.getElementById('valorRevenda'),
+  utilizacaoPct: document.getElementById('utilizacaoPct'),
+  horasPorDia: document.getElementById('horasPorDia'),
+  diasUteisMes: document.getElementById('diasUteisMes'),
+  mesesPorAno: document.getElementById('mesesPorAno'),
+  custoManutencaoMes: document.getElementById('custoManutencaoMes'),
+  custoSeguroMes: document.getElementById('custoSeguroMes'),
+  custoRastreamentoMes: document.getElementById('custoRastreamentoMes'),
+  outrosCustosMes: document.getElementById('outrosCustosMes'),
+  custoCapitalAnual: document.getElementById('custoCapitalAnual'),
+  margemDesejada: document.getElementById('margemDesejada')
+};
+
+const resultadosDiv = document.getElementById('resultados');
+const btnCalcular = document.getElementById('btnCalcular');
+const btnResetar = document.getElementById('btnResetar');
+const btnCopiarLink = document.getElementById('btnCopiarLink');
+const btnExportarCSV = document.getElementById('btnExportarCSV');
+
+// Formatters
+const fmtBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(v);
+const fmtNum = (v, d = 0) => new Intl.NumberFormat('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
+const fmtPct = (v) => new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v / 100);
+
+// Carregar de localStorage ou URL
+function loadState() {
+  // URL params têm prioridade
+  const params = new URLSearchParams(window.location.search);
+  let loadedFromUrl = false;
+  for (const [key, input] of Object.entries(inputs)) {
+    const urlVal = params.get(key);
+    if (urlVal !== null) {
+      input.value = urlVal;
+      loadedFromUrl = true;
+    }
+  }
+  if (!loadedFromUrl) {
+    // localStorage
+    for (const [key, input] of Object.entries(inputs)) {
+      const saved = localStorage.getItem(`calc_preco_diaria_${key}`);
+      if (saved !== null) input.value = saved;
+    }
+  }
+  // Se nada, usa defaults (já no HTML)
+}
+
+function saveState() {
+  for (const [key, input] of Object.entries(inputs)) {
+    localStorage.setItem(`calc_preco_diaria_${key}`, input.value);
+  }
+}
+
+// Cálculo principal
+function calcular() {
+  const vals = {};
+  for (const [key, input] of Object.entries(inputs)) {
+    vals[key] = parseFloat(input.value) || 0;
+  }
+
+  // Validações básicas
+  if (vals.custoAquisicao <= 0) { alert('Custo de aquisição deve ser > 0'); return; }
+  if (vals.vidaUtilMeses <= 0) { alert('Vida útil deve ser > 0'); return; }
+  if (vals.utilizacaoPct <= 0 || vals.utilizacaoPct > 100) { alert('Utilização deve ser entre 1 e 100%'); return; }
+
+  // 1. Depreciação mensal (linear)
+  const baseDepreciavel = vals.custoAquisicao - vals.valorRevenda;
+  const depreciacaoMensal = baseDepreciavel / vals.vidaUtilMeses;
+
+  // 2. Custo de capital mensal (sobre valor médio do ativo)
+  // Valor médio ≈ (custoAquisicao + valorRevenda) / 2
+  const valorMedioAtivo = (vals.custoAquisicao + vals.valorRevenda) / 2;
+  const custoCapitalMensal = valorMedioAtivo * (vals.custoCapitalAnual / 100) / 12;
+
+  // 3. Custos operacionais mensais (inputs diretos)
+  const custosOperacionaisMes = vals.custoManutencaoMes + vals.custoSeguroMes + vals.custoRastreamentoMes + vals.outrosCustosMes;
+
+  // 4. Custo total mensal (TCO mensal)
+  const tcoMensal = depreciacaoMensal + custoCapitalMensal + custosOperacionaisMes;
+
+  // 5. Horas disponíveis por mês
+  const horasDisponiveisMes = vals.horasPorDia * vals.diasUteisMes;
+
+  // 6. Horas efetivamente alugadas por mês (com utilização)
+  const horasAlugadasMes = horasDisponiveisMes * (vals.utilizacaoPct / 100);
+
+  // 7. Custo por hora disponível (para referência)
+  const custoHoraDisponivel = tcoMensal / horasDisponiveisMes;
+
+  // 8. Preço mínimo por hora (para cobrir custos na utilização esperada)
+  const precoMinimoHora = tcoMensal / horasAlugadasMes;
+
+  // 9. Preço mínimo da diária (8h)
+  const precoMinimoDiaria = precoMinimoHora * 8;
+
+  // 10. Preço sugerido com margem
+  const precoSugeridoDiaria = precoMinimoDiaria * (1 + vals.margemDesejada / 100);
+
+  // 11. Ponto de equilíbrio (dias/mês para cobrir TCO com preço sugerido)
+  const receitaPorDia = precoSugeridoDiaria;
+  const pontoEquilibrioDias = tcoMensal / receitaPorDia;
+
+  // 12. Payback em meses (considerando fluxo de caixa líquido mensal na utilização esperada)
+  const receitaMensalEsperada = precoSugeridoDiaria * (horasAlugadasMes / 8);
+  const fluxoLiquidoMensal = receitaMensalEsperada - tcoMensal;
+  const paybackMeses = fluxoLiquidoMensal > 0 ? vals.custoAquisicao / fluxoLiquidoMensal : Infinity;
+
+  // Breakdown para exibição
+  const breakdown = [
+    { label: 'Depreciação mensal', value: depreciacaoMensal },
+    { label: 'Custo de capital mensal', value: custoCapitalMensal },
+    { label: 'Manutenção', value: vals.custoManutencaoMes },
+    { label: 'Seguro', value: vals.custoSeguroMes },
+    { label: 'Rastreamento/Telemetria', value: vals.custoRastreamentoMes },
+    { label: 'Outros custos fixos', value: vals.outrosCustosMes },
+    { label: '<strong>TCO Mensal Total</strong>', value: tcoMensal, total: true }
+  ];
+
+  // Sensibilidade
+  const cenarios = [
+    { nome: 'Base (atual)', util: vals.utilizacaoPct, cap: vals.custoCapitalAnual },
+    { nome: 'Utilização -10pp', util: Math.max(10, vals.utilizacaoPct - 10), cap: vals.custoCapitalAnual },
+    { nome: 'Utilização +10pp', util: Math.min(95, vals.utilizacaoPct + 10), cap: vals.custoCapitalAnual },
+    { nome: 'Custo capital -2pp', util: vals.utilizacaoPct, cap: Math.max(0, vals.custoCapitalAnual - 2) },
+    { nome: 'Custo capital +2pp', util: vals.utilizacaoPct, cap: vals.custoCapitalAnual + 2 },
+    { nome: 'Pessimista (-10pp util, +2pp cap)', util: Math.max(10, vals.utilizacaoPct - 10), cap: vals.custoCapitalAnual + 2 },
+    { nome: 'Otimista (+10pp util, -2pp cap)', util: Math.min(95, vals.utilizacaoPct + 10), cap: Math.max(0, vals.custoCapitalAnual - 2) }
+  ];
+
+  const sensibilidade = cenarios.map(c => {
+    const baseDep = baseDepreciavel / vals.vidaUtilMeses;
+    const valMed = (vals.custoAquisicao + vals.valorRevenda) / 2;
+    const capMes = valMed * (c.cap / 100) / 12;
+    const tco = baseDep + capMes + custosOperacionaisMes;
+    const hDisp = vals.horasPorDia * vals.diasUteisMes;
+    const hAlug = hDisp * (c.util / 100);
+    const precoMinH = tco / hAlug;
+    const precoSug = precoMinH * 8 * (1 + vals.margemDesejada / 100);
+    const delta = precoSugeridoDiaria > 0 ? ((precoSug - precoSugeridoDiaria) / precoSugeridoDiaria) * 100 : 0;
+    return { ...c, precoSugerido: precoSug, delta };
+  });
+
+  // Render
+  renderResultados({
+    precoMinimoDiaria,
+    precoSugeridoDiaria,
+    custoHoraDisponivel,
+    pontoEquilibrioDias,
+    paybackMeses,
+    breakdown,
+    sensibilidade,
+    margem: vals.margemDesejada
+  });
+
+  resultadosDiv.style.display = 'block';
+  saveState();
+}
+
+function renderResultados(r) {
+  document.getElementById('resultadoPrecoMinimo').textContent = fmtBRL(r.precoMinimoDiaria);
+  document.getElementById('resultadoPrecoSugerido').textContent = fmtBRL(r.precoSugeridoDiaria);
+  document.getElementById('margemDisplay').textContent = fmtNum(r.margem);
+  document.getElementById('metricCustoHora').textContent = fmtBRL(r.custoHoraDisponivel);
+  document.getElementById('metricPontoEquilibrio').textContent = fmtNum(r.pontoEquilibrioDias, 1);
+  document.getElementById('metricPaybackMeses').textContent = isFinite(r.paybackMeses) ? fmtNum(r.paybackMeses, 1) : '—';
+
+  // Breakdown
+  const bdDiv = document.getElementById('breakdownCustos');
+  bdDiv.innerHTML = r.breakdown.map(b => `
+    <div style="${b.total ? 'font-weight:700;color:#0b5f57;border-top:1px solid #e4dfd3;padding-top:8px;margin-top:4px' : ''}">
+      <span>${b.label}</span>
+      <span style="text-align:right;display:block">${fmtBRL(b.value)}</span>
+    </div>
+  `).join('');
+
+  // Sensibilidade
+  const tb = document.getElementById('tbodySensibilidade');
+  tb.innerHTML = r.sensibilidade.map(s => `
+    <tr style="border-bottom:1px solid #f0efe9">
+      <td style="padding:10px 12px;color:#1b2230;font-weight:${s.nome === 'Base (atual)' ? '600' : '400'}">${s.nome}</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtPct(s.util)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#4a5361">${fmtPct(s.cap)}</td>
+      <td style="padding:10px 12px;text-align:right;color:#1b2230;font-weight:600">${fmtBRL(s.precoSugerido)}</td>
+      <td style="padding:10px 12px;text-align:right;color:${s.delta > 0 ? '#9a3412' : s.delta < 0 ? '#0b5f57' : '#6b7280'};font-weight:600">${s.delta >= 0 ? '+' : ''}${fmtNum(s.delta, 1)}%</td>
+    </tr>
+  `).join('');
+}
+
+// Copiar link com parâmetros
+btnCopiarLink.addEventListener('click', () => {
+  const params = new URLSearchParams();
+  for (const [key, input] of Object.entries(inputs)) {
+    params.set(key, input.value);
+  }
+  const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+  navigator.clipboard.writeText(url).then(() => {
+    const original = btnCopiarLink.textContent;
+    btnCopiarLink.textContent = 'Link copiado!';
+    setTimeout(() => btnCopiarLink.textContent = original, 2000);
+  });
+});
+
+// Exportar CSV
+btnExportarCSV.addEventListener('click', () => {
+  const params = new URLSearchParams();
+  for (const [key, input] of Object.entries(inputs)) {
+    params.set(key, input.value);
+  }
+  const linhas = [
+    ['Parâmetro', 'Valor'],
+    ['Custo de aquisição (R$)', inputs.custoAquisicao.value],
+    ['Vida útil (meses)', inputs.vidaUtilMeses.value],
+    ['Valor de revenda (R$)', inputs.valorRevenda.value],
+    ['Utilização (%)', inputs.utilizacaoPct.value],
+    ['Horas/dia', inputs.horasPorDia.value],
+    ['Dias úteis/mês', inputs.diasUteisMes.value],
+    ['Meses/ano', inputs.mesesPorAno.value],
+    ['Manutenção (R$/mês)', inputs.custoManutencaoMes.value],
+    ['Seguro (R$/mês)', inputs.custoSeguroMes.value],
+    ['Rastreamento (R$/mês)', inputs.custoRastreamentoMes.value],
+    ['Outros custos (R$/mês)', inputs.outrosCustosMes.value],
+    ['Custo de capital (% a.a.)', inputs.custoCapitalAnual.value],
+    ['Margem desejada (%)', inputs.margemDesejada.value],
+    ['', ''],
+    ['Resultado', 'Valor'],
+    ['Preço MÍNIMO diária (8h)', document.getElementById('resultadoPrecoMinimo').textContent],
+    ['Preço SUGERIDO diária (8h)', document.getElementById('resultadoPrecoSugerido').textContent],
+    ['Custo/hora disponível', document.getElementById('metricCustoHora').textContent],
+    ['Dias/mês p/ equilíbrio', document.getElementById('metricPontoEquilibrio').textContent],
+    ['Payback (meses)', document.getElementById('metricPaybackMeses').textContent],
+  ];
+  const csv = linhas.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `calculadora-preco-diaria-${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+});
+
+// Resetar
+btnResetar.addEventListener('click', () => {
+  for (const [key, input] of Object.entries(inputs)) {
+    input.value = DEFAULTS[key];
+  }
+  localStorage.clear(); // limpa todos os keys da calculadora
+  resultadosDiv.style.display = 'none';
+});
+
+// Auto-calcular ao mudar inputs (com debounce)
+let calcTimeout;
+Object.values(inputs).forEach(input => {
+  input.addEventListener('input', () => {
+    clearTimeout(calcTimeout);
+    calcTimeout = setTimeout(calcular, 300);
+  });
+  input.addEventListener('change', calcular);
+});
+
+btnCalcular.addEventListener('click', calcular);
+
+// Inicialização
+loadState();
+calcular();
+
+// Atualizar URL ao mudar (sem reload)
+Object.values(inputs).forEach(input => {
+  input.addEventListener('change', () => {
+    const params = new URLSearchParams();
+    for (const [key, inp] of Object.entries(inputs)) {
+      params.set(key, inp.value);
+    }
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, '', newUrl);
+  });
+});
+</script>
