@@ -138,6 +138,10 @@ description: "Compare preventiva vs corretiva: calcule o ROI de investir em manu
 <input type="number" id="aumVidaUtil" step="1" min="0" max="50" value="15" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
 <label class="form-conta" style="margin:0">
+<span>Valor médio por equipamento (R$)</span>
+<input type="number" id="valorMedioEquip" step="10000" min="0" value="300000" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
+</label>
+<label class="form-conta" style="margin:0">
 <span>Custo de capital / WACC (% a.a.)</span>
 <input type="number" id="waccRoi" step="0.1" min="0" max="50" value="14.5" style="font-family:inherit;padding:10px 12px;border:1px solid var(--cinza-claro);border-radius:8px;background:#fff;font-size:16px;width:100%;box-sizing:border-box">
 </label>
@@ -278,6 +282,7 @@ const DEFAULTS_ROI = {
   redPecas: 40,
   redMaoObra: 35,
   aumVidaUtil: 15,
+  valorMedioEquip: 300000,
   waccRoi: 14.5
 };
 
@@ -345,7 +350,7 @@ function calcular() {
   const receitaAdicionalAnual = horasRecuperadasAno * receitaHora * (v.taxaOcupMedia / 100) * v.numEquip;
 
   // Benefício extensão vida útil (valor residual)
-  const valorFrota = v.numEquip * 300000; // estimativa média R$ 300k/equip
+  const valorFrota = v.numEquip * (v.valorMedioEquip || 0);
   const valorVidaUtilAnual = valorFrota * (v.aumVidaUtil / 100) / v.vidaPrograma; // simplificado
 
   // Benefício total anual
@@ -362,8 +367,7 @@ function calcular() {
   let fluxoAcumulado = -v.capexInicial;
   const fluxoCaixa = [];
   for (let ano = 1; ano <= v.vidaPrograma; ano++) {
-    const fluxoAno = beneficioTotalAnual - v.opexAnual; // OPEX já está na economia líquida, mas vamos separar
-    // Na verdade: economiaLiquidaAnual já subtrai OPEX. beneficioTotalAnual = economiaLiquidaAnual + receitaAdicional + valorVidaUtil
+    // economiaLiquidaAnual já desconta o OPEX do programa
     const fluxoLiquido = beneficioTotalAnual;
     const vp = fluxoLiquido / Math.pow(1 + v.waccRoi / 100, ano);
     fluxoAcumulado += fluxoLiquido;
@@ -383,8 +387,8 @@ function calcular() {
   // Cenários de sensibilidade
   const cenarios = [
     { nome: 'Base', rf: v.redFalhas, rm: v.redMttr, capex: v.capexInicial, opex: v.opexAnual },
-    { nome: 'Conservador (-10pp falhas, -5pp MTTR)', rf: v.redFalhas - 10, rm: v.redMttr - 5, capex: v.capexInicial, opex: v.opexAnual },
-    { nome: 'Otimista (+10pp falhas, +5pp MTTR)', rf: v.redFalhas + 10, rm: v.redMttr + 5, capex: v.capexInicial, opex: v.opexAnual },
+    { nome: 'Conservador (-10pp falhas, -5pp MTTR)', rf: Math.max(0, v.redFalhas - 10), rm: Math.max(0, v.redMttr - 5), capex: v.capexInicial, opex: v.opexAnual },
+    { nome: 'Otimista (+10pp falhas, +5pp MTTR)', rf: Math.min(100, v.redFalhas + 10), rm: Math.min(100, v.redMttr + 5), capex: v.capexInicial, opex: v.opexAnual },
     { nome: 'CAPEX +30%', rf: v.redFalhas, rm: v.redMttr, capex: v.capexInicial * 1.3, opex: v.opexAnual },
     { nome: 'OPEX +50%', rf: v.redFalhas, rm: v.redMttr, capex: v.capexInicial, opex: v.opexAnual * 1.5 },
     { nome: 'WACC +3pp', rf: v.redFalhas, rm: v.redMttr, capex: v.capexInicial, opex: v.opexAnual, wacc: v.waccRoi + 3 },

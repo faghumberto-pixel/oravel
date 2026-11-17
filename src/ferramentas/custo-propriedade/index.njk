@@ -202,7 +202,7 @@ description: "Calcule o TCO completo do equipamento: aquisição, depreciação,
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
 <div id="resTir" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0%</div>
-<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">TIR Equivalente</div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-secundario);margin-top:4px">TIR da compra vs. aluguel</div>
 </div>
 <div style="background:#fff;border:1px solid var(--cinza-claro);border-radius:12px;padding:16px;text-align:center">
 <div id="resPaybackTco" style="font-family:var(--font-titulo);font-size:clamp(1.125rem,2vw,1.5rem);font-weight:600;color:var(--texto-escuro)">0 anos</div>
@@ -246,11 +246,11 @@ description: "Calcule o TCO completo do equipamento: aquisição, depreciação,
 <thead>
 <tr style="background:#e7f1ef;border-bottom:2px solid var(--azul-petroleo)">
 <th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--texto-escuro)">Ano</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">CAPEX</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Capital próprio (t0)</th>
 <th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Financ. (Princ+Juros)</th>
 <th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Operacional</th>
 <th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Depreciação (contábil)</th>
-<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Custo Capital (WACC)</th>
+<th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Custo de oportunidade (informativo)</th>
 <th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">Total Ano</th>
 <th style="padding:8px 10px;text-align:right;font-weight:600;color:var(--texto-escuro)">VP Ano</th>
 </tr>
@@ -396,14 +396,13 @@ function calcular() {
   const custoOpAnual = v.combAnual + v.opAnual + v.prevAnual + v.corrAnual + v.segAnual + v.rastAnual + v.pneusAnual + v.outrosAnual;
 
   // Fluxo de caixa anual (VPL)
-  let vpl = 0;
-  let tirFluxo = [-v.precoCompra]; // ano 0 = investimento inicial
+  
   const fluxoAnual = [];
   let valorLivro = v.precoCompra;
   let saldoDevedor = valorFinanciado;
 
   for (let ano = 1; ano <= anosVida; ano++) {
-    const capex = ano === 1 ? v.precoCompra : 0;
+    const capex = ano === 1 ? valorProprio : 0;
 
     // Financiamento: principal + juros
     let finPrinc = 0, finJuros = 0;
@@ -423,10 +422,8 @@ function calcular() {
     valorLivro -= dep;
 
     // Total ano
-    const totalAno = finTotal + custoOpAnual + custoCapital;
+    const totalAno = finTotal + custoOpAnual;
     const vpAno = totalAno / Math.pow(1 + v.waccTco / 100, ano);
-    vpl += vpAno;
-    tirFluxo.push(-totalAno);
 
     fluxoAnual.push({
       ano, capex, finPrinc, finJuros, finTotal, custoOpAnual, dep, custoCapital,
@@ -434,10 +431,23 @@ function calcular() {
     });
   }
 
-  // Valor residual no final (entrada de caixa)
+  // TCO = capital próprio (t0) + parcelas do financiamento + operação - residual, tudo a VP.
+  // O custo de oportunidade já está na taxa de desconto (WACC); não se soma de novo.
+  const pvParcelas = (wacc) => {
+    let pv = 0;
+    for (let a = 1; a <= Math.ceil(v.prazoFin / 12); a++) {
+      const meses = Math.min(12, Math.max(0, v.prazoFin - 12 * (a - 1)));
+      pv += parcelaMensal * meses / Math.pow(1 + wacc / 100, a);
+    }
+    return pv;
+  };
+  const pvOperacao = (custoOpA, anos, wacc) => {
+    let pv = 0;
+    for (let a = 1; a <= anos; a++) pv += custoOpA / Math.pow(1 + wacc / 100, a);
+    return pv;
+  };
   const vpResidual = v.valResidual / Math.pow(1 + v.waccTco / 100, anosVida);
-  vpl -= vpResidual; // subtrai porque é entrada
-  tirFluxo[tirFluxo.length - 1] += v.valResidual;
+  let vpl = valorProprio + pvParcelas(v.waccTco) + pvOperacao(custoOpAnual, anosVida, v.waccTco) - vpResidual;
 
   // TCO Total = VPL dos custos
   const tcoTotal = vpl;
@@ -460,16 +470,16 @@ function calcular() {
     vplTerc += custoTercAnual / Math.pow(1 + v.waccTco / 100, a);
   }
 
-  // TIR aproximada (busca binária)
+  // TIR incremental da compra vs. aluguel (entrada positiva): investe o preço, economiza aluguel - operação, recebe residual
   let tir = 0;
   {
-    let low = -0.5, high = 2.0;
-    for (let i = 0; i < 50; i++) {
+    const fluxoCompra = [-v.precoCompra];
+    for (let a = 1; a <= anosVida; a++) fluxoCompra.push(custoRentalAnual - custoOpAnual + (a === anosVida ? v.valResidual : 0));
+    let low = -0.9, high = 3.0;
+    for (let i = 0; i < 60; i++) {
       const mid = (low + high) / 2;
       let npv = 0;
-      for (let t = 0; t < tirFluxo.length; t++) {
-        npv += tirFluxo[t] / Math.pow(1 + mid, t);
-      }
+      for (let t = 0; t < fluxoCompra.length; t++) npv += fluxoCompra[t] / Math.pow(1 + mid, t);
       if (npv > 0) low = mid; else high = mid;
     }
     tir = (low + high) / 2;
@@ -480,10 +490,9 @@ function calcular() {
   const paybackAnos = economiaAnualVsRental > 0 ? v.precoCompra / economiaAnualVsRental : Infinity;
 
   // Breakdown VPL
-  const vplCapex = v.precoCompra;
-  const vplFin = fluxoAnual.reduce((s, f) => s + (f.finJuros / Math.pow(1 + v.waccTco/100, f.ano)), 0);
-  const vplOp = fluxoAnual.reduce((s, f) => s + (f.custoOpAnual / Math.pow(1 + v.waccTco/100, f.ano)), 0);
-  const vplCap = fluxoAnual.reduce((s, f) => s + (f.custoCapital / Math.pow(1 + v.waccTco/100, f.ano)), 0);
+  const vplCapex = valorProprio;
+  const vplFin = pvParcelas(v.waccTco);
+  const vplOp = pvOperacao(custoOpAnual, anosVida, v.waccTco);
 
   // Cenários
   const baseHrs = v.hrsAno;
@@ -518,14 +527,7 @@ function calcular() {
     const outrosA = v.outrosAnual;
     const custoOpA = combA + opA + prevA + corrA + segA + rastA + pneusA + outrosA;
 
-    let vplC = v.precoCompra;
-    for (let a = 1; a <= anos; a++) {
-      const capProp = valorProprio * (1 - (a - 0.5) / anos);
-      const cc = capProp * (wacc / 100);
-      const tot = custoOpA + cc;
-      vplC += tot / Math.pow(1 + wacc/100, a);
-    }
-    vplC -= c.res / Math.pow(1 + wacc/100, anos);
+    const vplC = valorProprio + pvParcelas(wacc) + pvOperacao(custoOpA, anos, wacc) - c.res / Math.pow(1 + wacc/100, anos);
     const ch = vplC / (anos * c.hrs);
     const delta = ((ch - custoHora) / custoHora) * 100;
     return { ...c, custoHora: ch, delta };
@@ -549,10 +551,9 @@ function calcular() {
   document.getElementById('resMelhorOpcao').style.color = opts[0].cor;
 
   document.getElementById('breakdownTco').innerHTML = [
-    { label: 'CAPEX (aquisição)', value: vplCapex, cor: '#9a3412' },
-    { label: 'Juros financiamento (VPL)', value: vplFin, cor: '#f59e0b' },
+    { label: 'Capital próprio (entrada)', value: vplCapex, cor: '#9a3412' },
+    { label: 'Parcelas do financiamento (VPL)', value: vplFin, cor: '#f59e0b' },
     { label: 'Operacional (VPL)', value: vplOp, cor: '#0b5f57' },
-    { label: 'Custo capital próprio (VPL)', value: vplCap, cor: '#6b7280' },
     { label: '(-) Valor residual (VP)', value: -vpResidual, cor: '#0b5f57' },
     { label: '<strong>TCO Total (VPL)</strong>', value: tcoTotal, total: true }
   ].map(b => `

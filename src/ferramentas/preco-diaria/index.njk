@@ -315,7 +315,8 @@ function calcular() {
 
   // 12. Payback em meses (considerando fluxo de caixa líquido mensal na utilização esperada)
   const receitaMensalEsperada = precoSugeridoDiaria * (horasAlugadasMes / 8);
-  const fluxoLiquidoMensal = receitaMensalEsperada - tcoMensal;
+  // Fluxo de caixa: receita - custos desembolsáveis (depreciação e custo de capital já representam o próprio investimento)
+  const fluxoLiquidoMensal = receitaMensalEsperada - custosOperacionaisMes;
   const paybackMeses = fluxoLiquidoMensal > 0 ? vals.custoAquisicao / fluxoLiquidoMensal : Infinity;
 
   // Breakdown para exibição
@@ -333,11 +334,11 @@ function calcular() {
   const cenarios = [
     { nome: 'Base (atual)', util: vals.utilizacaoPct, cap: vals.custoCapitalAnual },
     { nome: 'Utilização -10pp', util: Math.max(10, vals.utilizacaoPct - 10), cap: vals.custoCapitalAnual },
-    { nome: 'Utilização +10pp', util: Math.min(95, vals.utilizacaoPct + 10), cap: vals.custoCapitalAnual },
+    { nome: 'Utilização +10pp', util: Math.min(100, vals.utilizacaoPct + 10), cap: vals.custoCapitalAnual },
     { nome: 'Custo capital -2pp', util: vals.utilizacaoPct, cap: Math.max(0, vals.custoCapitalAnual - 2) },
     { nome: 'Custo capital +2pp', util: vals.utilizacaoPct, cap: vals.custoCapitalAnual + 2 },
     { nome: 'Pessimista (-10pp util, +2pp cap)', util: Math.max(10, vals.utilizacaoPct - 10), cap: vals.custoCapitalAnual + 2 },
-    { nome: 'Otimista (+10pp util, -2pp cap)', util: Math.min(95, vals.utilizacaoPct + 10), cap: Math.max(0, vals.custoCapitalAnual - 2) }
+    { nome: 'Otimista (+10pp util, -2pp cap)', util: Math.min(100, vals.utilizacaoPct + 10), cap: Math.max(0, vals.custoCapitalAnual - 2) }
   ];
 
   const sensibilidade = cenarios.map(c => {

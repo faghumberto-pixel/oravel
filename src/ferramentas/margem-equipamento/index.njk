@@ -348,7 +348,9 @@ function calcular() {
   const margemLiquidaPct = receitaMensal > 0 ? (margemLiquida / receitaMensal) * 100 : 0;
 
   // 7. Payback (meses para recuperar custo de aquisição com margem líquida)
-  const paybackMeses = margemLiquida > 0 ? v.custoAquisicao / margemLiquida : Infinity;
+  // Usa o fluxo de caixa (antes de depreciação e custo de capital, que já embutem o próprio investimento)
+  const caixaMensal = margemBruta - custosFixos;
+  const paybackMeses = caixaMensal > 0 ? v.custoAquisicao / caixaMensal : Infinity;
 
   // 8. ROI Anual (%)
   const roiAnual = v.custoAquisicao > 0 ? (margemLiquida * 12 / v.custoAquisicao) * 100 : 0;
@@ -387,7 +389,7 @@ function calcular() {
 
   const cenarioResultados = cenarios.map(c => {
     const rec = c.diaria * c.dias;
-    const comb = v.combustivelLitros * v.precoDiesel * (c.dias / baseDias); // escala combustível
+    const comb = v.combustivelLitros * v.precoDiesel * (baseDias > 0 ? c.dias / baseDias : 1); // escala combustível
     const op = v.custoOperador;
     const mb = rec - comb - op;
     const fix = v.manutPrevMensal + c.manutCorr + v.seguroMensal + v.rastreamentoMensal + v.outrosFixosMensal;
