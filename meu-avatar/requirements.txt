@@ -1,0 +1,11 @@
+# Dependencias leves (rodam em CPU local)
+gradio>=4.44
+edge-tts>=6.1.10
+Pillow>=10.0
+numpy
+rembg[cpu]>=2.0.57
+onnxruntime
+imageio-ffmpeg
+requests
+huggingface_hub
+pytest
