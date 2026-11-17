@@ -1,0 +1,8 @@
+{
+  "name": "oravel-cadastro-mail",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "deploy": "wrangler deploy", "dev": "wrangler dev" },
+  "dependencies": { "worker-mailer": "^1.2.0" },
+  "devDependencies": { "wrangler": "^4.0.0" }
+}

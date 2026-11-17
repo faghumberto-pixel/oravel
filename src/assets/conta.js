@@ -12,6 +12,8 @@ const app = initializeApp({
   appId: "1:588824747002:web:bbffcc368e227b605be243"
 });
 initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider("6LerhRsuAAAAAANMO5ZjmR9IrpEWu3g5GPmfYyOs"), isTokenAutoRefreshEnabled: true });
+// Endereço do Worker que avisa contato@oravel.org (preencher após o deploy; vazio = não avisa)
+const AVISO_URL = "";
 const auth = getAuth(app);
 const db = getFirestore(app);
 const $ = (s) => document.querySelector(s);
@@ -49,6 +51,13 @@ if (fc) fc.addEventListener("submit", async (ev) => {
       nome: d.nome.trim(), sobrenome: d.sobrenome.trim(), empresa: d.empresa.trim(), whatsapp: d.whatsapp.trim(),
       cidade: d.cidade.trim(), estado: d.estado, email: d.email.trim(), criado: serverTimestamp()
     });
+    if (AVISO_URL) {
+      try {
+        const token = await cred.user.getIdToken();
+        await fetch(AVISO_URL, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+          body: JSON.stringify({ nome: d.nome, sobrenome: d.sobrenome, email: d.email, empresa: d.empresa, whatsapp: d.whatsapp, cidade: d.cidade, estado: d.estado }) });
+      } catch (_) {} // o aviso é complementar: não bloqueia o cadastro
+    }
     await sendPasswordResetEmail(auth, d.email.trim(), { url: "https://oravel.org/?cadastro=ok" });
     await signOut(auth);
     fc.reset();
