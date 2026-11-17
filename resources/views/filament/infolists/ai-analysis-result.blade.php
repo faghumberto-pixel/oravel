@@ -97,6 +97,21 @@
             </div>
         @endif
     </div>
+@elseif ($record->type === \App\Models\AIAnalysis::TYPE_ORDEM_SERVICO)
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">O.S.</p><p class="text-sm">{{ data_get($record->context, 'os.numero', '—') }} · {{ data_get($record->context, 'os.tipo', '—') }}</p></div>
+        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Avaliação geral</p><p class="text-sm">{{ ucfirst($response['avaliacao_geral'] ?? '—') }}</p></div>
+        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Risco de retrabalho</p><p class="text-sm">{{ ucfirst($response['risco_retrabalho'] ?? '—') }}</p></div>
+        <div class="lg:col-span-3"><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Resumo</p><p class="text-sm">{{ $response['resumo'] ?? '' }}</p></div>
+        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Prazo e SLA</p><p class="text-sm">{{ $response['prazo_e_sla'] ?? '—' }}</p></div>
+        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Custo</p><p class="text-sm">{{ $response['custo'] ?? '—' }}</p></div>
+        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Peças e materiais</p><p class="text-sm">{{ $response['pecas_e_materiais'] ?? '—' }}</p></div>
+        @foreach (['riscos' => 'Riscos', 'pontos_de_atencao' => 'Pontos de atenção', 'recomendacoes' => 'Recomendações'] as $chave => $titulo)
+            @if (! empty($response[$chave]))
+                <div class="lg:col-span-3"><p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $titulo }}</p><ul class="list-disc pl-5 text-sm">@foreach ($response[$chave] as $item)<li>{{ $item }}</li>@endforeach</ul></div>
+            @endif
+        @endforeach
+    </div>
 @elseif ($record->type === \App\Models\AIAnalysis::TYPE_PROSPECT)
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Prioridade</p><p class="text-sm">{{ ucfirst($response['prioridade'] ?? '—') }}</p></div>

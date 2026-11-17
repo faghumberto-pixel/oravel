@@ -150,6 +150,34 @@
                 @endforeach
             </ul>
         </div>
+    @elseif ($analysis->type === \App\Models\AIAnalysis::TYPE_ORDEM_SERVICO)
+        @php($os = $analysis->context['os'] ?? [])
+        <div class="section">
+            <div class="section-title">Ordem de serviço</div>
+            <table class="data-grid">
+                <tr>
+                    <td><span class="label">O.S.</span><span class="value">{{ $os['numero'] ?? '—' }} · {{ $os['tipo'] ?? '—' }}</span></td>
+                    <td><span class="label">Equipamento</span><span class="value">{{ data_get($analysis->context, 'ativo.nome', '—') }} @if (data_get($analysis->context, 'ativo.patrimonio'))({{ data_get($analysis->context, 'ativo.patrimonio') }})@endif</span></td>
+                    <td><span class="label">Situação</span><span class="value">{{ $os['status'] ?? '—' }}</span></td>
+                    <td><span class="label">Avaliação geral</span><span class="value">{{ ucfirst($response['avaliacao_geral'] ?? '—') }}</span></td>
+                </tr>
+            </table>
+        </div>
+        <div class="section"><div class="section-title">Resumo</div><p>{{ $response['resumo'] ?? '' }}</p></div>
+        <div class="section"><div class="section-title">Prazo e SLA</div><p>{{ $response['prazo_e_sla'] ?? '—' }}</p></div>
+        <div class="section"><div class="section-title">Custo</div><p>{{ $response['custo'] ?? '—' }}</p></div>
+        <div class="section"><div class="section-title">Peças e materiais</div><p>{{ $response['pecas_e_materiais'] ?? '—' }}</p></div>
+        @foreach (['checklist_e_registro' => 'Checklist e registro', 'riscos' => 'Riscos', 'pontos_de_atencao' => 'Pontos de atenção', 'recomendacoes' => 'Recomendações'] as $chave => $titulo)
+            @if (! empty($response[$chave]))
+                <div class="section"><div class="section-title">{{ $titulo }}</div><ul>@foreach ($response[$chave] as $item)<li>{{ $item }}</li>@endforeach</ul></div>
+            @endif
+        @endforeach
+        <div class="section"><div class="section-title">Risco de retrabalho: {{ ucfirst($response['risco_retrabalho'] ?? '—') }}</div><p>{{ $response['motivo_risco_retrabalho'] ?? '' }}</p></div>
+        @if (! empty($response['proximos_passos']))
+            <div class="section"><div class="section-title">Próximos passos</div>
+                <ol>@foreach ($response['proximos_passos'] as $passo)<li><strong>{{ $passo['acao'] ?? '' }}</strong> ({{ $passo['responsavel_sugerido'] ?? '—' }}, {{ $passo['prazo'] ?? '—' }})</li>@endforeach</ol>
+            </div>
+        @endif
     @elseif ($analysis->type === \App\Models\AIAnalysis::TYPE_PROSPECT)
         <div class="section">
             <div class="section-title">Prospect</div>

@@ -40,6 +40,8 @@ class AIAnalysis extends Model
 
     public const TYPE_PROSPECT = 'prospect';
 
+    public const TYPE_ORDEM_SERVICO = 'ordem_servico';
+
     public const STATUS_PENDENTE = 'pendente';
 
     public const STATUS_CONCLUIDA = 'concluida';
@@ -64,6 +66,7 @@ class AIAnalysis extends Model
         'equipment_damage_id',
         'crm_lead_id',
         'prospect_id',
+        'maintenance_order_id',
         'context',
         'response',
         'status',
@@ -149,6 +152,11 @@ class AIAnalysis extends Model
         return $this->belongsTo(Prospect::class);
     }
 
+    public function maintenanceOrder(): BelongsTo
+    {
+        return $this->belongsTo(MaintenanceOrder::class);
+    }
+
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class, 'tenant_id');
@@ -168,6 +176,7 @@ class AIAnalysis extends Model
             // que ja estava salvo no context original nesse caso.
             self::TYPE_COMERCIAL => $this->crmLead?->name ?? data_get($this->context, 'lead.nome'),
             self::TYPE_PROSPECT => $this->prospect?->nome ?? data_get($this->context, 'prospect.nome'),
+            self::TYPE_ORDEM_SERVICO => $this->maintenanceOrder?->os_number ?? data_get($this->context, 'os.numero'),
             self::TYPE_LOGISTICA => filled(data_get($this->context, 'data'))
                 ? Carbon::parse(data_get($this->context, 'data'))->format('d/m/Y')
                 : null,

@@ -58,6 +58,7 @@ class AIAnalysisResource extends BaseResource
             AIAnalysis::TYPE_RETRABALHO => 'Retrabalho / Corretivas',
             AIAnalysis::TYPE_PLANO_PREVENTIVO => 'Planos Preventivos',
             AIAnalysis::TYPE_PROSPECT => 'Análise de Prospect',
+            AIAnalysis::TYPE_ORDEM_SERVICO => 'Análise da O.S.',
         ];
     }
 

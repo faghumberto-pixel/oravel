@@ -4,6 +4,7 @@ namespace App\Filament\Resources\MaintenanceOrderResource\Pages;
 
 use App\Filament\Pages\DossieOperacional;
 use App\Filament\Resources\MaintenanceOrderResource;
+use App\Filament\Resources\MaintenanceOrderResource\Concerns\AnalisaOsComIa;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesDamageFromAvariaType;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\CreatesReplacementFromOsType;
 use App\Filament\Resources\MaintenanceOrderResource\Concerns\StoresPhotoEvidence;
@@ -22,6 +23,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditMaintenanceOrder extends EditRecord
 {
+    use AnalisaOsComIa;
     use CreatesDamageFromAvariaType;
     use CreatesReplacementFromOsType;
     use StoresPhotoEvidence;
@@ -149,6 +151,8 @@ class EditMaintenanceOrder extends EditRecord
             // consultas/impressão primeiro, depois transições administrativas,
             // destrutivas por último)
             Actions\ActionGroup::make([
+                ...$this->analiseIaActions(),
+
                 // Folha em papel: imprime a O.S. ja com cliente, equipamento e problema; o mecanico completa a mao
                 // e a IA le a foto de volta e atualiza ESTA O.S. (nunca cria outra).
                 Actions\Action::make('imprimir_folha')
