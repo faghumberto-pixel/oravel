@@ -12,7 +12,7 @@ Este texto descreve o que o site faz hoje. Deve ser revisado por advogado antes 
 
 ## Dados que coletamos hoje
 
-- **Navegação**: O site é estático e não usa cookies próprios nem ferramentas de análise de audiência. O servidor de hospedagem pode registrar dados técnicos de acesso (como endereço IP e data), conforme a hospedagem escolhida.
+- **Navegação**: O site é estático e não usa cookies próprios. Para entender quais conteúdos são mais lidos, usamos o Plausible Analytics, que mede a audiência de forma agregada, sem cookies, sem acompanhar o visitante entre sites e sem identificar pessoas individualmente. Ele registra a página visitada, a origem do acesso (por exemplo, Google ou link de outro site), a localização aproximada (país e região), o tipo de aparelho e o navegador. O servidor de hospedagem também pode registrar dados técnicos de acesso (como endereço IP e data), conforme a hospedagem escolhida.
 - **Fontes do Google Fonts**: As páginas carregam fontes do Google Fonts, o que envia seu endereço IP ao Google. Se preferirmos evitar isso, as fontes podem ser servidas pelo próprio site.
 - **Gazeta Oravel**: ao se inscrever, coletamos o seu e-mail para enviar a Gazeta Oravel (edição semanal). A base legal é o consentimento (LGPD, art. 7º, I), dado ao marcar a caixa do formulário. O e-mail é armazenado e enviado pelo Sender (Sender.net), provedor de e-mail marketing. Você pode cancelar a qualquer momento pelo link no rodapé de cada edição ou pelo e-mail [contato@oravel.org](mailto:contato@oravel.org).
 - **Comunidade**: O grupo de WhatsApp é regido pelas regras e pela política do próprio WhatsApp. Seu número fica visível aos membros.
