@@ -10,7 +10,7 @@ readingTime: "6 min"
 
 ## Por que QR Code agora (e não daqui a 2 anos)
 
-- **Custo quase zero**: etiqueta plástica R$ 0,50–1,50; apps gratuitos funcionam
+- **Custo baixo**: etiquetas e formulários têm custo baixo; cote os valores reais
 - **Adoção imediata**: todo operador tem celular com câmera
 - **Rastreabilidade**: quem, quando, onde, o quê — sem digitação
 - **Escala**: começa com 10 máquinas, vai para 500 sem mudar processo
@@ -63,12 +63,14 @@ readingTime: "6 min"
 
 ## Etiquetas que duram (não cai na primeira chuva)
 
-| Material | Durabilidade | Custo unitário | Onde comprar |
+| Material | Durabilidade (estimativa a testar) | Custo unitário (estimativa a cotar) | Onde comprar |
 |----------|--------------|----------------|--------------|
-| Papel adesivo + fita transparente | 3–6 meses | R$ 0,30 | Kalunga, papelaria |
-| Poliéster branco (matte) | 2–3 anos | R$ 0,80–1,20 | Etiquetas Online, LabelPrint, Mercado Livre |
-| Vinil destrutível (anti-remoção) | 3–5 anos | R$ 1,50–2,50 | Same |
+| Papel adesivo + fita transparente | 3–6 meses | R$ 0,30 | Papelarias |
+| Poliéster branco (matte) | 2–3 anos | R$ 0,80–1,20 | Fornecedores de etiquetas |
+| Vinil destrutível (anti-remoção) | 3–5 anos | R$ 1,50–2,50 | Idem |
 | Alumínio anodizado (gravação a laser) | 10+ anos | R$ 8–15 | Fornecedores industriais |
+
+As durabilidades e os custos da tabela são **estimativas de ordem de grandeza** e não foram verificados em fonte. Cote com fornecedores e teste a etiqueta no ambiente real (sol, chuva, poeira, lavagem) antes de comprar em volume.
 
 **Tamanho mínimo**: 3 × 3 cm (legível a 30 cm). **Impressão**: laser (não jato de tinta) ou térmica. **Fixação**: superfícies lisas, limpas com álcool; evite cantos vivos.
 

@@ -38,13 +38,13 @@ Para usos que vão além do contrato (por exemplo, enviar promoção ao encarreg
 
 ## Regime simplificado para pequenas empresas
 
-A Resolução CD/ANPD nº 2/2022 criou um regime diferenciado para agentes de tratamento de pequeno porte, com menos burocracia, mas sem isenção ([resumo da Mayer Brown](https://www.mayerbrown.com/-/media/files/perspectives-events/publications/2021/09/legal-update--agentes-de-tratamento-de-pequeno-porte.pdf)). Segundo as fontes consultadas:
+A Resolução CD/ANPD nº 2/2022 ([texto na ANPD](https://www.gov.br/anpd/pt-br/acesso-a-informacao/institucional/atos-normativos/regulamentacoes_anpd/resolucao-cd-anpd-no-2-de-27-de-janeiro-de-2022)) criou um regime diferenciado para agentes de tratamento de pequeno porte, com menos burocracia, mas sem isenção. Conforme o texto da resolução:
 
-- Dispensa de indicar encarregado formal, desde que haja um canal de contato para o titular.
-- Registro das operações de tratamento em formato simplificado.
-- Comunicação de incidentes continua obrigatória; em casos de risco à integridade física ou moral dos titulares, o prazo de três dias úteis vale mesmo para pequenos agentes.
+- **Encarregado:** não é obrigatório indicar, mas é preciso oferecer um canal de comunicação com o titular (art. 11).
+- **Registro das operações:** pode ser feito em formato simplificado (art. 9º).
+- **Prazos:** pequenos agentes têm prazo em dobro para atender solicitações de titulares e para comunicar incidentes de segurança de risco relevante, **exceto** quando houver potencial comprometimento da integridade física ou moral dos titulares ou da segurança nacional (art. 14). A comunicação de incidentes continua obrigatória, e o prazo-base está em regulamentação própria da ANPD, que deve ser consultada.
 
-Confirme se a sua empresa se enquadra no conceito de pequeno porte, pois há condições na resolução.
+O regime **não vale para todos**: o art. 3º exclui quem realiza tratamento de alto risco, quem tem receita bruta acima do limite da Lei Complementar 123/2006 e quem pertence a certos grupos econômicos. Confirme com o jurídico se a sua locadora se enquadra.
 
 ## Checklist para a locadora
 
