@@ -26,25 +26,25 @@ pagefind: true
 <span class="chip">Como Vender Mais</span>
 </div>
 </div>
-<!-- Floating card -->
-<div class="hero-floating-card">
-  <div class="hero-floating-card-inner">
-    <div class="hero-floating-card-left">
-      <div class="hero-floating-card-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-      </div>
-      <div class="hero-floating-card-content">
-        <h3>Panorama do Setor 2027</h3>
-        <p>Confira os principais dados e tendências da locação de equipamentos no Brasil.</p>
-        <a href="/painel-mercado/" class="hero-floating-card-link">Acesse o relatório →</a>
-      </div>
-    </div>
-    <div class="hero-floating-card-cover" aria-hidden="true">
-      <span class="hero-floating-card-cover-title">PANORAMA DO SETOR 2027</span>
-      <img class="hero-floating-card-cover-img" src="https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=300&q=80" alt="" loading="lazy">
-    </div>
-  </div>
+<!-- Artigos em destaque (rotativo): capa, titulo abaixo, link para ler -->
+{% set heroArtigos = [] %}
+{% for pH in collections.posts | limit(10) %}{% if pH.data.image and heroArtigos.length < 6 %}{% set _h = heroArtigos.push({ url: pH.url, titulo: pH.data.title, tema: (pH.data.theme | themeLabel), img: pH.data.image }) %}{% endif %}{% endfor %}
+{% if heroArtigos.length %}
+{% set h0 = heroArtigos[0] %}
+<div class="hero-floating-card hero-artigos" id="hero-rotativo" data-intervalo="6000" role="region" aria-label="Artigos em destaque">
+<a class="hero-artigo" id="hero-artigo" href="{{ h0.url }}">
+<div class="hero-artigo-capa"><img src="{{ h0.img }}" alt="" width="600" height="400" fetchpriority="high"></div>
+<div class="hero-artigo-corpo">
+<span class="hero-artigo-tema">{{ h0.tema }}</span>
+<h3>{{ h0.titulo }}</h3>
+<span class="hero-artigo-ler">Ler artigo →</span>
 </div>
+</a>
+<div class="hero-artigos-pontos" id="hero-pontos" hidden></div>
+</div>
+<script type="application/json" id="hero-dados">{{ heroArtigos | dump | safe }}</script>
+<script src="/assets/hero-rotativo.js" defer></script>
+{% endif %}
 </div>
 </section>
 
