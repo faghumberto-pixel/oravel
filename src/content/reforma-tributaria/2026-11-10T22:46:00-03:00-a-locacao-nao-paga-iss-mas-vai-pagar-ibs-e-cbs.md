@@ -49,6 +49,6 @@ O desenho completo da transição também está na Emenda Constitucional 132/202
 4. **Sistemas**: verifique se o ERP/software de locação suporta split payment e cálculo de créditos
 5. **Equipe**: treine comercial e financeiro na nova dinâmica
 
-## Simulador gratuito
+## Ferramentas
 
-Veja as [ferramentas do site](/ferramentas/), que incluem um simulador de impacto da reforma. Trate o resultado como estimativa e confirme as alíquotas e regras com o contador.
+O site tem [ferramentas de gestão](/ferramentas/) para a locadora. Um simulador do impacto da reforma está em desenvolvimento e ainda não foi lançado: para estimar o efeito na sua locadora, peça ao contador uma simulação por contrato.

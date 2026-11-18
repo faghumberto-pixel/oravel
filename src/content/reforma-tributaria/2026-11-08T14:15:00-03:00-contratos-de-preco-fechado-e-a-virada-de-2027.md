@@ -64,7 +64,7 @@ Contratos de 12, 24 ou 36 meses assinados **antes de 2027** são os mais exposto
 
 ## Ferramentas
 
-As [ferramentas do site](/ferramentas/) incluem uma autoavaliação de prontidão. Use como apoio, e não como parecer.
+O site tem [ferramentas de gestão](/ferramentas/) para a locadora. Um simulador do impacto da reforma e uma autoavaliação de maturidade estão em desenvolvimento e ainda não foram lançados.
 
 ## Fontes
 
