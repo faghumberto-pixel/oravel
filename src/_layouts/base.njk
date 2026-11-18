@@ -3,9 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{% if title %}{{ title }} · {% endif %}oravel.org</title>
-{% if description %}<meta name="description" content="{{ description }}">{% endif %}
-{% if canonical %}<link rel="canonical" href="{{ canonical }}">{% endif %}
+{% set siteUrl = "https://oravel.org" %}
+{% set siteDesc = "Guias, ferramentas e referências sobre tributação, tecnologia, vendas e gestão para quem administra locadoras de equipamentos no Brasil." %}
+{% set pageDesc = description or summary or (themeDesc[theme] if theme and themeDesc) or siteDesc %}
+{% set pageTitle = (title + " · oravel.org") if title else "oravel.org · Conhecimento para quem administra locadoras de equipamentos" %}
+{% set pageUrl = canonical or (siteUrl + page.url) %}
+<title>{{ pageTitle }}</title>
+<meta name="description" content="{{ pageDesc | striptags | truncate(300) }}">
+<link rel="canonical" href="{{ pageUrl }}">
+{% if noindex %}<meta name="robots" content="noindex, follow">{% else %}<meta name="robots" content="index, follow, max-image-preview:large">{% endif %}
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="oravel.org">
+<meta property="og:type" content="{% if theme and date %}article{% else %}website{% endif %}">
+<meta property="og:title" content="{{ title or 'oravel.org' }}">
+<meta property="og:description" content="{{ pageDesc | striptags | truncate(300) }}">
+<meta property="og:url" content="{{ pageUrl }}">
+{% if image %}<meta property="og:image" content="{{ siteUrl }}{{ image }}">{% endif %}
+<meta name="twitter:card" content="{% if image %}summary_large_image{% else %}summary{% endif %}">
+<meta name="twitter:title" content="{{ title or 'oravel.org' }}">
+<meta name="twitter:description" content="{{ pageDesc | striptags | truncate(200) }}">
+{% if image %}<meta name="twitter:image" content="{{ siteUrl }}{{ image }}">{% endif %}
+<link rel="alternate" type="application/rss+xml" title="oravel.org" href="/feed.xml">
+{% if page.url == "/" %}{% ldHome %}{% endif %}
+{% if theme and date and title %}{% ldArticle title, pageDesc, date, image, theme, pageUrl %}{% endif %}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

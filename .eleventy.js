@@ -144,6 +144,26 @@ module.exports = function(eleventyConfig) {
     return bgs[theme] || '#e7f1ef';
   });
 
+  // JSON-LD (dados estruturados) para SEO
+  const ld = (obj) => '<script type="application/ld+json">' + JSON.stringify(obj).replace(/</g, '\\u003c') + '</script>';
+  const THEME_LABELS = { 'reforma-tributaria': 'Reforma tributária', 'tecnologia': 'Tecnologia', 'la-fora': 'Lá fora', 'vendas': 'Vendas', 'gestao-e-operacao': 'Gestão e operação', 'comunidade': 'Comunidade' };
+  eleventyConfig.addShortcode('ldHome', () => ld({
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'Organization', '@id': 'https://oravel.org/#org', name: 'oravel.org', url: 'https://oravel.org/', logo: 'https://oravel.org/favicon.svg' },
+      { '@type': 'WebSite', '@id': 'https://oravel.org/#site', url: 'https://oravel.org/', name: 'oravel.org', inLanguage: 'pt-BR', publisher: { '@id': 'https://oravel.org/#org' } }
+    ]
+  }));
+  eleventyConfig.addShortcode('ldArticle', (title, desc, date, image, theme, url) => {
+    const iso = DateTime.fromJSDate(date, { zone: 'America/Sao_Paulo' }).toISO();
+    const article = { '@type': 'Article', headline: title, description: String(desc).replace(/<[^>]*>/g, ''), datePublished: iso, dateModified: iso, inLanguage: 'pt-BR', mainEntityOfPage: url, author: { '@type': 'Organization', name: 'oravel.org', url: 'https://oravel.org/' }, publisher: { '@id': 'https://oravel.org/#org' } };
+    if (image) article.image = 'https://oravel.org' + image;
+    return ld({ '@context': 'https://schema.org', '@graph': [article, { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://oravel.org/' },
+      { '@type': 'ListItem', position: 2, name: THEME_LABELS[theme] || theme, item: 'https://oravel.org/' + theme + '/' },
+      { '@type': 'ListItem', position: 3, name: title, item: url } ] }] });
+  });
+
   // Shortcodes
   eleventyConfig.addShortcode('year', () => new Date().getFullYear());
 
