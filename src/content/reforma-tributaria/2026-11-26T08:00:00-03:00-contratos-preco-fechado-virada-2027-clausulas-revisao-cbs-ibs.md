@@ -3,102 +3,88 @@ image: "/assets/img/contratos-preco-fechado-2027-clausulas.jpg"
 title: "Contratos de preço fechado e a virada de 2027: cláusulas de revisão para CBS/IBS"
 date: 2026-11-26T08:00:00-03:00
 theme: "reforma-tributaria"
-summary: "Como redigir cláusula de revisão de preço para contratos vigentes em 2027; neutralidade tributária; reequilíbrio econômico-financeiro; modelos de aditivo contratual para locação de equipamentos."
-source: "InvestNews; Piraciadv.blog; Contábeis; Conexês Contabilidade; PraticoLocacoes; TaxUp; FazNota; Gov.br"
+summary: "Estrutura de uma cláusula de revisão por mudança tributária e um roteiro para tratar contratos vigentes, com a transição conferida no texto da LC 214/2025. Pontos de partida para o advogado, e não modelos prontos."
+source: "LC 214/2025, arts. 12 e 343 a 349 (texto conferido em Adm Direito); Código Civil; prática contratual"
 readingTime: "6 min"
 ---
 
-## O problema: contratos assinados hoje, tributação nova em 2027
+Este texto complementa [Contratos de preço fechado e a virada de 2027](/reforma-tributaria/2026-11-08T14:15:00-03:00-contratos-de-preco-fechado-e-a-virada-de-2027/) e **não é parecer jurídico nem tributário**. As cláusulas são **pontos de partida para o advogado revisar**. A transição foi conferida no texto da LC 214/2025, alterada pela LC 227/2026, e depende de regulamentação.
 
-A Reforma Tributária (LC 214/2025) institui **CBS (federal) e IBS (estadual/municipal)** a partir de **1º/01/2027** (transição 2026–2033). Locadoras com **contratos de preço fixo vigentes em 2027** correm risco de perder margem se não houver cláusula de revisão. A lei prevê **neutralidade tributária** (art. 156, LC 214), mas a aplicação prática exige previsão contratual.
+## O que a lei fixa para a transição
 
-## O que a lei diz (resumo para locador)
+Conforme os arts. 343 a 349 ([Adm Direito](https://www.admdireito.com.br/legislacao/art/lec_00002142025-347)):
 
-| Ponto | LC 214/2025 | Impacto no contrato de locação |
-|-------|-------------|--------------------------------|
-| **Início CBS/IBS** | 01/01/2027 (alíquotas teste 2026) | Novo tributo incide sobre receita de locação |
-| **Split payment** | Arts. 31–35 | Cliente paga líquido à locadora + tributo direto ao governo |
-| **Créditos** | Não entram no split; apurados na declaração mensal | Locadora recupera crédito de insumos (peças, combustível, energia) depois |
-| **Neutralidade** | Art. 156: "não onerar nem beneficiar" | Base para pleitear reequilíbrio se contrato não prevê revisão |
-| **Revisão de preços** | Não automática; depende de cláusula ou negociação | **Sem cláusula, locadora absorve a diferença** |
+| Período | CBS | IBS |
+|---------|-----|-----|
+| 2026 | 0,9% (art. 346) | 0,1% (art. 343) |
+| 2027 a 2028 | Alíquota de referência reduzida em 0,1 ponto percentual (art. 347) | 0,1% no total: 0,05% estadual e 0,05% municipal (art. 344) |
+| 2029 a 2033 | Alíquota de referência fixada anualmente | Alíquotas de referência fixadas anualmente, em transição gradual (arts. 349 e 360 a 364) |
 
-## Cláusula modelo de revisão tributária (para contratos novos)
+As alíquotas de referência serão fixadas por resolução do Senado (art. 349), e **não estão publicadas neste texto**. Por isso, qualquer comparação de "carga antes e depois" depende de números que ainda serão definidos e do regime de cada locadora.
 
-> **CLÁUSULA X – REVISÃO POR ALTERAÇÃO TRIBUTÁRIA**
+## O que o contrato precisa prever
+
+**Princípio:** um contrato de preço fechado precisa dizer o que acontece se os tributos mudarem. A cláusula não deve supor o sentido da mudança (aumento ou redução), porque a diferença de carga depende do regime, dos créditos e do ano.
+
+### Estrutura sugerida (para discutir com o advogado)
+
+> **CLÁUSULA X: REVISÃO POR ALTERAÇÃO TRIBUTÁRIA**
 >
-> 1. Caso ocorra alteração na legislação tributária que impacte direta ou indiretamente a carga tributária incidente sobre a locação objeto deste instrumento (incluindo, mas não se limitando, à instituição da CBS e do IBS nos termos da LC 214/2025), as partes acordam que o **VALOR DA LOCAÇÃO SERÁ REVISADO** para manter o equilíbrio econômico-financeiro originalmente pactuado.
+> 1. Se houver alteração na legislação tributária que modifique a carga de tributos incidentes sobre a locação objeto deste contrato, o valor da locação será revisado para refletir a diferença de carga, **em qualquer sentido, aumento ou redução**.
 >
-> 2. A revisão será calculada com base na **diferença efetiva de carga tributária** (nova alíquota efetiva – alíquota efetiva na data da assinatura), aplicada sobre a base de cálculo do contrato, **excluídos efeitos de crédito** que a LOCADORA vier a aproveitar.
+> 2. A diferença será calculada comparando a carga tributária efetiva na data da assinatura com a carga efetiva após a alteração, **considerando os créditos que a LOCADORA aproveitar**, conforme metodologia descrita em anexo.
 >
-> 3. A LOCADORA apresentará **memória de cálculo** e **comprovantes** (NF-e/NFS-e com destaque de CBS/IBS, DCTFWeb, guias de recolhimento) no prazo de 30 (trinta) dias da entrada em vigor da nova tributação.
+> 3. A parte que pedir a revisão apresentará **memória de cálculo e documentos fiscais** que a sustentem, no prazo de [X] dias da vigência da nova tributação.
 >
 > 4. O novo valor vigorará a partir da competência em que a nova tributação se tornar exigível.
 >
-> 5. Fica facultado à LOCATÁRIA, em caso de discordância fundamentada, solicitar perícia contábil independente, cujos custos serão rateados 50/50.
+> 5. Em caso de discordância fundamentada, as partes buscarão [mecanismo a definir com o jurídico, por exemplo, apuração por contador independente], com repartição de custos definida no contrato.
 
-## Aditivo para contratos JÁ ASSINADOS (vigentes em 2027)
+Decisões a tomar com o advogado: quem pode pedir a revisão, prazo, qual é a metodologia do cálculo e como resolver divergências.
 
-Se o contrato **não tem cláusula de revisão**, faça aditivo **antes de 31/12/2026**:
+### Contratos já assinados
 
-> **TERMO ADITIVO Nº X – REEQUILÍBRIO TRIBUTÁRIO 2027**
->
-> As partes, LOCADORA e LOCATÁRIA, acordam em incluir a **Cláusula X (acima)** ao Contrato nº [NÚMERO], de [DATA], com efeitos a partir de **01/01/2027**, para fins de adequação à Lei Complementar nº 214/2025 (Reforma Tributária).
->
-> A LOCADORA compromete-se a demonstrar, documentalmente, o impacto tributário efetivo, garantindo a **neutralidade** prevista no art. 156 da LC 214/2025.
+Se o contrato não tem cláusula, a alternativa é propor um **aditivo** negociado com o cliente. Quanto mais cedo a conversa começar, mais fácil a negociação. Se o cliente não aceitar, o que a lei civil permite em cada caso é uma questão jurídica específica.
 
-**Dica**: envie o aditivo **junto com a renovação anual** ou comunicação de reajuste inflacionário — passa como "atualização contratual", não "aumento".
+**Transparência:** apresente o aditivo como o que é, uma regra de revisão para os dois lados. Não o apresente como "atualização" para disfarçar um reajuste: isso desgasta a relação e pode gerar contestação.
 
-## Cálculo prático do impacto (exemplo simplificado)
+## Cuidados no cálculo
 
-| Item | Cenário 2026 (PIS/COFINS + ICMS/ISS) | Cenário 2027 (CBS + IBS) ilustrativo |
-|------|--------------------------------------|--------------------------------------|
-| Receita locação | R$ 10.000 | R$ 10.000 |
-| PIS/COFINS (3,65% + 7,6%) | R$ 1.125 | — |
-| ICMS (12% médio) ou ISS (2–5%) | R$ 1.200 | — |
-| **CBS (8,8%*) + IBS (17,7%*)** | — | **R$ 2.650** |
-| **Carga efetiva** | ~23,25% | ~26,5%* |
-| **Diferença (repassável se cláusula)** | — | **~3,25 pp** |
+- **Use os créditos.** O IBS e a CBS geram créditos nas compras (art. 47; veja [Crédito de CBS](/reforma-tributaria/2026-11-09T10:30:00-03:00-credito-de-cbs-como-a-locadora-passa-a-recuperar-imposto/)). Repassar a alíquota "cheia" sem considerar créditos tende a ser contestado.
+- **Cálculo por contrato.** A diferença de carga varia por regime (lucro real, presumido, Simples) e por tipo de despesa. Peça ao contador a simulação.
+- **Tributo por fora.** O IBS e a CBS não integram a própria base de cálculo (art. 12, § 2º, I). Defina como o preço será apresentado: com tributo destacado ou incluído.
+- **Reajuste por índice geral não é revisão tributária.** São mecanismos diferentes. Veja [Reajuste em contrato de prazo longo](/vendas/2026-11-30T10:00:00-03:00-reajuste-em-contrato-de-locacao-longo-indice-data-base-e-clausula-clara/).
 
-*Alíquotas de referência (teste 2026); alíquotas definitivas sairão em lei complementar.
+## Checklist
 
-**Créditos** (peças, diesel, energia, aluguel de imóvel, serviços) reduzem a CBS/IBS a pagar. A cláusula deve prever: **repassa-se o líquido (débito – crédito)**.
+- [ ] Levantar contratos vigentes com término depois de 31/12/2026.
+- [ ] Classificar: (A) com cláusula de revisão tributária; (B) sem cláusula.
+- [ ] Grupo A: revisar a redação, para cobrir os dois sentidos da mudança e o uso de créditos.
+- [ ] Grupo B: preparar proposta de aditivo, com revisão do advogado.
+- [ ] Alinhar com o contador a simulação da carga por regime e por contrato.
+- [ ] Conversar com os clientes principais, com explicação de uma página.
+- [ ] Atualizar o modelo de contrato novo.
 
-## Checklist de preparação contratual (faça até 30/11/2026)
-
-- [ ] **Levante todos os contratos vigentes** com término após 31/12/2026.
-- [ ] **Classifique**: (A) têm cláusula de revisão tributária; (B) não têm.
-- [ ] **Grupo A**: revise a redação — cobre CBS/IBS, split payment, créditos, neutralidade.
-- [ ] **Grupo B**: prepare aditivo padrão + cronograma de assinatura (meta: 100% assinados até 20/12/2026).
-- [ ] **Alinhe com contador**: simulação de carga efetiva 2027 por regime (Lucro Real, Presumido, Simples).
-- [ ] **Comunique clientes-chave** (top 20) em reunião: "Vamos formalizar a proteção mútua prevista na lei."
-- [ ] **Atualize modelo de contrato novo** com cláusula definitiva.
-
-## Armadilhas para evitar
+## Armadilhas
 
 | Armadilha | Por que é risco | Correção |
 |-----------|-----------------|----------|
-| "Repasso integral da alíquota nominal (26,5%)" | Ignora créditos; cliente contesta; pode configurar enriquecimento sem causa | Cláusula prevê **débito – crédito = líquido** |
-| "Revisão automática pelo IPCA/IGP-M" | Índice geral não captura mudança tributária setorial | Cláusula **específica para tributação** |
-| Não documentar memória de cálculo | Cliente não paga; judicialização | Entregue planilha + NF-e + DCTFWeb + guias |
-| Esperar 2027 para negociar | Cliente já pagou orçamento; recusa aditivo | **Antecipe: assine aditivo em 2026** |
+| Repassar a alíquota nominal sem considerar créditos | Cliente contesta; pode haver discussão judicial | Cláusula prevê carga efetiva, com créditos |
+| Cláusula que só funciona para aumento | Cliente tende a rejeitar | Cláusula nos dois sentidos |
+| Não documentar a memória de cálculo | Cliente não paga; litígio | Entregar planilha e notas fiscais |
+| Esperar a mudança acontecer para negociar | Cliente pode recusar aditivo | Começar a conversa antes |
 
 ## Como aplicar na sua locadora
 
-1. **Peça ao jurídico/contador** a minuta de cláusula e aditivo adaptados ao seu regime tributário.
-2. **Extraia do ERP** a lista de contratos ativos com fim > 31/12/2026.
-3. **Separe 2 pilhas**: com e sem cláusula. Priorize os sem cláusula.
-4. **Agende reuniões curtas (15 min)** com cada cliente top 20: leve aditivo impresso + 1 página de explicação.
-5. **Para os demais**: envie aditivo por e-mail/WhatsApp com assinatura eletrônica (Clicksign, DocuSign, ZapSign — todos validam).
-6. **Arquive assinados** no ERP vinculado ao contrato. Marque "revisão tributária 2027 = OK".
-7. **Em janeiro/2027**: rode a primeira memória de cálculo real e envie aos clientes com 30 dias de antecedência do reajuste.
+1. Peça ao jurídico e ao contador a minuta de cláusula e de aditivo, adaptadas ao seu regime.
+2. Extraia do sistema os contratos ativos com término depois de 31/12/2026.
+3. Separe em duas pilhas, com e sem cláusula, e priorize os sem cláusula.
+4. Converse com os clientes principais antes de enviar o aditivo.
+5. Arquive os aditivos assinados vinculados ao contrato no sistema.
+6. Acompanhe a regulamentação e as alíquotas de referência.
 
 ## Fontes
 
-- [InvestNews: Reforma tributária: como funciona a revisão de preço dos contratos em 2027](https://investnews.com.br/economia/reforma-tributaria-revisao-contratos-2027/)
-- [Piraciadv.blog: CBS e IBS em Contratos de Locação: Redução de Aluguel em 2027](https://piraciadv.blog/2026/09/27/parecer-acerca-a-neutralidade-dos-efeitos-do-cbs-e-ibs-para-2027-e-2028-e-a-efetiva-reducao-do-valor-dos-contratos-em-andamento-material-para-baixa/)
-- [Contábeis: Simulação de Preço na Reforma Tributária: Guia Completo](https://www.contabeis.com.br/artigos/78951/simulacao-de-preco-na-reforma-tributaria-guia-completo/)
-- [Conexês Contabilidade: Locadoras na reforma: IBS e CBS no aluguel e na venda da frota](https://conexescontabilidade.com.br/br/seo/locadoras-de-veiculos-e-de-equipamentos-ibs-e-cbs-na-locacao-de-bens-moveis/)
-- [PraticoLocacoes: Reforma Tributária na Locação de Bens Móveis | Guia Completo](https://praticolocacoes.com.br/reforma-tributaria-locacao-equipamentos-ibs-cbs/)
-- [TaxUp: Reforma Tributária na locação de máquinas e equipamentos](https://taxup.com.br/solucoes/reforma-tributaria/locacao-maquinas-equipamentos/)
-- [FazNota: Locação de máquinas e veículos: NFS-e com IBS e CBS a partir de 01/01/2027](https://faznota.com.br/blog/locacao-de-bens-moveis-nfse-ibs-cbs.php)
-- [Gov.br: Receita Federal e Comitê Gestor do IBS publicam documentação técnica da plataforma pública do split payment (jun/2026)](https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/junho/receita-federal-e-comite-gestor-do-ibs-publicam-documentacao-tecnica-da-plataforma-publica-do-split-payment)
+- [LC 214/2025, arts. 343 a 349 (alíquotas de transição)](https://www.admdireito.com.br/legislacao/art/lec_00002142025-347)
+- [LC 214/2025, art. 47 (créditos)](https://www.admdireito.com.br/legislacao/art/lec_00002142025-47)
+- [LC 214/2025, art. 12 (base de cálculo)](https://www.admdireito.com.br/legislacao/art/lec_00002142025-12)

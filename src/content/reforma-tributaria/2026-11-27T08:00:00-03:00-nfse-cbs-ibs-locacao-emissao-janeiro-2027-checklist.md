@@ -3,118 +3,66 @@ image: "/assets/img/nfse-cbs-ibs-locacao-2027-checklist.jpg"
 title: "NFS-e com CBS/IBS na locação: o que muda na emissão a partir de janeiro de 2027"
 date: 2026-11-27T08:00:00-03:00
 theme: "reforma-tributaria"
-summary: "Layout da NFS-e com campos CBS/IBS, CST/CFOP, crédito do tomador, testes em 2026; checklist de preparação do sistema emissor e do financeiro para o split payment."
-source: "FazNota; PraticoLocacoes; Contábeis; TaxUp; Gov.br; Conexês Contabilidade; Advanced Contabil"
-readingTime: "5 min"
+summary: "O que os comunicados oficiais e a LC 214/2025 dizem sobre documento fiscal com IBS e CBS, a diferença entre locação pura e locação com serviço, e um checklist de conferência do sistema emissor e do financeiro para a virada de 2027."
+source: "CGIBS (comunicados de 12/12/2025 e 15/06/2026); LC 214/2025, arts. 12, 32, 47 e 343 a 349 (texto conferido em Adm Direito); Prefeitura de São Paulo (SF/DEJUG 9/2026)"
+readingTime: "6 min"
 ---
 
-## O que muda na nota fiscal de locação em 2027
+Este texto **não é orientação tributária** e não traz leiaute técnico de documento fiscal. Os detalhes de campos, códigos e versões estão nas notas técnicas oficiais e dependem do seu sistema emissor. Ele reúne o que as fontes oficiais confirmam e propõe um checklist de conferência. Complementa [Ano de teste da CBS e do IBS](/reforma-tributaria/2026-11-18T08:50:00-03:00-ano-de-teste-da-cbs-e-do-ibs-checklist-de-adaptacao-da-locadora/).
 
-A partir de **01/01/2027**, a **NFS-e nacional** (padrão unificado) passa a exigir **campos específicos para CBS e IBS**, além do **split payment** (pagamento dividido). Quem emite nota hoje via prefeitura ou software próprio precisa testar em 2026 para não parar em janeiro.
+## O que as fontes oficiais confirmam
 
-## Novos campos obrigatórios na NFS-e (locação de bens móveis)
+- **Os campos já valem em 2026.** Segundo o comunicado do Comitê Gestor do IBS (CGIBS) com a Receita Federal, de 12/12/2025, o ano de 2026 é de testes, e os documentos fiscais eletrônicos devem ser emitidos com destaque de CBS e IBS. O comunicado de 15/06/2026 informa que, para empresas do regime regular, não seria permitida a emissão sem os campos a partir de 3 de agosto de 2026. **Não confirmamos em fonte oficial posterior se essa rejeição está em vigor.**
+- **A alíquota de teste é de 1% no total**, sendo 0,9% de CBS e 0,1% de IBS (arts. 346 e 343 da LC 214), e a apuração em 2026 é informativa, com compensação contra PIS e Cofins (art. 348).
+- **Em 2027 e 2028**, a CBS passa à alíquota de referência, reduzida em 0,1 ponto percentual (art. 347), e o IBS fica em 0,1% no total (art. 344).
 
-| Campo | Descrição | Exemplo locação |
-|-------|-----------|-----------------|
-| `tribIBS` | Grupo IBS | Obrigatório |
-| `tribCBS` | Grupo CBS | Obrigatório |
-| `vBC_IBS` | Base de cálculo IBS | R$ 10.000,00 |
-| `vBC_CBS` | Base de cálculo CBS | R$ 10.000,00 |
-| `pAliq_IBS` | Alíquota IBS (statutária) | 17,7%* |
-| `pAliq_CBS` | Alíquota CBS (statutária) | 8,8%* |
-| `vIBS` | Valor IBS (base × alíquota) | R$ 1.770,00 |
-| `vCBS` | Valor CBS (base × alíquota) | R$ 880,00 |
-| `cSitTrib` | Código de situação tributária (CST) | Ver tabela abaixo |
-| `cBenefFisc` | Código de benefício fiscal (se houver) | — |
-| `indSplit` | Indicador split payment | 1 = Sim |
+Ou seja, em janeiro de 2027 **não é a primeira vez** que o sistema emite campos de CBS e IBS. O que muda é que a CBS passa a ter alíquota de referência, e as regras de crédito e recolhimento seguem a regulamentação.
 
-*Alíquotas de teste 2026; definitivas virão em lei complementar.
+## Locação pura e locação com serviço: o documento pode ser diferente
 
-### CST para locação de bens móveis (sugestão baseada em discussões técnicas 2026)
+Na **locação pura** de bens móveis, a Prefeitura de São Paulo, na Solução de Consulta SF/DEJUG nº 9/2026, afirma que não há fato gerador de ISS, não se aplica código de serviço e **não é exigida NFS-e** ([texto da consulta](https://prefeitura.sp.gov.br/documents/d/fazenda/sc-09-2026-pdf)). Isso não resolve como será o documento fiscal do IBS e da CBS nesse caso, porque a própria consulta diz que o município não tem competência para se manifestar sobre eles. Outros municípios podem ter entendimento diferente.
 
-| Situação | CST CBS | CST IBS | Observação |
-|----------|---------|---------|------------|
-| Locação padrão (Lucro Real/Presumido) | **01** (Operação tributável com crédito) | **01** | Regra geral |
-| Locação para Simples Nacional (tomador) | **01** | **01** | Crédito do tomador limitado |
-| Locação com imunidade/isenção | **02** / **03** | **02** / **03** | Raro em locação |
-| Locação exportação (raro) | **04** | **04** | Não incide |
+Se o contrato inclui **serviço** (por exemplo, operador), a nota tende a seguir a regra de serviço. Veja [Locação com operador](/reforma-tributaria/2026-12-11T08:00:00-03:00-locacao-com-operador-locacao-servico-ou-os-dois-o-que-muda-com-ibs-e-cbs/). A pergunta ao contador é: **que documento a minha locadora emite em 2027, em cada tipo de contrato, no meu município?**
 
-> **Atenção**: CST definitivo será publicado em ato do Comitê Gestor do IBS. Use a tabela acima como **referência de trabalho para testes em 2026**.
+## O que a nota precisa permitir
 
-## Split payment na prática: o que a nota dispara
+- **Crédito do cliente:** a apropriação de crédito exige documento fiscal eletrônico idôneo (art. 47, § 1º, II). Nota com erro prejudica o crédito do cliente. Veja [Crédito de CBS](/reforma-tributaria/2026-11-09T10:30:00-03:00-credito-de-cbs-como-a-locadora-passa-a-recuperar-imposto/).
+- **Split payment:** o art. 32 prevê que quem origina a transação de pagamento transmita ao prestador de serviço de pagamento as informações que vinculam a operação ao pagamento e identificam os valores de IBS e CBS. Como isso será feito na prática depende da regulamentação. Veja [Split payment](/reforma-tributaria/2026-11-07T09:00:00-03:00-split-payment-o-efeito-no-caixa-da-locadora/).
+- **Base de cálculo:** o IBS e a CBS não integram a própria base (art. 12, § 2º, I). O sistema precisa tratar isso do jeito que a regulamentação definir.
 
-1. **Emissão da NFS-e** com `indSplit = 1` + valores de CBS/IBS
-2. **Sistema bancário (SPB/Pix)** lê a nota → gera **QR Code Pix duplo**:
-   - Parte 1: valor líquido → chave Pix da locadora
-   - Parte 2: CBS + IBS → conta única da União/Estados/Municípios
-3. **Cliente paga um único Pix** → sistema divide automaticamente
-4. **Locadora recebe só o líquido** no extrato
-5. **Comprovante do split** (gerado pelo banco) = prova de recolhimento (substitui DARF/GNRE)
+## Checklist de conferência do emissor
 
-## Checklist de preparação do sistema emissor (teste em 2026)
+- [ ] Perguntar ao fornecedor do sistema qual **versão do leiaute** está em uso e se está atualizada conforme as notas técnicas oficiais.
+- [ ] Pedir um **ambiente de teste** e emitir notas de locação com os campos de CBS e IBS preenchidos.
+- [ ] Conferir se a nota é **autorizada** e se os valores batem com o esperado.
+- [ ] Definir quem responde por **rejeições** e em quanto tempo.
+- [ ] Testar a nota para **cliente do regime regular** e para **cliente fora dele**, que tendem a ter tratamentos diferentes.
+- [ ] Confirmar com o contador o **documento correto** para locação pura e para locação com serviço, no seu município.
+- [ ] Guardar evidências dos testes (notas, mensagens de erro, datas).
 
-### Até 30/06/2026
-- [ ] Contate seu **fornecedor de software emissor** (NFS-e): "Já têm versão homologada com CBS/IBS/split?"
-- [ ] Peça **ambiente de homologação (sandbox)** para testar emissão.
-- [ ] Valide: CST, alíquotas, base de cálculo, QR Code split, XML/JSON padrão.
+## Checklist do financeiro
 
-### Até 30/09/2026
-- [ ] **Teste emissão completa**: locação R$ 10.000 → NFS-e com CBS/IBS → QR Code split → pagamento simulado → conciliação.
-- [ ] Verifique **CFOP** para locação: **5.929** (prestação de serviço de locação de bens móveis) ou o que seu contador definir.
-- [ ] Teste **crédito do tomador**: emita nota para CNPJ seu (simulação) → veja se crédito aparece na DCTFWeb dele.
+- [ ] Conciliar **nota, recebimento e tributo**: o extrato pode mostrar valores diferentes do total da nota, conforme a regulamentação do split.
+- [ ] Conferir como a locadora **apura débitos e créditos** na escrituração, com o contador.
+- [ ] Revisar a **previsão de caixa**, que não deve supor, por enquanto, como o split afetará cada tipo de cliente.
+- [ ] Ajustar o plano de contas para separar créditos de **IBS e CBS**, que não se compensam entre si (art. 47, § 1º, I).
 
-### Até 30/11/2026
-- [ ] **Treine equipe de faturamento**: novos campos, CST, split, o que explicar ao cliente.
-- [ ] Atualize **modelo de contrato**: cláusula de pagamento split (já vimos no post anterior).
-- [ ] Alinhe com **contador**: como a locadora vai apurar crédito próprio (peças, diesel, energia, aluguel) na DCTFWeb nova.
+## Comunicação ao cliente
 
-### Dezembro/2026
-- [ ] **Emissão paralela** (produção + homologação) por 15 dias — compare XMLs.
-- [ ] **Go-live** 01/01/2027 com monitoramento diário primeira semana.
-
-## Checklist do financeiro (conciliação split)
-
-| Antes (2026) | Depois (2027) | Ação |
-|--------------|---------------|------|
-| Cliente paga R$ 12.650 → locadora | Cliente paga R$ 10.000 (locadora) + R$ 2.650 (gov) | Ajuste conciliação: **só o líquido entra no contas a receber** |
-| Locadora guarda R$ 2.650 → recolhe DARF dia 20 | Recolhimento **instantâneo/automático** no pagamento | Elimine tarefa "recolher PIS/COFINS/ICMS/ISS" |
-| Comprovante = DARF pago | Comprovante = **recibo do split (banco/SPB)** | Arquive PDF do split no lugar do DARF |
-| Crédito = compensação mensal | Crédito = **apuração na DCTFWeb mensal** | Contador deve configurar nova rotina |
-
-## O que explicar ao cliente (1 página, anexo ao contrato/aditivo)
-
-> **A partir de 01/01/2027, o pagamento da locação muda:**
->
-> 1. **Valor do contrato NÃO muda** (a diária continua a mesma).
-> 2. Na hora de pagar, o **Pix vai gerar 2 destinos automáticos**: sua locadora (líquido) + governo (CBS/IBS).
-> 3. Você **não precisa fazer nada diferente** — paga o Pix único que o banco divide.
-> 4. O **comprovante do banco** vale como prova de que o imposto foi recolhido.
-> 5. Dúvidas? Fale com seu contador ou chame a gente.
-
-## Armadilhas comuns em 2026 (evite)
-
-| Armadilha | Consequência | Prevenção |
-|-----------|--------------|-----------|
-| Não testar em homologação | Nota rejeitada em jan/2027; emissão manual de emergência | Teste **agosto a novembro** |
-| CST errado | Crédito do tomador não entra; fiscalização | Valide com contador + software |
-| Financeiro não preparado para só líquido | Fluxo de caixa "some" R$ 2.650 por R$ 10.000 | Simule no caixa: receita líquida = 73,5% do bruto |
-| Não comunicar cliente | Cliente acha que é "aumento disfarçado" | Envie 1-pager em nov/2026 + cláusula no aditivo |
+Quando houver mudança relevante na forma de cobrar ou de pagar, avise o cliente com antecedência, com explicação simples e sem prometer detalhes que dependem de regulamentação. Combine com a revisão contratual em [Contratos de preço fechado e a virada de 2027](/reforma-tributaria/2026-11-26T08:00:00-03:00-contratos-preco-fechado-virada-2027-clausulas-revisao-cbs-ibs/).
 
 ## Como aplicar na sua locadora
 
-1. **Esta semana**: ligue para o fornecedor do emissor NFS-e e peça cronograma de homologação CBS/IBS.
-2. **Agende com contador** simulação de carga tributária 2027 (Lucro Real/Presumido/Simples) — base para precificação.
-3. **Monte grupo WhatsApp/Equipe**: faturamento + financeiro + contador + TI/fornecedor software.
-4. **Rodar piloto** em setembro: 10 notas teste no sandbox → valide XML, QR Code split, conciliação.
-5. **Novembro**: treine equipe, envie comunicado clientes, assine aditivos.
-6. **01/01/2027**: monitore primeiras 50 notas — qualquer erro, acione suporte do software em < 1 h.
+1. Ligue para o fornecedor do emissor e peça a situação da adaptação (versão do leiaute, ambiente de teste).
+2. Peça ao contador a classificação de cada tipo de contrato (locação pura, com serviço, misto) e o documento fiscal correspondente.
+3. Reúna faturamento, financeiro, contador e fornecedor do sistema em uma conversa curta para fechar responsáveis.
+4. Rode uma bateria de notas de teste e arquive os resultados.
+5. Acompanhe os comunicados do CGIBS e da Receita Federal, e anote a data de cada consulta.
 
 ## Fontes
 
-- [FazNota: Locação de máquinas e veículos: NFS-e com IBS e CBS a partir de 01/01/2027](https://faznota.com.br/blog/locacao-de-bens-moveis-nfse-ibs-cbs.php)
-- [PraticoLocacoes: Reforma Tributária na Locação de Bens Móveis | Guia Completo](https://praticolocacoes.com.br/reforma-tributaria-locacao-equipamentos-ibs-cbs/)
-- [Contábeis: Reforma Tributária: locação de bens móveis e crédito tributário](https://www.contabeis.com.br/artigos/79053/reforma-tributaria-locacao-de-bens-moveis-e-credito-tributario/)
-- [TaxUp: Reforma Tributária na locação de máquinas e equipamentos](https://taxup.com.br/solucoes/reforma-tributaria/locacao-maquinas-equipamentos/)
-- [Gov.br: Receita Federal e Comitê Gestor do IBS publicam documentação técnica da plataforma pública do split payment (jun/2026)](https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/junho/receita-federal-e-comite-gestor-do-ibs-publicam-documentacao-tecnica-da-plataforma-publica-do-split-payment)
-- [Conexês Contabilidade: Locadoras na reforma: IBS e CBS no aluguel e na venda da frota](https://conexescontabilidade.com.br/br/seo/locadoras-de-veiculos-e-de-equipamentos-ibs-e-cbs-na-locacao-de-bens-moveis/)
-- [Advanced Contabil: Locação de Equipamentos e Máquinas: CBS/IBS para Construtoras](https://advancedcontabil.com.br/blog/locacao-equipamentos-maquinas-cbs-ibs)
+- [CGIBS: orientações sobre a entrada em vigor da CBS e do IBS em 1º de janeiro de 2026 (12/12/2025)](https://www.cgibs.gov.br/comite-gestor-do-ibs-e-receita-federal-divulgam-orientacoes-sobre-a-entrada-em-vigor-da-cbs-e-do-ibs-em-1-de-janeiro-de-2026)
+- [CGIBS: novo marco da reforma tributária inicia em 3 de agosto com o preenchimento de campos do IBS e da CBS (15/06/2026)](https://www.cgibs.gov.br/novo-marco-da-reforma-tributaria-inicia-em-03-de-agosto-com-preenchimento-obrigatorio-dos-campos-relativos-ao-ibs-e-a-cbs)
+- [Prefeitura de São Paulo: Solução de Consulta SF/DEJUG nº 9/2026](https://prefeitura.sp.gov.br/documents/d/fazenda/sc-09-2026-pdf)
+- [LC 214/2025, arts. 343 a 349 e 12 (texto)](https://www.admdireito.com.br/legislacao/art/lec_00002142025-347)
+- [LC 214/2025, art. 47 (créditos)](https://www.admdireito.com.br/legislacao/art/lec_00002142025-47)
