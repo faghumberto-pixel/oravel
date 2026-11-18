@@ -4,13 +4,13 @@ title: "Quando vender um equipamento: os dois sinais juntos"
 date: 2026-11-07T11:00:00-03:00
 theme: "gestao-e-operacao"
 summary: "Custo de manutenção alto + utilização financeira baixa = hora de vender. Não espere quebrar de vez."
-source: "Rental Equipment Register — Fleet Management 101; TARGIT — Best KPIs; United Rentals"
+source: "TARGIT — Best KPIs (blog de fornecedor); United Rentals"
 readingTime: "5 min"
 ---
 
 ## A regra do mercado
 
-O mercado sugere **vender quando os dois sinais aparecem juntos**:
+Uma leitura comum em materiais de fornecedores do setor é **vender quando os dois sinais aparecem juntos** (não a confirmamos em fonte independente):
 
 1. **Custo de manutenção excessivo** — a máquina gasta mais em reparo do que rende
 2. **Baixa utilização financeira** — receita de locação / custo de aquisição está baixo
@@ -21,14 +21,14 @@ Se só um dos dois aparece, ainda dá para gerenciar. **Os dois juntos = decisã
 
 | Indicador | Alerta | Ação |
 |-----------|--------|------|
-| Custo manutenção acumulado / Valor residual | > 60% | Prepare venda |
+| Custo manutenção acumulado / Valor residual | Limite a definir (exemplo de partida: 60%) | Prepare venda |
 | Utilização financeira (receita / custo aquisição) | < 1.5× ao ano | Reavalie frota |
 | Dias parado por quebra / ano | > 30 dias | Candidato a venda |
 | Idade da frota | > referência do setor | Planeje renovação |
 
 ## Reinvestimento
 
-Referência prática: **reinvestir ~10% do custo original da frota por ano** para manter a idade média. Isso evita o "choque de capital" de trocar tudo de uma vez.
+Referência citada em conversas do setor, **sem fonte confirmada por nós**: reinvestir algo como 10% do custo original da frota por ano para manter a idade média. Isso evita o "choque de capital" de trocar tudo de uma vez.
 
 ## Valor residual
 

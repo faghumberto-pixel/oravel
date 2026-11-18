@@ -4,7 +4,7 @@ title: "Preventiva ou corretiva: qual compensa"
 date: 2026-11-09T14:00:00-03:00
 theme: "gestao-e-operacao"
 summary: "A preventiva custa menos e é previsível. A corretiva é cara, imprevisível e para a frota. A conta fecha quando você registra cada reparo."
-source: "Rental Equipment Register — Fleet Management 101; United Rentals; EZRentOut; Build-Construct"
+source: "TARGIT (blog de fornecedor); United Rentals; EZRentOut; Build-Construct"
 readingTime: "6 min"
 ---
 
@@ -20,9 +20,9 @@ readingTime: "6 min"
 
 ## A regra prática do mercado
 
-> **No máximo 8% da frota parada** por manutenção/quebra. **Nenhum equipamento mais de 2 semanas quebrado**: alugar, consertar ou vender.
+> Segundo um blog da Targit (fornecedor de software), a referência é de **no máximo 8% da frota fora de condição de alugar** e **nenhum equipamento mais de duas semanas nessa situação**: alugar, consertar ou vender. Não confirmamos isso em outra fonte independente.
 
-Fonte: *Rental Equipment Register — Fleet Management 101* (regra 72-20-8)
+Fonte da referência: [blog da Targit](https://www.targit.com/blog/best-kpis-for-the-equipment-rental-industry), fornecedor de software (regra 72-20-8 e limite de duas semanas). Veja [A regra 72-20-8](/la-fora/2026-11-10T14:30:00-03:00-a-regra-72-20-8-como-as-locadoras-americanas-leem-a-propria-frota/).
 
 ## Como virar o jogo
 
