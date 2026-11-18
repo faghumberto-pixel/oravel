@@ -3,8 +3,8 @@ image: "/assets/img/tarifas-e-custo-da-frota-nos-eua-como-as-maiores-locadoras-d
 title: "Tarifas e custo da frota nos EUA: como as maiores locadoras descrevem o risco"
 date: 2026-12-08T08:00:00-03:00
 theme: "la-fora"
-summary: "Locadoras americanas listam tarifas de importação como risco para o custo de manutenção e reposição de frota e contam com contratos de compra fechados. O que isso sugere para quem importa máquinas e peças no Brasil."
-source: "United Rentals (10-Q, 2026); Construction Equipment (pesquisa com gestores de frota); Nasdaq; TTNews"
+summary: "A United Rentals lista tarifas entre os riscos para o custo de manutenção e reposição da frota, e gestores de frota relatam alta de preços de equipamentos. O que isso sugere, em método, para quem importa máquinas e peças no Brasil."
+source: "United Rentals (10-Q do 1º trimestre de 2026); Construction Equipment (pesquisa com gestores de frota); Nasdaq"
 readingTime: "5 min"
 ---
 
@@ -14,9 +14,8 @@ Os fatos abaixo vêm de relatórios e reportagens, e não de dados medidos por n
 
 ## O que as empresas dizem
 
-- A **United Rentals**, no 10-Q de 2026, cita custos maiores de manutenção e reposição decorrentes de tarifas entre os fatores de risco ([documento arquivado](https://www.boardroomalpha.com/sec/uri-10-q-2026-04-22-0001067701-26-000016)). Segundo o resumo disponível, a empresa não espera aumento de custo de investimento em 2026 porque as compras do ano já estão negociadas, e pretende trabalhar com fornecedores que consigam absorver ou evitar reajustes.
+- A **United Rentals**, no 10-Q do primeiro trimestre de 2026, lista entre os fatores de risco o aumento dos custos de manutenção e de reposição, inclusive por causa de tarifas, e a queda do valor residual dos equipamentos ([documento arquivado](https://www.boardroomalpha.com/sec/uri-10-q-2026-04-22-0001067701-26-000016)). No mesmo documento, a empresa diz que uma parte dos aumentos de custo causados pela inflação é repassada aos clientes, e que os mais relevantes repassados são combustível e entrega.
 - Análises de mercado, como a do [Nasdaq](https://www.nasdaq.com/articles/can-united-rentals-offset-cost-pressures-with-better-fleet-efficiency), apontam tarifas, custo de mão de obra e reposição de equipamentos como riscos contínuos para as margens, e discutem a eficiência de frota como compensação.
-- A **Herc** projetou investimento bruto em frota de locação entre US$ 1,25 bilhão e US$ 1,4 bilhão para 2026, segundo a imprensa financeira. A mesma cobertura relata que a ação oscilou em fevereiro de 2026 com a turbulência comercial, e que a preocupação principal era o efeito indireto das tarifas sobre decisões de investimento.
 
 ## O que dizem os gestores de frota
 
@@ -24,7 +23,7 @@ Segundo uma [pesquisa com gestores de frota](https://www.constructionequipment.c
 
 ## Três movimentos que aparecem nas fontes
 
-1. **Compra antecipada e contratos fechados:** fixar o investimento do ano com os fornecedores antes de mudanças de custo.
+1. **Planejar a compra com antecedência:** o risco de custo de reposição é um motivo para decidir o plano de frota do ano antes de mudanças de preço. Esta é uma leitura deste texto, e não uma prática descrita pelas empresas nas fontes.
 2. **Eficiência da frota:** usar melhor o que já existe, em vez de comprar mais. É o raciocínio de [Utilização](/tecnologia/2026-11-06T14:05:00-03:00-utilizacao-o-indicador-que-mais-importa/).
 3. **Repasse de custo:** análises mencionam a possibilidade de reajustar a diária. Em contratos longos, isso depende de cláusula, como em [Reajuste em contrato de prazo longo](/vendas/2026-11-30T10:00:00-03:00-reajuste-em-contrato-de-locacao-longo-indice-data-base-e-clausula-clara/).
 
@@ -50,5 +49,3 @@ O caso americano não se aplica ao Brasil linha por linha. O que serve é o mét
 - [United Rentals: 10-Q de 2026 (arquivo SEC)](https://www.boardroomalpha.com/sec/uri-10-q-2026-04-22-0001067701-26-000016)
 - [Nasdaq: Can United Rentals offset cost pressures with better fleet efficiency?](https://www.nasdaq.com/articles/can-united-rentals-offset-cost-pressures-with-better-fleet-efficiency)
 - [Construction Equipment: Fleet managers identify tariff effects](https://www.constructionequipment.com/industry-news/blog/55326755/impact-of-tariffs-on-equipment-valuation-and-fleet-management-strategies)
-- [TTNews: United Rentals may benefit from tariff chaos](https://www.ttnews.com/articles/united-rentals-tariff)
-- [TS2: Herc Holdings stock slides as tariff turmoil dents appetite for industrials](https://ts2.tech/en/herc-holdings-stock-slides-as-tariff-turmoil-dents-appetite-for-industrials/)

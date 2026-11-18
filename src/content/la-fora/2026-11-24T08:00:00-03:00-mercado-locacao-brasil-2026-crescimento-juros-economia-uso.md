@@ -3,74 +3,59 @@ image: "/assets/img/mercado-locacao-brasil-2026-crescimento.jpg"
 title: "Mercado de locação no Brasil 2026: crescimento de 7%, juros altos e 'economia do uso'"
 date: 2026-11-24T08:00:00-03:00
 theme: "la-fora"
-summary: "Panorama setorial com dados atuais: mercado deve ultrapassar R$ 52 bilhões; drivers (juros, infraestrutura, construção); perfil de demanda por região; mudança cultural do 'ter' para 'usar'."
-source: "Sobratema; ALEC; Valor Globo; EM.com.br; FolhaPE; Canal Diesel; e-Shoje; Máquinas & Equipamentos; Revista PEGN"
+summary: "O Rental Market Report (KPMG, a pedido da Analoc) estima R$ 52,9 bilhões em 2026, alta de 7%. O que o relatório diz sobre participação regional, número de empresas, juros e mão de obra, sem projeções que as fontes não trazem."
+source: "Rental Market Report (KPMG/Analoc, com apoio da Sobratema), conforme divulgado por Analoc, ALEC, Sobratema e Monitor Mercantil"
 readingTime: "5 min"
 ---
 
-## Números que definem o momento
+Os números abaixo vêm do **Rental Market Report**, elaborado pela consultoria KPMG a pedido da Analoc (Associação Brasileira dos Sindicatos e Associações Representantes dos Locadores de Equipamentos, Máquinas e Ferramentas), com apoio da Sobratema. Foram conferidos no texto divulgado pela [ALEC](https://alec.org.br/mercado-8/), que reproduz o comunicado, e no [Monitor Mercantil](https://monitormercantil.com.br/mercado-de-locacao-de-equipamentos-deve-crescer-7-em-2026-ultrapassando-r-52-bilhoes/). São estimativas de entidades do setor, e não dados oficiais de governo.
 
-O mercado brasileiro de locação de equipamentos deve **crescer 7% em 2026**, ultrapassando **R$ 52 bilhões** em faturamento, segundo a Sobratema. É o terceiro ano seguido de expansão acima do PIB, puxada por uma combinação rara: juros altos (que encarecem compra), carteira de obras públicas robusta e mudança cultural das construtoras.
+## Os números principais
 
-## Os 4 drivers principais
+- **Faturamento:** o mercado brasileiro de locação de máquinas e equipamentos deve chegar a **R$ 52,9 bilhões em 2026**, alta de **7%** sobre o ano anterior. A ALEC cita R$ 49,4 bilhões em 2025.
+- **Ritmo histórico:** nos últimos cinco anos, o setor teve aumento médio de **10% ao ano**, segundo o relatório.
+- **Peso na economia:** o rental responde por **0,4% do PIB**, contra cerca de 0,15% na Europa e 0,26% nos EUA, segundo o texto.
+- **Tamanho do setor:** **50 mil empresas** e **200 mil funcionários**, com **penetração de 40%** na relação entre locação e propriedade (o texto usa esse termo, sem detalhar o cálculo).
 
-### 1. Juros altos = aluguel mais competitivo
-Com Selic em dois dígitos, o custo de capital para comprar máquina nova subiu 30–40% em 2 anos. Locação vira **OpEx dedutível** vs. **CapEx imobilizado**. Construtoras médias (faturamento R$ 50–500 mi) são as que mais migram: "prefiro alugar 5 retroescavadeiras e guardar o caixa para terreno".
+## Onde está o mercado
 
-### 2. Infraestrutura e obra pública
-PAC, PAC Seleções, leilões de rodovia/ferrovia/porto, saneamento (Marco Legal) — R$ 200+ bilhões em obras contratadas ou em licitação 2024–2027. Locadoras que atendem empreiteiras de médio porte (turnover de frota alto) crescem 2× a média.
+O relatório indica a participação de cada região **no mercado** (e não o crescimento de cada uma):
 
-### 3. "Economia do uso" chegou à construção
-Pesquisa da ALEC com 300 construtoras mostra: **62% pretendem aumentar share de locação em 2026**. Motivos: flexibilidade, tecnologia mais nova na frota alugada, transferência de risco de manutenção, ESG (frota mais eficiente = menos emissão).
+| Região | Participação |
+|--------|--------------|
+| Sudeste | 60% |
+| Nordeste | 15% |
+| Sul | 13% |
+| Centro-Oeste | 7% |
+| Norte | 5% |
 
-### 4. Escassez de mão de obra especializada
-Operador qualificado custa caro e falta. Locadoras que entregam **máquina + operador certificado** (modelo *wet rental*) cobram 30–50% a mais e têm fila de espera. É a margem extra que paga a capacitação.
+Um dos executivos citados afirma que o mercado é **muito pulverizado**: pequenas empresas atendendo mercados regionais, médias companhias voltadas a obras maiores em todo o território e grandes empresas estruturadas para qualquer demanda.
 
-## Perfil de demanda por região (2026)
+## Por que a locação ganha espaço (segundo o relatório)
 
-| Região | Crescimento estimado | Drivers locais | Equipamentos mais demandados |
-|--------|---------------------|----------------|------------------------------|
-| **Sudeste** | 5–6% | Metrô SP, rodovias, data centers, retrofit predial | Plataformas, geradores, compactadores |
-| **Nordeste** | 10–12% | Transnordestina, eólicas, solar, saneamento, porto | Retro, mini escava, rolos, geradores |
-| **Sul** | 6–7% | Safra recorde, logística portuária, industrial | Colheitadeiras (locação sazonal), empilhadeiras |
-| **Centro-Oeste** | 8–9% | Agronegócio, Ferrogrão, Brasília (obras públicas) | Tratores, niveladoras, caminhões fora de estrada |
-| **Norte** | 9–10% | Mineração, hidrelétricas, infraestrutura urbana | Escavadeiras hidráulicas, caminhões articulados |
+O presidente da Analoc afirma que "o mercado de rental deixou de ser uma alternativa e passou a ser uma estratégia", porque, ao alugar, a empresa **libera capital** para outras áreas e **transfere a responsabilidade** por manutenção e gestão de frota. O presidente da Sobratema destaca o papel da locação em obras de infraestrutura e a previsibilidade de custos. São visões de entidades do setor.
 
-**Destaque**: Nordeste e Norte crescem acima da média pela primeira vez em década — deixaram de ser "mercado residual".
+## O que o relatório aponta como desafio
 
-## O que muda na operação da locadora
+- **Macroeconomia e juros altos.** O setor é intensivo em capital e tem custos operacionais altos, e por isso depende de fluxo de caixa. Sem ele, diz um dos executivos, fica mais difícil contratar mão de obra especializada.
+- **Mão de obra especializada**, descrita como outro gargalo.
 
-| Mudança | Ação prática |
-|---------|--------------|
-| **Ciclo de venda mais curto** | Construtora decide alugar em 1 semana (antes 30–60 dias). Tenha frota pronta, contrato padrão, vistoria ágil. |
-| **Exigência de tecnologia** | Cliente pede telemetria, relatório de utilização, emissão digital. Invista no básico (QR Code, portal cliente). |
-| **Contratos mais longos** | Locação 12–36 meses vira padrão em infra. Estruture precificação tiered (já vimos no post de vendas). |
-| **Sustentabilidade como requisito** | Editais públicos pedem frota Euro 5/6, biodiesel, gestão de resíduos. Documente e use como diferencial. |
-| **Concorrência de grandes entrando no miolo** | Mills, Armac, Lokamax, Tecnogera descendo para obras médias. Diferencie no atendimento, velocidade, especialização regional. |
+## O que este texto não afirma
 
-## Riscos no radar
+Não conferimos, nas fontes, números de **crescimento por região**, o percentual de construtoras que pretendem aumentar a locação, o impacto dos juros no custo de comprar máquina, nem valores de obras públicas. Esses dados circularam em outras versões deste assunto, mas não constam nas fontes primárias consultadas. Também não há aqui projeção de margem para "máquina com operador".
 
-1. **Inadimplência**: obras públicas pagam em 60–120 dias. Tenha linha de capital de giro e seguro de crédito.
-2. **Custo de peças/importados**: dólar alto encarece manutenção. Negocie contratos de manutenção com OEM (custo fixo).
-3. **Mão de obra de oficina**: mecânico hidráulico/diesel falta. Treine aprendizes, pague acima do mercado, retenha.
-4. **Dependência de 1–2 grandes clientes**: se uma obra para, sua receita cai 30%. Diversifique carteira (meta: nenhum cliente > 15%).
+## O que isso sugere para a sua locadora
 
-## Como aplicar na sua locadora
+O relatório é um retrato do setor, e não da sua operação. Perguntas que ele inspira:
 
-1. **Mapeie a carteira por região e setor** (infra, construção civil, industrial, agro, eventos). Onde está o crescimento?
-2. **Ajuste a frota ao perfil regional**: Nordeste = mais terraplenagem; Sul = logística/industrial; Sudeste = vertical/elétrico.
-3. **Monte pacote "máquina + operador"** para 3 modelos de alta demanda. Treine, certifique (NR-11/12), precifique com margem 40%.
-4. **Prepare proposta padrão para editais públicos**: documentação ESG, frota atendendo emissões, seguro, vistoria digital.
-5. **Revise capital de giro**: simule inadimplência de 30 dias do maior cliente. Tem fôlego? Se não, abra linha agora.
+1. **Onde está a sua receita** por região e por tipo de cliente? Veja o [painel mensal](/comunidade/2026-11-18T09:10:00-03:00-painel-mensal-da-locadora-oito-indicadores-e-formulas-modelo-para-copiar/).
+2. **Quanto do seu caixa** sustenta a frota e a oficina? Juros altos pesam em quem financia. Veja [Orçamento da locadora para 2027](/gestao-e-operacao/2026-12-18T08:00:00-03:00-orcamento-da-locadora-para-2027-um-roteiro-a-partir-do-historico/).
+3. **Você consegue contratar e manter** mecânicos e operadores? O relatório aponta a mão de obra como gargalo; veja [Cinco perguntas das pesquisas de mercado](/comunidade/2026-11-18T09:00:00-03:00-cinco-perguntas-que-as-pesquisas-de-mercado-deixam-para-cada-locadora/).
+4. **Qual a sua dependência de poucos clientes?** Veja [Retenção de clientes](/vendas/2026-11-21T08:00:00-03:00-retencao-clientes-locadora-pos-venda-estruturado/).
 
 ## Fontes
 
-- [Sobratema: Mercado de locação de equipamentos deve crescer 7% em 2026, ultrapassando R$ 52 bilhões](https://www.sobratema.org.br/noticias/index.php?slug=mercado-de-locacao-de-equipamentos-deve-crescer-7-em-2026-ultrapassando-r-52-bilhoes-4565163)
 - [ALEC: Mercado de locação de equipamentos deve crescer 7% em 2026](https://alec.org.br/mercado-8/)
-- [Valor Globo: Locação de equipamentos avança no Brasil e ganha espaço nas empresas](https://valor.globo.com/patrocinado/pressworks/noticia/2026/04/23/locacao-de-equipamentos-avanca-no-brasil-e-ganha-espaco-nas-empresas-1.ghtml)
-- [EM.com.br: Em cenário de juros altos, aluguel de máquinas se consolida](https://www.em.com.br/mundo-corporativo/2026/09/7503859-em-cenario-de-juros-altos-aluguel-de-maquinas-se-consolida.html)
-- [FolhaPE: Mercado de locação de máquinas cresce no Brasil e Nordeste ganha espaço](https://www.folhape.com.br/economia/mercado-de-locacao-de-maquinas-cresce-no-brasil-e-nordeste-ganha/502566/)
+- [Sobratema: Mercado de locação de equipamentos deve crescer 7% em 2026, ultrapassando R$ 52 bilhões](https://www.sobratema.org.br/noticias/index.php?slug=mercado-de-locacao-de-equipamentos-deve-crescer-7-em-2026-ultrapassando-r-52-bilhoes-4565163)
+- [Monitor Mercantil: mercado de locação deve crescer 7% em 2026 (26/03/2026)](https://monitormercantil.com.br/mercado-de-locacao-de-equipamentos-deve-crescer-7-em-2026-ultrapassando-r-52-bilhoes/)
 - [Canal Diesel: Mercado de locação de equipamentos deve crescer 7% em 2026](https://www.canaldiesel.com.br/2026/03/mercado-de-locacao-de-equipamentos-deve.html)
-- [e-Shoje: "Economia do uso", locação de equipamentos deve movimentar bilhões em 2026](https://eshoje.com.br/economia/economia-e-mercado/2026/07/economia-do-uso-locacao-de-equipamentos-deve-movimentar-bilhoes-em-2026-e-vira-alternativa-no-brasil/)
-- [Máquinas & Equipamentos: Mercado de locação de máquinas cresce no Brasil e Nordeste](https://maquinasequipamentos.com.br/mercado-de-locacao-de-maquinas-cresce-no-brasil-e-nordeste/)
-- [Revista PEGN: Mercado de locação de equipamentos avança no Brasil impulsionado por mudanças no setor da construção](https://revistapegn.globo.com/conteudo-de-marca/pressworks/noticia/2026/06/mercado-de-locacao-de-equipamentos-avanca-no-brasil-impulsionado-por-mudancas-no-setor-da-construcao-1.ghtml)

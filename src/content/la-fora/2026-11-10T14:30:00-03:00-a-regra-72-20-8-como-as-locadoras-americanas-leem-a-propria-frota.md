@@ -4,13 +4,13 @@ title: "A regra 72-20-8: como as locadoras americanas leem a própria frota"
 date: 2026-11-10T14:30:00-03:00
 theme: "la-fora"
 summary: "Uma referência prática do setor americano para saber se a frota está saudável: 72% alugada, 20% pronta, no máximo 8% parada."
-source: "Rental Equipment Register — Fleet Management 101; TARGIT — Best KPIs"
+source: "TARGIT — Best KPIs for the Equipment Rental Industry (blog de fornecedor)"
 readingTime: "7 min"
 ---
 
 ## A regra prática
 
-Publicações do setor americano descrevem uma referência simples para saber se a frota está saudável. Não é lei nem norma: é uma **regra prática** que ajuda a conversar com os números.
+Um blog da [Targit](https://www.targit.com/blog/best-kpis-for-the-equipment-rental-industry), fornecedor de software, descreve como "padrão do setor" uma referência simples de utilização física: 72% da frota alugada, 20% pronta no pátio e no máximo 8% fora de condição de alugar. **Não confirmamos essa referência em outra fonte independente**, nem a atribuição ao Rental Equipment Register que aparecia neste post. Não é lei nem norma: é uma **regra prática** que ajuda a conversar com os números.
 
 | Indicador | Referência | O que significa |
 |-----------|------------|-----------------|
@@ -26,7 +26,7 @@ Publicações do setor americano descrevem uma referência simples para saber se
 
 ## Regras práticas citadas
 
-- Reinvestir cerca de **10% do custo original da frota por ano** para manter a idade média
+- Reinvestir parte do custo da frota todos os anos para controlar a idade média. Um percentual de cerca de 10% circula em conversas do setor, mas **não o confirmamos nas fontes lidas**
 - Nenhum equipamento deveria ficar parado por quebra por mais de **duas semanas**: alugar, consertar ou vender
 - Equipamento com **manutenção excessiva e baixa utilização financeira** é candidato a venda
 
@@ -36,8 +36,7 @@ Os percentuais vêm do mercado americano e de publicações do setor. Eles serve
 
 ## Fontes
 
-- Rental Equipment Register, *Fleet Management 101*
-- TARGIT, *Melhores indicadores para locação de equipamentos*
+- [Targit: Best KPIs for the Equipment Rental Industry](https://www.targit.com/blog/best-kpis-for-the-equipment-rental-industry)
 - Quipli, *State of Rental Report 2026*
 - For Construction Pros, *Projeção da ARA para 2025*
 - International Rental News, *Relatório de mercado da ERA 2024*
