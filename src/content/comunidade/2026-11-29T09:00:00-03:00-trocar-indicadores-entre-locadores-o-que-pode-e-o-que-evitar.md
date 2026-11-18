@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/trocar-indicadores-entre-locadores-o-que-pode-e-o-que-evitar.jpg"
 title: "Trocar indicadores entre locadores: o que pode e o que evitar"
 date: 2026-11-29T09:00:00-03:00
 theme: "comunidade"

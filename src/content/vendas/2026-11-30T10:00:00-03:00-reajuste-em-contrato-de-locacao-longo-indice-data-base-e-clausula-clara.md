@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/reajuste-em-contrato-de-locacao-longo-indice-data-base-e-clausula-clara.jpg"
 title: "Reajuste em contrato de locação de prazo longo: índice, data-base e cláusula clara"
 date: 2026-11-30T10:00:00-03:00
 theme: "vendas"

@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/sazonalidade-na-locadora-como-medir-o-ciclo-da-demanda-com-24-meses-de-dados.jpg"
 title: "Sazonalidade na locadora: como medir o ciclo da demanda com 24 meses de dados"
 date: 2026-12-03T08:00:00-03:00
 theme: "gestao-e-operacao"

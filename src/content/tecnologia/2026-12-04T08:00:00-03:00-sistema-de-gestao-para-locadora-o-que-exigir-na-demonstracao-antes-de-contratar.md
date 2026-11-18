@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/sistema-de-gestao-para-locadora-o-que-exigir-na-demonstracao-antes-de-contratar.jpg"
 title: "Sistema de gestão para locadora: o que exigir na demonstração antes de contratar"
 date: 2026-12-04T08:00:00-03:00
 theme: "tecnologia"

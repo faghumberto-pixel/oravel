@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/locadora-no-simples-nacional-e-a-reforma-o-que-o-cliente-vai-perguntar-sobre-credito.jpg"
 title: "Locadora no Simples Nacional e a reforma: o que o cliente vai perguntar sobre crédito"
 date: 2026-12-05T08:00:00-03:00
 theme: "reforma-tributaria"

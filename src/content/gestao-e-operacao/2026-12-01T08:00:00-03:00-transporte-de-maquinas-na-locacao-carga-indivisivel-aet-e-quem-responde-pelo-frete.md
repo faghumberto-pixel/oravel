@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/transporte-de-maquinas-na-locacao-carga-indivisivel-aet-e-quem-responde-pelo-frete.jpg"
 title: "Transporte de máquinas na locação: carga indivisível, AET e quem responde pelo frete"
 date: 2026-12-01T08:00:00-03:00
 theme: "gestao-e-operacao"

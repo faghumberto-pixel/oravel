@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/estoque-de-pecas-da-oficina-curva-abc-e-criticidade-na-locadora.jpg"
 title: "Estoque de peças da oficina: como cruzar curva ABC e criticidade na locadora"
 date: 2026-11-28T08:00:00-03:00
 theme: "gestao-e-operacao"

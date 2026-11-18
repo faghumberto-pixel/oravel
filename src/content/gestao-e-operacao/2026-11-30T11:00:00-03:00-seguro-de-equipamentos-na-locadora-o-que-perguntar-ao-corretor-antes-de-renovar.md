@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/seguro-de-equipamentos-na-locadora-o-que-perguntar-ao-corretor-antes-de-renovar.jpg"
 title: "Seguro de equipamentos na locadora: o que perguntar ao corretor antes de renovar"
 date: 2026-11-30T11:00:00-03:00
 theme: "gestao-e-operacao"

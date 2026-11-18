@@ -1,4 +1,5 @@
 ---
+image: "/assets/img/cobranca-na-locacao-de-equipamentos-contrato-com-testemunhas-e-por-que-duplicata-nem-sempre-cabe.jpg"
 title: "Cobrança na locação de equipamentos: contrato com testemunhas e por que duplicata nem sempre cabe"
 date: 2026-12-02T08:00:00-03:00
 theme: "vendas"
