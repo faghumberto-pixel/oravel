@@ -23,3 +23,18 @@
 - https://unsplash.com/photos/UWU_i03dNq4
 - https://unsplash.com/photos/xRlI-L-kvrw
 - https://unsplash.com/photos/n95VMLxqM2I
+
+# Posts de novembro de 2026 (Unsplash License)
+
+- https://unsplash.com/photos/ZgmGq_eFmUs
+- https://unsplash.com/photos/gSlXYYX4U4g
+- https://unsplash.com/photos/bGMyTnSlYvE
+- https://unsplash.com/photos/XeRqsvi9qBc
+- https://unsplash.com/photos/EN1tF2EG-50
+- https://unsplash.com/photos/DIsLoeMXCuQ
+- https://unsplash.com/photos/eKY6_9W_iqY
+- https://unsplash.com/photos/gsJknVUwkog
+- https://unsplash.com/photos/WoZs8gGyQBY
+- https://unsplash.com/photos/CaZHJbYdEf0
+- https://unsplash.com/photos/n6dpoztQ2FY
+- https://unsplash.com/photos/OyI1n2iR52c
