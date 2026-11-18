@@ -109,6 +109,8 @@ async function principal() {
 
   // 2. Build
   console.log('\n2. Build (Eleventy + pagefind)');
+  // Limpa a saida antes: o Eleventy nao apaga arquivos de builds anteriores, e eles iriam ao ar.
+  fs.rmSync(path.join(RAIZ, '_site'), { recursive: true, force: true });
   const build = rodar('npm', ['run', 'build'], { stdio: 'inherit' });
   if (build.status !== 0) falhar('o build falhou.');
   const caminhoHome = path.join(RAIZ, '_site', 'index.html');
