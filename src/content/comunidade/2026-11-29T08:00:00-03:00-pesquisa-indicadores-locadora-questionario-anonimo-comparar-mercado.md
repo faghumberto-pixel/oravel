@@ -10,7 +10,9 @@ readingTime: "5 min"
 
 ## Por que pesquisar se você já tem seus números
 
-Seus números mostram **onde você está**. A pesquisa mostra **onde o mercado está**. A diferença entre os dois é **onde está a oportunidade** (ou o risco). Locadoras que participam de benchmarks anônimos tomam decisões de frota, preço e gente com 40% menos erro (Quipli 2026).
+Seus números mostram **onde você está**. Uma pesquisa bem desenhada pode mostrar **como o seu grupo ou o mercado se compara**. Este texto propõe um questionário como ponto de partida. Não afirmamos ganho de precisão nas decisões: não encontramos medição disso nas fontes lidas.
+
+**Antes de montar qualquer pesquisa entre locadoras, leia o cuidado concorrencial.** Troca de informação entre concorrentes é tema de atenção do CADE, e alguns dos indicadores abaixo (desconto médio, margem EBITDA, receita por funcionário, headcount) são **sensíveis**. Veja [Trocar indicadores entre locadores: o que pode e o que evitar](/comunidade/2026-11-29T09:00:00-03:00-trocar-indicadores-entre-locadores-o-que-pode-e-o-que-evitar/). **O questionário e as regras de uso devem ser revisados por um advogado de concorrência antes de circular.** Os indicadores sensíveis estão marcados com (S) nas tabelas.
 
 ## O que medir (15 indicadores essenciais)
 
@@ -26,9 +28,9 @@ Seus números mostram **onde você está**. A pesquisa mostra **onde o mercado e
 ### Financeiro & Comercial
 | Indicador | Fórmula | Unidade | Por que importa |
 |-----------|---------|---------|-----------------|
-| **Receita por funcionário** | Receita bruta ÷ Headcount total | R$ | Produtividade geral |
-| **EBITDA margin** | EBITDA ÷ Receita bruta | % | Saúde operacional |
-| **Desconto médio ponderado** | Σ(Desconto × Receita) ÷ Receita bruta | % | Disciplina de preço |
+| **Receita por funcionário (S)** | Receita bruta ÷ Headcount total | R$ | Produtividade geral |
+| **EBITDA margin (S)** | EBITDA ÷ Receita bruta | % | Saúde operacional |
+| **Desconto médio ponderado (S)** | Σ(Desconto × Receita) ÷ Receita bruta | % | Disciplina de preço |
 | **Ticket médio locação** | Receita bruta ÷ Nº locações | R$ | Mix de produtos/clientes |
 | **% Receita recorrente (12m+)** | Receita contratos >12m ÷ Total | % | Previsibilidade, valuation |
 | **Churn clientes ativos** | Clientes ativos ano anterior – atuais ÷ Ativos anterior | % | Retenção |
@@ -39,7 +41,7 @@ Seus números mostram **onde você está**. A pesquisa mostra **onde o mercado e
 |-----------|---------|---------|-----------------|
 | **Custo manutenção / Valor residual** | Custo manut. 12m ÷ Valor mercado atual | % | Hora de vender |
 | **Tempo médio check-out + check-in** | Média (saída + retorno) | Minutos | Eficiência balcão/oficina |
-| **Headcount / Ativo** | Funcionários totais ÷ Ativos totais | Ratio | Estrutura enxuta vs. pesada |
+| **Headcount / Ativo (S)** | Funcionários totais ÷ Ativos totais | Ratio | Estrutura enxuta vs. pesada |
 
 ## Desenho do questionário (modelo pronto)
 
@@ -60,16 +62,16 @@ Seus números mostram **onde você está**. A pesquisa mostra **onde o mercado e
 | 3 | Idade média da frota (anos) | ______ |
 | 4 | % Frota própria | ______ |
 | 5 | Capex / Receita (%) | ______ |
-| 6 | Receita por funcionário (R$) | ______ |
-| 7 | Margem EBITDA (%) | ______ |
-| 8 | Desconto médio ponderado (%) | ______ |
+| 6 | Receita por funcionário (R$) (S) | ______ |
+| 7 | Margem EBITDA (%) (S) | ______ |
+| 8 | Desconto médio ponderado (%) (S) | ______ |
 | 9 | Ticket médio locação (R$) | ______ |
 | 10 | % Receita contratos > 12 meses | ______ |
 | 11 | Churn clientes ativos (%) | ______ |
 | 12 | NPS transacional (pontos) | ______ |
 | 13 | Custo manut. 12m / Valor residual (%) | ______ |
 | 14 | Tempo check-out + check-in (min) | ______ |
-| 15 | Headcount / Ativo | ______ |
+| 15 | Headcount / Ativo (S) | ______ |
 
 ### Seção C – Qualitativo (opcional)
 16. **Maior gargalo 2025**: [Mão de obra] [Peças/fornecedores] [Preço/desconto] [Inadimplência] [Tecnologia] [Outro: ____]
@@ -81,7 +83,7 @@ Seus números mostram **onde você está**. A pesquisa mostra **onde o mercado e
 | Camada | Como fazer |
 |--------|------------|
 | **Coleta** | Google Forms / Microsoft Forms **sem coletar email**; link único por participante (não rastreável) |
-| **Armazenamento** | Planilha acessível **só ao facilitador/consultor** (não aos participantes) |
+| **Armazenamento** | Planilha acessível **apenas a um terceiro independente** (consultoria ou associação), e nunca a um dos participantes, que seriam concorrentes potenciais |
 | **Processamento** | Dados agregados por faixa (ex.: "Faturamento R$ 15–50 mi: n=8, mediana utilização financeira = 52%") |
 | **Regra de supressão** | Qualquer corte com **n < 5** não é mostrado (ex.: "Região Norte, >R$ 150 mi: n=2 → suprimido") |
 | **Devolução** | Cada participante recebe **seu número vs. mediana da sua faixa** — não vê os outros individualmente |
@@ -93,25 +95,28 @@ Seus números mostram **onde você está**. A pesquisa mostra **onde o mercado e
 |------------|-----------|
 | **Anual (obrigatório)** | Questionário completo (15 indicadores) — fecha em março (dados ano anterior) |
 | **Trimestral (opcional)** | Pulse curto: 5 indicadores-chave (utilização financeira, desconto médio, churn, NPS, Capex) |
-| **Governança** | Comitê de 3 donos (rodízio anual) + facilitador externo = valida metodologia, resolve disputas |
+| **Governança** | Terceiro independente conduz a coleta; definição das perguntas e das regras de uso validada por advogado de concorrência; ata registrada |
 
 ## Como usar os resultados na decisão
 
-| Decisão | Indicador-chave | Regra prática |
-|---------|-----------------|---------------|
-| **Comprar frota nova** | Utilização financeira > 65% + Capex/Receita < 15% | **Compre** (demanda paga) |
-| **Vender frota** | Custo manut/Valor > 20% + Utilização financeira < 40% | **Venda** (não paga o custo) |
-| **Subir preço / cortar desconto** | Desconto médio > mediana mercado + Utilização > 60% | **Aperte** (cliente aceita) |
-| **Contratar mecânico** | Headcount/Ativo < 0,8 (mediana) + Custo manut/Valor > 15% | **Contrate** (oficina é gargalo) |
-| **Investir em telemetria** | % Telemetria ativa < 50% (mediana) + Frota > 50 | **Pilote** (ROI comprovado) |
+Um indicador comparado não decide sozinho. Use os resultados como **pergunta para investigar**, e não como regra automática. Por exemplo:
+
+| Situação observada | Pergunta a investigar |
+|--------------------|-----------------------|
+| Utilização financeira da sua locadora abaixo da faixa do grupo | O problema é preço, frota parada, mix de máquinas ou carteira? Veja [Disponibilidade](/gestao-e-operacao/2026-12-13T08:00:00-03:00-disponibilidade-da-frota-mtbf-mttr-e-como-calcular-por-categoria-de-maquina/) |
+| Custo de manutenção alto em relação ao valor da máquina | É hora de avaliar a venda? Veja [Quando vender um equipamento](/gestao-e-operacao/2026-11-18T08:00:00-03:00-quando-vender-equipamento-criterios-idade-custo-utilizacao/) |
+| Desconto médio acima da faixa do grupo | Há política de desconto e registro? Veja [Rate control](/vendas/2026-11-04T17:15:00-03:00-rate-control-nao-dar-desconto-sem-criterio/) |
+| Poucos mecânicos para a frota | A oficina é o gargalo? Veja [Estoque de peças](/gestao-e-operacao/2026-11-28T08:00:00-03:00-estoque-de-pecas-da-oficina-curva-abc-e-criticidade-na-locadora/) |
+
+Os limites de decisão (quando comprar, vender ou contratar) devem vir da sua margem, do seu custo de capital e da sua carteira, e não de uma tabela genérica.
 
 ## Como aplicar na sua locadora (iniciando sozinho ou em grupo)
 
 ### Opção A – Grupo de 6–10 locadoras (ideal)
-1. **Convide pares de outras regiões** (WhatsApp/email): "Topo benchmark anônimo anual. 15 indicadores, 20 min, relatório comparativo. Topa?"
-2. **Defina facilitador** (um dos donos ou consultor) — roda a cada ano.
+1. **Procure um advogado de concorrência** para validar o questionário e a composição do grupo, e só depois convide pares de outras regiões.
+2. **Defina um terceiro independente** (consultoria ou associação) para conduzir a coleta, e não um dos participantes.
 3. **Envie link do Forms** em março/2026 (dados 2025). Prazo 30 dias.
-4. **Facilitador consolida**, suprime n<5, devolve relatório individual (seu vs. mediana da faixa).
+4. **O terceiro consolida**, suprime cortes com poucos participantes e devolve relatório individual (seu vs. mediana da faixa).
 5. **Reunião virtual 60 min** para discutir insights (não números individuais).
 6. **Repita 2027** — série histórica própria.
 
