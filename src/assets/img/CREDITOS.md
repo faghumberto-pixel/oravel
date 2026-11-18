@@ -67,3 +67,13 @@
 - https://www.pexels.com/photo/6801651/ — cobranca-na-locacao-de-equipamentos-contrato-com-testemunhas-e-por-que-duplicata-nem-sempre-cabe.jpg
 - https://www.pexels.com/photo/3184418/ — trocar-indicadores-entre-locadores-o-que-pode-e-o-que-evitar.jpg
 - https://www.pexels.com/photo/6295875/ — herc-compra-a-h-e-o-que-a-maior-aquisicao-do-setor-nos-eua-ensina-a-locadoras-menores.jpg
+
+# Posts de 07 e 08/12/2026 (Wikimedia Commons; atribuição)
+
+- https://commons.wikimedia.org/wiki/File:Laptop_Kensington_lock.jpg — Santeri Viinamäki, CC BY-SA 4.0
+- https://commons.wikimedia.org/wiki/File:Container-port_in_Buenos_Aires.jpg — Dan DeLuca, CC BY 2.0
+
+# Posts de 09 e 10/12/2026 (Wikimedia Commons; atribuição)
+
+- https://commons.wikimedia.org/wiki/File:Caterpillar_backhoe_loader_at_construction_site_in_Sunnyvale.jpg — Grendelkhan, CC BY-SA 3.0
+- https://commons.wikimedia.org/wiki/File:Legal_Contract_%26_Signature_-_Warm_Tones.jpg — Blogtrepreneur, CC BY 2.0
