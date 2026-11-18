@@ -92,6 +92,9 @@ module.exports = function(eleventyConfig) {
     return DateTime.fromJSDate(dateObj, { zone: 'America/Sao_Paulo' }).toFormat('EEE, dd MMM yyyy HH:mm:ss ZZZ');
   });
 
+  // Remove itens com data no futuro (usado no sitemap, que so lista o que ja foi publicado)
+  eleventyConfig.addFilter('jaPublicados', (posts) => posts.filter(p => p.date <= new Date()));
+
   eleventyConfig.addFilter('limit', (arr, n) => arr.slice(0, n));
 
   // Ranking da home: junta posts com dados de src/_data/ranking.json.
