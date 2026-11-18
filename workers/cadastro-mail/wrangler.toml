@@ -2,6 +2,7 @@ name = "oravel-cadastro-mail"
 main = "src/index.js"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
+preview_urls = false
 
 [vars]
 FIREBASE_PROJECT = "oravel-org"

@@ -51,6 +51,7 @@ export default {
       "Empresa: " + limpa(d.empresa, 120),
       "WhatsApp: " + limpa(d.whatsapp, 20),
       "Cidade/UF: " + limpa(d.cidade, 80) + "/" + limpa(d.estado, 2),
+      "Origem: " + (limpa(d.origem, 60) || "direto"),
       "", "UID: " + claims.sub
     ].join("\n");
 
