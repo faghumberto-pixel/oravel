@@ -16,11 +16,11 @@ Este texto é uma orientação comercial, e não parecer jurídico. As fontes qu
 
 A Lei 10.192/2001 declara nula qualquer cláusula de reajuste ou correção monetária com periodicidade inferior a um ano (art. 2º, §1º, conforme [transcrição da lei](https://www.admdireito.com.br/legislacao/art/lei_00101922001-2)). Na prática, o reajuste de preço em contrato privado só pode ser aplicado quando completa 12 meses, contados da data-base definida.
 
-O índice, por sua vez, pode ser escolhido pelas partes no contrato. Uma locadora pode adotar um índice geral de preços, um índice de custo da construção ou uma composição de índices, desde que isso esteja escrito e seja objetivo.
+O caput do mesmo artigo admite a estipulação de reajuste por índices de preços gerais, setoriais ou que reflitam a variação dos custos de produção ou dos insumos nos contratos de prazo de duração igual ou superior a um ano. O índice, por sua vez, pode ser escolhido pelas partes no contrato. Uma locadora pode adotar um índice geral de preços, um índice de custo da construção ou uma composição de índices, desde que isso esteja escrito e seja objetivo.
 
 ## Cláusula genérica não ajuda
 
-Uma decisão do [TJSC](https://www.legjur.com/jurisprudencia/eme/320.7597.5495.7472), em contrato administrativo, entendeu que, quando o contrato só remete à Lei 10.192 sem definir índice, data-base ou fórmula, não há critério objetivo para aplicar o reajuste automaticamente. Embora o caso seja de contrato público, o raciocínio serve de alerta: "reajuste conforme a lei" é uma cláusula fraca.
+Uma decisão do [TJSC](https://www.admdireito.com.br/jurisprudencia/eme/320.7597.5495.7472), em contrato administrativo, entendeu que, quando o contrato só remete à Lei 10.192 sem definir índice, data-base ou fórmula, não há critério objetivo para aplicar o reajuste automaticamente. Embora o caso seja de contrato público, o raciocínio serve de alerta: "reajuste conforme a lei" é uma cláusula fraca.
 
 Material sobre contratos de aluguel também alerta que expressões como "reajuste anual pelo IGP-M", sem data-base e período de referência, deixam espaço para interpretações diferentes ([Partnr](https://www.partnr.ai/blog/indice-de-reajuste-de-aluguel)).
 
@@ -54,5 +54,5 @@ Material sobre contratos de aluguel também alerta que expressões como "reajust
 ## Fontes
 
 - [Lei 10.192/2001, art. 2º (transcrição)](https://www.admdireito.com.br/legislacao/art/lei_00101922001-2)
-- [TJSC: decisão sobre cláusula de reajuste sem índice e data-base definidos](https://www.legjur.com/jurisprudencia/eme/320.7597.5495.7472)
+- [TJSC: decisão sobre cláusula de reajuste sem índice e data-base definidos](https://www.admdireito.com.br/jurisprudencia/eme/320.7597.5495.7472)
 - [Partnr: reajuste de aluguel, IGP-M, IPCA ou INPC](https://www.partnr.ai/blog/indice-de-reajuste-de-aluguel)

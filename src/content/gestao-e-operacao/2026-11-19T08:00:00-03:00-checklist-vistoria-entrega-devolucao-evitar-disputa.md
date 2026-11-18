@@ -10,7 +10,7 @@ readingTime: "5 min"
 
 ## Por que a vistoria virou obrigação, não opção
 
-Sem registro datado, a cobrança de dano vira "palavra contra palavra". Locadoras dos EUA que adotaram vistoria fotográfica padronizada relatam queda de disputas e recebimento mais rápido de danos. No Brasil, o termo assinado na saída e na volta blinda os dois lados.
+Sem registro datado, a cobrança de dano vira "palavra contra palavra". Empresas americanas de software de vistoria, como a Record360, defendem que registrar a condição do equipamento antes e depois da locação ajuda a cobrar danos e a evitar disputas. É um argumento de fornecedor do setor, e não encontramos medição independente do efeito. No Brasil, o termo assinado na saída e na volta blinda os dois lados.
 
 ## O que registrar (o mínimo viável)
 
@@ -44,13 +44,13 @@ Inclua cláusula que:
 | Etapa | Responsável | Ferramenta | Evidência |
 |-------|-------------|------------|-----------|
 | Preparar máquina | Oficina | Checklist papel/app | Fotos + assinatura oficina |
-| Vistoria saída | Operador balcão | Celular + app gratuito (Google Forms, Microsoft Forms, Checklist Fácil, GoCodes free) | PDF gerado + assinatura cliente (WhatsApp/email) |
+| Vistoria saída | Operador balcão | Celular + formulário ou aplicativo de checklist | PDF gerado + assinatura cliente (WhatsApp/email) |
 | Entregar resumo ao cliente | Balcão | Mesmo app | Cliente confirma "recebi e concordo" |
 | Vistoria retorno | Oficina (até 4 h após chegada) | Mesmo app | PDF comparativo lado a lado |
 | Aviso de dano novo | Comercial | WhatsApp/email com PDF | Registro de ciência do cliente |
 | Fechamento | Financeiro | ERP | Lança cobrança ou libera caução |
 
-**Apps gratuitos testados por locadoras brasileiras**: Google Forms + Form Publisher (gera PDF), Microsoft Forms, Checklist Fácil (plano free), GoCodes (free até 25 ativos), QR Code Generator + planilha.
+**Exemplos de ferramentas que podem servir** (não as testamos, e planos gratuitos mudam com o tempo; confira limites e condições antes de adotar): Google Forms com um complemento de geração de PDF, Microsoft Forms, aplicativos de checklist e geradores de QR Code com planilha.
 
 ## Como aplicar na sua locadora
 

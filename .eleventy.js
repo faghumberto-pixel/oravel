@@ -94,6 +94,20 @@ module.exports = function(eleventyConfig) {
 
   eleventyConfig.addFilter('limit', (arr, n) => arr.slice(0, n));
 
+  // Ranking da home: junta posts com dados de src/_data/ranking.json.
+  // campo: 'leituras' ou 'nota'. Para 'nota', exige um minimo de votos.
+  eleventyConfig.addFilter('topPorRanking', (posts, ranking, campo, n = 5) => {
+    const itens = (ranking && ranking.itens) || {};
+    const minVotos = (ranking && ranking.notaMinimaVotos) || 0;
+    return posts
+      .map(post => ({ post, r: itens[post.fileSlug] }))
+      .filter(x => x.r && (campo !== 'nota' || x.r.votos >= minVotos))
+      .sort((a, b) => b.r[campo] - a.r[campo] || b.r.votos - a.r.votos)
+      .slice(0, n);
+  });
+  eleventyConfig.addFilter('numBr', (n) => Number(n).toLocaleString('pt-BR'));
+  eleventyConfig.addFilter('notaBr', (n) => Number(n).toFixed(1).replace('.', ','));
+
   eleventyConfig.addFilter('themeLabel', (theme) => {
     const labels = {
       'reforma-tributaria': 'Reforma tributária',

@@ -4,7 +4,7 @@ title: "Por que a manutenção decide o resultado da locadora"
 date: 2026-11-10T09:30:00-03:00
 theme: "gestao-e-operacao"
 summary: "Equipamento parado não fatura. Mas o prejuízo não termina na diária perdida: o cliente procura outra locadora e você pode precisar subalugar."
-source: "Rental Equipment Register — Fleet Management 101; United Rentals; EZRentOut; Build-Construct"
+source: "TARGIT (blog de fornecedor); United Rentals; EZRentOut; Build-Construct"
 readingTime: "8 min"
 ---
 
@@ -16,7 +16,7 @@ O outro lado também é verdadeiro. Alugar o máximo, sem parar para revisar, **
 
 ## Referência do mercado americano
 
-Publicações do setor sugerem que, no máximo, **8% da frota fique parada** por manutenção ou quebra, e que **nenhum equipamento passe de duas semanas quebrado**: alugar, consertar ou vender.
+Um blog da Targit, fornecedor de software, descreve como referência que **no máximo 8% da frota** fique fora de condição de alugar, e que **nenhum equipamento passe de duas semanas** nessa situação: alugar, consertar ou vender. Não confirmamos isso em outra fonte independente.
 
 Veja a [regra 72-20-8 na íntegra →](/la-fora/)
 

@@ -19,7 +19,7 @@ Segundo as análises consultadas (por exemplo, [CRC-SP](https://online.crcsp.org
 1. **Manter IBS e CBS dentro do regime unificado do Simples**; ou
 2. **Apurar IBS e CBS pelo regime regular**, mantendo os demais tributos no Simples (o chamado regime híbrido).
 
-A ConJur descreve que essa opção é semestral e irretratável no período. Confirme a regra e os prazos vigentes.
+Segundo a [Migalhas](https://www.migalhas.com.br/depeso/463764/simples-nacional-e-ibs-cbs-impactos-para-fornecedor-e-cliente), a LC 123/2006 (art. 13, §§ 9º e 10, na redação atual) estabelece que a opção produz efeitos por semestre, é **irretratável em cada período** e deve ser exercida nos meses de **setembro e março** que antecedem os semestres iniciados em janeiro e julho. A [ConJur](https://www.conjur.com.br/2025-nov-14/quer-pagar-como-reforma-tributaria-e-simples-nacional//?print=1) também fala em opção semestral. Confirme com o contador a regra e os prazos vigentes.
 
 ## O que muda para o cliente
 

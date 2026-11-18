@@ -4,7 +4,7 @@ title: "Transporte de máquinas na locação: carga indivisível, AET e quem res
 date: 2026-12-01T08:00:00-03:00
 theme: "gestao-e-operacao"
 summary: "Levar a máquina até a obra envolve regras de peso e dimensão, autorização do DNIT ou do estado e responsabilidades que precisam estar no contrato. Um roteiro para a locadora organizar o frete sem surpresa."
-source: "DNIT (Resolução nº 11/2022 e regras de AET); SETCESP; DER-SE (Portaria 034/2025)"
+source: "DNIT (Resolução nº 11/2022); DER-SE (Portaria 034/2025)"
 readingTime: "5 min"
 ---
 
@@ -20,7 +20,7 @@ Na prática, uma escavadeira de médio porte sobre prancha pode ultrapassar limi
 
 ## O que é a AET
 
-A Autorização Especial de Trânsito (AET) é o documento que autoriza o trânsito de veículo ou combinação com carga indivisível. Segundo o [SETCESP](https://setcesp.org.br/noticias/dnit-regulamenta-transporte-de-cargas-indivisiveis-em-rodovias-federais/), ela é solicitada pelo transportador ou embarcador no sistema do DNIT. Rodovias estaduais têm regras e emissão próprias: por exemplo, o DER de Sergipe publicou a [Portaria 034/2025](https://der.se.gov.br/wp-content/uploads/2025/02/PORTARIA-No-034_2025.pdf), que prevê comprovação de indivisibilidade com responsabilidade técnica de engenheiro.
+A Autorização Especial de Trânsito (AET) é o documento que autoriza o trânsito de veículo ou combinação com carga indivisível. A Resolução nº 11/2022 prevê que a AET é solicitada, analisada e expedida por um sistema do DNIT (o SIAET), e que o custo de eventuais exigências, como vistorias de obras de arte, cabe ao interessado no transporte. Rodovias estaduais têm regras e emissão próprias: por exemplo, o DER de Sergipe publicou a [Portaria 034/2025](https://der.se.gov.br/wp-content/uploads/2025/02/PORTARIA-No-034_2025.pdf), que permite ao DER exigir comprovação de indivisibilidade da carga, mediante responsabilidade técnica do engenheiro que assinar a ART ou do requerente.
 
 Pontos que costumam pesar no planejamento:
 
@@ -30,7 +30,7 @@ Pontos que costumam pesar no planejamento:
 
 ## Quem responde pelo quê
 
-Pela regra federal descrita pelo SETCESP, cabe ao transportador sinalizar e remover a carga em caso de acidente ou pane, retomando o fluxo normal em até 24 horas. Isso responde pela estrada. Dentro do contrato de locação, a divisão entre locadora e cliente é negociada:
+Pela Resolução nº 11/2022 (art. 6º), em acidente ou problema mecânico em rodovia sob jurisdição do DNIT, cabe ao transportador sinalizar e remover a carga em tempo adequado. Para cargas que ultrapassem os limites do art. 24 (largura de 4,50 m, altura de 5,30 m, comprimento de 30 m ou peso bruto de 100 t), é exigido ainda um plano de contingência, com meta de retomar o fluxo em até 24 horas. Isso responde pela estrada. Dentro do contrato de locação, a divisão entre locadora e cliente é negociada:
 
 | Ponto | Decisão a registrar no contrato |
 |-------|-------------------------------|
@@ -67,6 +67,5 @@ O frete entra no custo do contrato, e não só na diária. A conta de [Custo por
 ## Fontes
 
 - [DNIT: Resolução nº 11/2022 (AET)](https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/resolucoes-aet/Resoluon11_2022PortugusBrasil.pdf)
-- [SETCESP: Dnit regulamenta transporte de cargas indivisíveis em rodovias federais](https://setcesp.org.br/noticias/dnit-regulamenta-transporte-de-cargas-indivisiveis-em-rodovias-federais/)
 - [DER-SE: Portaria nº 034/2025](https://der.se.gov.br/wp-content/uploads/2025/02/PORTARIA-No-034_2025.pdf)
 - [Bsoft: cargas indivisíveis](https://bsoft.com.br/blog/cargas-indivisiveis)

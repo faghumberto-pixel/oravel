@@ -4,35 +4,35 @@ title: "Inteligência artificial na operação: o que já é prática e o que ai
 date: 2026-11-11T10:30:00-03:00
 theme: "tecnologia"
 summary: "Manutenção preditiva, roteirização, inspeção por visão computacional e assistentes de operador — o que já roda em frota real e o que segue em piloto."
-source: "Caterpillar, Komatsu, Volvo CE, John Deere, Built Robotics, Trimble, Oracle Construction Cloud, relatórios IDC e McKinsey Global Institute"
+source: "Materiais de fabricantes e plataformas (Caterpillar, Komatsu, Volvo CE, Trimble, Oracle); padrão AEMP/ISO 15143-3"
 readingTime: "10 min"
 ---
 
 ## IA já opera em cinco frentes nas grandes frotas
 
-Relatórios de fabricantes e plataformas de gestão apontam aplicações **em produção** (não apenas pilotos) em:
+Fabricantes e plataformas de gestão descrevem aplicações de IA em frentes como as abaixo. **Esses são materiais comerciais**: não conferimos de forma independente o que está em uso, o que ainda é piloto, nem os números de resultado que circulam sobre elas.
 
 ### 1. Manutenção preditiva baseada em condição
 Modelos aprendem o padrão de vibração, temperatura, pressão e corrente de cada máquina. Alerta surge **antes** do limiar de parada — não depois.
 - **Caterpillar (Cat Condition Monitoring)**: usa telemetria nativa + modelos para prever falhas de motor, transmissão e hidráulica.
 - **Komatsu (Komtrax Plus)**: combina dados de operação com histórico de manutenção; sugere janela de troca de componente.
-- **Resultado citado**: redução de 15–25 % em paradas não planejadas em frotas > 200 ativos (IDC, 2024).
+- Os resultados dependem de dados, de frota e de processo. Não verificamos estudos de terceiros que quantifiquem a redução de paradas.
 
 ### 2. Roteirização e alocação dinâmica de frota
 Algoritmos cruzam demanda de obras, disponibilidade de equipamento, combustível e janela de manutenção.
 - **Trimble Construction Cloud / Oracle Construction Cloud**: rebalanceiam alocação sem intervenção manual diária.
-- **Ganho relatado**: 8–12 % mais horas faturadas por ativo/mês em locadoras que migraram de planilha para alocação assistida.
+- Não verificamos medição independente de ganho de horas faturadas com alocação assistida.
 
 ### 3. Inspeção por visão computacional
 Câmeras fixas no pátio ou embarcadas detectam:
 - Danos em pneus, caçambas, implementos (classificação de gravidade).
 - Uso de EPI pelo operador (capacete, colete).
 - Vazamentos visuais em mangueiras e cilindros.
-- **Em produção**: Caterpillar Detect Technologies, Volvo CE Co-Pilot, John Deere See & Spray (adaptado para construção).
+- Exemplos de tecnologias de fabricantes que usam visão computacional ou assistência em campo: confirme com cada fabricante a disponibilidade, o escopo e a aplicação à construção.
 
 ### 4. Assistente de operador (operator coaching)
 Feedback em tempo real na cabine: "reduza rotação", "evite giro desnecessário", "mantenha zona de economia".
-- **Komatsu Intelligent Machine Control** / **Cat Grade with Assist**: reduzem consumo 5–10 % e ciclos por hora ↑ 3–7 % em operações de terraplanagem repetitiva.
+- Fabricantes oferecem sistemas de controle e assistência de máquina (por exemplo, da Komatsu e da Caterpillar). Não verificamos os percentuais de consumo e de ciclos que aparecem em materiais promocionais.
 
 ### 5. Escavação e carregamento autônomos (ainda pilotos controlados)
 - **Built Robotics**: escavadeiras e carregadeiras autônomas em obra de vala longa; supervisão remota 1:5.
@@ -91,8 +91,6 @@ Feedback em tempo real na cabine: "reduza rotação", "evite giro desnecessário
 - John Deere, *See & Spray Technology Adaptation for Construction* (2023)
 - Built Robotics, *Autonomous Excavation Fleet Deployment Report* (2024)
 - Trimble / Oracle Construction Cloud, *Dynamic Fleet Allocation Case Studies* (2024)
-- IDC, *Worldwide Construction Equipment Telematics and AI Forecast* (2024)
-- McKinsey Global Institute, *The Next Frontier for AI in Construction & Mining* (2023)
 - AEMP / ISO 15143-3, *Telematics Data Standard for Construction Equipment* (v2.0, 2022)
 
 > Artigo baseado em fontes técnicas e relatórios de mercado (maioria norte-americana/europeia). Números de economia e ROI variam por região, tipo de obra e maturidade da frota. Não há estudo brasileiro consolidado citado aqui.

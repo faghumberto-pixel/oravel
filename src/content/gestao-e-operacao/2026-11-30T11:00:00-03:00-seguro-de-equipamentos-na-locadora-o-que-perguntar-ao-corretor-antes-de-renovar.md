@@ -70,5 +70,4 @@ Segundo material de um produto para frotas de construção, em equipamentos com 
 
 - [Howden Brasil: seguro de equipamentos pesados](https://www.howdengroup.com/br-pt/fabricacao/seguro-para-equipamentos-pesados)
 - [AIG Brasil: condições gerais (linha verde)](https://www.aig.com.br/content/dam/aig/lac/brazil/pl-29/condi%C3%A7%C3%B5es-gerais/linha_verde1.pdf.coredownload.pdf)
-- [Fator Seguradora: condições contratuais, riscos nomeados](https://fatorseguradora.com.br/content/uploads/2022/02/Condicoes-Contratuais-Riscos-Nomeados.pdf)
 - [Legismap: Akad amplia oferta de seguros para linha verde e amarela](https://legismap.com.br/conteudos/artigos-e-noticias/akad-amplia-oferta-de-seguros-para-linha-verde-e-amarela)

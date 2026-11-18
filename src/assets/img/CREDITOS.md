@@ -77,3 +77,23 @@
 
 - https://commons.wikimedia.org/wiki/File:Caterpillar_backhoe_loader_at_construction_site_in_Sunnyvale.jpg — Grendelkhan, CC BY-SA 3.0
 - https://commons.wikimedia.org/wiki/File:Legal_Contract_%26_Signature_-_Warm_Tones.jpg — Blogtrepreneur, CC BY 2.0
+
+# Posts de 11 e 12/12/2026 (Wikimedia Commons; atribuição)
+
+- https://commons.wikimedia.org/wiki/File:Control_cab_with_a_view_-_geograph.org.uk_-_4560408.jpg — M J Richardson, CC BY-SA 2.0
+- https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4990.jpg — Dietmar Rabich, CC BY-SA 4.0
+
+# Posts de 13 e 14/12/2026 (Wikimedia Commons; atribuição)
+
+- https://commons.wikimedia.org/wiki/File:Working_on_the_bed_of_the_gave_de_Pau_5.jpg — Herbythyme, CC BY-SA 4.0
+- https://commons.wikimedia.org/wiki/File:Deepfreeze_I_638a.jpg — United States Navy, Public domain
+
+# Posts de 15 e 16/12/2026 (Wikimedia Commons; atribuição)
+
+- https://commons.wikimedia.org/wiki/File:FEMA_-_43325_-_Construction_equipment_at_Pickins_yard_in_California.jpg — Adam Dubrowa, Public domain
+- https://commons.wikimedia.org/wiki/File:Praha,_Nov%C3%A9_M%C4%9Bsto,_N%C3%A1rodn%C3%AD_t%C5%99%C3%ADda,_p%C5%99estavba_OD_Tesco.JPG — autor indicado na página do arquivo, CC BY-SA 3.0
+
+# Posts de 17 e 18/12/2026 (Wikimedia Commons; atribuição)
+
+- https://commons.wikimedia.org/wiki/File:Gps-receiver-GT750-top.jpg — Kreuzschnabel, CC BY-SA 3.0
+- https://commons.wikimedia.org/wiki/File:Working_on_a_planning_session_with_stationery_items,_notebook,_and_colorful_pencils_on_a_wooden_desk.jpg — Shixart1985, CC BY 2.0

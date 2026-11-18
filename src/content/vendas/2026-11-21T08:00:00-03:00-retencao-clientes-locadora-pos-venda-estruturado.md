@@ -10,7 +10,9 @@ readingTime: "5 min"
 
 ## O primeiro aluguel é só o começo
 
-Dados do setor mostram que **conquistar um novo cliente custa 5 a 7 vezes mais** que manter um atual. No Brasil, locadoras que estruturam o pós-venda aumentam o *share of wallet* em 20–40% em 12 meses. O segredo não é "atender bem" — é ter processo.
+Conquistar um cliente novo costuma custar mais do que manter um atual, mas os múltiplos citados na internet variam bastante e **não encontramos medição específica para locadoras**, nem dados brasileiros de ganho de *share of wallet* com pós-venda estruturado. O ponto aqui é de método: o pós-venda funciona melhor quando tem processo, e não quando depende da boa vontade de quem atende.
+
+**Importante:** descontos, metas e prazos desta página são **exemplos de partida**, e não referências de mercado. Calibre com a sua margem e o seu histórico.
 
 ## 4 pilares do pós-venda em locação
 
@@ -19,7 +21,7 @@ Dados do setor mostram que **conquistar um novo cliente custa 5 a 7 vezes mais**
 | Momento | Ação | Responsável | Métrica |
 |---------|------|-------------|---------|
 | **T+1 dia útil** | WhatsApp/ligação: "Equipamento atendeu? Precisa de algo?" | Balcão/Comercial | % contatos respondidos < 24 h |
-| **T+7 dias** | Email curto: pesquisa 3 perguntas (NPS + 1 aberta) | Comercial/Marketing | Taxa de resposta > 30% |
+| **T+7 dias** | Email curto: pesquisa 3 perguntas (NPS + 1 aberta) | Comercial/Marketing | Taxa de resposta |
 | **T+30 dias** | Ligação consultiva: "Como vai a obra? Previsão de próxima necessidade?" | Gerente de contas | % contas com próxima locação agendada |
 | **T+90 dias** | Reativação se inativo: oferta personalizada (desconto progressivo, upgrade) | Comercial | Taxa de reativação |
 
@@ -29,20 +31,22 @@ Dados do setor mostram que **conquistar um novo cliente custa 5 a 7 vezes mais**
 
 | Faixa anual (faturamento) | Benefício | Regra |
 |---------------------------|-----------|-------|
-| R$ 50–150 mil | Desconto 5% + prioridade de frota | Aplicado automaticamente no fechamento |
-| R$ 150–500 mil | Desconto 8% + gerente de conta dedicado + vistoria prioritária | Revisão trimestral |
-| > R$ 500 mil | Desconto 10–12% + condições especiais (pagamento 45 dias, equipamento reserva) | Contrato anual renovado |
+| Faixa 1 (menor volume) | Desconto pequeno + prioridade de frota | Aplicado no fechamento, dentro do limite de desconto da política |
+| Faixa 2 | Desconto maior + gerente de conta dedicado + vistoria prioritária | Revisão trimestral |
+| Faixa 3 (maior volume) | Desconto maior + condições especiais (prazo de pagamento, equipamento reserva) | Contrato anual renovado |
+
+Os valores de faturamento de cada faixa e os percentuais de desconto devem sair da sua margem por categoria (veja [Rate control](/vendas/2026-11-04T17:15:00-03:00-rate-control-nao-dar-desconto-sem-criterio/)).
 
 **Diferencial**: benefícios claros, sem "pontos que expiram", sem burocracia para resgatar. O desconto já vem na nota.
 
 ### 3. Indicadores que importam (churn, NPS, share of wallet)
 
-| Indicador | Como calcular | Meta saudável | Frequência |
+| Indicador | Como calcular | Meta | Frequência |
 |-----------|---------------|---------------|------------|
-| **Churn de clientes ativos** | Clientes que alugaram ano passado e não alugaram este ano / Total ativos ano passado | < 15%/ano | Trimestral |
-| **NPS transacional** | % promotores (9–10) – % detratores (0–6) pós-locação | > 50 | Mensal |
-| **Share of wallet estimado** | Faturamento do cliente com você / (Faturamento total estimado do cliente em locação) | > 40% nas contas-chave | Semestral |
-| **Frequência média** | Total de locações / Clientes ativos | > 4 locações/ano/cliente | Mensal |
+| **Churn de clientes ativos** | Clientes que alugaram ano passado e não alugaram este ano / Total ativos ano passado | A definir com seu histórico | Trimestral |
+| **NPS transacional** | % promotores (9–10) – % detratores (0–6) pós-locação | A definir com seu histórico | Mensal |
+| **Share of wallet estimado** | Faturamento do cliente com você / (Faturamento total estimado do cliente em locação) | A definir com seu histórico | Semestral |
+| **Frequência média** | Total de locações / Clientes ativos | A definir com seu histórico | Mensal |
 | **Ticket médio recorrente** | Faturamento recorrente / Locações recorrentes | Crescimento > inflação | Mensal |
 
 ### 4. Gestão de contas-chave (key account management)
