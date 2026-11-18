@@ -22,7 +22,7 @@ module.exports = function(eleventyConfig) {
   themes.forEach(theme => {
     eleventyConfig.addCollection(theme, function(collectionApi) {
       return collectionApi.getFilteredByGlob(`src/content/${theme}/*.md`)
-        .filter(item => !item.data.draft)
+        .filter(item => !item.data.draft && item.date <= new Date())
         .sort((a, b) => b.date - a.date);
     });
   });
@@ -30,7 +30,7 @@ module.exports = function(eleventyConfig) {
   // Collection: todos os posts (para home e RSS)
   eleventyConfig.addCollection('posts', function(collectionApi) {
     return collectionApi.getFilteredByGlob('src/content/**/*.md')
-      .filter(item => !item.data.draft && item.data.theme)
+      .filter(item => !item.data.draft && item.data.theme && item.date <= new Date())
       .sort((a, b) => b.date - a.date);
   });
 
