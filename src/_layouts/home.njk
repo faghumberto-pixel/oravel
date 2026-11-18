@@ -213,7 +213,7 @@ pagefind: true
 <h2 id="ultimos-title" class="section-title section-title-h2">Últimos artigos</h2>
 </div>
 <div class="articles-list home-lista" role="list" aria-labelledby="ultimos-title">
-{% for post in collections.posts | limit(5) %}
+{% for post in collections.posts | limit(8) %}
 <a class="article-item" role="listitem" href="{{ post.url }}">
 {% if post.data.image %}<img src="{{ post.data.image }}" alt="" class="article-thumb" loading="lazy" width="135" height="90">{% endif %}
 <div class="article-content">
