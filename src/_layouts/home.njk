@@ -200,6 +200,69 @@ pagefind: true
 </div>
 </article>
 </div>
+
+<!-- Últimos artigos -->
+<div class="section-head">
+<div class="section-bar" aria-hidden="true"></div>
+<h2 id="ultimos-title" class="section-title section-title-h2">Últimos artigos</h2>
+</div>
+<div class="articles-list home-lista" role="list" aria-labelledby="ultimos-title">
+{% for post in collections.posts | limit(5) %}
+<a class="article-item" role="listitem" href="{{ post.url }}">
+{% if post.data.image %}<img src="{{ post.data.image }}" alt="" class="article-thumb" loading="lazy" width="135" height="90">{% endif %}
+<div class="article-content">
+<h3>{{ post.data.title }}</h3>
+<div class="article-meta">{{ post.data.theme | themeLabel }} · {{ post.date | dateBr }}{% if post.data.readingTime %} · {{ post.data.readingTime }} de leitura{% endif %}</div>
+</div>
+</a>
+{% endfor %}
+</div>
+
+<!-- Artigos mais lidos -->
+{# Dados de demonstração (ranking.demo) só aparecem no ambiente local (npm run dev). No build publicado, só entram dados reais. #}
+{% set mostrarRanking = (not ranking.demo) or ambiente.local %}
+{% set maisLidos = [] %}{% if mostrarRanking %}{% set maisLidos = collections.posts | topPorRanking(ranking, 'leituras', 5) %}{% endif %}
+{% if maisLidos.length %}
+<div class="section-head">
+<div class="section-bar" aria-hidden="true"></div>
+<h2 id="lidos-title" class="section-title section-title-h2">Artigos mais lidos</h2>
+</div>
+<div class="articles-list home-lista" role="list" aria-labelledby="lidos-title">
+{% for item in maisLidos %}
+<a class="article-item" role="listitem" href="{{ item.post.url }}">
+{% if item.post.data.image %}<img src="{{ item.post.data.image }}" alt="" class="article-thumb" loading="lazy" width="135" height="90">{% endif %}
+<div class="article-content">
+<h3><span class="article-rank">{{ loop.index }}.</span> {{ item.post.data.title }}</h3>
+<div class="article-meta">{{ item.post.data.theme | themeLabel }} · {{ item.r.leituras | numBr }} leituras</div>
+</div>
+</a>
+{% endfor %}
+</div>
+{% endif %}
+
+<!-- Melhores avaliados -->
+{% set melhores = [] %}{% if mostrarRanking %}{% set melhores = collections.posts | topPorRanking(ranking, 'nota', 5) %}{% endif %}
+{% if melhores.length %}
+<div class="section-head">
+<div class="section-bar" aria-hidden="true"></div>
+<h2 id="avaliados-title" class="section-title section-title-h2">Melhores avaliados</h2>
+</div>
+<div class="articles-list home-lista" role="list" aria-labelledby="avaliados-title">
+{% for item in melhores %}
+<a class="article-item" role="listitem" href="{{ item.post.url }}">
+{% if item.post.data.image %}<img src="{{ item.post.data.image }}" alt="" class="article-thumb" loading="lazy" width="135" height="90">{% endif %}
+<div class="article-content">
+<h3><span class="article-rank">{{ loop.index }}.</span> {{ item.post.data.title }}</h3>
+<div class="article-meta">{{ item.post.data.theme | themeLabel }} · nota {{ item.r.nota | notaBr }} de 5 · {{ item.r.votos }} avaliações</div>
+</div>
+</a>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if ranking.demo and mostrarRanking and (maisLidos.length or melhores.length) %}
+<p class="ranking-demo">Pré-visualização local com dados de demonstração. Não é exibido no site publicado.</p>
+{% endif %}
 </div>
 
 <!-- RIGHT COLUMN (SIDEBAR) -->
