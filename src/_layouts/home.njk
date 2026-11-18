@@ -160,6 +160,7 @@ pagefind: true
 <script type="application/json" id="rotativo-dados">{{ rotativos | dump | safe }}</script>
 <script src="/assets/home-rotativo.js" defer></script>
 <script src="/assets/home-juros.js" defer></script>
+<script src="/assets/grafico-tv.js" defer></script>
 
 <!-- Ferramentas para sua locadora -->
 <div class="section-head">
@@ -343,6 +344,21 @@ pagefind: true
 </div>
 </div>
 <p class="juros-fonte">Fonte: <a href="https://www.bcb.gov.br/" target="_blank" rel="noopener">Banco Central do Brasil</a> (séries do SGS).</p>
+</article>
+
+<!-- Indice do Setor Industrial (grafico TradingView sob demanda) -->
+<article class="sidebar-card indicators-card mercado-card" aria-labelledby="mercado-title">
+<div class="indicators-head">
+<div class="indicators-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+</div>
+<h3 class="indicators-title" id="mercado-title">Índice do Setor Industrial</h3>
+<a href="/painel-mercado/#mercado-capitais" class="indicators-link">Ampliar →</a>
+</div>
+<div class="grafico-tv grafico-tv--mini" data-grafico-tv data-elemento="tv-mini-chart" data-simbolo="BMFBOVESPA:INDX">
+<p class="grafico-fallback">Gráfico indisponível no momento.</p>
+</div>
+<p class="grafico-fonte">INDX, B3. Gráfico da TradingView, com atraso de 15 minutos. <a href="https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/cotacoes/" target="_blank" rel="noopener">Tempo real na B3</a>.</p>
 </article>
 
 <!-- Community card -->

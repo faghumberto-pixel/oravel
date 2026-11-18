@@ -108,6 +108,17 @@ description: "Indicadores do mercado brasileiro de locação de equipamentos: fa
 </section>
 </div>
 
+<h2 class="painel-titulo" id="mercado-capitais">Mercado de capitais <span>índice da B3</span></h2>
+<section class="painel-bloco painel-bloco--grafico-tv">
+<h3>Índice do Setor Industrial (INDX)</h3>
+<p class="painel-legenda">Índice Bovespa do Setor Industrial, da B3. Gráfico interativo, com <strong>atraso de 15 minutos</strong>, conforme indicado no próprio gráfico. Para acompanhar em tempo real, use a página de cotações da B3.</p>
+<p class="painel-acao"><a href="https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/cotacoes/" class="btn btn-outline" target="_blank" rel="noopener">Ver em tempo real na B3 →</a></p>
+<div class="grafico-tv grafico-tv--grande" data-grafico-tv data-elemento="tv-advanced-chart" data-simbolo="BMFBOVESPA:INDX">
+<p class="grafico-fallback">Gráfico indisponível no momento. Consulte a cotação oficial na <a href="https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/cotacoes/" target="_blank" rel="noopener">página de cotações da B3</a>.</p>
+</div>
+<p class="painel-fonte">Gráfico fornecido pela TradingView, com atraso de 15 minutos; não substitui o boletim oficial da B3. O índice reúne empresas do setor industrial e não é um índice de locadoras.</p>
+</section>
+
 <h2 class="painel-titulo">Fatores que movem o setor <span>citados nas fontes</span></h2>
 <div class="painel-bloco painel-bloco--tabela">
 <div class="tabela-rolagem">
@@ -342,3 +353,4 @@ document.addEventListener('DOMContentLoaded', () => {
   renderFixos(); renderFatores(); atualizar();
 });
 </script>
+<script src="/assets/grafico-tv.js" defer></script>

@@ -970,3 +970,19 @@ a.category-item:focus-visible, a.tool-card:focus-visible, a.article-item:focus-v
   .rodape-col a { padding: 11px 0; }
 }
 
+/* Graficos de mercado (TradingView, sob demanda) */
+.grafico-tv { background: #FFFFFF; border-radius: var(--raio-medio); overflow: hidden; }
+.grafico-tv--mini { min-height: 220px; }
+.grafico-tv--grande { min-height: 520px; border: 1px solid var(--cinza-claro); margin-top: var(--esp-2); }
+.grafico-tv tv-mini-chart { display: block; width: 100%; height: 220px; }
+.grafico-tv tv-advanced-chart { display: block; width: 100%; height: 520px; }
+.grafico-fallback { margin: 0; padding: var(--esp-3); font-size: 13.5px; color: var(--texto-secundario); line-height: 1.5; }
+.grafico-fallback a { color: var(--azul-petroleo); font-weight: 600; }
+.grafico-fonte { margin: var(--esp-2) 0 0; font-size: 12.5px; color: var(--texto-secundario); line-height: 1.4; }
+@media (max-width: 768px) {
+  .grafico-tv--grande { min-height: 440px; }
+  .grafico-tv tv-advanced-chart { height: 440px; }
+}
+.painel-acao { margin: var(--esp-2) 0 0; }
+.grafico-fonte a { color: var(--azul-petroleo); font-weight: 600; }
+
