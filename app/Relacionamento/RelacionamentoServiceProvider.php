@@ -3,8 +3,10 @@
 namespace App\Relacionamento;
 
 use App\Relacionamento\Console\BackfillRelacionamento;
+use App\Relacionamento\Console\PurgarRelacionamento;
 use App\Relacionamento\Http\RelacionamentoEventoController;
 use App\Relacionamento\Http\RelacionamentoSiteEventoController;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,8 +16,11 @@ class RelacionamentoServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillRelacionamento::class]);
+            $this->commands([BackfillRelacionamento::class, PurgarRelacionamento::class]);
         }
+
+        // Cumpre o prazo de guarda da politica de privacidade, todo dia de madrugada.
+        $this->callAfterResolving(Schedule::class, fn (Schedule $s) => $s->command('relacionamento:purgar')->dailyAt('03:30')->withoutOverlapping());
 
         Route::middleware(['api', 'throttle:120,1'])->prefix('api')->group(function () {
             Route::post('/relacionamento/eventos', [RelacionamentoEventoController::class, 'store'])

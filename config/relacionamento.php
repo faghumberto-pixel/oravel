@@ -5,6 +5,9 @@ return [
     // So' interacoes dos ultimos N dias entram no score (engajamento esfria).
     'janela_dias' => 90,
 
+    // Prazo de guarda do historico de uso do site (prometido na politica de privacidade do oravel.org).
+    'retencao_meses' => 24,
+
     // Da maior para a menor faixa: o score cai na primeira cujo minimo ele alcanca.
     'faixas' => [
         ['min' => 80, 'rotulo' => 'Excelente', 'cor' => 'success'],
