@@ -69,6 +69,26 @@ export default {
         return json({ erro: "falha no envio", detalhe: "resend " + r.status }, 502, cors);
       }
     } catch (e) { console.error("resend", String(e && e.message || e)); return json({ erro: "falha no envio" }, 502, cors); }
+    // Boas-vindas ao cliente: complementar, a falha aqui não derruba o aviso já enviado
+    const emailCliente = limpa(claims.email, 120);
+    if (emailCliente) {
+      const boasVindas = [
+        "Olá, " + nome + ".", "",
+        "Recebemos seu cadastro no oravel.org. Seu usuário é este e-mail: " + emailCliente + ".", "",
+        "Em instantes você receberá outra mensagem, enviada pelo Firebase (noreply@oravel-org.firebaseapp.com), com o link para definir sua senha. O assunto vem em inglês: \"Reset your password for project-Oravel-org\". Se não encontrar, confira a caixa de spam.", "",
+        "Depois de definir a senha, é só entrar em https://oravel.org/entrar/.", "",
+        "Dúvidas? Responda este e-mail.", "",
+        "oravel.org"
+      ].join("\n");
+      try {
+        const r2 = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { "Authorization": "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" },
+          body: JSON.stringify({ from: env.MAIL_FROM, to: [emailCliente], reply_to: env.MAIL_TO, subject: "Recebemos seu cadastro no oravel.org", text: boasVindas })
+        });
+        if (!r2.ok) console.error("resend-boas-vindas", r2.status, (await r2.text()).slice(0, 300));
+      } catch (e) { console.error("resend-boas-vindas", String(e && e.message || e)); }
+    }
     return json({ ok: true }, 200, cors);
   }
 };
