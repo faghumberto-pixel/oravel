@@ -1,5 +1,3 @@
-import { WorkerMailer } from "worker-mailer";
-
 const JWKS_URL = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com";
 const b64u = (s) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
 const json = (o, status, cors) => new Response(JSON.stringify(o), { status, headers: { "Content-Type": "application/json", ...cors } });
@@ -37,7 +35,7 @@ export default {
     try {
       const auth = req.headers.get("Authorization") || "";
       claims = await verificaToken(auth.replace(/^Bearer\s+/i, ""), env.FIREBASE_PROJECT);
-    } catch { return json({ erro: "não autorizado" }, 401, cors); }
+    } catch (e) { console.error("token", String(e && e.message || e)); return json({ erro: "não autorizado", detalhe: String(e && e.message || e).slice(0, 60) }, 401, cors); }
 
     let d;
     try { d = await req.json(); } catch { return json({ erro: "json inválido" }, 400, cors); }
@@ -56,12 +54,21 @@ export default {
     ].join("\n");
 
     try {
-      await WorkerMailer.send(
-        { host: env.SMTP_HOST, port: Number(env.SMTP_PORT), secure: true, credentials: { username: env.SMTP_USER, password: env.SMTP_PASS }, authType: "plain" },
-        { from: { name: "oravel.org", email: env.SMTP_USER }, to: env.MAIL_TO, reply: limpa(claims.email || d.email, 120) || undefined,
-          subject: "Novo cadastro no oravel.org: " + nome + " " + sobrenome, text: texto }
-      );
-    } catch (e) { return json({ erro: "falha no envio" }, 502, cors); }
+      const r = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: env.MAIL_FROM, to: [env.MAIL_TO],
+          reply_to: limpa(claims.email || d.email, 120) || undefined,
+          subject: "Novo cadastro no oravel.org: " + nome + " " + sobrenome, text: texto
+        })
+      });
+      if (!r.ok) {
+        const detalhe = (await r.text()).slice(0, 300);
+        console.error("resend", r.status, detalhe);
+        return json({ erro: "falha no envio", detalhe: "resend " + r.status }, 502, cors);
+      }
+    } catch (e) { console.error("resend", String(e && e.message || e)); return json({ erro: "falha no envio" }, 502, cors); }
     return json({ ok: true }, 200, cors);
   }
 };

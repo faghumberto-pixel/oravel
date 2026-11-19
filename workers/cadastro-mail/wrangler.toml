@@ -7,9 +7,10 @@ preview_urls = false
 [vars]
 FIREBASE_PROJECT = "oravel-org"
 ALLOWED_ORIGINS = "https://oravel.org,https://www.oravel.org,https://oravel-org.web.app"
-SMTP_HOST = "smtp.titan.email"
-SMTP_PORT = "465"
 MAIL_TO = "contato@oravel.org"
-# Segredos (não ficam no repositório):
-#   npx wrangler secret put SMTP_USER   -> contato@oravel.org
-#   npx wrangler secret put SMTP_PASS   -> senha da caixa no Titan
+MAIL_FROM = "oravel.org <cadastro@oravel.org>"
+# Segredo (não fica no repositório):
+#   npx wrangler secret put RESEND_API_KEY   -> chave da API do Resend
+
+[observability]
+enabled = true
