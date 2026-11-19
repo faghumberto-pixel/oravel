@@ -41,7 +41,7 @@
     if (m) { try { estado = { i: def.passos.length, v: JSON.parse(decodeURIComponent(escape(atob(m[1])))) }; } catch (e) {} }
 
     function salvar() { store(chave, estado); }
-    function limpar() { store(chave, null); estado = { i: -1, v: {} }; history.replaceState(null, '', location.pathname); render(); }
+    function limpar() { store(chave, null); estado = { i: -1, v: {} }; history.replaceState(null, '', location.pathname); concluido = false; tInicio = Date.now(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
     function barra(i) {
       var total = def.passos.length;
@@ -199,7 +199,7 @@
         else { var f0 = root.querySelector('.tool-form'); if (f0) { f0.scrollIntoView({ behavior: 'smooth', block: 'start' }); var i0 = f0.querySelector('input,select'); if (i0) i0.focus({ preventScroll: true }); } }
       };
       acoes.insertBefore(alt, acoes.children[1] || null);
-      var vol = $('button', { class: 'tool-link', type: 'button' }, 'Novo cálculo (limpar tudo)'); vol.onclick = limpar; acoes.appendChild(vol);
+      var vol = $('button', { class: 'tool-link', type: 'button' }, 'Refazer do início'); vol.onclick = limpar; acoes.appendChild(vol);
       alvo.appendChild(acoes);
       alvo.appendChild(dropEmailNota());
       root.querySelector('.tool-result-head').setAttribute('tabindex', '-1');
