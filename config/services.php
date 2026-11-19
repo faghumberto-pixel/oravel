@@ -122,4 +122,11 @@ return [
         ],
     ],
 
+    // Canais do modulo Relacionamento Oravel (POST /api/relacionamento/eventos). Token vazio = canal desligado.
+    'relacionamento' => [
+        'channels' => [
+            'oravel-org' => ['token' => env('RELACIONAMENTO_TOKEN_ORAVEL_ORG')],
+        ],
+    ],
+
 ];

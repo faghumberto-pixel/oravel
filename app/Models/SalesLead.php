@@ -167,6 +167,13 @@ class SalesLead extends Model
         return $this->decision_makers[0] ?? null;
     }
 
+
+    /** Linha do tempo do modulo Relacionamento Oravel (aba "Relacionamento"). */
+    public function relInteracoes(): HasMany
+    {
+        return $this->hasMany(\App\Relacionamento\Models\RelInteracao::class, 'sales_lead_id');
+    }
+
     public function interactions(): HasMany
     {
         return $this->hasMany(SalesLeadInteraction::class)->latest('contact_date');

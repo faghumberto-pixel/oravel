@@ -252,6 +252,7 @@ class ProspectResource extends Resource
         return [
             RelationManagers\ContatosRelationManager::class,
             RelationManagers\AIAnalysesRelationManager::class,
+            \App\Relacionamento\Filament\RelationManagers\RelacionamentoRelationManager::class,
         ];
     }
 

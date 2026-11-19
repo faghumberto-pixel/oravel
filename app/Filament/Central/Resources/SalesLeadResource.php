@@ -572,6 +572,7 @@ class SalesLeadResource extends Resource
             TimelineRelationManager::class,
             InteractionsRelationManager::class,
             AppointmentsRelationManager::class,
+            \App\Relacionamento\Filament\RelationManagers\RelacionamentoRelationManager::class,
         ];
     }
 

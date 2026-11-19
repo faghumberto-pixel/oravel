@@ -225,6 +225,13 @@ class Prospect extends Model
         return $this->belongsTo(SalesLead::class, 'sales_lead_id');
     }
 
+
+    /** Linha do tempo do modulo Relacionamento Oravel (aba "Relacionamento"). */
+    public function relInteracoes(): HasMany
+    {
+        return $this->hasMany(\App\Relacionamento\Models\RelInteracao::class, 'prospect_id');
+    }
+
     public function contatos(): HasMany
     {
         return $this->hasMany(ProspectContato::class);
