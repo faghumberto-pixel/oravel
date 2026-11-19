@@ -42,7 +42,7 @@ module.exports = {
     "calculadora-rentabilidade": {
       titulo: "Calculadora de Rentabilidade",
       resumo: "Margem, retorno anual sobre a frota, payback e resultado depois do custo de capital.",
-      tipo: "wizard", categoria: "Vendas", tempo: "4 min", nivel: "Intermediário", status: "ativa", versao: "1.0", video: "", videoDrive: "1xxXHaokBw_TFWB6B95ZBbKxUriAMQXdh",
+      tipo: "wizard", categoria: "Vendas", tempo: "4 min", nivel: "Intermediário", status: "ativa", versao: "1.0", video: "",
       artigos: ["preco-da-diaria-a-conta-nao-termina-na-diaria", "custo-por-hora-quanto-custa-de-verdade-operar-cada-maquina", "utilizacao-o-indicador-que-mais-importa"]
     },
     "checklist-vistoria": {
@@ -66,7 +66,7 @@ module.exports = {
       nivel: "Básico",
       status: "ativa",
       versao: "1.0",
-      video: "", videoDrive: "1fx1n-TKBUPCu0nv98rQs9_firmoOVN5L", // ID do video no YouTube (ex.: "dQw4w9WgXcQ"). Vazio = mostra o espaco reservado.
+      video: "", // ID do video no YouTube (ex.: "dQw4w9WgXcQ"). Vazio = mostra o espaco reservado.
       // slugs de artigos (fileSlug) em src/content/**
       artigos: [
         "o-custo-escondido-da-frota-parada",

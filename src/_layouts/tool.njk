@@ -35,15 +35,16 @@ pagefind: true
 {{ content | safe }}
 </section>
 
+{# Bloco de video: so aparece quando a ferramenta tem video (campo video = YouTube, ou videoDrive = Google Drive, no registro). #}
+{% if f.videoDrive or f.video %}
 <section class="container tool-video tool-noprint" aria-label="Vídeo explicativo">
 {% if f.videoDrive %}
 <div class="tool-video-frame"><iframe src="https://drive.google.com/file/d/{{ f.videoDrive }}/preview" title="Vídeo: {{ f.titulo }}" loading="lazy" allow="autoplay; fullscreen" allowfullscreen></iframe></div>
-{% elif f.video %}
-<div class="tool-video-frame"><iframe src="https://www.youtube-nocookie.com/embed/{{ f.video }}" title="Vídeo: {{ f.titulo }}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
 {% else %}
-<div class="tool-video-frame tool-video-vazio" role="img" aria-label="Espaço reservado para o vídeo explicativo"><span>Vídeo explicativo em breve</span></div>
+<div class="tool-video-frame"><iframe src="https://www.youtube-nocookie.com/embed/{{ f.video }}" title="Vídeo: {{ f.titulo }}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
 {% endif %}
 </section>
+{% endif %}
 
 {% set relacionados = [] %}
 {% for slug in f.artigos %}{% for p in collections.posts %}{% if p.fileSlug.endsWith(slug) %}{% set _ignorar = relacionados.push(p) %}{% endif %}{% endfor %}{% endfor %}
