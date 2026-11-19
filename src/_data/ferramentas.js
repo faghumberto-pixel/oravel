@@ -66,7 +66,7 @@ module.exports = {
       nivel: "Básico",
       status: "ativa",
       versao: "1.0",
-      video: "", // ID do video no YouTube (ex.: "dQw4w9WgXcQ"). Vazio = mostra o espaco reservado.
+      video: "", videoDrive: "1fx1n-TKBUPCu0nv98rQs9_firmoOVN5L", // ID do video no YouTube (ex.: "dQw4w9WgXcQ"). Vazio = mostra o espaco reservado.
       // slugs de artigos (fileSlug) em src/content/**
       artigos: [
         "o-custo-escondido-da-frota-parada",
