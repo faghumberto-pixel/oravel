@@ -5,8 +5,9 @@
 //   3. criar src/ferramentas/<slug>/index.njk com layout: tool.njk e ferramenta: "<slug>".
 // Ferramentas "legado" so aparecem no registro (relacionados, schema); o card do hub e manual.
 module.exports = {
-  // Telemetria anonima agregada (Worker). Vazio = desligada (nada e enviado).
-  telemetriaUrl: "",
+  // Sinais anonimos (ferramenta concluida, download) para a Central da Oravel (modulo Relacionamento).
+  // So publicar o site com isto ligado DEPOIS de a Central estar no ar com a rota. Vazio = desligado.
+  telemetriaUrl: "https://app.oravel.com.br/api/relacionamento/site-evento",
   itens: {
     "margem-equipamento": {
       titulo: "Calculadora de Margem por Equipamento", resumo: "Veja a margem real de cada ativo da frota: receita gerada menos custo total de posse (depreciação, manutenção, seguro, rastreamento, capital). Identifique equipamentos que drenam caixa.",

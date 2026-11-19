@@ -37,6 +37,9 @@
   window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
   plausible.init()
 </script>
+{# Sinais anonimos para a Central (ferramentas concluidas, downloads). Desliga junto com ferramentas.telemetriaUrl. #}
+{% if ferramentas.telemetriaUrl %}<meta name="oravel-rel" content="{{ ferramentas.telemetriaUrl }}">
+<script src="/assets/rel.js" defer></script>{% endif %}
 {% if pagefind %}<link rel="stylesheet" href="/pagefind/pagefind-ui.css">{% endif %}
 </head>
 <body>

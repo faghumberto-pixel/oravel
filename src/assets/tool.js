@@ -24,7 +24,9 @@
     try { if (window.plausible) window.plausible(nome, { props: Object.assign({ ferramenta: slug }, extra || {}) }); } catch (e) {}
     var url = wrap.dataset.telemetry;
     if (url && navigator.sendBeacon) {
-      try { navigator.sendBeacon(url, JSON.stringify(Object.assign({ evento: nome, ferramenta: slug, em: new Date().toISOString() }, extra || {}))); } catch (e) {}
+      var visitor = window.OravelRel ? window.OravelRel.token() : '';
+      if (!visitor) return; // sem token (Do Not Track ou sem rel.js): nao envia
+      try { navigator.sendBeacon(url, JSON.stringify(Object.assign({ evento: nome, ferramenta: slug, titulo: wrap.dataset.toolTitle || '', visitor: visitor, em: new Date().toISOString() }, extra || {}))); } catch (e) {}
     }
   }
 
