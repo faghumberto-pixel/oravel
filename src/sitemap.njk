@@ -59,6 +59,11 @@ permalink: /sitemap.xml
 <priority>0.7</priority>
 </url>
 <url>
+<loc>https://oravel.org/ferramentas/</loc>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
 <loc>https://oravel.org/busca/</loc>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
@@ -69,6 +74,13 @@ permalink: /sitemap.xml
 <lastmod>{{ post.date | dateISO }}</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.8</priority>
+</url>
+{% endfor %}
+{% for t in collections.ferramentasPaginas %}
+<url>
+<loc>https://oravel.org{{ t.url }}</loc>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
 </url>
 {% endfor %}
 </urlset>

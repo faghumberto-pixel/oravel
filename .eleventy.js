@@ -34,6 +34,11 @@ module.exports = function(eleventyConfig) {
       .sort((a, b) => b.date - a.date);
   });
 
+  // Collection: paginas de ferramentas (src/ferramentas/<slug>/index.njk), usada no sitemap
+  eleventyConfig.addCollection('ferramentasPaginas', function(collectionApi) {
+    return collectionApi.getFilteredByGlob('src/ferramentas/*/index.njk');
+  });
+
   // Collection: páginas institucionais
   eleventyConfig.addCollection('pages', function(collectionApi) {
     return collectionApi.getFilteredByGlob('src/content/pages/*.md');
