@@ -44,7 +44,7 @@ class RelInteracao extends Model
         self::TIPO_ARTIGO => ['Leu artigo', 'info', 'heroicon-o-document-text'],
         self::TIPO_VIDEO => ['Assistiu vídeo', 'primary', 'heroicon-o-play-circle'],
         self::TIPO_FERRAMENTA => ['Usou ferramenta', 'success', 'heroicon-o-calculator'],
-        self::TIPO_PDF => ['Baixou PDF', 'warning', 'heroicon-o-arrow-down-tray'],
+        self::TIPO_PDF => ['Baixou material', 'warning', 'heroicon-o-arrow-down-tray'],
         self::TIPO_GAZETA => ['Entrou na Gazeta', 'success', 'heroicon-o-newspaper'],
         self::TIPO_EMAIL_ABERTO => ['Abriu e-mail', 'gray', 'heroicon-o-envelope-open'],
         self::TIPO_EMAIL_CLIQUE => ['Clicou em e-mail', 'info', 'heroicon-o-cursor-arrow-rays'],

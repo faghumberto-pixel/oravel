@@ -124,6 +124,8 @@ return [
 
     // Canais do modulo Relacionamento Oravel (POST /api/relacionamento/eventos). Token vazio = canal desligado.
     'relacionamento' => [
+        // Hosts do oravel.org autorizados a mandar sinais anonimos (ferramentas, downloads).
+        'site_hosts' => ['oravel.org', 'www.oravel.org', 'oravel-org.web.app'],
         'channels' => [
             'oravel-org' => ['token' => env('RELACIONAMENTO_TOKEN_ORAVEL_ORG')],
         ],

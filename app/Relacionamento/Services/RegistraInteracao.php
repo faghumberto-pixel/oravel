@@ -60,6 +60,7 @@ class RegistraInteracao
             'dados' => $d['dados'] ?? null,
             'ocorrido_em' => isset($d['ocorrido_em']) ? Carbon::parse($d['ocorrido_em']) : now(),
             'dedupe_key' => $d['dedupe_key'] ?? null,
+            'visitor_token' => $d['visitor_token'] ?? null,
         ]);
     }
 
@@ -87,7 +88,10 @@ class RegistraInteracao
         $digitos = self::normalizaTelefone($d['telefone'] ?? null);
 
         if ($email === null && $digitos === null) {
-            return null;
+            // Acesso anonimo de um navegador que ja se identificou antes: cai na pessoa conhecida.
+            return ! empty($d['visitor_token'])
+                ? RelContato::whereJsonContains('visitor_tokens', $d['visitor_token'])->first()
+                : null;
         }
 
         $contato = ($email ? RelContato::where('email', $email)->first() : null)
@@ -129,7 +133,26 @@ class RegistraInteracao
 
         $contato->save();
 
+        $this->herdarAcessosAnonimos($contato, $d['visitor_token'] ?? null);
+
         return $contato;
+    }
+
+    /**
+     * Quando a pessoa se identifica, os acessos anonimos anteriores do mesmo navegador (ferramentas, downloads)
+     * passam a ser dela e da empresa dela. So' pega o que ainda nao tem dono: nunca rouba de outra pessoa.
+     */
+    private function herdarAcessosAnonimos(RelContato $contato, ?string $token): void
+    {
+        if (! $token) {
+            return;
+        }
+
+        RelInteracao::whereNull('contato_id')->where('visitor_token', $token)->update([
+            'contato_id' => $contato->id,
+            'prospect_id' => $contato->prospect_id,
+            'sales_lead_id' => $contato->sales_lead_id,
+        ]);
     }
 
     /** Liga a pessoa a UMA empresa. Ambiguo (0 ou 2+ casamentos) = nao liga: vinculo errado e' pior que nenhum. */
