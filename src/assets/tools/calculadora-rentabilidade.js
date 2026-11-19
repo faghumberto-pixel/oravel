@@ -30,7 +30,7 @@ OravelTool.register({
         { rotulo: 'Margem operacional', valor: margemOp, formato: 'pct', nota: 'Receita menos manutenção e outros custos' },
         { rotulo: 'Retorno anual sobre a frota', valor: roi, formato: 'pct', nota: 'Depois da depreciação' },
         { rotulo: 'Receita bruta anual / valor da frota', valor: yieldB, formato: 'pct' },
-        { rotulo: 'Payback simples (anos)', valor: payback == null ? 0 : payback, formato: 'num', nota: payback == null ? 'Resultado operacional não positivo' : 'Valor da frota ÷ resultado operacional anual' },
+        { rotulo: 'Payback simples (anos)', valor: payback, formato: 'num', nota: payback == null ? 'Resultado operacional não positivo' : 'Valor da frota ÷ resultado operacional anual' },
         { rotulo: 'Manutenção sobre receita', valor: manutPct, formato: 'pct' },
         { rotulo: 'Resultado depois do capital (mês)', valor: eco, formato: 'brl' }
       ],

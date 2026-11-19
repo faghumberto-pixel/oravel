@@ -9,6 +9,7 @@
 
   var fmt = {
     int: function (v) { return Math.round(v).toLocaleString('pt-BR'); },
+    brl2: function (v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); },
     brl: function (v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }); },
     pct: function (v) { return v.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%'; },
     num: function (v) { return v.toLocaleString('pt-BR', { maximumFractionDigits: 2 }); }
@@ -139,7 +140,7 @@
       r.indicadores.forEach(function (k) {
         var d = $('div', { class: 'tool-kpi' });
         d.appendChild($('span', null, k.rotulo));
-        d.appendChild($('strong', null, fmt[k.formato || 'num'](k.valor)));
+        d.appendChild($('strong', null, k.valor == null ? '\u2014' : fmt[k.formato || 'num'](k.valor)));
         if (k.nota) d.appendChild($('small', null, k.nota));
         g.appendChild(d);
       });
@@ -160,16 +161,17 @@
         gc.appendChild(ul); alvo.appendChild(gc);
       }
 
-      if (r.tabela) {
+      [r.tabela, r.tabela2, r.tabela3].forEach(function (tab) {
+        if (!tab) return;
         var tc = $('section', { class: 'otc-card tool-tabela-wrap' });
-        tc.appendChild($('h3', null, r.tabela.titulo));
+        tc.appendChild($('h3', null, tab.titulo));
         var tb = $('table', { class: 'tool-tabela' });
-        var th = $('tr'); r.tabela.colunas.forEach(function (c, ix) { th.appendChild($('th', { scope: 'col', class: ix ? 'num' : '' }, c)); });
+        var th = $('tr'); tab.colunas.forEach(function (c, ix) { th.appendChild($('th', { scope: 'col', class: ix ? 'num' : '' }, c)); });
         var thead = $('thead'); thead.appendChild(th); tb.appendChild(thead);
         var tbd = $('tbody');
-        r.tabela.linhas.forEach(function (ln) { var tr = $('tr'); ln.forEach(function (c, ix) { tr.appendChild($('td', { class: ix ? 'num' : '' }, c)); }); tbd.appendChild(tr); });
+        tab.linhas.forEach(function (ln) { var tr = $('tr'); ln.forEach(function (c, ix) { tr.appendChild($('td', { class: ix ? 'num' : '' }, c)); }); tbd.appendChild(tr); });
         tb.appendChild(tbd); tc.appendChild(tb); alvo.appendChild(tc);
-      }
+      });
 
       [['Conclusões', r.conclusoes], ['Sugestões práticas', r.sugestoes]].forEach(function (par) {
         if (!par[1] || !par[1].length) return;
@@ -250,8 +252,9 @@
           p.opcoes.forEach(function (o) { var op = $('option', { value: o.valor != null ? o.valor : o }, o.rotulo || o); c.appendChild(op); });
           c.value = estado.v[p.id] != null ? estado.v[p.id] : (p.padrao != null ? p.padrao : c.options[0].value);
         } else {
-          c = $('input', { class: 'tool-input', inputmode: 'decimal', autocomplete: 'off' });
-          var at = estado.v[p.id] != null ? estado.v[p.id] : p.padrao; c.value = at != null ? String(at).replace('.', ',') : '';
+          c = $('input', { class: 'tool-input', autocomplete: 'off' });
+          if (p.tipo === 'texto') c.setAttribute('maxlength', '80'); else c.setAttribute('inputmode', 'decimal');
+          var at = estado.v[p.id] != null ? estado.v[p.id] : p.padrao; c.value = at != null ? (p.tipo === 'texto' ? String(at) : String(at).replace('.', ',')) : '';
         }
         if (p.ajuda) { var h = $('small', null, p.ajuda); l.appendChild(c); l.appendChild(h); } else l.appendChild(c);
         if (p.prefixo || p.sufixo) l.firstChild.textContent += ' (' + (p.prefixo || p.sufixo) + ')';
@@ -266,8 +269,9 @@
         var v = {}, msg = '';
         for (var k = 0; k < def.passos.length; k++) {
           var p = def.passos[k], c = campos[p.id];
-          if (p.tipo === 'opcoes') { v[p.id] = c.value; continue; }
+          if (p.tipo === 'opcoes' || p.tipo === 'texto') { v[p.id] = c.value; continue; }
           var n = parseNum(c.value);
+          if (n == null && p.opcional) { v[p.id] = null; continue; }
           if (n == null) { msg = 'Informe um número em: ' + p.pergunta; break; }
           if ((p.min != null && n < p.min) || (p.max != null && n > p.max)) { msg = p.pergunta + ': use um valor entre ' + (p.min != null ? p.min : 0) + ' e ' + (p.max != null ? p.max : 'sem limite') + '.'; break; }
           v[p.id] = n;

@@ -8,6 +8,31 @@ module.exports = {
   // Telemetria anonima agregada (Worker). Vazio = desligada (nada e enviado).
   telemetriaUrl: "",
   itens: {
+    "margem-equipamento": {
+      titulo: "Calculadora de Margem por Equipamento", resumo: "Veja a margem real de cada ativo da frota: receita gerada menos custo total de posse (depreciação, manutenção, seguro, rastreamento, capital). Identifique equipamentos que drenam caixa.",
+      tipo: "formulario", categoria: "Gestão", tempo: "5 min", nivel: "Intermediário", status: "ativa", versao: "2.0", video: "",
+      artigos: ["custo-por-hora-quanto-custa-de-verdade-operar-cada-maquina", "preco-da-diaria-a-conta-nao-termina-na-diaria", "por-que-a-manutencao-decide-o-resultado-da-locadora"]
+    },
+    "disponibilidade": {
+      titulo: "Calculadora de Disponibilidade de Equipamentos", resumo: "Calcule a disponibilidade física e operacional da frota: MTBF, MTTR, tempo parado por manutenção, inspeção, logística. Veja o impacto financeiro da indisponibilidade na receita.",
+      tipo: "formulario", categoria: "Gestão", tempo: "5 min", nivel: "Intermediário", status: "ativa", versao: "2.0", video: "",
+      artigos: ["disponibilidade-da-frota-mtbf-mttr-e-como-calcular-por-categoria-de-maquina", "o-custo-escondido-da-frota-parada", "estoque-de-pecas-da-oficina-curva-abc-e-criticidade-na-locadora"]
+    },
+    "roi-manutencao": {
+      titulo: "Calculadora de ROI de Manutenção", resumo: "Compare preventiva vs corretiva: calcule o ROI de investir em manutenção preventiva, preditiva ou RCM. Veja redução de falhas, ganho de disponibilidade, economia com peças e payback do programa.",
+      tipo: "formulario", categoria: "Gestão", tempo: "6 min", nivel: "Avançado", status: "ativa", versao: "2.0", video: "",
+      artigos: ["preventiva-ou-corretiva-qual-compensa", "por-que-a-manutencao-decide-o-resultado-da-locadora", "estoque-de-pecas-da-oficina-curva-abc-e-criticidade-na-locadora"]
+    },
+    "custo-propriedade": {
+      titulo: "Calculadora de Custo Total de Propriedade (TCO)", resumo: "Calcule o TCO completo do equipamento: aquisição, depreciação, juros, seguro, manutenção, combustível, operador, rastreamento. Compare comprar vs alugar vs terceirizar. Inclui VPL e TIR.",
+      tipo: "formulario", categoria: "Gestão", tempo: "6 min", nivel: "Avançado", status: "ativa", versao: "2.0", video: "",
+      artigos: ["custo-por-hora-quanto-custa-de-verdade-operar-cada-maquina", "a-regra-72-20-8-como-as-locadoras-americanas-leem-a-propria-frota", "tarifas-e-custo-da-frota-nos-eua-como-as-maiores-locadoras-descrevem-o-risco"]
+    },
+    "viabilidade-frota": {
+      titulo: "Calculadora de Viabilidade de Nova Frota", resumo: "Avalie a expansão da frota: NPV, TIR, payback, capacidade de pagamento, ponto de equilíbrio. Compare cenários de compra, aluguel ou consórcio. Inclui análise de sensibilidade e stress test.",
+      tipo: "formulario", categoria: "Gestão", tempo: "8 min", nivel: "Avançado", status: "ativa", versao: "2.0", video: "",
+      artigos: ["a-regra-72-20-8-como-as-locadoras-americanas-leem-a-propria-frota", "tarifas-e-custo-da-frota-nos-eua-como-as-maiores-locadoras-descrevem-o-risco", "custo-por-hora-quanto-custa-de-verdade-operar-cada-maquina"]
+    },
     "preco-diaria": {
       titulo: "Calculadora de Preço da Diária",
       resumo: "Calcule o preço mínimo e o sugerido da diária com base em custo de aquisição, vida útil, utilização, manutenção, seguro, rastreamento, custo de capital e margem desejada.",

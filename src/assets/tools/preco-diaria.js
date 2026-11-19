@@ -58,11 +58,11 @@ OravelTool.register({
       titulo: 'Preço sugerido da diária: ' + brl2(precoSugeridoDiaria),
       resumo: 'Preço mínimo de ' + brl2(precoMinimoDiaria) + ' por diária de 8 horas; o sugerido inclui margem de ' + f.pct(vals.margemDesejada) + '.',
       indicadores: [
-        { rotulo: 'Preço mínimo da diária (8h)', valor: precoMinimoDiaria, formato: 'brl' },
-        { rotulo: 'Preço sugerido da diária (8h)', valor: precoSugeridoDiaria, formato: 'brl' },
-        { rotulo: 'Custo por hora disponível', valor: custoHoraDisponivel, formato: 'brl' },
+        { rotulo: 'Preço mínimo da diária (8h)', valor: precoMinimoDiaria, formato: 'brl2' },
+        { rotulo: 'Preço sugerido da diária (8h)', valor: precoSugeridoDiaria, formato: 'brl2' },
+        { rotulo: 'Custo por hora disponível', valor: custoHoraDisponivel, formato: 'brl2' },
         { rotulo: 'Dias por mês para equilíbrio', valor: pontoEquilibrioDias, formato: 'num' },
-        { rotulo: 'Payback (meses)', valor: isFinite(paybackMeses) ? paybackMeses : 0, formato: 'num', nota: isFinite(paybackMeses) ? '' : 'Fluxo líquido não positivo' }
+        { rotulo: 'Payback (meses)', valor: isFinite(paybackMeses) ? paybackMeses : null, formato: 'num', nota: isFinite(paybackMeses) ? '' : 'Fluxo líquido não positivo' }
       ],
       grafico: { titulo: 'Composição do custo total mensal', formato: 'brl', itens: [
         { rotulo: 'Depreciação', valor: depreciacaoMensal }, { rotulo: 'Custo de capital', valor: custoCapitalMensal },
