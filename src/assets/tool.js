@@ -56,7 +56,7 @@
 
     function renderIntro() {
       root.textContent = '';
-      var c = $('div', { class: 'tool-card tool-intro' });
+      var c = $('div', { class: 'otc-card tool-intro' });
       c.appendChild($('h2', null, def.introTitulo || 'Vamos começar'));
       c.appendChild($('p', null, def.intro || ''));
       var temSalvo = estado.v && Object.keys(estado.v).length;
@@ -74,7 +74,7 @@
       var i = estado.i, p = def.passos[i];
       root.textContent = '';
       root.appendChild(barra(i));
-      var c = $('form', { class: 'tool-card', novalidate: '' });
+      var c = $('form', { class: 'otc-card', novalidate: '' });
       var lab = $('label', { for: 'tool-campo', class: 'tool-pergunta' }, p.pergunta);
       c.appendChild(lab);
       if (p.ajuda) c.appendChild($('p', { class: 'tool-ajuda', id: 'tool-ajuda' }, p.ajuda));
@@ -122,15 +122,18 @@
     }
 
     function renderResultado() {
-      var r = def.calcular(estado.v);
       root.textContent = '';
+      montarResultado(root, def.calcular(estado.v), true);
+    }
+
+    function montarResultado(alvo, r, wizard) {
       if (!concluido) { concluido = true; evento(wrap, 'tool_complete', { segundos: Math.round((Date.now() - tInicio) / 1000), uf: estado.v.uf || '' }); }
 
       var cab = $('div', { class: 'tool-result-head' });
       cab.appendChild($('p', { class: 'tool-eyebrow' }, wrap.dataset.toolTitle));
       cab.appendChild($('h2', null, r.titulo));
       cab.appendChild($('p', { class: 'tool-resumo' }, r.resumo));
-      root.appendChild(cab);
+      alvo.appendChild(cab);
 
       var g = $('div', { class: 'tool-kpis' });
       r.indicadores.forEach(function (k) {
@@ -140,10 +143,10 @@
         if (k.nota) d.appendChild($('small', null, k.nota));
         g.appendChild(d);
       });
-      root.appendChild(g);
+      alvo.appendChild(g);
 
       if (r.grafico) {
-        var gc = $('section', { class: 'tool-card' });
+        var gc = $('section', { class: 'otc-card' });
         gc.appendChild($('h3', null, r.grafico.titulo));
         var max = Math.max.apply(null, r.grafico.itens.map(function (x) { return x.valor; })) || 1;
         var ul = $('ul', { class: 'tool-bars' });
@@ -154,34 +157,51 @@
           li.appendChild($('span', { class: 'tool-bar-val' }, fmt[r.grafico.formato || 'num'](x.valor)));
           ul.appendChild(li);
         });
-        gc.appendChild(ul); root.appendChild(gc);
+        gc.appendChild(ul); alvo.appendChild(gc);
+      }
+
+      if (r.tabela) {
+        var tc = $('section', { class: 'otc-card tool-tabela-wrap' });
+        tc.appendChild($('h3', null, r.tabela.titulo));
+        var tb = $('table', { class: 'tool-tabela' });
+        var th = $('tr'); r.tabela.colunas.forEach(function (c, ix) { th.appendChild($('th', { scope: 'col', class: ix ? 'num' : '' }, c)); });
+        var thead = $('thead'); thead.appendChild(th); tb.appendChild(thead);
+        var tbd = $('tbody');
+        r.tabela.linhas.forEach(function (ln) { var tr = $('tr'); ln.forEach(function (c, ix) { tr.appendChild($('td', { class: ix ? 'num' : '' }, c)); }); tbd.appendChild(tr); });
+        tb.appendChild(tbd); tc.appendChild(tb); alvo.appendChild(tc);
       }
 
       [['Conclusões', r.conclusoes], ['Sugestões práticas', r.sugestoes]].forEach(function (par) {
         if (!par[1] || !par[1].length) return;
-        var s = $('section', { class: 'tool-card' }); s.appendChild($('h3', null, par[0]));
-        var ul = $('ul', { class: 'tool-lista' }); par[1].forEach(function (t) { ul.appendChild($('li', null, t)); }); s.appendChild(ul); root.appendChild(s);
+        var s = $('section', { class: 'otc-card' }); s.appendChild($('h3', null, par[0]));
+        var ul = $('ul', { class: 'tool-lista' }); par[1].forEach(function (t) { ul.appendChild($('li', null, t)); }); s.appendChild(ul); alvo.appendChild(s);
       });
 
-      var prem = $('details', { class: 'tool-card tool-premissas' });
+      var prem = $('details', { class: 'otc-card tool-premissas' });
       prem.appendChild($('summary', null, 'Premissas e dados informados'));
       var pl = $('ul', { class: 'tool-lista' });
       def.passos.forEach(function (p) { var v = estado.v[p.id]; pl.appendChild($('li', null, p.rotulo + ': ' + (v == null ? 'não informado' : (p.tipo === 'opcoes' ? v : fmt.num(v) + (p.sufixo ? ' ' + p.sufixo : ''))))); });
       (r.premissas || []).forEach(function (t) { pl.appendChild($('li', null, t)); });
-      prem.appendChild(pl); root.appendChild(prem);
+      prem.appendChild(pl); alvo.appendChild(prem);
 
-      root.appendChild($('p', { class: 'tool-print-rodape' }, 'Gerado gratuitamente pela Oravel.org · oravel.org' + wrap.dataset.tool.replace(/^/, '/ferramentas/') + '/ · ' + new Date().toLocaleDateString('pt-BR')));
+      alvo.appendChild($('p', { class: 'tool-print-rodape' }, 'Gerado gratuitamente pela Oravel.org · oravel.org' + wrap.dataset.tool.replace(/^/, '/ferramentas/') + '/ · ' + new Date().toLocaleDateString('pt-BR')));
 
       var acoes = $('div', { class: 'tool-acoes tool-noprint' });
       var pdf = $('button', { class: 'btn', type: 'button' }, 'Baixar PDF');
-      pdf.onclick = function () { evento(wrap, 'tool_pdf'); document.title = def.slug + '-oravel'; var d = root.querySelector('details'); if (d) d.open = true; window.print(); };
+      pdf.onclick = function () { evento(wrap, 'tool_pdf'); document.title = def.slug + '-oravel'; var d = alvo.querySelector('details'); if (d) d.open = true; window.print(); };
       acoes.appendChild(pdf);
       acoes.appendChild(dropShare());
       var art = document.querySelector('.tool-related-list a');
       if (art) acoes.appendChild($('a', { class: 'tool-link', href: '#tool-rel-titulo' }, 'Ler artigo relacionado'));
-      var vol = $('button', { class: 'tool-link', type: 'button' }, 'Refazer'); vol.onclick = limpar; acoes.appendChild(vol);
-      root.appendChild(acoes);
-      root.appendChild(dropEmailNota());
+      var alt = $('button', { class: 'btn btn-outline tool-alterar', type: 'button' }, 'Alterar dados');
+      alt.onclick = function () {
+        if (wizard) { estado.i = 0; salvar(); render(); }
+        else { var f0 = root.querySelector('.tool-form'); if (f0) { f0.scrollIntoView({ behavior: 'smooth', block: 'start' }); var i0 = f0.querySelector('input,select'); if (i0) i0.focus({ preventScroll: true }); } }
+      };
+      acoes.insertBefore(alt, acoes.children[1] || null);
+      var vol = $('button', { class: 'tool-link', type: 'button' }, 'Novo cálculo (limpar tudo)'); vol.onclick = limpar; acoes.appendChild(vol);
+      alvo.appendChild(acoes);
+      alvo.appendChild(dropEmailNota());
       root.querySelector('.tool-result-head').setAttribute('tabindex', '-1');
       root.querySelector('.tool-result-head').focus({ preventScroll: false });
     }
@@ -216,7 +236,56 @@
       return n;
     }
 
+    function renderFormulario() {
+      root.textContent = '';
+      var form = $('form', { class: 'otc-card tool-form', novalidate: '' });
+      var res = $('div', { class: 'tool-form-res', 'aria-live': 'polite' });
+      var campos = {}, grupoAtual = null, grid = null, erroEl = $('p', { class: 'tool-erro', role: 'alert' });
+      def.passos.forEach(function (p) {
+        if (p.grupo !== grupoAtual) { grupoAtual = p.grupo; form.appendChild($('h3', { class: 'tool-grupo' }, grupoAtual || '')); grid = $('div', { class: 'tool-grid' }); form.appendChild(grid); }
+        var l = $('label', { class: 'tool-campo' }); l.appendChild($('span', null, p.pergunta));
+        var c;
+        if (p.tipo === 'opcoes') {
+          c = $('select', { class: 'tool-input' });
+          p.opcoes.forEach(function (o) { var op = $('option', { value: o.valor != null ? o.valor : o }, o.rotulo || o); c.appendChild(op); });
+          c.value = estado.v[p.id] != null ? estado.v[p.id] : (p.padrao != null ? p.padrao : c.options[0].value);
+        } else {
+          c = $('input', { class: 'tool-input', inputmode: 'decimal', autocomplete: 'off' });
+          var at = estado.v[p.id] != null ? estado.v[p.id] : p.padrao; c.value = at != null ? String(at).replace('.', ',') : '';
+        }
+        if (p.ajuda) { var h = $('small', null, p.ajuda); l.appendChild(c); l.appendChild(h); } else l.appendChild(c);
+        if (p.prefixo || p.sufixo) l.firstChild.textContent += ' (' + (p.prefixo || p.sufixo) + ')';
+        campos[p.id] = c; grid.appendChild(l);
+      });
+      form.appendChild(erroEl);
+      var rst = $('button', { class: 'tool-link', type: 'button' }, 'Restaurar valores padrão'); rst.onclick = function () { estado = { i: 0, v: {} }; salvar(); renderFormulario(); };
+      form.appendChild(rst);
+      root.appendChild(form); root.appendChild(res);
+      var t, primeiro = true;
+      function ler() {
+        var v = {}, msg = '';
+        for (var k = 0; k < def.passos.length; k++) {
+          var p = def.passos[k], c = campos[p.id];
+          if (p.tipo === 'opcoes') { v[p.id] = c.value; continue; }
+          var n = parseNum(c.value);
+          if (n == null) { msg = 'Informe um número em: ' + p.pergunta; break; }
+          if ((p.min != null && n < p.min) || (p.max != null && n > p.max)) { msg = p.pergunta + ': use um valor entre ' + (p.min != null ? p.min : 0) + ' e ' + (p.max != null ? p.max : 'sem limite') + '.'; break; }
+          v[p.id] = n;
+        }
+        erroEl.textContent = msg;
+        if (msg) return;
+        estado.v = v; estado.i = 0; salvar();
+        res.textContent = ''; montarResultado(res, def.calcular(v), false);
+        if (primeiro) { primeiro = false; evento(wrap, 'tool_start'); }
+        if (!concluido) { concluido = true; evento(wrap, 'tool_complete', { segundos: Math.round((Date.now() - tInicio) / 1000) }); }
+      }
+      form.onsubmit = function (e) { e.preventDefault(); ler(); };
+      form.addEventListener('input', function () { clearTimeout(t); t = setTimeout(ler, 400); });
+      ler();
+    }
+
     function render() {
+      if (def.modo === 'formulario') { renderFormulario(); return; }
       if (estado.i < 0) renderIntro();
       else if (estado.i >= def.passos.length) renderResultado();
       else renderPasso();

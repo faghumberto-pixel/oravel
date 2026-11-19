@@ -8,6 +8,12 @@ module.exports = {
   // Telemetria anonima agregada (Worker). Vazio = desligada (nada e enviado).
   telemetriaUrl: "",
   itens: {
+    "preco-diaria": {
+      titulo: "Calculadora de Preço da Diária",
+      resumo: "Calcule o preço mínimo e o sugerido da diária com base em custo de aquisição, vida útil, utilização, manutenção, seguro, rastreamento, custo de capital e margem desejada.",
+      tipo: "formulario", categoria: "Vendas", tempo: "5 min", nivel: "Intermediário", status: "ativa", versao: "1.1", video: "",
+      artigos: ["preco-da-diaria-a-conta-nao-termina-na-diaria", "estrategias-precificacao-locacao-2026-alem-diaria", "custo-por-hora-quanto-custa-de-verdade-operar-cada-maquina"]
+    },
     "calculadora-rentabilidade": {
       titulo: "Calculadora de Rentabilidade",
       resumo: "Margem, retorno anual sobre a frota, payback e resultado depois do custo de capital.",

@@ -29,7 +29,7 @@ pagefind: true
 </div>
 </header>
 
-<section class="container tool-wrap" data-tool="{{ ferramenta }}" data-tool-title="{{ f.titulo }}" data-telemetry="{{ ferramentas.telemetriaUrl }}">
+<section class="container tool-wrap{% if f.tipo == "formulario" %} tool-wide{% endif %}" data-tool="{{ ferramenta }}" data-tool-title="{{ f.titulo }}" data-telemetry="{{ ferramentas.telemetriaUrl }}">
 <noscript><p class="tool-aviso">Esta ferramenta precisa de JavaScript ativado para calcular no seu navegador.</p></noscript>
 <div id="tool-root" class="tool-root" aria-live="polite"></div>
 {{ content | safe }}

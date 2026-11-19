@@ -17,7 +17,7 @@ description: "Calculadoras, simuladores e checklists para locadoras usarem na ho
 <section class="container" style="padding-top:24px;padding-bottom:80px">
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px">
 
-{% for slug, f in ferramentas.itens %}{% if f.tipo == "wizard" and f.status == "ativa" %}
+{% for slug, f in ferramentas.itens %}{% if (f.tipo == "wizard" or f.tipo == "formulario") and f.status == "ativa" %}
 <a href="/ferramentas/{{ slug }}/" class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:30px;text-decoration:none;color:inherit;display:block">
 <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--azul-petroleo)">Calculadora</span>
 <h3 style="margin:12px 0 8px;font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro);line-height:1.25">{{ f.titulo | replace("Calculadora de ", "") }}</h3>
@@ -26,23 +26,7 @@ description: "Calculadoras, simuladores e checklists para locadoras usarem na ho
 </a>
 {% endif %}{% endfor %}
 
-<!-- Calculadora Preço da Diária -->
-<a href="/ferramentas/preco-diaria/" class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:30px;text-decoration:none;color:inherit;display:block;transition:border-color .15s,box-shadow .15s" onmouseover="this.style.borderColor='#0b5f57';this.style.boxShadow='0 8px 24px rgba(11,95,87,.12)'" onmouseout="this.style.borderColor='#e4dfd3';this.style.boxShadow='none'">
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-<span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--azul-petroleo)">Calculadora</span>
-</div>
-<h3 style="margin:0 0 8px;font-family:var(--font-titulo);font-size:24px;font-weight:600;color:var(--texto-escuro);line-height:1.25">Preço da Diária</h3>
-<p style="margin:0 0 16px;color:var(--texto-secundario);font-size:15.5px;line-height:1.5">Calcule o preço mínimo e o sugerido da diária com base em custo de aquisição, vida útil, utilização, manutenção, seguro, rastreamento, custo de capital e margem desejada.</p>
-<div style="display:flex;flex-wrap:wrap;gap:8px;font-size:13px">
-<span style="background:#e7f1ef;color:var(--azul-petroleo);padding:4px 10px;border-radius:999px;font-weight:600">Vendas</span>
-<span style="background:#fef3e7;color:#9a3412;padding:4px 10px;border-radius:999px;font-weight:600">Gestão</span>
-<span style="background:#e7f1ef;color:var(--texto-secundario);padding:4px 10px;border-radius:999px">v1.0</span>
-</div>
-<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--cinza-claro);display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;color:var(--azul-petroleo)">
-<span>Abrir calculadora</span>
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-</div>
-</a>
+
 
 <!-- Calculadora Margem por Equipamento -->
 <a href="/ferramentas/margem-equipamento/" class="card" style="background:#fff;border:1px solid var(--cinza-claro);border-radius:16px;padding:30px;text-decoration:none;color:inherit;display:block;transition:border-color .15s,box-shadow .15s" onmouseover="this.style.borderColor='#0b5f57';this.style.boxShadow='0 8px 24px rgba(11,95,87,.12)'" onmouseout="this.style.borderColor='#e4dfd3';this.style.boxShadow='none'">
