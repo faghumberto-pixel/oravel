@@ -573,6 +573,7 @@ class SalesLeadResource extends Resource
             InteractionsRelationManager::class,
             AppointmentsRelationManager::class,
             \App\Relacionamento\Filament\RelationManagers\RelacionamentoRelationManager::class,
+            \App\Relacionamento\Filament\RelationManagers\ConteudosConsumidosRelationManager::class,
         ];
     }
 

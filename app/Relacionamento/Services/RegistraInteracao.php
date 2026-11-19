@@ -26,7 +26,7 @@ class RegistraInteracao
 
     /**
      * @param  array  $d  tipo (obrigatorio); email|telefone|nome|empresa|cidade|estado|visitor_token|consentimento_origem;
-     *                    prospect_id|sales_lead_id (forca a empresa, usado pelo backfill); conteudo_slug|titulo|resultado|
+     *                    prospect_id|sales_lead_id (forca a empresa, usado pelo backfill); conteudo_slug|tema|titulo|resultado|
      *                    duracao_segundos|origem|utm_*|dados|ocorrido_em|dedupe_key
      */
     public function registrar(array $d): RelInteracao
@@ -166,9 +166,14 @@ class RegistraInteracao
             return;
         }
 
-        RelConteudo::firstOrCreate(
+        $conteudo = RelConteudo::firstOrCreate(
             ['slug' => $d['conteudo_slug']],
-            ['tipo' => $tipo, 'titulo' => $d['titulo'] ?? $d['conteudo_slug']],
+            ['tipo' => $tipo, 'titulo' => $d['titulo'] ?? $d['conteudo_slug'], 'tema' => $d['tema'] ?? null],
         );
+
+        // O site pode passar a classificar o tema depois: completa so' se estava vazio.
+        if ($conteudo->tema === null && ! empty($d['tema'])) {
+            $conteudo->update(['tema' => $d['tema']]);
+        }
     }
 }

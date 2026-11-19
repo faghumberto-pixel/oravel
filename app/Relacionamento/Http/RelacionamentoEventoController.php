@@ -4,6 +4,7 @@ namespace App\Relacionamento\Http;
 
 use App\Http\Controllers\Controller;
 use App\Relacionamento\Models\RelInteracao;
+use App\Relacionamento\Models\RelInteresse;
 use App\Relacionamento\Services\RegistraInteracao;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -34,6 +35,7 @@ class RelacionamentoEventoController extends Controller
             'cidade' => ['nullable', 'string', 'max:120'],
             'estado' => ['nullable', 'string', 'max:10'],
             'conteudo_slug' => ['nullable', 'string', 'max:160', 'regex:/^[a-z0-9\-\/_]+$/'],
+            'tema' => ['nullable', Rule::in(RelInteresse::TEMAS)],
             'titulo' => ['nullable', 'string', 'max:255'],
             'resultado' => ['nullable', 'string', 'max:255'],
             'duracao_segundos' => ['nullable', 'integer', 'min:0', 'max:86400'],

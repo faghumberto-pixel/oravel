@@ -78,6 +78,11 @@ class RelInteracao extends Model
         return self::TIPOS[$tipo][2] ?? 'heroicon-o-bolt';
     }
 
+    public function conteudo(): BelongsTo
+    {
+        return $this->belongsTo(RelConteudo::class, 'conteudo_slug', 'slug');
+    }
+
     public function contato(): BelongsTo
     {
         return $this->belongsTo(RelContato::class, 'contato_id');

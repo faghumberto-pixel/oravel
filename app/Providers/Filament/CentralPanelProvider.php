@@ -121,6 +121,8 @@ class CentralPanelProvider extends PanelProvider
             ->globalSearch(false) // a busca que vale e a ScreenSearch (campo unico no topbar)
             ->favicon(asset('favicon.png').'?v=6')
             ->resources([
+                \App\Relacionamento\Filament\Resources\RelScoreRegraResource::class,
+                \App\Relacionamento\Filament\Resources\RelAcaoRegraResource::class,
                 LandingPageLeadResource::class,
                 PlanResource::class,
                 SignatureResource::class,
@@ -132,6 +134,7 @@ class CentralPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make('Comercial'),
                 NavigationGroup::make('Prospecção'),
+                NavigationGroup::make('Relacionamento Oravel')->collapsed(),
                 NavigationGroup::make('Clientes e Contratos'),
                 NavigationGroup::make('Acessos e Uso')->collapsed(),
                 NavigationGroup::make('Treinamento')->collapsed(),
