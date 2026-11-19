@@ -35,8 +35,7 @@ pagefind: true
 {{ content | safe }}
 </section>
 
-<section class="container tool-video tool-noprint" aria-labelledby="tool-video-titulo">
-<h2 id="tool-video-titulo" class="section-title section-title-h3">Vídeo explicativo</h2>
+<section class="container tool-video tool-noprint" aria-label="Vídeo explicativo">
 {% if f.video %}
 <div class="tool-video-frame"><iframe src="https://www.youtube-nocookie.com/embed/{{ f.video }}" title="Vídeo: {{ f.titulo }}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
 {% else %}
