@@ -1,0 +1,60 @@
+---
+layout: base.njk
+pagefind: true
+---
+{# ToolLayout: toda ferramenta nova herda este layout. Variaveis: ferramenta (slug no registro), title, description. #}
+{% set f = ferramentas.itens[ferramenta] %}
+{% set url = "https://oravel.org" + page.url %}
+<script type="application/ld+json">{{ {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebApplication", "name": f.titulo, "description": f.resumo, "url": url, "applicationCategory": "BusinessApplication", "operatingSystem": "Any", "inLanguage": "pt-BR", "isAccessibleForFree": true, "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" }, "publisher": { "@id": "https://oravel.org/#org" } },
+    { "@type": "BreadcrumbList", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://oravel.org/" },
+      { "@type": "ListItem", "position": 2, "name": "Ferramentas", "item": "https://oravel.org/ferramentas/" },
+      { "@type": "ListItem", "position": 3, "name": f.titulo, "item": url } ] }
+  ]
+} | dump | safe }}</script>
+
+<header class="tema-hero tool-noprint">
+<div class="container">
+<div class="breadcrumb"><a href="/">Início</a> / <a href="/ferramentas/">Ferramentas</a> / {{ f.titulo }}</div>
+<h1 class="page-title">{{ f.titulo }}</h1>
+<p>{{ description }}</p>
+<ul class="tool-meta" aria-label="Informações da ferramenta">
+<li><span>Tempo médio</span><strong>{{ f.tempo }}</strong></li>
+<li><span>Nível</span><strong>{{ f.nivel }}</strong></li>
+<li><span>Cadastro</span><strong>Não precisa</strong></li>
+</ul>
+</div>
+</header>
+
+<section class="container tool-wrap" data-tool="{{ ferramenta }}" data-tool-title="{{ f.titulo }}" data-telemetry="{{ ferramentas.telemetriaUrl }}">
+<noscript><p class="tool-aviso">Esta ferramenta precisa de JavaScript ativado para calcular no seu navegador.</p></noscript>
+<div id="tool-root" class="tool-root" aria-live="polite"></div>
+{{ content | safe }}
+</section>
+
+<section class="container tool-video tool-noprint" aria-labelledby="tool-video-titulo">
+<h2 id="tool-video-titulo" class="section-title section-title-h3">Vídeo explicativo</h2>
+{% if f.video %}
+<div class="tool-video-frame"><iframe src="https://www.youtube-nocookie.com/embed/{{ f.video }}" title="Vídeo: {{ f.titulo }}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+{% else %}
+<div class="tool-video-frame tool-video-vazio" role="img" aria-label="Espaço reservado para o vídeo explicativo"><span>Vídeo explicativo em breve</span></div>
+{% endif %}
+</section>
+
+{% set relacionados = [] %}
+{% for slug in f.artigos %}{% for p in collections.posts %}{% if p.fileSlug.endsWith(slug) %}{% set _ignorar = relacionados.push(p) %}{% endif %}{% endfor %}{% endfor %}
+{% if relacionados.length %}
+<section class="container tool-related tool-noprint" aria-labelledby="tool-rel-titulo">
+<h2 id="tool-rel-titulo" class="section-title section-title-h3">Artigos relacionados</h2>
+<ul class="tool-related-list">
+{% for p in relacionados %}<li><a href="{{ p.url }}"><span>{{ p.data.theme | themeLabel }}</span>{{ p.data.title }}</a></li>{% endfor %}
+</ul>
+</section>
+{% endif %}
+
+<script src="/assets/tool.js" defer></script>
+<script src="/assets/tools/{{ ferramenta }}.js" defer></script>
+<link rel="stylesheet" href="/assets/tool.css">
