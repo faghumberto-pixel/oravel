@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\WebDiscard;
 use App\Models\WebEvent;
+use App\Models\WebIpIgnorado;
 use App\Models\WebPageview;
 use App\Models\WebVisit;
 use App\Services\IpGeolocationService;
@@ -147,6 +148,14 @@ class SiteTrackingController extends Controller
         $visit = WebVisit::where('session_token', $session)->first();
 
         if (! $visit) {
+            // IP da equipe/empresa (lista em Site Institucional > IPs ignorados): nao vira visita, e os pings e cliques
+            // da mesma sessao tambem somem, porque exigem a visita.
+            if (WebIpIgnorado::ignora($request->ip())) {
+                $this->discard(WebDiscard::REASON_IP_IGNORADO, $session);
+
+                return;
+            }
+
             $ua = (string) $request->userAgent();
             $agent = UserAgentInfo::parse($ua);
             $place = $geo->locate($request->ip());

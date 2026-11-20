@@ -3,6 +3,7 @@
 namespace App\Relacionamento\Http;
 
 use App\Http\Controllers\Controller;
+use App\Models\WebIpIgnorado;
 use App\Relacionamento\Models\RelInteracao;
 use App\Relacionamento\Services\RegistraInteracao;
 use Illuminate\Http\Request;
@@ -28,8 +29,8 @@ class RelacionamentoSiteEventoController extends Controller
     {
         $resposta = response()->noContent();
 
-        if (! $this->origemPermitida($request)) {
-            return $resposta;
+        if (! $this->origemPermitida($request) || WebIpIgnorado::ignora($request->ip())) {
+            return $resposta; // origem nao autorizada ou IP da equipe/empresa (ver WebIpIgnorado)
         }
 
         try {

@@ -18,6 +18,8 @@ class WebDiscard extends Model
 
     public const REASON_ORIGIN = 'origem_invalida';
 
+    public const REASON_IP_IGNORADO = 'ip_ignorado';
+
     protected $fillable = ['day', 'reason', 'hits', 'sessions'];
 
     protected $casts = ['day' => 'date'];
@@ -29,6 +31,7 @@ class WebDiscard extends Model
             self::REASON_ROBOT => 'Robô (pelo navegador)',
             self::REASON_DATACENTER => 'IP de servidor/nuvem (robô ou pré-visualização)',
             self::REASON_ORIGIN => 'Origem não autorizada',
+            self::REASON_IP_IGNORADO => 'IP ignorado (equipe/empresa)',
         ];
     }
 
