@@ -76,13 +76,19 @@ class CrmPacotesTest extends TestCase
 
     public function test_storage_and_logistics_packages_follow_their_menu_groups(): void
     {
+        // Chaves de config('pacotes.chaves_complementos') (ex.: Visão geral da logística da frota) NUNCA entram em pacote:
+        // a Central liga contrato a contrato (commit 3c5b5415). Por isso saem do que se espera de cada grupo.
+        $complementos = (array) config('pacotes.chaves_complementos', []);
         $estoque = Pacotes::features('estoque');
-        $this->assertEmpty(array_diff($this->chavesDoGrupo('Materiais e Peças'), $estoque), 'todo módulo do menu entra');
+        $this->assertEmpty(array_diff($this->chavesDoGrupo('Materiais e Peças'), $estoque, $complementos), 'todo módulo do menu entra');
         $this->assertEmpty(array_intersect($estoque, $this->chavesDoGrupo('Logística')));
         $this->assertNotContains('tabela_crm_leads', $estoque);
 
         $log = Pacotes::features('logistica');
-        $this->assertEmpty(array_diff(array_merge($this->chavesDoGrupo('Logística'), $this->chavesDoGrupo('Gestão de Frota')), $log));
+        $this->assertEmpty(array_diff(array_merge($this->chavesDoGrupo('Logística'), $this->chavesDoGrupo('Gestão de Frota')), $log, $complementos));
+        foreach ($complementos as $chave) {
+            $this->assertNotContains($chave, $log, "{$chave} é complemento: nunca entra no pacote");
+        }
         $this->assertEmpty(array_intersect($log, $this->chavesDoGrupo('Materiais e Peças')));
     }
 
@@ -128,7 +134,9 @@ class CrmPacotesTest extends TestCase
         $crm = $this->tenantComPacote('vendas');
         $this->actingAs($this->admin($crm));
         $this->assertSame(CrmFunil::getUrl(), Pacotes::urlInicial($crm));
-        $this->assertStringContainsString('crm-funil', AppProfile::homeUrl(auth()->user(), AppProfile::ADMIN));
+        // A tela inicial do pacote continua sendo o funil, mas sem o Painel de Controle no contrato o Guia dos módulos
+        // vale antes dela (commit b1ab57c8); a rota /admin que leva direto ao funil é testada logo abaixo.
+        $this->assertStringContainsString('primeiros-passos', AppProfile::homeUrl(auth()->user(), AppProfile::ADMIN));
 
         $locadora = $this->tenantComPacote('locadora');
         $this->actingAs($this->admin($locadora));
@@ -151,7 +159,8 @@ class CrmPacotesTest extends TestCase
 
     public function test_contract_form_stores_the_package_and_lists_filter_and_count_by_it(): void
     {
-        $super = User::create(['name' => 'Super', 'email' => (config('oravel.super_admins')[0] ?? 'faghumberto@gmail.com'), 'password' => bcrypt('x'), 'is_approved' => true]);
+        config(['oravel.super_admins' => ['equipe@oravel.test']]); // no ambiente de teste a lista vem vazia
+        $super = User::create(['name' => 'Super', 'email' => 'equipe@oravel.test', 'password' => bcrypt('x'), 'is_approved' => true]);
         $this->actingAs($super);
         Filament::setCurrentPanel(Filament::getPanel('central'));
 

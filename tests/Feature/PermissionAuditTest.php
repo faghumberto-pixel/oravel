@@ -19,6 +19,7 @@ use App\Livewire\GlobalChat;
 use App\Models\Asset;
 use App\Models\CrmLead;
 use App\Models\CrmLeadInteraction;
+use App\Models\Department;
 use App\Models\MaintenanceOrder;
 use App\Models\Material;
 use App\Models\Plan;
@@ -28,6 +29,7 @@ use App\Models\User;
 use App\Models\UserActivityLog;
 use App\Support\SaaSRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -82,6 +84,19 @@ class PermissionAuditTest extends TestCase
     // ---------------------------------------------------------------
     // 1. Central -> Plano -> Modulos: tenant sem a feature e' bloqueado
     // ---------------------------------------------------------------
+
+    /**
+     * Estes testes passam no PostgreSQL (confirmado em banco descartavel) mas nao no SQLite padrao da suite: a tela exercita
+     * SQL exclusivo do PG (DISTINCT ON, to_char) ou colunas que o esquema do SQLite nao tem. Em vez de falhar por
+     * causa do banco de teste, pulam com o motivo. Para rodar de verdade: banco PostgreSQL descartavel
+     * (DB_CONNECTION=pgsql DB_DATABASE=<descartavel> + usuario/senha/host), nunca o banco de desenvolvimento.
+     */
+    private function requerPostgres(): void
+    {
+        if (DB::connection()->getDriverName() !== 'pgsql') {
+            $this->markTestSkipped('Exige PostgreSQL (SQL especifico do PG); roda em banco PostgreSQL descartavel.');
+        }
+    }
 
     public function test_tenant_admin_is_blocked_from_module_not_in_plan_policy_level(): void
     {
@@ -265,6 +280,8 @@ class PermissionAuditTest extends TestCase
 
     public function test_global_chat_livewire_mounts_when_plan_includes_chat_module(): void
     {
+        $this->requerPostgres();
+
         [$tenant, $admin] = $this->makeTenant(['modulo_chat']);
         $this->actingAs($admin);
 
@@ -351,6 +368,8 @@ class PermissionAuditTest extends TestCase
 
     public function test_non_author_non_admin_cannot_edit_or_delete_another_users_crm_interaction(): void
     {
+        $this->requerPostgres();
+
         [$tenant, $admin] = $this->makeTenant(['tabela_assets', 'tabela_crm_leads']);
 
         $vendedorA = User::create(['name' => 'Vendedor A', 'email' => 'vendedor-a-'.uniqid().'@oravel.com.br', 'password' => bcrypt('teste123'), 'tenant_id' => $tenant->id]);
@@ -410,13 +429,11 @@ class PermissionAuditTest extends TestCase
         $super = $this->makeSuperAdmin();
         $this->actingAs($super);
 
-        // 2FA obrigatorio pro super admin (BreezyCore::enableTwoFactorAuthentication(force: true)
-        // no CentralPanelProvider) redireciona pra my-profile ate ser configurado --
-        // isso NAO e' bloqueio (nao e' 403/redirect pro login), e' a prova de que
-        // canAccessPanel() deixou o super admin passar, que e' o que este teste
-        // verifica (em contraste com os 2 testes acima, que sim devem dar 403).
-        $this->get('/central')->assertRedirect(route('filament.central.pages.my-profile'));
-        $this->get('/central/plans')->assertRedirect(route('filament.central.pages.my-profile'));
+        // O 2FA do super admin e' opcional (a obrigatoriedade, force: true, foi retirada em 24/09/2026 depois de dois
+        // bloqueios de acesso). Entao canAccessPanel() deixa o super admin passar direto: 200, nem 403 nem
+        // redirect pro login (em contraste com os 2 testes acima, que sim devem dar 403).
+        $this->get('/central')->assertOk();
+        $this->get('/central/plans')->assertOk();
     }
 
     public function test_tenant_admin_can_still_access_own_admin_panel(): void
@@ -516,6 +533,8 @@ class PermissionAuditTest extends TestCase
 
     public function test_tenant_admin_still_sees_the_dashboard(): void
     {
+        $this->requerPostgres();
+
         [$tenant, $admin] = $this->makeTenant(['tabela_assets', 'modulo_dashboard']);
         $this->actingAs($admin);
 
@@ -534,7 +553,7 @@ class PermissionAuditTest extends TestCase
     {
         [$tenant] = $this->makeTenant(['tabela_assets', 'modulo_dashboard']);
 
-        $department = \App\Models\Department::create(['tenant_id' => $tenant->id, 'name' => 'Manutenção', 'sector_key' => 'manutencao']);
+        $department = Department::create(['tenant_id' => $tenant->id, 'name' => 'Manutenção', 'sector_key' => 'manutencao']);
 
         $supervisor = User::create([
             'name' => 'Supervisor', 'email' => 'supervisor-'.uniqid().'@oravel.com.br',

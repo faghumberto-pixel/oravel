@@ -127,7 +127,8 @@ class PacotesCheckoutTest extends TestCase
     public function test_central_lets_the_operator_set_price_and_put_the_showcase_plan_on_sale(): void
     {
         $plano = Pacotes::planoDeVitrine('servicos');
-        $super = User::create(['name' => 'Super', 'email' => (config('oravel.super_admins')[0] ?? 'faghumberto@gmail.com'), 'password' => bcrypt('x'), 'is_approved' => true]);
+        config(['oravel.super_admins' => ['equipe@oravel.test']]); // no ambiente de teste a lista vem vazia
+        $super = User::create(['name' => 'Super', 'email' => 'equipe@oravel.test', 'password' => bcrypt('x'), 'is_approved' => true]);
         $this->actingAs($super);
         Filament::setCurrentPanel(Filament::getPanel('central'));
 
@@ -158,9 +159,9 @@ class PacotesCheckoutTest extends TestCase
     {
         $html = file_get_contents(base_path('public_html/planos/index.html'));
 
-        // Departamento Pessoal entra no site publicado junto com a página própria (branch do site, Fase 8I-site).
-        foreach (array_diff(array_keys(Pacotes::opcoes()), ['departamento_pessoal']) as $codigo) {
-            $this->assertStringContainsString('href="https://app.oravel.com.br/assinar/'.$codigo.'"', $html, "link de {$codigo}");
+        // Desde o novo padrão do site (commit 3303998f) cada pacote leva ao contato consultivo, não ao checkout direto.
+        foreach (array_keys(Pacotes::opcoes()) as $codigo) {
+            $this->assertStringContainsString('href="/contato.php?pacote='.$codigo.'"', $html, "link de {$codigo}");
         }
 
         $this->assertStringNotContainsString('R$', $html, 'preço fica só na Central/checkout');
@@ -169,7 +170,8 @@ class PacotesCheckoutTest extends TestCase
 
     public function test_central_action_creates_the_missing_showcase_plans_without_touching_existing_ones(): void
     {
-        $super = User::create(['name' => 'Super', 'email' => (config('oravel.super_admins')[0] ?? 'faghumberto@gmail.com'), 'password' => bcrypt('x'), 'is_approved' => true]);
+        config(['oravel.super_admins' => ['equipe@oravel.test']]); // no ambiente de teste a lista vem vazia
+        $super = User::create(['name' => 'Super', 'email' => 'equipe@oravel.test', 'password' => bcrypt('x'), 'is_approved' => true]);
         $this->actingAs($super);
         Filament::setCurrentPanel(Filament::getPanel('central'));
 

@@ -169,7 +169,8 @@ class PacotesVendaveisTest extends TestCase
     public function test_choosing_a_package_suggests_the_central_price_only_when_the_field_is_empty(): void
     {
         Pacotes::planoDeVitrine('servicos')->update(['base_price' => 790, 'price' => 790, 'billing_cycle' => 'quarterly']);
-        $super = User::create(['name' => 'Super', 'email' => (config('oravel.super_admins')[0] ?? 'faghumberto@gmail.com'), 'password' => bcrypt('x'), 'is_approved' => true]);
+        config(['oravel.super_admins' => ['equipe@oravel.test']]); // no ambiente de teste a lista vem vazia
+        $super = User::create(['name' => 'Super', 'email' => 'equipe@oravel.test', 'password' => bcrypt('x'), 'is_approved' => true]);
         $this->actingAs($super);
         Filament::setCurrentPanel(Filament::getPanel('central'));
 
