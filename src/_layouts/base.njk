@@ -40,6 +40,8 @@
 {# Sinais anonimos para a Central (ferramentas concluidas, downloads). Desliga junto com ferramentas.telemetriaUrl. #}
 {% if ferramentas.telemetriaUrl %}<meta name="oravel-rel" content="{{ ferramentas.telemetriaUrl }}">
 <script src="/assets/rel.js" defer></script>{% endif %}
+{% if ferramentas.telemetriaUrl and ferramentas.visitasUrl %}<meta name="oravel-visitas" content="{{ ferramentas.visitasUrl }}">
+<script src="/assets/visitas.js" defer></script>{% endif %}
 {% if pagefind %}<link rel="stylesheet" href="/pagefind/pagefind-ui.css">{% endif %}
 </head>
 <body>

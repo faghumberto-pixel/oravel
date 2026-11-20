@@ -21,16 +21,21 @@ Este texto descreve o que o site faz hoje. Deve ser revisado por advogado antes 
 
 <a id="uso-de-ferramentas-e-materiais"></a>
 
-## Uso de ferramentas e materiais
+## Navegação, ferramentas e materiais (com o seu consentimento)
 
-Se você **aceitar** o aviso de privacidade exibido no site, guardamos no seu navegador um identificador aleatório. Quando você conclui uma ferramenta gratuita (por exemplo, uma calculadora) ou baixa um material, enviamos à Oravel o nome da ferramenta ou do arquivo, o tempo de uso e, se você informou, o estado. Esse identificador não contém nome, e-mail nem telefone.
+Se você **aceitar** o aviso de privacidade exibido no site, guardamos no seu navegador um identificador aleatório e registramos na Central da Oravel:
 
-Se você se identificar em outro momento (por exemplo, ao assinar a Gazeta Oravel ou ao se cadastrar), podemos associar esse histórico ao seu e-mail. Usamos essas informações para entender quais temas interessam às locadoras, melhorar o conteúdo do oravel.org e decidir qual material ou contato comercial pode ser útil para você. Não vendemos esses dados.
+- as **páginas que você visita**, a origem do acesso (por exemplo, Google ou link de outro site), o tipo de aparelho e de navegador, o tempo de leitura e até onde você rolou a página;
+- o seu **endereço IP** e a **localização aproximada** (cidade e estado) deduzida dele;
+- os cliques em links externos e em downloads;
+- as **ferramentas** que você conclui (com o tempo de uso) e os **materiais** que você baixa.
+
+Esse identificador não contém nome, e-mail nem telefone. Se você se identificar em outro momento (por exemplo, ao assinar a Gazeta Oravel ou ao se cadastrar), podemos associar esse histórico ao seu e-mail. Usamos essas informações para entender quais temas interessam às locadoras, melhorar o conteúdo do oravel.org e decidir qual material ou contato comercial pode ser útil para você. Não vendemos esses dados.
 
 - **Base legal:** consentimento do titular (LGPD, art. 7º, I). Sem o seu aceite, nada disso é guardado nem enviado.
-- **Se você recusar:** o identificador não é criado e nenhuma informação de uso é enviada. As ferramentas e os materiais continuam funcionando normalmente.
+- **Se você recusar:** o identificador não é criado e nenhuma informação de visita ou de uso é enviada. As ferramentas e os materiais continuam funcionando normalmente. A medição de audiência agregada e sem identificação do Plausible, descrita acima, é independente deste aviso.
 - **Como mudar de ideia:** o site também respeita o sinal "Do Not Track" do navegador. <button type="button" onclick="window.OravelRel&&OravelRel.reabrir()" style="cursor:pointer;background:none;border:0;padding:0;color:inherit;text-decoration:underline;font:inherit">Alterar minha escolha</button>. Para pedir a exclusão do histórico já associado ao seu e-mail, escreva para [contato@oravel.org](mailto:contato@oravel.org).
-- **Prazo de guarda:** 24 meses.
+- **Prazo de guarda:** as visitas às páginas (inclusive o IP) são apagadas em até **13 meses**; o histórico de ferramentas e materiais associado a uma pessoa, em até **24 meses**.
 
 ## Seus direitos (LGPD)
 
@@ -48,4 +53,4 @@ Para comentar nos artigos, a pessoa se cadastra informando nome, sobrenome, e-ma
 - **Armazenamento:** os dados ficam em serviços do Google (Firebase Authentication e Cloud Firestore), com acesso restrito. O reCAPTCHA do Google é usado para barrar robôs.
 - **Eliminação:** você pode pedir a exclusão do cadastro e dos seus comentários a qualquer momento, pelo controlador acima, no e-mail [contato@oravel.org](mailto:contato@oravel.org), que também atende pedidos dos titulares sobre seus dados (LGPD).
 
-<p style="margin:24px 0 0;color:#6b7280;font-size:14px">Última revisão: 19 de novembro de 2026</p>
+<p style="margin:24px 0 0;color:#6b7280;font-size:14px">Última revisão: 20 de novembro de 2026</p>

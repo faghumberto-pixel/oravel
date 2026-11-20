@@ -8,6 +8,8 @@ module.exports = {
   // Sinais anonimos (ferramenta concluida, download) para a Central da Oravel (modulo Relacionamento).
   // So publicar o site com isto ligado DEPOIS de a Central estar no ar com a rota. Vazio = desligado.
   telemetriaUrl: "https://app.oravel.com.br/api/relacionamento/site-evento",
+  // Visitas as paginas do oravel.org (mesmo coletor do institucional; aparece em Visitas do Site, coluna Site). Vazio = desligado.
+  visitasUrl: "https://app.oravel.com.br/api/site-track",
   itens: {
     "margem-equipamento": {
       titulo: "Calculadora de Margem por Equipamento", resumo: "Veja a margem real de cada ativo da frota: receita gerada menos custo total de posse (depreciação, manutenção, seguro, rastreamento, capital). Identifique equipamentos que drenam caixa.",

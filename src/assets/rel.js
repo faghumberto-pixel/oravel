@@ -1,5 +1,5 @@
 /* Sinais anonimos do oravel.org para a Central da Oravel (modulo Relacionamento), SOMENTE com consentimento.
- * - aviso discreto "Aceitar / Recusar" na primeira visita; sem escolha ou com "Recusar", nada e criado nem enviado;
+ * - aviso discreto "Aceitar / Recusar" na primeira visita (cobre tambem visitas.js, o rastreio de paginas); sem escolha ou com "Recusar", nada e criado nem enviado;
  * - OravelRel.token(): identificador anonimo do navegador (localStorage), usado pelas ferramentas;
  * - clique em download (/downloads/*, /assets/materiais/*) vira um evento "download".
  * Nao envia nome, e-mail nem telefone. Respeita "Do Not Track". Sem URL configurada (meta), nao faz nada.
@@ -9,7 +9,8 @@
   var meta = document.querySelector('meta[name="oravel-rel"]');
   var url = meta && meta.content;
   var dnt = navigator.doNotTrack === '1' || window.doNotTrack === '1';
-  var CONSENT = 'oravel:consent', TOKEN = 'oravel:vt';
+  // Chave v2: o aceite passou a cobrir tambem as visitas as paginas (IP, cidade/estado, origem, tempo); quem aceitou so' as ferramentas e' perguntado de novo.
+  var CONSENT = 'oravel:consent2', TOKEN = 'oravel:vt';
 
   function ler(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function gravar(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
@@ -41,6 +42,7 @@
     if (!gravar(CONSENT, valor)) return fechar();
     if (valor !== 'sim') apagar(TOKEN);
     fechar();
+    try { document.dispatchEvent(new CustomEvent('oravel:consent', { detail: valor })); } catch (e) {}
   }
 
   function aviso() {
@@ -54,7 +56,7 @@
     wrap.style.cssText = 'max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between';
     var p = document.createElement('p');
     p.style.cssText = 'margin:0;flex:1 1 320px';
-    p.appendChild(document.createTextNode('Podemos guardar no seu navegador um identificador anônimo para saber quais ferramentas e materiais você usa e, se você se identificar depois, melhorar o conteúdo e te oferecer o que fizer sentido. '));
+    p.appendChild(document.createTextNode('Para melhorar o conteúdo, podemos guardar no seu navegador um identificador anônimo e registrar as páginas que você visita, de onde veio, o aparelho, o tempo de leitura e sua localização aproximada (pelo IP), além das ferramentas e materiais que você usa. Se você se identificar depois, podemos ligar esse histórico ao seu e-mail. '));
     var a = document.createElement('a');
     a.href = '/privacidade/#uso-de-ferramentas-e-materiais'; a.textContent = 'Saiba mais'; a.style.cssText = 'color:#fff;text-decoration:underline';
     p.appendChild(a);
