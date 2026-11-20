@@ -24,6 +24,7 @@ class RelContato extends Model
     protected $casts = [
         'visitor_tokens' => 'array',
         'consentimento_em' => 'datetime',
+        'descadastrado_em' => 'datetime',
     ];
 
     public function prospect(): BelongsTo

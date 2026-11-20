@@ -88,8 +88,10 @@ class RelContatoResource extends Resource
                 Tables\Columns\TextColumn::make('interacoes_count')->label('Interações')->sortable(),
                 Tables\Columns\TextColumn::make('interacoes_max_ocorrido_em')->label('Última interação')->dateTime('d/m/Y H:i')->sortable()->placeholder('—'),
                 Tables\Columns\IconColumn::make('consentimento_em')->label('Aceitou receber')->boolean()
-                    ->getStateUsing(fn (RelContato $c): bool => $c->consentimento_em !== null)
-                    ->tooltip(fn (RelContato $c): ?string => $c->consentimento_em ? $c->consentimento_origem.' · '.$c->consentimento_em->format('d/m/Y H:i') : 'Sem registro de consentimento'),
+                    ->getStateUsing(fn (RelContato $c): bool => $c->consentimento_em !== null && $c->descadastrado_em === null)
+                    ->tooltip(fn (RelContato $c): ?string => $c->descadastrado_em
+                        ? 'Descadastrou-se em '.$c->descadastrado_em->format('d/m/Y')
+                        : ($c->consentimento_em ? $c->consentimento_origem.' · '.$c->consentimento_em->format('d/m/Y H:i') : 'Sem registro de consentimento')),
                 Tables\Columns\TextColumn::make('created_at')->label('Entrou em')->dateTime('d/m/Y')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('interacoes_max_ocorrido_em', 'desc')
@@ -97,7 +99,9 @@ class RelContatoResource extends Resource
                 Tables\Filters\Filter::make('sem_empresa')->label('Sem empresa vinculada')->toggle()
                     ->query(fn (Builder $query) => $query->whereNull('prospect_id')->whereNull('sales_lead_id')),
                 Tables\Filters\Filter::make('com_consentimento')->label('Aceitaram receber conteúdo')->toggle()
-                    ->query(fn (Builder $query) => $query->whereNotNull('consentimento_em')),
+                    ->query(fn (Builder $query) => $query->whereNotNull('consentimento_em')->whereNull('descadastrado_em')),
+                Tables\Filters\Filter::make('descadastrados')->label('Descadastrados (não contatar)')->toggle()
+                    ->query(fn (Builder $query) => $query->whereNotNull('descadastrado_em')),
                 Tables\Filters\SelectFilter::make('consentimento_origem')->label('Origem do aceite')
                     ->options(fn () => RelContato::whereNotNull('consentimento_origem')->distinct()->pluck('consentimento_origem', 'consentimento_origem')->all()),
             ])
@@ -153,7 +157,9 @@ class RelContatoResource extends Resource
                 Infolists\Components\TextEntry::make('proxima_acao')->label('Próxima ação sugerida')
                     ->state(fn (RelContato $c): string => app(ProximaAcao::class)->para(self::score($c)['score'])?->titulo ?? '—'),
                 Infolists\Components\TextEntry::make('consentimento')->label('Consentimento')
-                    ->state(fn (RelContato $c): string => $c->consentimento_em ? $c->consentimento_origem.' em '.$c->consentimento_em->format('d/m/Y H:i') : 'Sem registro de consentimento'),
+                    ->state(fn (RelContato $c): string => $c->descadastrado_em
+                        ? 'DESCADASTRADO em '.$c->descadastrado_em->format('d/m/Y').' — não contatar'
+                        : ($c->consentimento_em ? $c->consentimento_origem.' em '.$c->consentimento_em->format('d/m/Y H:i') : 'Sem registro de consentimento')),
             ])->columns(3),
         ]);
     }

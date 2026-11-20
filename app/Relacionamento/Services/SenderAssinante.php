@@ -14,10 +14,10 @@ use Illuminate\Support\Carbon;
 class SenderAssinante
 {
     /** @return list<array> dados prontos para RegistraInteracao::registrar() (um por tipo distinto de tag reconhecida) */
-    public function interacoes(array $p): array
+    public function interacoes(array $p, ?string $tipoPadrao = null): array
     {
         $email = RegistraInteracao::normalizaEmail($p['email'] ?? null);
-        if ($email === null || empty($p['id'])) {
+        if ($email === null) {
             return [];
         }
 
@@ -29,6 +29,11 @@ class SenderAssinante
                     $tipos[$tipo] ??= $titulo;
                 }
             }
+        }
+
+        // Lista exportada de um grupo/formulario sem tags: o tipo padrao assume o lugar da tag.
+        if ($tipos === [] && $tipoPadrao !== null) {
+            $tipos[$tipoPadrao] = $tipoPadrao;
         }
 
         $nome = trim(($p['firstname'] ?? '').' '.($p['lastname'] ?? ''));
@@ -45,21 +50,26 @@ class SenderAssinante
                 'empresa' => $empresa,
                 'titulo' => $tipo === RelInteracao::TIPO_GAZETA ? 'Gazeta Oravel' : 'Material: '.$tagTitulo,
                 'origem' => 'sender',
-                'ocorrido_em' => $this->quando($p['created_utc'] ?? null),
+                'ocorrido_em' => $this->quando($p['created_utc'] ?? null, $p['created_local'] ?? null),
                 // So' formulario carrega o aceite do titular; assinante importado/manual nao prova consentimento.
                 'consentimento_origem' => $veioDeFormulario ? 'sender-form' : null,
-                'dados' => ['sender_id' => $p['id'], 'tags' => $tags->all(), 'source' => $p['source'] ?? null],
-                'dedupe_key' => "sender:subscribers-new:{$p['id']}:{$tipo}",
+                'dados' => array_filter(['sender_id' => $p['id'] ?? null, 'tags' => $tags->all(), 'source' => $p['source'] ?? null]),
+                // Uma pessoa = uma interacao por tipo, venha do webhook ou do CSV (mesma chave nos dois caminhos).
+                'dedupe_key' => 'sender:'.$tipo.':'.sha1($email),
             ];
         }
 
         return $saida;
     }
 
-    private function quando(?string $utc): Carbon
+    private function quando(?string $utc, ?string $local = null): Carbon
     {
         try {
-            return $utc ? Carbon::parse($utc, 'UTC')->setTimezone(config('app.timezone')) : now();
+            if ($utc) {
+                return Carbon::parse($utc, 'UTC')->setTimezone(config('app.timezone'));
+            }
+
+            return $local ? Carbon::parse($local, config('app.timezone')) : now();
         } catch (\Throwable) {
             return now();
         }

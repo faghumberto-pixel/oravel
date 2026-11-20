@@ -3,6 +3,7 @@
 namespace App\Relacionamento;
 
 use App\Relacionamento\Console\BackfillRelacionamento;
+use App\Relacionamento\Console\ImportarSenderCsv;
 use App\Relacionamento\Console\PurgarRelacionamento;
 use App\Relacionamento\Http\RelacionamentoEventoController;
 use App\Relacionamento\Http\RelacionamentoSiteEventoController;
@@ -17,7 +18,7 @@ class RelacionamentoServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillRelacionamento::class, PurgarRelacionamento::class]);
+            $this->commands([BackfillRelacionamento::class, ImportarSenderCsv::class, PurgarRelacionamento::class]);
         }
 
         // Cumpre o prazo de guarda da politica de privacidade, todo dia de madrugada.

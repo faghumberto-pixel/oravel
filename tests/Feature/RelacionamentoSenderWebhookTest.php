@@ -140,8 +140,15 @@ class RelacionamentoSenderWebhookTest extends TestCase
     {
         $this->enviar('{lixo')->assertOk();
         $this->enviar($this->assinante(['email' => null]))->assertOk();
-        $this->enviar($this->assinante(['id' => null]))->assertOk();
 
         $this->assertSame(0, RelInteracao::count());
+    }
+
+    public function test_id_do_sender_e_opcional_e_a_pessoa_conta_uma_vez_por_tipo(): void
+    {
+        $this->enviar($this->assinante(['id' => null]))->assertOk();
+        $this->enviar($this->assinante(['id' => 'OUTRO-ID']))->assertOk(); // mesmo e-mail, outro id: continua 1
+
+        $this->assertSame(1, RelInteracao::count());
     }
 }
