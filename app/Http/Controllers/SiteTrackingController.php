@@ -94,11 +94,30 @@ class SiteTrackingController extends Controller
         $host = $origin ? parse_url($origin, PHP_URL_HOST) : null;
         $scheme = $origin ? parse_url($origin, PHP_URL_SCHEME) : null;
 
-        if (! $host || ! in_array(strtolower($host), config('oravel.site_tracking.allowed_hosts', []), true)) {
+        if (! $host || $this->siteForHost((string) $host) === null) {
             return null;
         }
 
         return ($scheme ?: 'https').'://'.$host;
+    }
+
+    /** Qual site da Oravel e' esse host; null = host nao autorizado. */
+    private function siteForHost(string $host): ?string
+    {
+        $host = strtolower($host);
+
+        if (in_array($host, config('oravel.site_tracking.allowed_hosts', []), true)) {
+            return WebVisit::SITE_INSTITUCIONAL;
+        }
+
+        return in_array($host, config('oravel.site_tracking.org_hosts', []), true) ? WebVisit::SITE_ORG : null;
+    }
+
+    private function siteOf(Request $request): string
+    {
+        $origin = $request->headers->get('Origin') ?: $request->headers->get('Referer');
+
+        return $this->siteForHost((string) parse_url((string) $origin, PHP_URL_HOST)) ?? WebVisit::SITE_INSTITUCIONAL;
     }
 
     private function token(mixed $value): ?string
@@ -145,6 +164,7 @@ class SiteTrackingController extends Controller
 
             try {
                 $visit = WebVisit::create([
+                    'site' => $this->siteOf($request),
                     'visitor_token' => $visitor,
                     'session_token' => $session,
                     'ip_address' => $request->ip(),

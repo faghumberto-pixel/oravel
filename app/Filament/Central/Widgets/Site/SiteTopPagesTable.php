@@ -24,7 +24,7 @@ class SiteTopPagesTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => WebPageview::query()
+            ->query(fn (): Builder => WebPageview::query()->whereHas('visit', fn ($q) => $q->institucional())
                 ->where('entered_at', '>=', WebAnalytics::since($this->filters['period'] ?? '7'))
                 ->selectRaw('path, count(*) as views, count(distinct web_visit_id) as visits, avg(active_seconds) as avg_time, avg(max_scroll) as avg_scroll')
                 ->groupBy('path')

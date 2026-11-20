@@ -44,6 +44,7 @@ class WebVisitResource extends Resource
             ->defaultSort('started_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('started_at')->label('Quando')->dateTime('d/m/Y H:i')->sortable(),
+                Tables\Columns\TextColumn::make('site')->label('Site')->badge()->color(fn (string $state): string => $state === WebVisit::SITE_ORG ? 'info' : 'gray'),
                 Tables\Columns\TextColumn::make('landing_path')->label('Página de entrada')->limit(40)->searchable(),
                 Tables\Columns\TextColumn::make('source')->label('Origem')->badge()->color('gray')
                     ->state(fn (WebVisit $r) => $r->sourceLabel()),
@@ -63,6 +64,7 @@ class WebVisitResource extends Resource
                 Tables\Columns\TextColumn::make('state')->label('UF')->placeholder('—'),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('site')->label('Site')->options(WebVisit::sites()),
                 Tables\Filters\SelectFilter::make('device_type')->label('Dispositivo')
                     ->options(['desktop' => 'Desktop', 'mobile' => 'Celular', 'tablet' => 'Tablet']),
                 Tables\Filters\SelectFilter::make('period')->label('Período')->options(WebAnalytics::periods())

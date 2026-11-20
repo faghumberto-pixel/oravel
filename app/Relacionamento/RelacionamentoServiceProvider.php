@@ -22,7 +22,12 @@ class RelacionamentoServiceProvider extends ServiceProvider
         }
 
         // Cumpre o prazo de guarda da politica de privacidade, todo dia de madrugada.
-        $this->callAfterResolving(Schedule::class, fn (Schedule $s) => $s->command('relacionamento:purgar')->dailyAt('03:30')->withoutOverlapping());
+        $this->callAfterResolving(Schedule::class, function (Schedule $s) {
+            $s->command('relacionamento:purgar')->dailyAt('03:30')->withoutOverlapping();
+            // Visitas aos sites (web_visits, com IP): 13 meses, como diz a politica de privacidade do oravel.org.
+            // O comando ja existia mas nao estava agendado em lugar nenhum: o historico nunca expirava.
+            $s->command('web-analytics:prune')->dailyAt('03:40')->withoutOverlapping();
+        });
 
         Route::middleware(['api', 'throttle:120,1'])->prefix('api')->group(function () {
             Route::post('/relacionamento/eventos', [RelacionamentoEventoController::class, 'store'])

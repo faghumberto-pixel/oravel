@@ -28,13 +28,13 @@ class SiteVisitsChart extends ChartWidget
     {
         $since = WebAnalytics::since($this->filters['period'] ?? '7');
 
-        $rows = WebVisit::query()
+        $rows = WebVisit::query()->institucional()
             ->where('started_at', '>=', $since)
             ->selectRaw('date(started_at) as day, count(*) as visits, count(distinct visitor_token) as visitors')
             ->groupBy('day')
             ->pluck('visits', 'day')
             ->all();
-        $visitors = WebVisit::query()
+        $visitors = WebVisit::query()->institucional()
             ->where('started_at', '>=', $since)
             ->selectRaw('date(started_at) as day, count(distinct visitor_token) as visitors')
             ->groupBy('day')

@@ -22,7 +22,7 @@ class SiteClicksTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => WebEvent::query()
+            ->query(fn (): Builder => WebEvent::query()->whereHas('visit', fn ($q) => $q->institucional())
                 ->where('type', 'click')
                 ->where('occurred_at', '>=', WebAnalytics::since($this->filters['period'] ?? '7'))
                 ->selectRaw('label, count(*) as clicks, count(distinct web_visit_id) as visitors')

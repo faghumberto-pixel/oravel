@@ -15,7 +15,7 @@ class SiteVisitMatcher
 {
     public static function forMoment(Carbon $at): ?WebVisit
     {
-        $candidates = WebVisit::query()
+        $candidates = WebVisit::query()->institucional()
             ->where('started_at', '<=', $at->copy()->addSeconds(10))
             ->where('last_activity_at', '>=', $at->copy()->subSeconds(90))
             ->whereHas('pageviews', fn ($q) => $q->where('path', 'like', '/contato%')->orWhere('path', 'like', '/locadoras%'))

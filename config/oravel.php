@@ -126,6 +126,9 @@ return [
     */
 
     'site_tracking' => [
+        // Hosts do oravel.org (conteudo). Fixos aqui, e nao no .env, para o rastreamento do .org nao depender de a PROD
+        // ter SITE_TRACKING_HOSTS atualizado (essa variavel continua valendo so para o institucional).
+        'org_hosts' => ['oravel.org', 'www.oravel.org', 'oravel-org.web.app'],
         'allowed_hosts' => array_values(array_filter(array_map(
             'trim',
             explode(',', (string) env('SITE_TRACKING_HOSTS', 'oravel.com.br,www.oravel.com.br'))

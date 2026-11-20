@@ -22,7 +22,7 @@ class SiteSourcesTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => WebVisit::query()
+            ->query(fn (): Builder => WebVisit::query()->institucional()
                 ->where('started_at', '>=', WebAnalytics::since($this->filters['period'] ?? '7'))
                 ->selectRaw("coalesce(nullif(utm_source, ''), nullif(referrer_host, ''), 'Direto') as origem, count(*) as visits, count(distinct visitor_token) as visitors, avg(duration_seconds) as avg_time")
                 ->groupBy('origem')

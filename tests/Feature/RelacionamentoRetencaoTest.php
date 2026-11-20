@@ -91,4 +91,13 @@ class RelacionamentoRetencaoTest extends TestCase
         $this->assertNotNull($evento);
         $this->assertSame('30 3 * * *', $evento->expression);
     }
+
+    public function test_visitas_aos_sites_tambem_expiram_por_agendamento(): void
+    {
+        $evento = collect(app(\Illuminate\Console\Scheduling\Schedule::class)->events())
+            ->first(fn ($e) => str_contains($e->command, 'web-analytics:prune'));
+
+        $this->assertNotNull($evento);
+        $this->assertSame('40 3 * * *', $evento->expression);
+    }
 }
