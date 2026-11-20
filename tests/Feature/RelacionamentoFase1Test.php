@@ -166,4 +166,11 @@ class RelacionamentoFase1Test extends TestCase
             ->assertCanSeeTableRecords([$nova, $antiga], inOrder: true)
             ->assertCanNotSeeTableRecords([$alheia]);
     }
+
+    public function test_ocorrido_em_com_fuso_nao_desloca_o_horario(): void
+    {
+        $this->evento(['tipo' => 'artigo', 'email' => 'a@b.com', 'ocorrido_em' => '2026-11-19T10:00:00Z'])->assertStatus(201);
+
+        $this->assertSame('2026-11-19 10:00:00', RelInteracao::firstOrFail()->ocorrido_em->utc()->format('Y-m-d H:i:s'));
+    }
 }

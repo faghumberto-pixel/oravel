@@ -8,6 +8,15 @@ return [
     // Prazo de guarda do historico de uso do site (prometido na politica de privacidade do oravel.org).
     'retencao_meses' => 24,
 
+    // Sender (e-mail marketing): a TAG do assinante diz de que formulario ele veio. [trecho do titulo da tag em
+    // minusculas, tipo da interacao]. Tag sem correspondencia e' ignorada (so' registrada no log), nunca vira
+    // pontuacao por chute.
+    'sender_tags' => [
+        ['gazeta', 'gazeta_inscricao'],
+        ['fatura', 'pdf'],
+        ['nfs', 'pdf'],
+    ],
+
     // Da maior para a menor faixa: o score cai na primeira cujo minimo ele alcanca.
     'faixas' => [
         ['min' => 80, 'rotulo' => 'Excelente', 'cor' => 'success'],

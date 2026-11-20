@@ -12,6 +12,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -32,21 +33,33 @@ class RelacionamentoRelationManager extends RelationManager
         return true;
     }
 
+    /** Interacoes da pessoa/empresa dona da ficha. Quem herda (ficha do Contato) troca a relacao. */
+    protected function interacoes(): HasMany
+    {
+        return $this->getOwnerRecord()->relInteracoes();
+    }
+
+    /** Interesses sao marcados por empresa (Prospect/SalesLead); a ficha do Contato nao os tem. */
+    protected function mostraInteresses(): bool
+    {
+        return true;
+    }
+
     /** Resumo em texto puro (sem HTML proprio): score, faixa, proxima acao, interesses e ultimo acesso. */
     public function resumo(): string
     {
         $dono = $this->getOwnerRecord();
-        $q = $dono->relInteracoes();
+        $q = $this->interacoes();
 
         $score = app(CalculaScore::class)->calcular($q);
         $acao = app(ProximaAcao::class)->para($score['score']);
-        $interesses = RelInteresse::marcados($dono);
+        $interesses = $this->mostraInteresses() ? RelInteresse::marcados($dono) : [];
         $ultima = (clone $q)->max('ocorrido_em');
 
         return implode(' · ', array_filter([
             "Relacionamento: {$score['score']}/100 ({$score['faixa']})",
             'Próxima ação: '.($acao?->titulo ?? '—'),
-            'Interesses: '.($interesses ? implode(', ', $interesses) : '—'),
+            $this->mostraInteresses() ? 'Interesses: '.($interesses ? implode(', ', $interesses) : '—') : null,
             $ultima ? 'Último acesso: '.Carbon::parse($ultima)->format('d/m/Y H:i') : 'Sem interações ainda',
         ]));
     }
@@ -57,7 +70,7 @@ class RelacionamentoRelationManager extends RelationManager
             ->recordTitleAttribute('titulo')
             ->heading('Linha do tempo')
             ->description(fn (): string => $this->resumo())
-            ->headerActions([
+            ->headerActions(! $this->mostraInteresses() ? [] : [
                 Tables\Actions\Action::make('interesses')->label('Interesses')->icon('heroicon-o-tag')
                     ->modalHeading('Interesses da empresa')
                     ->form(fn (): array => [
@@ -94,7 +107,7 @@ class RelacionamentoRelationManager extends RelationManager
 
     private function textoSugestao(): string
     {
-        $sugeridos = app(SugereInteresses::class)->para($this->getOwnerRecord()->relInteracoes());
+        $sugeridos = app(SugereInteresses::class)->para($this->interacoes());
 
         return $sugeridos === []
             ? 'Sem sugestões: nenhum conteúdo com tema foi consumido ainda.'

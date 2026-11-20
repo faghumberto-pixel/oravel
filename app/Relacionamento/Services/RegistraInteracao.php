@@ -58,7 +58,8 @@ class RegistraInteracao
             'utm_medium' => $d['utm_medium'] ?? null,
             'utm_campaign' => $d['utm_campaign'] ?? null,
             'dados' => $d['dados'] ?? null,
-            'ocorrido_em' => isset($d['ocorrido_em']) ? Carbon::parse($d['ocorrido_em']) : now(),
+            // Laravel grava a hora de parede do Carbon, sem converter: leva para o fuso do app antes de salvar.
+            'ocorrido_em' => isset($d['ocorrido_em']) ? Carbon::parse($d['ocorrido_em'])->setTimezone(config('app.timezone')) : now(),
             'dedupe_key' => $d['dedupe_key'] ?? null,
             'visitor_token' => $d['visitor_token'] ?? null,
         ]);

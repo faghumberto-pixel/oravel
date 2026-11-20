@@ -121,6 +121,7 @@ class CentralPanelProvider extends PanelProvider
             ->globalSearch(false) // a busca que vale e a ScreenSearch (campo unico no topbar)
             ->favicon(asset('favicon.png').'?v=6')
             ->resources([
+                \App\Relacionamento\Filament\Resources\RelContatoResource::class,
                 \App\Relacionamento\Filament\Resources\RelScoreRegraResource::class,
                 \App\Relacionamento\Filament\Resources\RelAcaoRegraResource::class,
                 LandingPageLeadResource::class,

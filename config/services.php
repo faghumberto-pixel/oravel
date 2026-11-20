@@ -125,6 +125,8 @@ return [
     // Canais do modulo Relacionamento Oravel (POST /api/relacionamento/eventos). Token vazio = canal desligado.
     'relacionamento' => [
         // Hosts do oravel.org autorizados a mandar sinais anonimos (ferramentas, downloads).
+        // Segredo de assinatura dos webhooks do Sender (so' no .env, nunca no repositorio). Vazio = recusa tudo.
+        'sender_secret' => env('RELACIONAMENTO_SENDER_SECRET'),
         'site_hosts' => ['oravel.org', 'www.oravel.org', 'oravel-org.web.app'],
         'channels' => [
             'oravel-org' => ['token' => env('RELACIONAMENTO_TOKEN_ORAVEL_ORG')],
