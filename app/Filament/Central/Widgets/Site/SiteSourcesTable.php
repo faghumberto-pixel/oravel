@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Widgets\Site;
 
+use App\Filament\Central\Widgets\Site\Concerns\EscopoDeSite;
 use App\Models\WebVisit;
 use App\Support\WebAnalytics;
 use Filament\Tables;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SiteSourcesTable extends TableWidget
 {
+    use EscopoDeSite;
     use InteractsWithPageFilters;
 
     protected static bool $isDiscovered = false;
@@ -22,7 +24,7 @@ class SiteSourcesTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => WebVisit::query()->institucional()
+            ->query(fn (): Builder => $this->visitas(WebVisit::query())
                 ->where('started_at', '>=', WebAnalytics::since($this->filters['period'] ?? '7'))
                 ->selectRaw("coalesce(nullif(utm_source, ''), nullif(referrer_host, ''), 'Direto') as origem, count(*) as visits, count(distinct visitor_token) as visitors, avg(duration_seconds) as avg_time")
                 ->groupBy('origem')

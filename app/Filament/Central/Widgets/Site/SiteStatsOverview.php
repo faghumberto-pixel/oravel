@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Widgets\Site;
 
+use App\Filament\Central\Widgets\Site\Concerns\EscopoDeSite;
 use App\Models\WebEvent;
 use App\Models\WebVisit;
 use App\Support\WebAnalytics;
@@ -11,6 +12,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class SiteStatsOverview extends StatsOverviewWidget
 {
+    use EscopoDeSite;
     use InteractsWithPageFilters;
 
     protected static bool $isDiscovered = false;
@@ -22,7 +24,7 @@ class SiteStatsOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         $since = WebAnalytics::since($this->filters['period'] ?? '7');
-        $visits = WebVisit::query()->institucional()->where('started_at', '>=', $since);
+        $visits = $this->visitas(WebVisit::query())->where('started_at', '>=', $since);
 
         $total = (clone $visits)->count();
         $unique = (clone $visits)->distinct()->count('visitor_token');
@@ -30,7 +32,7 @@ class SiteStatsOverview extends StatsOverviewWidget
         $avg = (int) (clone $visits)->where('page_views', '>', 0)->avg('duration_seconds');
         $bounced = (clone $visits)->where('page_views', '<=', 1)->where('duration_seconds', '<', 10)->count();
         $bounceRate = $total > 0 ? round(($bounced / $total) * 100) : 0;
-        $clicks = WebEvent::query()->whereHas('visit', fn ($q) => $q->institucional())->where('occurred_at', '>=', $since)->where('type', 'click')->count();
+        $clicks = WebEvent::query()->whereHas('visit', fn ($q) => $this->visitas($q))->where('occurred_at', '>=', $since)->where('type', 'click')->count();
         $returning = (clone $visits)->where('is_returning', true)->count();
 
         return [

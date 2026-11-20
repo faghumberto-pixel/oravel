@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Widgets\Site;
 
+use App\Filament\Central\Widgets\Site\Concerns\EscopoDeSite;
 use App\Models\WebEvent;
 use App\Support\WebAnalytics;
 use Filament\Tables;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SiteClicksTable extends TableWidget
 {
+    use EscopoDeSite;
     use InteractsWithPageFilters;
 
     protected static bool $isDiscovered = false;
@@ -22,7 +24,7 @@ class SiteClicksTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => WebEvent::query()->whereHas('visit', fn ($q) => $q->institucional())
+            ->query(fn (): Builder => WebEvent::query()->whereHas('visit', fn ($q) => $this->visitas($q))
                 ->where('type', 'click')
                 ->where('occurred_at', '>=', WebAnalytics::since($this->filters['period'] ?? '7'))
                 ->selectRaw('label, count(*) as clicks, count(distinct web_visit_id) as visitors')

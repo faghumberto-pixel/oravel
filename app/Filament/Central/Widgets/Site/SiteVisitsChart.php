@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Widgets\Site;
 
+use App\Filament\Central\Widgets\Site\Concerns\EscopoDeSite;
 use App\Models\WebVisit;
 use App\Support\WebAnalytics;
 use Filament\Widgets\ChartWidget;
@@ -9,6 +10,7 @@ use Filament\Widgets\Concerns\InteractsWithPageFilters;
 
 class SiteVisitsChart extends ChartWidget
 {
+    use EscopoDeSite;
     use InteractsWithPageFilters;
 
     protected static bool $isDiscovered = false;
@@ -28,13 +30,13 @@ class SiteVisitsChart extends ChartWidget
     {
         $since = WebAnalytics::since($this->filters['period'] ?? '7');
 
-        $rows = WebVisit::query()->institucional()
+        $rows = $this->visitas(WebVisit::query())
             ->where('started_at', '>=', $since)
             ->selectRaw('date(started_at) as day, count(*) as visits, count(distinct visitor_token) as visitors')
             ->groupBy('day')
             ->pluck('visits', 'day')
             ->all();
-        $visitors = WebVisit::query()->institucional()
+        $visitors = $this->visitas(WebVisit::query())
             ->where('started_at', '>=', $since)
             ->selectRaw('date(started_at) as day, count(distinct visitor_token) as visitors')
             ->groupBy('day')

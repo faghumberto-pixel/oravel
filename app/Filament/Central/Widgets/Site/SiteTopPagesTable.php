@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Widgets\Site;
 
+use App\Filament\Central\Widgets\Site\Concerns\EscopoDeSite;
 use App\Models\WebPageview;
 use App\Support\WebAnalytics;
 use Filament\Tables;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SiteTopPagesTable extends TableWidget
 {
+    use EscopoDeSite;
     use InteractsWithPageFilters;
 
     protected static bool $isDiscovered = false;
@@ -24,7 +26,7 @@ class SiteTopPagesTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => WebPageview::query()->whereHas('visit', fn ($q) => $q->institucional())
+            ->query(fn (): Builder => WebPageview::query()->whereHas('visit', fn ($q) => $this->visitas($q))
                 ->where('entered_at', '>=', WebAnalytics::since($this->filters['period'] ?? '7'))
                 ->selectRaw('path, count(*) as views, count(distinct web_visit_id) as visits, avg(active_seconds) as avg_time, avg(max_scroll) as avg_scroll')
                 ->groupBy('path')
