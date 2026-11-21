@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Resources\ProspectResource\Pages;
 
 use App\Filament\Central\Resources\ProspectResource;
+use App\Filament\Central\Resources\ProspectResource\RegistrarEntrevistaAction;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -12,6 +13,6 @@ class EditProspect extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [Actions\DeleteAction::make()];
+        return [RegistrarEntrevistaAction::make(), Actions\DeleteAction::make()];
     }
 }

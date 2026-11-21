@@ -54,3 +54,6 @@ Schedule::command('registros:limpar')->weeklyOn(0, '04:00')->withoutOverlapping(
 
 // G1: vencimentos por data do catalogo de equipamentos (documento/inspecao/preventiva por dias). Tenants sem a chave ligada sao pulados.
 Schedule::job(new \App\Jobs\Aptidao\RecalcularAptidaoDiarioJob)->dailyAt('02:30')->withoutOverlapping();
+
+// Outbox do Observatorio: reenvia eventos pendentes cuja proxima tentativa venceu.
+Schedule::command('observatorio:reenviar')->everyMinute()->withoutOverlapping();

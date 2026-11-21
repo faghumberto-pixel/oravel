@@ -124,6 +124,9 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // Integração com o Observatório (só envia dados e lê a definição das pesquisas; ver config/observatorio.php).
+        $this->app->bind(\App\Integracoes\Observatorio\ObservatorioGateway::class, \App\Integracoes\Observatorio\HttpObservatorioGateway::class);
+
         // Menu do painel admin: filtra páginas bloqueadas e menus pai vazios (ver a classe).
         $this->app->scoped(NavigationManager::class, fn () => new TenantNavigationManager);
 
