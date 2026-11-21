@@ -1,0 +1,51 @@
+/* Observatorio Oravel: so componentes proprios (prefixo obs-), usando as variaveis do site.
+   Nao altera layouts nem classes existentes. */
+.obs-hero h1{max-width:none}
+.obs{padding-bottom:var(--esp-8,64px)}
+.obs-indice{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;padding:20px 0;border-bottom:1px solid var(--cinza-claro);font-size:.9375rem}
+.obs-indice a{color:var(--texto-secundario);text-decoration:none}
+.obs-indice a:hover{color:var(--verde-escuro);text-decoration:underline}
+.obs-sec{padding:64px 0;border-bottom:1px solid var(--cinza-claro);text-align:center}
+.obs-sec:last-child{border-bottom:0}
+.obs-eyebrow{font-size:.8125rem;letter-spacing:.12em;text-transform:uppercase;color:var(--texto-secundario);margin:0 0 12px;font-weight:600}
+.obs-sec h2{font-size:clamp(1.75rem,3.2vw,2.5rem);line-height:1.2;margin:0 auto 20px;max-width:26ch;text-wrap:balance}
+.obs-sec h3{font-size:1.0625rem;margin:0 0 8px}
+.obs-texto{max-width:64ch;margin:0 auto 20px;font-size:1.125rem;color:var(--texto-secundario);line-height:1.7}
+.obs-links{margin:24px 0 0;font-size:.9375rem;color:var(--texto-secundario)}
+.obs-links a{color:var(--verde-escuro);text-decoration:underline;text-underline-offset:3px}
+.obs-perguntas,.obs-indicadores,.obs-lista,.obs-radar-grade,.obs-duas{display:grid;gap:16px;text-align:left;margin-top:32px}
+.obs-perguntas{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.obs-pergunta,.obs-item,.obs-ind,.obs-radar-bloco{border:1px solid var(--cinza-claro);border-radius:10px;padding:24px;background:#fff;text-decoration:none;color:inherit}
+.obs-pergunta,.obs-item{display:flex;flex-direction:column;gap:8px;transition:border-color .2s}
+.obs-pergunta:hover,.obs-item:hover{border-color:var(--verde-escuro)}
+.obs-pergunta-q{font-size:1.125rem;font-weight:600;line-height:1.35}
+.obs-pergunta-a{font-size:.875rem;color:var(--texto-secundario)}
+.obs-indicadores{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.obs-ind-valor{font-size:2.25rem;font-weight:700;color:var(--verde-escuro);line-height:1.1;margin-bottom:10px}
+.obs-ind-rotulo{font-size:.9375rem;line-height:1.5}
+.obs-ind-fonte{font-size:.8125rem;color:var(--texto-secundario);margin-top:12px}
+.obs-lista{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.obs-item-meta{font-size:.8125rem;color:var(--texto-secundario)}
+.obs-item-titulo{font-size:1.125rem;font-weight:600;line-height:1.35}
+.obs-item-resumo{font-size:.9375rem;color:var(--texto-secundario);line-height:1.55}
+.obs-radar-grade{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.obs-radar-bloco ul{list-style:none;margin:0;padding:0}
+.obs-radar-bloco li{display:flex;flex-direction:column;gap:2px;padding:10px 0;border-top:1px solid var(--cinza-claro);font-size:.9375rem}
+.obs-radar-bloco li a{color:var(--verde-escuro);font-weight:500;text-decoration:none}
+.obs-radar-bloco li a:hover{text-decoration:underline}
+.obs-radar-bloco li span{font-size:.8125rem;color:var(--texto-secundario)}
+.obs-radar-nota{font-size:.8125rem;color:var(--texto-secundario);margin:0 0 8px;line-height:1.5}
+.obs-duas{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:40px}
+.obs-dl{margin:0}.obs-dl dt{font-weight:600;margin-top:14px}.obs-dl dd{margin:2px 0 0;color:var(--texto-secundario);font-size:.9375rem}
+.obs-tempo{list-style:none;margin:0;padding:0 0 0 18px;border-left:1px solid var(--cinza-claro)}
+.obs-tempo li{display:flex;flex-direction:column;gap:2px;padding:0 0 18px 14px;position:relative;font-size:.9375rem}
+.obs-tempo li::before{content:"";position:absolute;left:-23px;top:6px;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid var(--cinza-claro)}
+.obs-tempo li.feito::before{background:var(--verde-escuro);border-color:var(--verde-escuro)}
+.obs-tempo span{font-size:.8125rem;color:var(--texto-secundario)}
+.obs-tabela{width:100%;border-collapse:collapse;text-align:left;margin-top:16px;font-size:.9375rem}
+.obs-tabela th,.obs-tabela td{padding:12px 10px;border-bottom:1px solid var(--cinza-claro);vertical-align:top}
+.obs-tabela th{font-size:.8125rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-secundario)}
+.obs-prosa{max-width:760px;margin:0 auto;text-align:left}
+.obs-prosa h2{max-width:none;text-align:left;font-size:1.5rem;margin-top:40px}
+.obs-prosa p,.obs-prosa li{line-height:1.7;color:var(--texto-secundario)}
+@media (max-width:768px){.obs-sec{padding:44px 0}.obs-item,.obs-pergunta,.obs-ind,.obs-radar-bloco{padding:18px}}

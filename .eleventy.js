@@ -102,6 +102,22 @@ module.exports = function(eleventyConfig) {
 
   eleventyConfig.addFilter('limit', (arr, n) => arr.slice(0, n));
 
+  // Radar da Locacao: assuntos (temas) por numero de artigos nos ultimos `dias` dias,
+  // com a comparacao contra os `dias` anteriores. So conta o que esta publicado.
+  eleventyConfig.addFilter('radarTemas', (posts, dias = 60) => {
+    const agora = Date.now(), ms = dias * 86400000;
+    const cont = {};
+    posts.forEach(p => {
+      const idade = agora - p.date.getTime();
+      if (idade < 0 || idade >= 2 * ms) return;
+      const t = p.data.theme;
+      cont[t] = cont[t] || { tema: t, atual: 0, anterior: 0 };
+      if (idade < ms) cont[t].atual++; else cont[t].anterior++;
+    });
+    return Object.values(cont).filter(c => c.atual > 0)
+      .sort((a, b) => (b.atual - b.anterior) - (a.atual - a.anterior) || b.atual - a.atual);
+  });
+
   // Ranking da home: junta posts com dados de src/_data/ranking.json.
   // campo: 'leituras' ou 'nota'. Para 'nota', exige um minimo de votos.
   eleventyConfig.addFilter('topPorRanking', (posts, ranking, campo, n = 5) => {

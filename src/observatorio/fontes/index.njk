@@ -1,0 +1,41 @@
+---
+layout: base.njk
+pagefind: true
+permalink: /observatorio/fontes/
+title: "Fontes do Observatório Oravel"
+description: "Todas as fontes utilizadas pelo Observatório Oravel: entidades do setor, estatísticas oficiais, normas e legislação, com o critério de uso de cada uma."
+---
+<link rel="stylesheet" href="/assets/observatorio.css">
+
+<header class="tema-hero obs-hero">
+<div class="container">
+<div class="breadcrumb"><a href="/">Início</a> / <a href="/observatorio/">Observatório</a> / Fontes</div>
+<h1 class="page-title">Fontes</h1>
+<p>Cada indicador tem origem, cada gráfico informa sua fonte. Esta página reúne as instituições de que o Observatório depende e o critério com que as usa.</p>
+</div>
+</header>
+
+<div class="container obs">
+<section class="obs-sec">
+<h2>Como citamos</h2>
+<div class="obs-prosa">
+<p><strong>Dado público:</strong> instituição, ano ou data de divulgação e, sempre que existir, link para o documento original. Quando um número chega por um veículo intermediário, citamos os dois.</p>
+<p><strong>Dado do Observatório:</strong> base de participantes, período, critério de agregação e margem de interpretação. Células com menos de 10 respostas não são publicadas. Detalhes na <a href="/painel-mercado/metodologia/">metodologia</a>.</p>
+<p><strong>Divergência entre fontes:</strong> quando duas fontes discordam, mostramos as duas e dizemos qual adotamos e por quê.</p>
+</div>
+</section>
+
+{%- for g in observatorio.fontes %}
+<section class="obs-sec">
+<h2>{{ g.grupo }}</h2>
+<table class="obs-tabela">
+<thead><tr><th>Fonte</th><th>Uso</th><th>Situação</th></tr></thead>
+<tbody>
+{%- for f in g.itens %}
+<tr><td><strong>{{ f.nome }}</strong></td><td>{{ f.desc }}</td><td>{{ "Em uso" if f.status == "utilizada" else "A incorporar" }}</td></tr>
+{%- endfor %}
+</tbody>
+</table>
+</section>
+{%- endfor %}
+</div>
