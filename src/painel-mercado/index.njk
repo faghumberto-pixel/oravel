@@ -5,6 +5,8 @@ permalink: /painel-mercado/
 title: "Painel do Mercado de Locação"
 description: "Indicadores do mercado brasileiro de locação de equipamentos: faturamento, distribuição regional, penetração da locação, vendas de máquinas e frota parada. Dados de estudos da Analoc, Sobratema e KPMG, com fonte em cada gráfico."
 ---
+<link rel="stylesheet" href="/assets/painel-mercado.css">
+<div class="pm">
 
 <header class="tema-hero">
 <div class="container">
@@ -197,11 +199,11 @@ const FATORES = [
 
 const el = (id) => document.getElementById(id);
 const bi = (v) => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' bi';
-const CLARO = '#B9C8C6', ESCURO = '#2F5D59';
+const CLARO = '#BFD0E8', ESCURO = '#1D4E89';
 
 // Escala sequencial de uma só cor (verde Oravel), usada no mapa e no mapa de calor
 const hex = (h) => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
-function escala(t) { const a = hex('#E6F1EF'), b = hex('#1E4D49'); return 'rgb(' + a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',') + ')'; }
+function escala(t) { const a = hex('#E8F0FA'), b = hex('#1D4E89'); return 'rgb(' + a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',') + ')'; }
 const textoSobre = (t) => t > 0.5 ? '#FFFFFF' : '#12201F';
 
 function valor(ano, regiao) { return regiao === 'todas' ? FATURAMENTO[ano] : FATURAMENTO[ano] * REGIOES[regiao].pct / 100; }
@@ -258,7 +260,7 @@ function grafico(id, tipo, labels, datasets, opts = {}) {
       plugins: {
         rotulosValor: { ativo: opts.valores !== false, formato: opts.formato, xFim: opts.xFim, soDataset: opts.soDataset },
         legend: { display: datasets.length > 1, position: 'bottom', labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, color: '#5B6B69', font: { size: 12 } } },
-        tooltip: { backgroundColor: '#12201F', titleColor: '#fff', bodyColor: '#E8F1EF', padding: 12, cornerRadius: 10, displayColors: datasets.length > 1,
+        tooltip: { backgroundColor: '#0B2447', titleColor: '#fff', bodyColor: '#E8F1EF', padding: 12, cornerRadius: 10, displayColors: datasets.length > 1,
           callbacks: { label: opts.tooltip || ((c) => (c.dataset.label ? c.dataset.label + ': ' : '') + (opts.prefixo || '') + c.parsed[horizontal ? 'x' : 'y'].toLocaleString('pt-BR') + (opts.sufixo || '')) } }
       },
       scales: {
@@ -293,21 +295,21 @@ function renderFiltrados(f) { renderMapa(f); renderHeat(f); }
 
 function renderFixos() {
   grafico('chartVendas', 'bar', ['2023', '2024', '2025'], [
-    { label: 'Total de máquinas para construção', data: [53.5, 58.2, 56.3], backgroundColor: gradiente('#6E9C96', '#1E4D49') },
-    { label: 'Linha amarela', data: [32.3, 36.6, 34.5], backgroundColor: gradiente('#DCE7E5', '#9FB9B5') }
+    { label: 'Total de máquinas para construção', data: [53.5, 58.2, 56.3], backgroundColor: gradiente('#5B8CC6', '#1D4E89') },
+    { label: 'Linha amarela', data: [32.3, 36.6, 34.5], backgroundColor: gradiente('#DCE6F3', '#9DB6D8') }
   ], { sufixo: ' mil', formato: (i, di) => (di === 0 ? [53.5, 58.2, 56.3] : [32.3, 36.6, 34.5])[i].toLocaleString('pt-BR'), ticksY: { callback: (v) => v } });
   grafico('chartFrotaParada', 'line', ['2017', '2023', '2024'], [{
-    label: 'Frota parada', data: [57, 19, 11], borderColor: '#1E4D49', borderWidth: 3, tension: 0.35, fill: true,
-    backgroundColor: (ctx) => { const a = ctx.chart.chartArea; if (!a) return 'transparent'; const g = ctx.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom); g.addColorStop(0, 'rgba(30,77,73,.35)'); g.addColorStop(1, 'rgba(30,77,73,0)'); return g; },
-    pointRadius: 5, pointBackgroundColor: '#fff', pointBorderColor: '#1E4D49', pointBorderWidth: 2, pointHoverRadius: 7
+    label: 'Frota parada', data: [57, 19, 11], borderColor: '#1D4E89', borderWidth: 3, tension: 0.35, fill: true,
+    backgroundColor: (ctx) => { const a = ctx.chart.chartArea; if (!a) return 'transparent'; const g = ctx.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom); g.addColorStop(0, 'rgba(29,78,137,.35)'); g.addColorStop(1, 'rgba(29,78,137,0)'); return g; },
+    pointRadius: 5, pointBackgroundColor: '#fff', pointBorderColor: '#1D4E89', pointBorderWidth: 2, pointHoverRadius: 7
   }], { sufixo: '%', max: 100, formato: (i) => [57, 19, 11][i] + '%' });
   grafico('chartCategorias', 'horizontalBar', ['Plataformas aéreas', 'Betoneiras'], [
-    { label: 'Mínimo da faixa', data: [90, 70], backgroundColor: gradiente('#6E9C96', '#1E4D49', true), borderRadius: { topLeft: 8, bottomLeft: 8 } },
-    { label: 'Até o máximo da faixa', data: [5, 5], backgroundColor: '#B9C8C6', borderRadius: { topRight: 8, bottomRight: 8 } }
+    { label: 'Mínimo da faixa', data: [90, 70], backgroundColor: gradiente('#5B8CC6', '#1D4E89', true), borderRadius: { topLeft: 8, bottomLeft: 8 } },
+    { label: 'Até o máximo da faixa', data: [5, 5], backgroundColor: '#BFD0E8', borderRadius: { topRight: 8, bottomRight: 8 } }
   ], { max: 100, stacked: true, soDataset: 1, formato: (i) => ['90% a 95%', '70% a 75%'][i], xFim: (i, pt) => pt.x,
        tooltip: (c) => c.datasetIndex === 0 ? `A partir de ${c.raw}% das vendas` : `Até ${c.dataIndex === 0 ? 95 : 75}% das vendas` });
   grafico('chartFinanciamento', 'horizontalBar', ['Capital próprio', 'Finame', 'CDC'], [
-    { label: '% dos entrevistados', data: [33, 23, 19], backgroundColor: gradiente('#6E9C96', '#1E4D49', true) }
+    { label: '% dos entrevistados', data: [33, 23, 19], backgroundColor: gradiente('#5B8CC6', '#1D4E89', true) }
   ], { sufixo: '%', max: 50, formato: (i) => [33, 23, 19][i] + '%' });
   comparativo('compMecanizacao', [{ rot: 'Brasil', v: 30, txt: 'cerca de 30%', forte: true }, { rot: 'Mercados globais', v: 60, txt: 'até 60%' }], 70);
   comparativo('compPib', [{ rot: 'Brasil', v: 0.4, txt: '0,4%', forte: true }, { rot: 'Estados Unidos', v: 0.26, txt: '0,26%' }, { rot: 'Europa', v: 0.15, txt: '0,15%' }], 0.5);
@@ -354,3 +356,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script src="/assets/grafico-tv.js" defer></script>
+</div>

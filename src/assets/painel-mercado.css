@@ -1,0 +1,28 @@
+/* Identidade do Painel do Mercado: azul. (O Observatorio usa verde-escuro com laranja.)
+   Escopo: tudo sob .pm, sem tocar no cabecalho, no rodape nem nas outras paginas. */
+.pm {
+  --pm-marinho: #0b2447;
+  --pm-azul: #1d4e89;
+  --pm-azul-hover: #153b69;
+  --pm-claro: #e8f0fa;
+  --pm-sobre: #c9d8ee;
+}
+.pm .tema-hero { background: var(--pm-marinho); border-bottom: 3px solid #4a90e2; }
+.pm .tema-hero h1, .pm .tema-hero .page-title { color: #fff; }
+.pm .tema-hero p { color: var(--pm-sobre); }
+.pm .tema-hero .breadcrumb, .pm .tema-hero .breadcrumb a { color: var(--pm-sobre); }
+.pm .tema-hero .breadcrumb a:hover { color: #fff; }
+.pm .painel a:not(.btn), .pm .tema-hero + * a:not(.btn) { color: var(--pm-azul); }
+.pm .painel-bloco { border-top-color: var(--pm-azul); }
+.pm .painel-meta { border-bottom-color: #c5d3e6; }
+.pm .kpi__valor { color: var(--pm-azul); }
+.pm .btn-outline, .pm .btn-secondary { color: var(--pm-azul); border-color: var(--pm-azul); }
+.pm .btn-outline:hover, .pm .btn-secondary:hover { background: var(--pm-azul); border-color: var(--pm-azul); color: #fff; }
+.pm .btn-primary { background: var(--pm-azul); border-color: var(--pm-azul); color: #fff; }
+.pm .btn-primary:hover { background: var(--pm-azul-hover); border-color: var(--pm-azul-hover); }
+.pm .form-select:focus, .pm .form-input:focus, .pm .form-control:focus { border-color: var(--pm-azul); box-shadow: 0 0 0 3px rgba(29, 78, 137, .18); }
+.pm .tile:focus-visible, .pm .heat__cel:focus-visible { outline-color: var(--pm-azul); }
+.pm .aviso-ilustrativo { background: var(--pm-claro); border-color: #c5d3e6; }
+.pm .heat-legenda i { background: linear-gradient(90deg, #e8f0fa, #1d4e89); }
+.pm .comp__barra { background: linear-gradient(90deg, #bfd0e8, #5b8cc6); }
+.pm .comp__barra--forte { background: linear-gradient(90deg, #5b8cc6, #1d4e89); }
