@@ -208,3 +208,9 @@
 @media (max-width: 640px) { .op-controles .op-campo:first-child { flex-basis: 100%; } }
 
 .op .op-kpis.op-kpis--mini { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+
+.op .op-sub-cta { min-height: 34px; font-size: .875rem; padding: 0 14px; }
+.op-hero-cta { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 16px; margin: 18px 0 0; max-width: 62ch; color: var(--op-muted); font-size: .9375rem; line-height: 1.5; }
+.op-hero-cta a:not(.op-btn) { color: var(--op-laranja); }
+@media (min-width: 641px) { .op-menu { flex: 1 1 0; } }
+@media (max-width: 640px) { .op .op-sub-cta { display: none; } }
