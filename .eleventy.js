@@ -100,6 +100,24 @@ module.exports = function(eleventyConfig) {
   // Remove itens com data no futuro (usado no sitemap, que so lista o que ja foi publicado)
   eleventyConfig.addFilter('jaPublicados', (posts) => posts.filter(p => p.date <= new Date()));
 
+  // Videos da home: so os ja publicados (data <= agora), do mais novo para o mais antigo
+  eleventyConfig.addFilter('videosPublicados', (videos) => (videos || [])
+    .filter(v => v && v.id && v.titulo && new Date(v.data) <= new Date())
+    .sort((a, b) => new Date(b.data) - new Date(a.data))
+    .map(v => Object.assign({}, v, { dataObj: new Date(v.data + 'T12:00:00-03:00') })));
+
+  // Dados estruturados VideoObject (SEO) para a faixa de videos
+  eleventyConfig.addFilter('videoSchema', (videos) => videos.map(v => {
+    const o = {
+      '@type': 'VideoObject', name: v.titulo, description: v.resumo || v.titulo,
+      thumbnailUrl: 'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg',
+      uploadDate: v.data, embedUrl: 'https://www.youtube-nocookie.com/embed/' + v.id,
+      inLanguage: 'pt-BR', publisher: { '@id': 'https://oravel.org/#org' }
+    };
+    if (v.duracao) o.duration = v.duracao;
+    return o;
+  }));
+
   eleventyConfig.addFilter('limit', (arr, n) => arr.slice(0, n));
 
   // Radar da Locacao: assuntos (temas) por numero de artigos nos ultimos `dias` dias,

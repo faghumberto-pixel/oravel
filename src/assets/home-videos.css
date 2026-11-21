@@ -1,0 +1,36 @@
+/* Faixa "Videos" da home. Prefixo vf-. Fundo: verde escuro do site, um tom acima do rodape. */
+.vf{background:var(--verde-escuro-claro);color:#fff;padding:var(--esp-6,48px) 0;border-top:1px solid rgba(255,255,255,.08)}
+.vf .section-head h2{color:#fff}
+.vf-carrossel{position:relative}
+.vf-trilho{list-style:none;margin:0;padding:0 0 8px;display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 3*20px)/4);gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent;overscroll-behavior-x:contain}
+.vf-item{scroll-snap-align:start;min-width:0}
+.vf-card{display:flex;flex-direction:column;gap:8px;color:#fff;text-decoration:none;border-radius:var(--raio-medio,12px)}
+.vf-card:hover,.vf-card:focus-visible{color:#fff}
+.vf-card:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.vf-thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:var(--raio-medio,12px);overflow:hidden;background:#0b2b2a}
+.vf-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}
+.vf-card:hover .vf-thumb img{transform:scale(1.03)}
+.vf-play{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:rgba(11,43,42,.78);border:2px solid #fff}
+.vf-play::after{content:"";position:absolute;left:19px;top:14px;border-left:14px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent}
+.vf-meta{font-size:12.5px;color:rgba(255,255,255,.72)}
+.vf-titulo{font-size:1rem;font-weight:600;line-height:1.35;color:#fff}
+.vf-seta{position:absolute;top:calc(50% - 40px);width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(11,43,42,.9);color:#fff;font-size:26px;line-height:1;cursor:pointer;z-index:2}
+.vf-seta:hover{background:#fff;color:var(--verde-escuro)}
+.vf-seta:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.vf-ant{left:-12px}.vf-prox{right:-12px}
+.vf-seta[hidden]{display:none}
+/* Janela do player */
+.vf-dialog{width:min(920px,calc(100% - 24px));max-height:calc(100% - 24px);padding:0;border:0;border-radius:var(--raio-grande,16px);background:#fff;color:var(--texto-escuro);overflow:auto}
+.vf-dialog::backdrop{background:rgba(5,20,19,.78)}
+.vf-dialog-cab{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 20px}
+.vf-dialog-cab h3{margin:0;font-family:var(--font-titulo);font-size:1.2rem;line-height:1.3}
+.vf-fechar{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--cinza-claro);background:#fff;font-size:24px;line-height:1;cursor:pointer;color:var(--texto-escuro)}
+.vf-fechar:focus-visible{outline:2px solid var(--azul-petroleo);outline-offset:2px}
+.vf-player{position:relative;aspect-ratio:16/9;background:#000}
+.vf-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vf-links{display:flex;flex-wrap:wrap;gap:12px 24px;padding:16px 20px 20px}
+.vf-links a{font-weight:600;color:var(--azul-petroleo)}
+.vf-links .btn{color:var(--texto-escuro)}
+@media (max-width:1024px){.vf-trilho{grid-auto-columns:calc((100% - 20px)/2)}}
+@media (max-width:640px){.vf-trilho{grid-auto-columns:78%}.vf-ant{left:-4px}.vf-prox{right:-4px}.vf-seta{display:none!important}}
+@media (prefers-reduced-motion:reduce){.vf-thumb img{transition:none}}

@@ -381,3 +381,45 @@ pagefind: true
 </div>
 </div>
 </section>
+{#- Faixa de videos: so aparece com videos publicados em src/_data/videos.js -#}
+{%- set videosHome = videos.itens | videosPublicados %}
+{%- if videosHome.length %}
+<link rel="stylesheet" href="/assets/home-videos.css">
+<section class="vf" aria-labelledby="vf-titulo">
+<div class="container">
+<div class="section-head">
+<div class="section-bar" aria-hidden="true"></div>
+<h2 id="vf-titulo" class="section-title section-title-h2">Vídeos</h2>
+</div>
+<div class="vf-carrossel">
+<button class="vf-seta vf-ant" type="button" aria-label="Vídeos anteriores" hidden>&#8249;</button>
+<ul class="vf-trilho" id="vf-trilho" role="list" tabindex="-1">
+{% for v in videosHome %}
+{% set artigo = null %}{% if v.artigo %}{% for p in collections.posts %}{% if p.fileSlug.endsWith(v.artigo) %}{% set artigo = p %}{% endif %}{% endfor %}{% endif %}
+{% set ferr = ferramentas.itens[v.ferramenta] if v.ferramenta else null %}
+<li class="vf-item">
+<a class="vf-card" href="https://www.youtube.com/watch?v={{ v.id }}" data-id="{{ v.id }}" data-titulo="{{ v.titulo }}"{% if artigo %} data-artigo-url="{{ artigo.url }}" data-artigo-titulo="{{ artigo.data.title }}"{% endif %}{% if ferr %} data-ferr-url="/ferramentas/{{ v.ferramenta }}/" data-ferr-titulo="{{ ferr.titulo }}"{% endif %}>
+<span class="vf-thumb"><img src="https://i.ytimg.com/vi/{{ v.id }}/hqdefault.jpg" alt="" loading="lazy" width="480" height="270"><span class="vf-play" aria-hidden="true"></span></span>
+<span class="vf-meta">{% if v.tema == "ferramentas" %}Ferramentas{% else %}{{ v.tema | themeLabel }}{% endif %} · {{ v.dataObj | dateBr }}</span>
+<span class="vf-titulo">{{ v.titulo }}</span>
+</a>
+</li>
+{% endfor %}
+</ul>
+<button class="vf-seta vf-prox" type="button" aria-label="Próximos vídeos" hidden>&#8250;</button>
+</div>
+</div>
+</section>
+
+<dialog class="vf-dialog" id="vf-dialog" aria-labelledby="vf-dialog-titulo">
+<div class="vf-dialog-cab">
+<h3 id="vf-dialog-titulo"></h3>
+<button class="vf-fechar" type="button" aria-label="Fechar vídeo">&times;</button>
+</div>
+<div class="vf-player" id="vf-player"></div>
+<div class="vf-links" id="vf-links"></div>
+</dialog>
+
+<script type="application/ld+json">{{ { "@context": "https://schema.org", "@graph": videosHome | videoSchema } | dump | safe }}</script>
+<script src="/assets/home-videos.js" defer></script>
+{%- endif %}
