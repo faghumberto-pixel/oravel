@@ -343,12 +343,12 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 <p class="op-rodape">Correções e dúvidas sobre os dados: <a href="mailto:dados@oravel.org">dados@oravel.org</a> · <a href="{{ P.metodologia }}">Metodologia</a> · <a href="/painel-mercado/historico/">Histórico de atualizações</a>{% if P.simulacao.ativa %}<br>Blocos e séries marcados como “Simulação” usam valores ilustrativos, não são dados publicados e não têm download.{% endif %}</p>
 
 </div>
-</div>
 
 <dialog class="op-dialogo" id="op-dialogo" aria-labelledby="op-d-tit">
 <div class="op-d-cab"><h2 id="op-d-tit"></h2><button type="button" class="op-btn op-btn--ghost op-d-fechar" id="op-d-fechar" aria-label="Fechar detalhes">Fechar</button></div>
 <div class="op-d-corpo" id="op-d-corpo"></div>
 </dialog>
+</div>
 
 <script type="application/json" id="op-dados">{{ P.cliente | dump | safe }}</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
