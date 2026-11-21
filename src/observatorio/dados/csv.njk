@@ -1,0 +1,10 @@
+---
+# Um CSV por indicador REAL do painel (src/_data/observatorioPainel.js). Nada simulado entra aqui.
+pagination:
+  data: observatorioPainel.csvs
+  size: 1
+  alias: c
+permalink: "/observatorio/dados/{{ c.nomeArquivo }}"
+eleventyExcludeFromCollections: true
+---
+{{ c.conteudo | safe }}

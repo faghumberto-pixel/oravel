@@ -2,263 +2,353 @@
 layout: base.njk
 pagefind: true
 permalink: /observatorio/
-title: "Observatório Oravel — inteligência de mercado para a locação"
-description: "Pesquisa, indicadores e boas práticas para gestores de locadoras de equipamentos. Todo número com fonte, toda pesquisa com metodologia, tudo de leitura aberta."
+title: "Observatório Oravel — painel de dados do mercado de locação"
+description: "Painel de inteligência de mercado da locação de equipamentos no Brasil: indicadores com fonte, período e metodologia em cada número, séries do Banco Central e download dos dados em CSV."
 ---
 
+{%- set P = observatorioPainel -%}
 {%- set temasRadar = collections.posts | radarTemas(60) -%}
 {%- set videosObs = videos.itens | videosPublicados -%}
-<link rel="stylesheet" href="/assets/observatorio.css">
+{%- set obsReal = observatorioPublico.disponivel -%}
 
-<header class="tema-hero obs-hero">
-<div class="container">
-<div class="breadcrumb"><a href="/">Início</a> / Observatório</div>
-<h1 class="page-title">Observatório Oravel</h1>
-<p>Uma iniciativa permanente para produzir inteligência sobre o mercado brasileiro de locação de equipamentos. Pesquisamos, organizamos os dados e explicamos o que eles significam para a gestão.</p>
+{#- Estado "Em breve": estrutura pronta, sem nenhum numero -#}
+{%- macro embreve(titulo, texto) -%}
+<div class="op-embreve">
+<span class="op-tag op-tag--breve">Em breve</span>
+<p class="op-embreve-tit">{{ titulo }}</p>
+<p class="op-embreve-txt">{{ texto }}</p>
 </div>
+{%- endmacro -%}
+
+<link rel="stylesheet" href="/assets/observatorio-painel.css">
+
+<div class="op" id="topo">
+
+<div class="op-sub" aria-label="Observatório Oravel">
+<div class="op-wrap op-sub-in">
+<a class="op-marca" href="/observatorio/"><span class="op-marca-ico" aria-hidden="true"></span><span>Observatório <strong>Oravel</strong></span></a>
+<nav class="op-menu" aria-label="Seções do Observatório">
+<a href="#painel">Painel de Mercado</a>
+<a href="#indicadores">Indicadores</a>
+<a href="#estudos">Estudos</a>
+<a href="#radar">Radar de Locação</a>
+<a href="{{ P.metodologia }}">Metodologia</a>
+</nav>
+<p class="op-badge"><span class="op-badge-ponto" aria-hidden="true"></span>Dados de mercado atualizados em <time datetime="2026-03-26">{{ P.atualizadoEm }}</time></p>
+</div>
+</div>
+
+<div class="op-wrap">
+
+<header class="op-hero" id="painel">
+<h1 class="op-h1">Painel de Mercado de Locação</h1>
+<p class="op-hero-txt">Dados públicos do mercado brasileiro de locação de equipamentos. Cada número traz fonte e período. <a href="{{ P.metodologia }}">Metodologia</a> · <a href="/manifesto/">Quem somos</a></p>
 </header>
 
-<div class="container obs">
+<noscript><p class="op-aviso">Os gráficos interativos e as séries do Banco Central precisam de JavaScript. Os indicadores, as fontes e os downloads em CSV abaixo funcionam sem ele.</p></noscript>
 
-<nav class="obs-indice" aria-label="Nesta página">
-<a href="#pesquisamos">O que pesquisamos</a>
-<a href="#indicadores">Indicadores</a>
-<a href="#estudos">Últimos estudos</a>
-<a href="#radar">Radar da Locação</a>
-<a href="#ferramentas">Ferramentas</a>
-<a href="#participar">Como participar</a>
+<div class="op-filtros" role="group" aria-label="Filtros do painel">
+<label class="op-campo"><span>Região</span>
+<select id="op-regiao"><option value="brasil">Brasil</option>{% for r in P.regioes %}<option value="{{ r.id }}">{{ r.rot }}</option>{% endfor %}</select></label>
+<p class="op-filtros-nota" id="op-regiao-nota">A região recalcula o faturamento por participação regional. É uma estimativa: a fonte não mede faturamento por região.</p>
+<button type="button" class="op-btn op-btn--ghost" id="op-limpar">Limpar filtros</button>
+</div>
+
+<h2 class="op-oculto">Indicadores principais</h2>
+<ul class="op-kpis" role="list">
+{%- for k in P.kpis %}
+<li class="op-kpi" data-kpi="{{ k.id }}">
+<p class="op-kpi-rot">{{ k.rotulo }}</p>
+<p class="op-kpi-val num" data-valor>{{ k.valor }}</p>
+<p class="op-kpi-var" data-variacao>{% if k.variacao %}<span class="op-delta">▲ {{ k.variacao }}</span>{% elif k.contexto %}{{ k.contexto }}{% endif %}</p>
+<p class="op-kpi-meta"><span data-periodo>{{ k.periodo }}</span><br>Fonte: {{ k.fonteCurta }}</p>
+</li>
+{%- endfor %}
+</ul>
+
+<section class="op-bloco op-graficoBloco" aria-labelledby="op-h-grafico">
+<div class="op-bloco-cab">
+<h2 id="op-h-grafico">Séries do mercado</h2>
+<div class="op-controles" role="group" aria-label="Controles do gráfico">
+<label class="op-campo"><span>Indicador</span>
+<select id="op-ind">{% for g in P.grafico %}<option value="{{ g.id }}">{{ g.rot }}</option>{% endfor %}</select></label>
+<label class="op-campo"><span>Período</span>
+<select id="op-per">{% for p in P.periodos %}<option value="{{ p.id }}"{% if p.id == '24m' %} selected{% endif %}>{{ p.rot }}</option>{% endfor %}</select></label>
+<label class="op-campo" id="op-eq-campo" hidden><span>Tipo de equipamento</span>
+<select id="op-eq"><option value="total">Todas as máquinas</option><option value="amarela">Linha amarela</option></select></label>
+</div>
+</div>
+<div class="op-grafico-area">
+<canvas id="op-canvas" role="img" aria-label="Gráfico da série selecionada. Os mesmos dados estão na tabela abaixo."></canvas>
+<p class="op-estado" id="op-estado" role="status" hidden></p>
+</div>
+<p class="op-grafico-meta" id="op-meta"></p>
+<div class="op-grafico-acoes">
+<a class="op-btn op-btn--ghost" id="op-csv-link" href="#" download hidden>Baixar CSV</a>
+<button type="button" class="op-btn op-btn--ghost" id="op-csv-btn" hidden>Baixar CSV</button>
+<a class="op-btn op-btn--ghost" href="{{ P.metodologia }}">Metodologia</a>
+</div>
+<details class="op-tabela">
+<summary>Ver os dados em tabela</summary>
+<div id="op-tabela" class="op-tabela-corpo"></div>
+</details>
+</section>
+
+<nav class="op-atalhos" aria-labelledby="op-h-atalhos">
+<h2 id="op-h-atalhos">Perguntas que todo gestor faz</h2>
+<ul role="list">
+{%- for p in observatorio.perguntas %}
+<li><a class="op-atalho" href="{{ p.a }}"><span class="op-atalho-q">{{ p.q }}</span><span class="op-atalho-a">{{ p.rotulo }} →</span></a></li>
+{%- endfor %}
+</ul>
 </nav>
 
-<section class="obs-sec" id="quem-somos">
-<p class="obs-eyebrow">Quem somos</p>
-<h2>O conhecimento do mercado de locação sempre esteve fragmentado</h2>
-<p class="obs-texto">Cada empresa aprende sozinha e cada gestor enfrenta praticamente os mesmos problemas. Poucos dados são compartilhados e poucos indicadores são publicados. O Observatório existe para mudar isso: reunir o que é público, acrescentar o que o setor compartilha de forma anônima e devolver tudo em acesso aberto, sem cadastro.</p>
-<p class="obs-links"><a href="/manifesto/">Ler o manifesto</a> · <a href="/politica-editorial/">Política editorial</a> · <a href="/como-produzimos/">Como produzimos</a></p>
-</section>
-
-<section class="obs-sec" id="pesquisamos">
-<p class="obs-eyebrow">O que pesquisamos</p>
-<h2>As perguntas que todo gestor de locadora faz</h2>
-<div class="obs-perguntas">
-{%- for p in observatorio.perguntas %}
-<a class="obs-pergunta" href="{{ p.a }}">
-<span class="obs-pergunta-q">{{ p.q }}</span>
-<span class="obs-pergunta-a">{{ p.rotulo }}</span>
-</a>
-{%- endfor %}
-</div>
-</section>
-
-<section class="obs-sec" id="indicadores">
-<p class="obs-eyebrow">Indicadores</p>
-<h2>Os números que organizam o debate do setor</h2>
-<div class="obs-indicadores">
-{%- for i in observatorio.indicadores %}
-<div class="obs-ind">
-<div class="obs-ind-valor">{{ i.valor }}</div>
-<div class="obs-ind-rotulo">{{ i.rotulo }}</div>
-<div class="obs-ind-fonte">Fonte: {{ i.fonte }}, {{ i.data }}</div>
-</div>
-{%- endfor %}
-</div>
-<p class="obs-links"><a href="/painel-mercado/">Abrir o Painel do Mercado</a> · <a href="/painel-mercado/metodologia/">Metodologia</a> · <a href="/observatorio/fontes/">Todas as fontes</a></p>
-</section>
-
-{%- if observatorioPublico.disponivel %}
-<section class="obs-sec" id="dados-observatorio">
-<p class="obs-eyebrow">Dados do Observatório</p>
-<h2>O que as locadoras participantes informaram</h2>
-<div class="obs-indicadores">
-<div class="obs-ind"><div class="obs-ind-valor">{{ observatorioPublico.resumo.empresas_entrevistadas }}</div><div class="obs-ind-rotulo">Empresas entrevistadas</div></div>
-<div class="obs-ind"><div class="obs-ind-valor">{{ observatorioPublico.resumo.respostas }}</div><div class="obs-ind-rotulo">Respostas registradas</div></div>
-<div class="obs-ind"><div class="obs-ind-valor">{{ observatorioPublico.resumo.estados_com_dados_publicaveis }}</div><div class="obs-ind-rotulo">Estados com dados publicáveis</div></div>
-</div>
-<div class="obs-radar-grade">
-{%- for bloco in [{ t: "Por estado", d: observatorioPublico.porEstado }, { t: "Por porte", d: observatorioPublico.porPorte }, { t: "Temas mais citados", d: observatorioPublico.temas }] %}
-<div class="obs-radar-bloco">
-<h3>{{ bloco.t }}</h3>
-<ul>
-{%- for g in bloco.d.grupos %}
-<li><span style="color:inherit;font-size:.9375rem">{{ g.rotulo }}</span><span>{{ g.percentual }}% · {{ g.empresas }} empresas</span></li>
+<div class="op-corpo">
+<section class="op-indicadores" id="indicadores" aria-labelledby="op-h-ind">
+<div class="op-bloco-cab"><h2 id="op-h-ind">Indicadores</h2><p class="op-bloco-sub">Cada card traz fonte, período e data da coleta. “Ver detalhes” abre a metodologia e o download.</p></div>
+<ul class="op-grade" role="list">
+{%- for i in P.indicadores %}
+<li class="op-card" data-ind="{{ i.id }}" data-tipo="{{ i.tipo }}">
+<div class="op-card-cab"><h3 class="op-card-tit">{{ i.titulo }}</h3>{% if i.regional %}<span class="op-tag op-tag--est" data-tag-est hidden>Estimativa</span>{% endif %}</div>
+{%- if i.tipo == 'bcb' %}
+<p class="op-card-val num" data-valor data-pendente>—</p>
+<p class="op-card-un">{{ i.unidade }}</p>
+<p class="op-card-data" data-data>Carregando série do Banco Central…</p>
+<svg class="op-spark op-spark--bcb" viewBox="0 0 120 36" preserveAspectRatio="none" role="img" aria-label="Evolução recente da série do Banco Central" data-spark></svg>
 {%- else %}
-<li><span>Ainda sem grupos com {{ observatorioPublico.k }} empresas ou mais.</span></li>
+<p class="op-card-val num" data-valor>{{ i.valor }}</p>
+<p class="op-card-un">{% if i.rotuloValor %}{{ i.rotuloValor }} · {% endif %}{{ i.unidade }}</p>
+{%- if i.variacao %}<p class="op-delta" data-variacao>▲ {{ i.variacao }}</p>{% endif %}
+{%- if i.tipo == 'serie' %}
+<svg class="op-spark" viewBox="0 0 {{ i.spark.svg.w }} {{ i.spark.svg.h }}" preserveAspectRatio="none" role="img" aria-label="{{ i.spark.svg.alt }}"><title>{{ i.spark.svg.alt }}</title>
+{%- if i.spark.svg.pontosReais %}<polyline class="op-spark-linha" points="{{ i.spark.svg.pontosReais }}" fill="none"/>{% endif %}
+{%- if i.spark.svg.pontosProjecao %}<polyline class="op-spark-linha op-spark-proj" points="{{ i.spark.svg.pontosProjecao }}" fill="none"/>{% endif %}
+<circle class="op-spark-ponto" cx="{{ i.spark.svg.ultimo.x }}" cy="{{ i.spark.svg.ultimo.y }}" r="3"/></svg>
+{%- elif i.tipo == 'barras' %}
+<ul class="op-barras" role="list">
+{%- for b in i.barras %}
+<li{% if b.id %} data-regiao="{{ b.id }}"{% endif %}><span class="op-barra-rot">{{ b.rot }}</span><span class="op-barra-trilho"><span class="op-barra-pre" style="width: {{ (b.v / i.max * 100) | round(1) }}%"></span></span><span class="op-barra-val num">{{ b.txt }}</span></li>
 {%- endfor %}
 </ul>
-</div>
-{%- endfor %}
-</div>
-<p class="obs-links">Fonte: Observatório Oravel, base de empresas participantes de entrevistas (versão {{ observatorioPublico.versao }}, apurada em {{ observatorioPublico.apuradoEm | dateBr }}). Critério: {{ observatorioPublico.unidade }}; só aparecem grupos com pelo menos {{ observatorioPublico.k }} empresas, e os percentuais de estado e porte têm como base os grupos exibidos. Margem de interpretação: amostra de participantes, sem pretensão de representar todo o setor. <a href="/observatorio/participantes/">Como funciona a anonimização</a></p>
-</section>
-{%- if observatorioPublico.benchmark.length %}
-<section class="obs-sec" id="benchmark">
-<p class="obs-eyebrow">Benchmark</p>
-<h2>Indicadores de gestão informados pelas locadoras</h2>
-<p class="obs-texto">Valores de referência (quartis) calculados com dados que empresas participantes informam de forma anônima.</p>
-{%- for b in observatorioPublico.benchmark %}
-<div class="obs-radar-bloco" style="margin-top:16px;text-align:left">
-<h3>{{ b.nome }} ({{ b.unidade }})</h3>
-<table class="obs-tabela">
-<thead><tr><th>Grupo</th><th>Empresas</th><th>1º quartil</th><th>Mediana</th><th>3º quartil</th></tr></thead>
-<tbody>
-{%- if b.nacional %}<tr><td>Brasil</td><td>{{ b.nacional.n }}</td><td>{{ b.nacional.p25 }}</td><td>{{ b.nacional.p50 }}</td><td>{{ b.nacional.p75 }}</td></tr>{% endif %}
-{%- for g in b.porPorte %}<tr><td>Porte {{ g.rotulo }}</td><td>{{ g.n }}</td><td>{{ g.p25 }}</td><td>{{ g.p50 }}</td><td>{{ g.p75 }}</td></tr>{% endfor %}
-{%- for g in b.porRegiao %}<tr><td>Região {{ g.rotulo }}</td><td>{{ g.n }}</td><td>{{ g.p25 }}</td><td>{{ g.p50 }}</td><td>{{ g.p75 }}</td></tr>{% endfor %}
-</tbody></table>
-</div>
-{%- endfor %}
-<p class="obs-links">Fonte: Observatório Oravel. Critério: dado mais recente de cada empresa nos últimos 12 meses; só aparecem grupos com pelo menos {{ observatorioPublico.k }} empresas, com quartis em vez de valores individuais. Margem de interpretação: amostra de participantes, sem pretensão de representar todo o setor. <a href="/observatorio/participantes/">Participar e comparar a sua empresa</a></p>
-</section>
 {%- endif %}
 {%- endif %}
+<p class="op-card-fonte">Fonte: {{ i.fonteCurta }}<br><span>{{ i.periodo }}</span></p>
+{%- if i.nota %}<p class="op-card-nota">{{ i.nota }}</p>{% endif %}
+<div class="op-card-acoes">
+<button type="button" class="op-btn" data-detalhe="{{ i.id }}" aria-haspopup="dialog">Ver detalhes</button>
+{%- if i.csv %}<a class="op-btn op-btn--ghost" href="/observatorio/dados/{{ i.csv }}.csv" download>Baixar CSV</a>
+{%- elif i.tipo == 'bcb' %}<button type="button" class="op-btn op-btn--ghost" data-csv-bcb="{{ i.codigo }}" disabled>Baixar CSV</button>{% endif %}
+</div>
+</li>
+{%- endfor %}
+</ul>
 
-<section class="obs-sec" id="estudos">
-<p class="obs-eyebrow">Últimos estudos</p>
-<h2>Análises publicadas recentemente</h2>
-<div class="obs-lista">
+<div class="op-filtro-vazio">
+{{ embreve("Filtro por tipo de equipamento e por estado", "As fontes publicam vendas só no total e na linha amarela, e o faturamento só por região. Quando houver séries por tipo de equipamento e por estado, os filtros passam a valer para todos os cards.") }}
+</div>
+</section>
+
+<aside class="op-estudos" id="estudos" aria-labelledby="op-h-est">
+<h2 id="op-h-est">Estudos e análises</h2>
+<ul role="list">
 {%- for post in collections.posts | limit(6) %}
-<a class="obs-item" href="{{ post.url }}">
-<span class="obs-item-meta">{{ post.data.theme | themeLabel }} · {{ post.date | dateBr }}{% if post.data.readingTime %} · {{ post.data.readingTime }}{% endif %}</span>
-<span class="obs-item-titulo">{{ post.data.title }}</span>
-<span class="obs-item-resumo">{{ post.data.summary }}</span>
-</a>
-{%- endfor %}
-</div>
-</section>
-
-<section class="obs-sec obs-radar" id="radar">
-<p class="obs-eyebrow">Radar da Locação</p>
-<h2>O que se move no mercado agora</h2>
-<p class="obs-texto">Atualizado a cada publicação. Nada aqui é opinião isolada: os assuntos vêm do que o Observatório publica e as mudanças vêm das fontes citadas.</p>
-<div class="obs-radar-grade">
-
-{%- if observatorioPublico.disponivel and observatorioPublico.radar.suficiente %}
-<div class="obs-radar-bloco">
-<h3>Radar das entrevistas</h3>
-<p class="obs-radar-nota">Temas citados pelas empresas entrevistadas, últimos {{ observatorioPublico.radar.janela_dias }} dias contra os {{ observatorioPublico.radar.janela_dias }} anteriores.</p>
-<ul>
-{%- set rotuloRadar = { novo: "Novo", crescendo: "Crescendo", diminuindo: "Diminuindo", recorrente: "Recorrente" } %}
-{%- for t in observatorioPublico.radar.temas | limit(6) %}
-<li><span style="color:inherit;font-size:.9375rem">{{ t.tema }}</span><span>{{ rotuloRadar[t.status] }}{% if t.variacao_pp !== null %} · {% if t.variacao_pp > 0 %}+{% endif %}{{ t.variacao_pp }} p.p.{% endif %}</span></li>
+<li><a href="{{ post.url }}"><span class="op-est-meta">{{ post.data.theme | themeLabel }} · {{ post.date | dateBr }}</span><span class="op-est-tit">{{ post.data.title }}</span></a></li>
 {%- endfor %}
 </ul>
+<a class="op-link" href="/publicacoes/">Ver todos os estudos →</a>
+</aside>
 </div>
-{%- endif %}
 
-<div class="obs-radar-bloco">
+<section class="op-bloco op-radar" id="radar" aria-labelledby="op-h-radar">
+<div class="op-bloco-cab"><h2 id="op-h-radar">Radar de Locação</h2><p class="op-bloco-sub">O que se move no mercado. Os assuntos vêm do que o Observatório publica e as mudanças vêm das fontes citadas.</p></div>
+<div class="op-radar-grade">
+
+<div class="op-rbloco">
 <h3>Assuntos em movimento</h3>
-<p class="obs-radar-nota">Temas com mais artigos nos últimos 60 dias, em comparação com os 60 anteriores.</p>
-<ul>
+<p class="op-nota">Temas com mais artigos nos últimos 60 dias, contra os 60 anteriores. Fonte: publicações do Observatório.</p>
+<ul role="list">
 {%- for t in temasRadar | limit(5) %}
 {%- set delta = t.atual - t.anterior %}
-<li><a href="/{{ t.tema }}/">{{ t.tema | themeLabel }}</a><span>{{ t.atual }} {{ "artigo" if t.atual == 1 else "artigos" }} · {% if delta > 0 %}+{{ delta }}{% elif delta < 0 %}{{ delta }}{% else %}estável{% endif %}</span></li>
+<li><a href="/{{ t.tema }}/">{{ t.tema | themeLabel }}</a><span class="num">{{ t.atual }} {{ "artigo" if t.atual == 1 else "artigos" }} · {% if delta > 0 %}+{{ delta }}{% elif delta < 0 %}{{ delta }}{% else %}estável{% endif %}</span></li>
 {%- else %}
 <li><span>Sem publicações no período.</span></li>
 {%- endfor %}
 </ul>
 </div>
 
-<div class="obs-radar-bloco">
+<div class="op-rbloco">
 <h3>Mudanças regulatórias</h3>
-<p class="obs-radar-nota">Acompanhamento da reforma tributária e seus efeitos sobre o caixa da locadora.</p>
-<ul>
+<p class="op-nota">Reforma tributária e seus efeitos sobre o caixa da locadora.</p>
+<ul role="list">
 {%- for post in collections['reforma-tributaria'] | limit(3) %}
-<li><a href="{{ post.url }}">{{ post.data.title }}</a><span>{{ post.date | dateBr }}</span></li>
+<li><a href="{{ post.url }}">{{ post.data.title }}</a><span class="num">{{ post.date | dateBr }}</span></li>
 {%- else %}
 <li><span>Sem publicações no período.</span></li>
 {%- endfor %}
 </ul>
 </div>
 
-<div class="obs-radar-bloco">
+<div class="op-rbloco">
 <h3>Tecnologias em pauta</h3>
-<p class="obs-radar-nota">Últimas análises da frente de Tecnologia.</p>
-<ul>
+<p class="op-nota">Últimas análises da frente de Tecnologia.</p>
+<ul role="list">
 {%- for post in collections['tecnologia'] | limit(3) %}
-<li><a href="{{ post.url }}">{{ post.data.title }}</a><span>{{ post.date | dateBr }}</span></li>
+<li><a href="{{ post.url }}">{{ post.data.title }}</a><span class="num">{{ post.date | dateBr }}</span></li>
 {%- else %}
 <li><span>Sem publicações no período.</span></li>
 {%- endfor %}
 </ul>
 </div>
 
-<div class="obs-radar-bloco">
+<div class="op-rbloco">
+<h3>Radar das entrevistas</h3>
+{%- if obsReal and observatorioPublico.radar.suficiente %}
+<p class="op-nota">Temas citados pelas empresas entrevistadas, últimos {{ observatorioPublico.radar.janela_dias }} dias contra os {{ observatorioPublico.radar.janela_dias }} anteriores. Fonte: Observatório Oravel.</p>
+{%- set rotuloRadar = { novo: "Novo", crescendo: "Crescendo", diminuindo: "Diminuindo", recorrente: "Recorrente" } %}
+<ul role="list">
+{%- for t in observatorioPublico.radar.temas | limit(6) %}
+<li><span>{{ t.tema }}</span><span class="num">{{ rotuloRadar[t.status] }}{% if t.variacao_pp !== null %} · {% if t.variacao_pp > 0 %}+{% endif %}{{ t.variacao_pp }} p.p.{% endif %}</span></li>
+{%- endfor %}
+</ul>
+{%- elif P.simulacao.ativa %}
+<div class="op-sim" data-simulado>
+<span class="op-tag op-tag--sim">Simulação</span>
+<p class="op-nota">Valores ilustrativos. O radar real exige 10 empresas por período.</p>
+<ul role="list">
+{%- for t in P.simulacao.proprios.radar %}
+<li><span>{{ t.tema }}</span><span class="num">{{ t.status }}{% if t.variacao %} · {{ t.variacao }}{% endif %}</span></li>
+{%- endfor %}
+</ul>
+</div>
+{%- else %}
+{{ embreve("Radar das entrevistas", "Compara os temas citados pelas empresas entrevistadas entre dois períodos. Aparece quando cada período tiver ao menos 10 empresas.") }}
+{%- endif %}
+</div>
+
+<div class="op-rbloco">
 <h3>Novos vídeos</h3>
-<ul>
+<ul role="list">
 {%- for v in videosObs | limit(3) %}
-<li><a href="https://www.youtube.com/watch?v={{ v.id }}" rel="noopener">{{ v.titulo }}</a><span>{{ v.dataObj | dateBr }}</span></li>
+<li><a href="https://www.youtube.com/watch?v={{ v.id }}" rel="noopener">{{ v.titulo }}</a><span class="num">{{ v.dataObj | dateBr }}</span></li>
 {%- else %}
 <li><span>Nenhum vídeo publicado ainda.</span></li>
 {%- endfor %}
 </ul>
 </div>
 
-<div class="obs-radar-bloco">
+<div class="op-rbloco">
 <h3>Pesquisas em andamento</h3>
-<ul>
+<ul role="list">
 <li><a href="/painel-mercado/contribuir/">Base anônima de indicadores de locadoras</a><span>aberta a contribuições</span></li>
 <li><a href="/ferramentas/benchmark/">Benchmark da Locadora</a><span>em uso</span></li>
 </ul>
 </div>
-
-<div class="obs-radar-bloco">
-<h3>Categorias em destaque</h3>
-<ul>
-{%- for t in temasRadar | limit(3) %}
-<li><a href="/{{ t.tema }}/">{{ t.tema | themeLabel }}</a><span>ver a frente</span></li>
-{%- endfor %}
-</ul>
-</div>
-
 </div>
 </section>
 
-<section class="obs-sec" id="ferramentas">
-<p class="obs-eyebrow">Ferramentas relacionadas</p>
-<h2>Do indicador do mercado para a decisão na sua empresa</h2>
-<div class="obs-lista obs-lista--2">
+<section class="op-bloco" id="dados-observatorio" aria-labelledby="op-h-obs">
+<div class="op-bloco-cab"><h2 id="op-h-obs">Dados do Observatório</h2><p class="op-bloco-sub">O que as locadoras participantes informam, sempre agregado e anônimo (mínimo de 10 empresas por grupo).</p></div>
+{%- if obsReal %}
+<ul class="op-kpis op-kpis--mini" role="list">
+<li class="op-kpi"><p class="op-kpi-rot">Empresas entrevistadas</p><p class="op-kpi-val num">{{ observatorioPublico.resumo.empresas_entrevistadas }}</p></li>
+<li class="op-kpi"><p class="op-kpi-rot">Respostas registradas</p><p class="op-kpi-val num">{{ observatorioPublico.resumo.respostas }}</p></li>
+<li class="op-kpi"><p class="op-kpi-rot">Estados com dados</p><p class="op-kpi-val num">{{ observatorioPublico.resumo.estados_com_dados_publicaveis }}</p></li>
+</ul>
+<div class="op-radar-grade">
+{%- for bloco in [{ t: "Por estado", d: observatorioPublico.porEstado }, { t: "Por porte", d: observatorioPublico.porPorte }, { t: "Temas mais citados", d: observatorioPublico.temas }] %}
+<div class="op-rbloco"><h3>{{ bloco.t }}</h3>
+<ul role="list">
+{%- for g in bloco.d.grupos %}<li><span>{{ g.rotulo }}</span><span class="num">{{ g.percentual }}% · {{ g.empresas }} empresas</span></li>
+{%- else %}<li><span>Ainda sem grupos com {{ observatorioPublico.k }} empresas ou mais.</span></li>{%- endfor %}
+</ul></div>
+{%- endfor %}
+</div>
+<p class="op-fonte">Fonte: Observatório Oravel, base de empresas participantes (versão {{ observatorioPublico.versao }}, apurada em {{ observatorioPublico.apuradoEm | dateBr }}). Critério: {{ observatorioPublico.unidade }}; só aparecem grupos com pelo menos {{ observatorioPublico.k }} empresas. Margem de interpretação: amostra de participantes, sem pretensão de representar todo o setor. <a href="/observatorio/participantes/">Como funciona a anonimização</a></p>
+{%- elif P.simulacao.ativa %}
+{%- set S = P.simulacao.proprios %}
+<div class="op-sim" data-simulado>
+<p class="op-sim-aviso"><span class="op-tag op-tag--sim">Simulação</span> {{ P.simulacao.aviso }} Os dados reais aparecem aqui quando houver ao menos 10 empresas por grupo. <a href="/observatorio/participantes/">Como participar</a></p>
+<ul class="op-kpis op-kpis--mini" role="list">
+<li class="op-kpi"><p class="op-kpi-rot">Empresas entrevistadas</p><p class="op-kpi-val num">{{ S.resumo.empresas }}</p></li>
+<li class="op-kpi"><p class="op-kpi-rot">Entrevistas</p><p class="op-kpi-val num">{{ S.resumo.entrevistas }}</p></li>
+<li class="op-kpi"><p class="op-kpi-rot">Respostas registradas</p><p class="op-kpi-val num">{{ S.resumo.respostas }}</p></li>
+<li class="op-kpi"><p class="op-kpi-rot">Estados com dados</p><p class="op-kpi-val num">{{ S.resumo.estados }}</p></li>
+</ul>
+<div class="op-radar-grade">
+{%- for bloco in [{ t: "Por estado", d: S.porEstado }, { t: "Por porte", d: S.porPorte }, { t: "Temas mais citados", d: S.temas }] %}
+<div class="op-rbloco"><h3>{{ bloco.t }}</h3>
+<ul role="list">{%- for g in bloco.d %}<li><span>{{ g.rotulo }}</span><span class="num">{{ g.percentual }}% · {{ g.empresas }} empresas</span></li>{%- endfor %}</ul></div>
+{%- endfor %}
+</div>
+<p class="op-fonte">Fonte: simulação ilustrativa da Oravel (valores fictícios, sem base de pesquisa). Período: não se aplica. Sem download de dados.</p>
+</div>
+{%- else %}
+{{ embreve("Indicadores próprios do Observatório", "Empresas entrevistadas, respostas e distribuição por estado, porte e tema. Aparecem quando houver amostra mínima de 10 empresas por grupo.") }}
+{%- endif %}
+</section>
+
+<section class="op-bloco" id="benchmark" aria-labelledby="op-h-bench">
+<div class="op-bloco-cab"><h2 id="op-h-bench">Benchmark de gestão</h2><p class="op-bloco-sub">Quartis de indicadores informados pelas locadoras. Quem participa compara a própria empresa com o grupo.</p></div>
+{%- if obsReal and observatorioPublico.benchmark.length %}
+{%- for b in observatorioPublico.benchmark %}
+<div class="op-rbloco op-rbloco--larga"><h3>{{ b.nome }} ({{ b.unidade }})</h3>
+<table class="op-tab"><thead><tr><th scope="col">Grupo</th><th scope="col">Empresas</th><th scope="col">1º quartil</th><th scope="col">Mediana</th><th scope="col">3º quartil</th></tr></thead><tbody>
+{%- if b.nacional %}<tr><th scope="row">Brasil</th><td class="num">{{ b.nacional.n }}</td><td class="num">{{ b.nacional.p25 }}</td><td class="num">{{ b.nacional.p50 }}</td><td class="num">{{ b.nacional.p75 }}</td></tr>{% endif %}
+{%- for g in b.porPorte %}<tr><th scope="row">Porte {{ g.rotulo }}</th><td class="num">{{ g.n }}</td><td class="num">{{ g.p25 }}</td><td class="num">{{ g.p50 }}</td><td class="num">{{ g.p75 }}</td></tr>{% endfor %}
+{%- for g in b.porRegiao %}<tr><th scope="row">Região {{ g.rotulo }}</th><td class="num">{{ g.n }}</td><td class="num">{{ g.p25 }}</td><td class="num">{{ g.p50 }}</td><td class="num">{{ g.p75 }}</td></tr>{% endfor %}
+</tbody></table></div>
+{%- endfor %}
+<p class="op-fonte">Fonte: Observatório Oravel. Critério: dado mais recente de cada empresa nos últimos 12 meses; só aparecem grupos com pelo menos {{ observatorioPublico.k }} empresas, com quartis em vez de valores individuais. Margem de interpretação: amostra de participantes. <a href="/observatorio/participantes/">Participar e comparar a sua empresa</a></p>
+{%- elif P.simulacao.ativa %}
+<div class="op-sim" data-simulado>
+<p class="op-sim-aviso"><span class="op-tag op-tag--sim">Simulação</span> {{ P.simulacao.aviso }} O benchmark real exige ao menos 10 empresas por grupo.</p>
+<table class="op-tab"><thead><tr><th scope="col">Indicador</th><th scope="col">Empresas</th><th scope="col">1º quartil</th><th scope="col">Mediana</th><th scope="col">3º quartil</th></tr></thead><tbody>
+{%- for b in P.simulacao.proprios.benchmark %}<tr><th scope="row">{{ b.nome }} ({{ b.unidade }})</th><td class="num">{{ b.n }}</td><td class="num">{{ b.p25 }}</td><td class="num">{{ b.p50 }}</td><td class="num">{{ b.p75 }}</td></tr>{% endfor %}
+</tbody></table>
+<p class="op-fonte">Fonte: simulação ilustrativa da Oravel (valores fictícios, sem base de pesquisa). Período: não se aplica. Sem download de dados.</p>
+</div>
+{%- else %}
+{{ embreve("Benchmark de gestão", "Mediana e quartis de utilização, disponibilidade, custo de manutenção e idade da frota, por porte e região. Aparece quando houver amostra mínima de 10 empresas por grupo.") }}
+{%- endif %}
+</section>
+
+<section class="op-bloco" id="ferramentas" aria-labelledby="op-h-ferr">
+<div class="op-bloco-cab"><h2 id="op-h-ferr">Ferramentas relacionadas</h2><p class="op-bloco-sub">Do indicador do mercado para a decisão na sua empresa.</p></div>
+<ul class="op-ferr" role="list">
 {%- set n = 0 %}
 {%- for slug, f in ferramentas.itens %}
 {%- if f.status == "ativa" and f.tipo != "legado" and n < 6 %}
 {%- set n = n + 1 %}
-<a class="obs-item" href="/ferramentas/{{ slug }}/">
-<span class="obs-item-meta">{{ f.categoria }} · {{ f.tempo }}</span>
-<span class="obs-item-titulo">{{ f.titulo }}</span>
-<span class="obs-item-resumo">{{ f.resumo }}</span>
-</a>
+<li><a href="/ferramentas/{{ slug }}/"><span class="op-ferr-cat">{{ f.categoria }} · {{ f.tempo }}</span><span class="op-ferr-tit">{{ f.titulo }}</span></a></li>
 {%- endif %}
 {%- endfor %}
-</div>
-<p class="obs-links"><a href="/ferramentas/">Ver todas as ferramentas</a></p>
+</ul>
+<a class="op-link" href="/ferramentas/">Ver todas as ferramentas →</a>
 </section>
 
-<section class="obs-sec" id="participar">
-<p class="obs-eyebrow">Como participar</p>
-<h2>Um mercado evolui quando compartilha conhecimento</h2>
-<p class="obs-texto">Gestores de locadoras podem contribuir com indicadores da própria empresa. Os dados são anonimizados e só aparecem agregados. Quem contribui recebe de volta a comparação com o restante da base.</p>
-<p class="obs-links"><a href="/observatorio/participantes/">Como funciona a participação</a> · <a href="/painel-mercado/contribuir/">Contribuir com dados</a></p>
-</section>
+<details class="op-transp" id="transparencia">
+<summary>Transparência: como participar, calendário editorial e cronologia</summary>
+<div class="op-transp-corpo">
+<p>Gestores de locadoras podem contribuir com indicadores da própria empresa. Os dados são anonimizados e só aparecem agregados. <a href="/observatorio/participantes/">Como funciona a participação</a> · <a href="/painel-mercado/contribuir/">Contribuir com dados</a> · <a href="/observatorio/fontes/">Todas as fontes</a></p>
+<div class="op-duas">
+<div><h3>Calendário permanente</h3>
+<dl class="op-dl">{%- for c in observatorio.calendario %}<dt>{{ c.ciclo }}</dt><dd>{{ c.itens }}</dd>{%- endfor %}</dl></div>
+<div><h3>Cronologia pública</h3>
+<ol class="op-tempo">{%- for m in observatorio.cronologia %}<li class="{{ m.estado }}"><strong>{{ m.marco }}</strong><span>{{ "Concluído" if m.estado == "feito" else "Previsto" }}. {{ m.nota }}</span></li>{%- endfor %}</ol></div>
+</div>
+</div>
+</details>
 
-<section class="obs-sec" id="transparencia">
-<p class="obs-eyebrow">Transparência</p>
-<h2>Calendário editorial e cronologia</h2>
-<div class="obs-duas">
-<div>
-<h3>Calendário permanente</h3>
-<dl class="obs-dl">
-{%- for c in observatorio.calendario %}
-<dt>{{ c.ciclo }}</dt><dd>{{ c.itens }}</dd>
-{%- endfor %}
-</dl>
-</div>
-<div>
-<h3>Cronologia pública</h3>
-<ol class="obs-tempo">
-{%- for m in observatorio.cronologia %}
-<li class="{{ m.estado }}"><strong>{{ m.marco }}</strong><span>{{ "Concluído" if m.estado == "feito" else "Previsto" }}. {{ m.nota }}</span></li>
-{%- endfor %}
-</ol>
-</div>
-</div>
-</section>
+<p class="op-rodape">Correções e dúvidas sobre os dados: <a href="mailto:dados@oravel.org">dados@oravel.org</a> · <a href="{{ P.metodologia }}">Metodologia</a> · <a href="/painel-mercado/historico/">Histórico de atualizações</a>{% if P.simulacao.ativa %}<br>Blocos e séries marcados como “Simulação” usam valores ilustrativos, não são dados publicados e não têm download.{% endif %}</p>
 
 </div>
+</div>
+
+<dialog class="op-dialogo" id="op-dialogo" aria-labelledby="op-d-tit">
+<div class="op-d-cab"><h2 id="op-d-tit"></h2><button type="button" class="op-btn op-btn--ghost op-d-fechar" id="op-d-fechar" aria-label="Fechar detalhes">Fechar</button></div>
+<div class="op-d-corpo" id="op-d-corpo"></div>
+</dialog>
+
+<script type="application/json" id="op-dados">{{ P.cliente | dump | safe }}</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+<script src="/assets/observatorio-painel.js" defer></script>
