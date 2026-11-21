@@ -1,28 +1,29 @@
-/* Identidade do Painel do Mercado: azul. (O Observatorio usa verde-escuro com laranja.)
+/* Identidade do Painel do Mercado: o verde da marca Oravel (o mesmo do menu do Observatorio).
    Escopo: tudo sob .pm, sem tocar no cabecalho, no rodape nem nas outras paginas. */
 .pm {
-  --pm-marinho: #0b2447;
-  --pm-azul: #1d4e89;
-  --pm-azul-hover: #153b69;
-  --pm-claro: #e8f0fa;
-  --pm-sobre: #c9d8ee;
+  --pm-fundo: #0b2b2a;
+  --pm-verde: #0b5f57;
+  --pm-verde-hover: #084a44;
+  --pm-claro: #e3f3ee;
+  --pm-sobre: #c4d7d4;
+  --pm-linha: #cfe0dc;
 }
-.pm .tema-hero { background: var(--pm-marinho); border-bottom: 3px solid #4a90e2; }
+.pm .tema-hero { background: var(--pm-fundo); border-bottom: 3px solid #3b8179; }
 .pm .tema-hero h1, .pm .tema-hero .page-title { color: #fff; }
 .pm .tema-hero p { color: var(--pm-sobre); }
 .pm .tema-hero .breadcrumb, .pm .tema-hero .breadcrumb a { color: var(--pm-sobre); }
 .pm .tema-hero .breadcrumb a:hover { color: #fff; }
-.pm .painel a:not(.btn), .pm .tema-hero + * a:not(.btn) { color: var(--pm-azul); }
-.pm .painel-bloco { border-top-color: var(--pm-azul); }
-.pm .painel-meta { border-bottom-color: #c5d3e6; }
-.pm .kpi__valor { color: var(--pm-azul); }
-.pm .btn-outline, .pm .btn-secondary { color: var(--pm-azul); border-color: var(--pm-azul); }
-.pm .btn-outline:hover, .pm .btn-secondary:hover { background: var(--pm-azul); border-color: var(--pm-azul); color: #fff; }
-.pm .btn-primary { background: var(--pm-azul); border-color: var(--pm-azul); color: #fff; }
-.pm .btn-primary:hover { background: var(--pm-azul-hover); border-color: var(--pm-azul-hover); }
-.pm .form-select:focus, .pm .form-input:focus, .pm .form-control:focus { border-color: var(--pm-azul); box-shadow: 0 0 0 3px rgba(29, 78, 137, .18); }
-.pm .tile:focus-visible, .pm .heat__cel:focus-visible { outline-color: var(--pm-azul); }
-.pm .aviso-ilustrativo { background: var(--pm-claro); border-color: #c5d3e6; }
-.pm .heat-legenda i { background: linear-gradient(90deg, #e8f0fa, #1d4e89); }
-.pm .comp__barra { background: linear-gradient(90deg, #bfd0e8, #5b8cc6); }
-.pm .comp__barra--forte { background: linear-gradient(90deg, #5b8cc6, #1d4e89); }
+.pm .painel a:not(.btn), .pm .tema-hero + * a:not(.btn) { color: var(--pm-verde); }
+.pm .painel-bloco { border-top-color: var(--pm-verde); }
+.pm .painel-meta { border-bottom-color: var(--pm-linha); }
+.pm .kpi__valor { color: var(--pm-verde); }
+.pm .btn-outline, .pm .btn-secondary { color: var(--pm-verde); border-color: var(--pm-verde); }
+.pm .btn-outline:hover, .pm .btn-secondary:hover { background: var(--pm-verde); border-color: var(--pm-verde); color: #fff; }
+.pm .btn-primary { background: var(--pm-verde); border-color: var(--pm-verde); color: #fff; }
+.pm .btn-primary:hover { background: var(--pm-verde-hover); border-color: var(--pm-verde-hover); }
+.pm .form-select:focus, .pm .form-input:focus, .pm .form-control:focus { border-color: var(--pm-verde); box-shadow: 0 0 0 3px rgba(11, 95, 87, .18); }
+.pm .tile:focus-visible, .pm .heat__cel:focus-visible { outline-color: var(--pm-verde); }
+.pm .aviso-ilustrativo { background: var(--pm-claro); border-color: var(--pm-linha); }
+.pm .heat-legenda i { background: linear-gradient(90deg, #e6f1ef, #1e4d49); }
+.pm .comp__barra { background: linear-gradient(90deg, #b9c8c6, #5e8f89); }
+.pm .comp__barra--forte { background: linear-gradient(90deg, #5e8f89, #1e4d49); }
