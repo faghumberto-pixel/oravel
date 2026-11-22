@@ -423,9 +423,9 @@ return [
 
     // Oravel Intelligence (produto próprio, pacote 'intelligence'): telas sem tabela. Desligadas por padrão; entram pelo pacote.
     'menu_intelligence_dashboard' => [
-        'label' => 'Tela: Intelligence → Dashboard Executivo',
+        'label' => 'Tela: Intelligence → Índice de Saúde',
         'grupo' => 'Intelligence',
-        'menu' => 'Dashboard Executivo',
+        'menu' => 'Índice de Saúde',
         'slug' => 'intelligence-dashboard',
         'herda' => ['__nunca__'],
     ],
@@ -451,9 +451,9 @@ return [
         'herda' => ['__nunca__'],
     ],
     'menu_intelligence_ia' => [
-        'label' => 'Tela: Intelligence → IA',
+        'label' => 'Tela: Intelligence → Assistente de IA',
         'grupo' => 'Intelligence',
-        'menu' => 'IA',
+        'menu' => 'Assistente de IA',
         'slug' => 'intelligence-ia',
         'herda' => ['__nunca__'],
     ],
@@ -462,6 +462,34 @@ return [
         'grupo' => 'Intelligence',
         'menu' => 'Relatórios',
         'slug' => 'intelligence-relatorios',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_intelligence_diagnostico' => [
+        'label' => 'Tela: Intelligence → Diagnóstico',
+        'grupo' => 'Intelligence',
+        'menu' => 'Diagnóstico',
+        'slug' => 'intelligence-diagnostico',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_intelligence_comparacao' => [
+        'label' => 'Tela: Intelligence → Comparação interna',
+        'grupo' => 'Intelligence',
+        'menu' => 'Comparação interna',
+        'slug' => 'intelligence-comparacao',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_intelligence_plano' => [
+        'label' => 'Tela: Intelligence → Plano de evolução',
+        'grupo' => 'Intelligence',
+        'menu' => 'Plano de evolução',
+        'slug' => 'intelligence-plano',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_intelligence_operacao' => [
+        'label' => 'Tela: Intelligence → Frota, finanças e oficina',
+        'grupo' => 'Intelligence',
+        'menu' => 'Frota, finanças e oficina',
+        'slug' => 'intelligence-operacao',
         'herda' => ['__nunca__'],
     ],
 ];

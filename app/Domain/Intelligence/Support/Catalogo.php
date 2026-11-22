@@ -112,4 +112,64 @@ class Catalogo
                 'calc' => fn ($d) => $d['entregas_no_prazo_pct'] ?? null],
         ];
     }
+
+    /**
+     * Orientação por indicador (alimenta Diagnóstico e Plano de evolução): por que importa e o que fazer. Texto de referência geral
+     * para locadoras, a revisar com um especialista do setor antes de ser vendido como recomendação.
+     *
+     * @return array<string, array{impacto: string, acoes: list<string>}>
+     */
+    public static function orientacao(): array
+    {
+        return [
+            'disponibilidade_frota' => ['impacto' => 'Equipamento parado não gera receita e compromete a entrega ao cliente.', 'acoes' => [
+                'Listar os equipamentos indisponíveis há mais tempo e definir um prazo de retorno para cada um.',
+                'Reservar as peças de maior giro para reduzir a espera na oficina.',
+                'Priorizar na oficina os equipamentos que têm contrato aguardando.']],
+            'utilizacao_frota' => ['impacto' => 'Equipamento disponível e sem contrato é capital parado.', 'acoes' => [
+                'Oferecer ativamente os equipamentos ociosos à carteira de clientes.',
+                'Rever preço e condições dos itens com menor giro.',
+                'Avaliar a venda ou a redução de itens ociosos há muito tempo.']],
+            'margem_operacional' => ['impacto' => 'É o que sobra da receita depois dos custos: mede se a operação se sustenta.', 'acoes' => [
+                'Mapear os 3 maiores custos do mês e definir uma meta de redução para cada um.',
+                'Rever os contratos de margem baixa no próximo reajuste.',
+                'Acompanhar o resultado todo mês, não só no fechamento do ano.']],
+            'retorno_sobre_frota' => ['impacto' => 'Mostra quanto a frota rende por ano sobre o valor investido nela.', 'acoes' => [
+                'Identificar os equipamentos que menos contribuem para a receita.',
+                'Priorizar investimento nas categorias com melhor retorno.',
+                'Rever o preço de locação dos equipamentos de maior valor.']],
+            'custo_manutencao_sobre_receita' => ['impacto' => 'Manutenção cara corrói a margem e costuma indicar equipamento velho ou manutenção só corretiva.', 'acoes' => [
+                'Levantar os equipamentos com maior custo de manutenção acumulado.',
+                'Aumentar a parcela de preventiva para reduzir as corretivas.',
+                'Negociar peças e serviços com os fornecedores mais usados.']],
+            'inadimplencia_pct' => ['impacto' => 'Receita faturada e não recebida pressiona o caixa.', 'acoes' => [
+                'Criar uma rotina de cobrança logo após o vencimento.',
+                'Rever limite e condições dos clientes com atrasos recorrentes.',
+                'Exigir garantias nos contratos de maior valor.']],
+            'taxa_conversao_propostas' => ['impacto' => 'Mostra quanto do esforço comercial vira contrato.', 'acoes' => [
+                'Registrar o motivo de cada proposta perdida.',
+                'Responder as propostas em até 24 horas.',
+                'Rever proposta e preço nas categorias com menos fechamento.']],
+            'concentracao_maior_cliente' => ['impacto' => 'Depender de um só cliente expõe a empresa se ele reduzir ou sair.', 'acoes' => [
+                'Definir uma participação máxima por cliente.',
+                'Abrir novos clientes nos segmentos que a empresa já atende.',
+                'Renovar com antecedência o contrato do maior cliente.']],
+            'preventiva_pct' => ['impacto' => 'Preventiva evita quebra em campo e reduz o custo de manutenção.', 'acoes' => [
+                'Montar o plano de preventiva por tipo de equipamento (horas de uso ou meses).',
+                'Programar a revisão antes de o equipamento voltar ao cliente.',
+                'Acompanhar o cumprimento do plano toda semana.']],
+            'corretivas_por_100_equipamentos' => ['impacto' => 'Muita corretiva por equipamento indica falha que se repete.', 'acoes' => [
+                'Analisar as causas das corretivas que mais se repetem.',
+                'Rever o checklist de saída e de retorno dos equipamentos.',
+                'Tratar a causa-raiz dos equipamentos que quebram com frequência.']],
+            'tempo_medio_reparo_h' => ['impacto' => 'Reparo demorado mantém o equipamento parado e atrasa o cliente.', 'acoes' => [
+                'Medir onde o tempo se perde: espera de peça, fila ou mão de obra.',
+                'Manter estoque mínimo das peças mais usadas.',
+                'Redistribuir a carga entre os técnicos.']],
+            'entregas_no_prazo_pct' => ['impacto' => 'Atraso na entrega prejudica a obra do cliente e a reputação da empresa.', 'acoes' => [
+                'Planejar rota e agenda de entregas com antecedência.',
+                'Confirmar a disponibilidade do equipamento antes de prometer o prazo.',
+                'Registrar o motivo de cada atraso para corrigir a causa.']],
+        ];
+    }
 }

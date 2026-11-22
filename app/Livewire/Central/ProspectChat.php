@@ -20,6 +20,9 @@ class ProspectChat extends Component
     /** Tela cheia (app do celular /assistente): ja abre aberto, sem fechar/gatilho. */
     public bool $fullscreen = false;
 
+    /** Embutido numa página (ex.: Dashboard do Intelligence): painel inline, já aberto, sem gatilho flutuante nem fundo escurecido. */
+    public bool $embutido = false;
+
     public string $question = '';
 
     public array $messages = [];
@@ -30,12 +33,13 @@ class ProspectChat extends Component
 
     public string $lastSql = '';
 
-    public function mount(bool $fullscreen = false): void
+    public function mount(bool $fullscreen = false, bool $embutido = false): void
     {
         $this->autorizar();
 
-        if ($fullscreen) {
-            $this->fullscreen = true;
+        if ($fullscreen || $embutido) {
+            $this->fullscreen = $fullscreen;
+            $this->embutido = $embutido;
             $this->toggle(); // abre e monta a mensagem de boas-vindas
         }
     }

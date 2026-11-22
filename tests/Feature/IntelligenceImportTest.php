@@ -205,7 +205,7 @@ class IntelligenceImportTest extends TestCase
         $this->actingAs($u);
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
-        Livewire::test(IntelligenceDashboard::class)->assertSee('Nenhuma fotografia da empresa ainda');
+        Livewire::test(IntelligenceDashboard::class)->assertSee('O Índice Oravel de Saúde da sua locadora');
 
         $file = UploadedFile::fake()->createWithContent('i.xlsx', file_get_contents($this->planilha([$this->base()])));
         Livewire::test(ListIntelligenceImports::class)
@@ -214,6 +214,6 @@ class IntelligenceImportTest extends TestCase
         $this->assertSame($t->id, IntelligenceSnapshot::withoutGlobalScopes()->where('tenant_id', $t->id)->value('tenant_id'));
 
         Livewire::test(IntelligenceDashboard::class)
-            ->assertSee('Índice geral da empresa')->assertSee('Disponibilidade da Frota')->assertDontSee('777');
+            ->assertSee('Índice geral')->assertSee('Disponibilidade')->assertDontSee('777');
     }
 }

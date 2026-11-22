@@ -1,6 +1,6 @@
 <div>
     {{-- Backdrop (fecha ao clicar fora) --}}
-    @unless ($fullscreen)
+    @unless ($fullscreen || $embutido)
         <div
             class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
             wire:click="toggle"
@@ -10,8 +10,8 @@
 
     {{-- Chat Panel (lateral direita) --}}
     <div
-        class="{{ $fullscreen ? 'fixed inset-0 w-full' : 'fixed right-0 top-0 h-full w-full max-w-2xl shadow-2xl' }} bg-white dark:bg-gray-900 flex flex-col z-50"
-        @if ($fullscreen) data-tema style="display: flex; height: 100dvh; --ac: {{ $tema['cor'] }}; --ac-d: {{ $tema['escura'] }}; --fundo: {{ $tema['fundo'] }};" @else style="display: {{ $isOpen ? 'flex' : 'none' }};" @endif
+        class="{{ $fullscreen ? 'fixed inset-0 w-full' : ($embutido ? 'relative w-full rounded-xl overflow-hidden ring-1 ring-gray-200 dark:ring-white/10' : 'fixed right-0 top-0 h-full w-full max-w-2xl shadow-2xl') }} bg-white dark:bg-gray-900 flex flex-col {{ $embutido ? '' : 'z-50' }}"
+        @if ($fullscreen) data-tema style="display: flex; height: 100dvh; --ac: {{ $tema['cor'] }}; --ac-d: {{ $tema['escura'] }}; --fundo: {{ $tema['fundo'] }};" @elseif ($embutido) data-tema-i style="display: flex; height: 640px; --ac: {{ $tema['cor'] }}; --ac-d: {{ $tema['escura'] }};" @else style="display: {{ $isOpen ? 'flex' : 'none' }};" @endif
     >
         {{-- Header --}}
         <div class="tema-cab flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0"
@@ -23,6 +23,12 @@
                     <div>
                         <h3 class="font-bold text-gray-900 dark:text-white leading-tight">Oravel Mobile</h3>
                         <p class="text-xs text-gray-500 dark:text-gray-400">{{ $tituloApp }} · {{ $subtituloApp }}</p>
+                    </div>
+                @elseif ($embutido)
+                    <img src="{{ asset($tema['icone']) }}" alt="" class="w-10 h-10 rounded-xl ring-2 ring-white/70">
+                    <div>
+                        <h3 class="font-bold leading-tight">{{ $tituloApp }}</h3>
+                        <p class="text-xs">Pergunte sobre a saúde e a evolução da empresa · {{ $subtituloApp }}</p>
                     </div>
                 @else
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center">
@@ -48,7 +54,7 @@
                     <span class="font-medium text-blue-600 dark:text-blue-400">{{ $prospectsEppNaoContatados }}</span>
                 </div>
                 @endif
-                @unless ($fullscreen)
+                @unless ($fullscreen || $embutido)
                 <button
                     wire:click="toggle"
                     class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -196,12 +202,13 @@
             </div>
         </div>
 
-        {{-- Sugestoes so no desktop: no app do celular (fullscreen) tiravam espaco do campo de digitar --}}
-        @unless ($fullscreen)
+        {{-- Sugestoes so no desktop: no app do celular (fullscreen) tiravam espaco do campo de digitar.
+             Embutido: so mostra se a area informou as proprias ($sugestoes); as de Prospects nao servem para outras areas. --}}
+        @if (! $fullscreen && (! $embutido || ! empty($sugestoes)))
         <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Perguntas rápidas:</p>
             <div class="flex gap-2 {{ $fullscreen ? 'flex-nowrap overflow-x-auto pb-1' : 'flex-wrap' }}">
-                @foreach([
+                @foreach($sugestoes ?? [
                     'Quais prospects são EPP e não contatei ainda?' => 'epp-nao-contatados',
                     'Quais estão aguardando retorno?' => 'aguardando-retorno',
                     'Qual o status dos prospects?' => 'status-prospects',
@@ -218,7 +225,7 @@
                 @endforeach
             </div>
         </div>
-        @endunless
+        @endif
 
         {{-- Input Area --}}
         <div class="tema-barra px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0"
@@ -231,7 +238,7 @@
                     placeholder="{{ $placeholder }}"
                     class="flex-1 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl {{ $fullscreen ? 'text-base' : 'text-sm' }} focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     @disabled($isLoading)
-                    autofocus
+                    @if (! $embutido) autofocus @endif
                 >
                 <button
                     wire:click="send"
@@ -275,7 +282,7 @@
     </div>
 
     {{-- Gatilho (fechado): barra no rodape direito, no estilo do chat do app --}}
-    @if (! $isOpen && ! $fullscreen)
+    @if (! $isOpen && ! $fullscreen && ! $embutido)
         <button
             type="button"
             wire:click="toggle"
@@ -316,11 +323,25 @@
         // O painel abre/fecha por display: rola de novo quando o chat e' aberto.
         $wire.$watch('isOpen', descer);
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && $wire.isOpen && !$wire.fullscreen) $wire.toggle();
+            if (e.key === 'Escape' && $wire.isOpen && !$wire.fullscreen && !$wire.embutido) $wire.toggle();
         });
         descer();
     </script>
     @endscript
+
+    @if ($embutido)
+        {{-- Embutido (desktop): só a cor de destaque da área; o fundo segue o claro/escuro do painel. --}}
+        <style>
+            [data-tema-i] .tema-cab { background: var(--ac) !important; border-color: var(--ac-d) !important; }
+            [data-tema-i] .tema-cab h3, [data-tema-i] .tema-cab p { color: #fff !important; }
+            [data-tema-i] .tema-cab p { opacity: .85; }
+            [data-tema-i] .tema-user { background: var(--ac) !important; color: #fff !important; }
+            [data-tema-i] .tema-ponto { background: var(--ac) !important; }
+            [data-tema-i] .tema-send { background: var(--ac) !important; }
+            [data-tema-i] .tema-send:hover { background: var(--ac-d) !important; }
+            [data-tema-i] .tema-barra input:focus { box-shadow: 0 0 0 2px var(--ac) !important; border-color: var(--ac) !important; }
+        </style>
+    @endif
 
     @if ($fullscreen)
         {{-- Tema do app do celular: cor propria da area (cada chat instalado tem a sua), sem branco.

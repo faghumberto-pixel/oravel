@@ -74,6 +74,14 @@ class IntelligenceChat extends ProspectChat
             'subtituloApp' => $cliente ?? 'Saúde e evolução da empresa',
             'placeholder' => 'Pergunte sobre indicadores, áreas, evolução...',
             'mostrarStats' => false,
+            'sugestoes' => [
+                'Como está minha empresa hoje?' => 'panorama',
+                'Minha disponibilidade aumentou?' => 'disponibilidade',
+                'Qual área está pior e por quê?' => 'pior-area',
+                'O que piorou desde a última fotografia?' => 'piorou',
+                'Mostre a evolução do índice geral' => 'evolucao',
+                'Como estou contra empresas parecidas?' => 'benchmark',
+            ],
             'badge' => 0,
         ];
     }
