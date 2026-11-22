@@ -1,13 +1,13 @@
-@extends('layouts.assistente', ['area' => request('area') === 'suprimentos' ? 'suprimentos' : 'prospects'])
+@extends('layouts.assistente', ['area' => in_array(request('area'), \App\Support\Assistente\Sessao::AREAS_DE_CLIENTE, true) ? request('area') : 'prospects'])
 
 @section('content')
-    @php($t = \App\Support\Assistente\Areas::tema(request('area') === 'suprimentos' ? 'suprimentos' : 'prospects'))
+    @php($t = \App\Support\Assistente\Areas::tema(in_array(request('area'), \App\Support\Assistente\Sessao::AREAS_DE_CLIENTE, true) ? request('area') : 'prospects'))
     <div class="min-h-screen flex flex-col items-center justify-center px-6">
         <div class="w-full max-w-sm">
             <div class="flex flex-col items-center mb-8">
                 <img src="{{ asset($t['icone']) }}" alt="Oravel" class="w-16 h-16 rounded-2xl mb-4">
                 <h1 class="text-xl font-bold">{{ $t['nome'] }}</h1>
-                <p class="text-sm text-gray-500 mt-1">Entre para usar o assistente de prospecção</p>
+                <p class="text-sm text-gray-500 mt-1">{{ $t['login'] ?? 'Entre para usar o assistente de prospecção' }}</p>
             </div>
 
             <form method="POST" action="{{ route('assistente.login') }}" class="space-y-4">

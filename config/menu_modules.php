@@ -420,4 +420,48 @@ return [
         'recurso' => true,
         'herda' => [],
     ],
+
+    // Oravel Intelligence (produto próprio, pacote 'intelligence'): telas sem tabela. Desligadas por padrão; entram pelo pacote.
+    'menu_intelligence_dashboard' => [
+        'label' => 'Tela: Intelligence → Dashboard Executivo',
+        'grupo' => 'Intelligence',
+        'menu' => 'Dashboard Executivo',
+        'slug' => 'intelligence-dashboard',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_intelligence_benchmark' => [
+        'label' => 'Tela: Intelligence → Benchmark',
+        'grupo' => 'Intelligence',
+        'menu' => 'Benchmark',
+        'slug' => 'intelligence-benchmark',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_intelligence_observatorio' => [
+        'label' => 'Tela: Intelligence → Observatório',
+        'grupo' => 'Intelligence',
+        'menu' => 'Observatório',
+        'slug' => 'intelligence-observatorio',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_intelligence_ferramentas' => [
+        'label' => 'Tela: Intelligence → Ferramentas',
+        'grupo' => 'Intelligence',
+        'menu' => 'Ferramentas',
+        'slug' => 'intelligence-ferramentas',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_intelligence_ia' => [
+        'label' => 'Tela: Intelligence → IA',
+        'grupo' => 'Intelligence',
+        'menu' => 'IA',
+        'slug' => 'intelligence-ia',
+        'herda' => ['__nunca__'],
+    ],
+    'menu_intelligence_relatorios' => [
+        'label' => 'Tela: Intelligence → Relatórios',
+        'grupo' => 'Intelligence',
+        'menu' => 'Relatórios',
+        'slug' => 'intelligence-relatorios',
+        'herda' => ['__nunca__'],
+    ],
 ];

@@ -30,6 +30,16 @@ class Areas
             'escura' => '#1d4ed8',
             'fundo' => '#eff6ff',
         ],
+        'intelligence' => [
+            'nome' => 'Oravel Intelligence',
+            'subtitulo' => 'Saúde e evolução',
+            'manifesto' => 'manifest-assistente-intelligence.json',
+            'icone' => 'icon-intelligence-192.png',
+            'cor' => '#4f46e5',
+            'escura' => '#4338ca',
+            'fundo' => '#eef2ff',
+            'login' => 'Entre para consultar a saúde e a evolução da sua empresa.',
+        ],
     ];
 
     /** @return array<string, string> */

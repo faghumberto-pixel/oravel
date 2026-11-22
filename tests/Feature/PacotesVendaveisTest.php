@@ -29,10 +29,10 @@ class PacotesVendaveisTest extends TestCase
         return ['tabela_solicitacao_locacao', 'tabela_equipment_damages', 'tabela_equipment_replacements'];
     }
 
-    public function test_all_seven_packages_exist_with_names(): void
+    public function test_all_packages_exist_with_names(): void
     {
         $this->assertSame(
-            ['locadora', 'vendas', 'manutencao', 'servicos', 'estoque', 'logistica', 'departamento_pessoal'],
+            ['locadora', 'vendas', 'manutencao', 'servicos', 'estoque', 'logistica', 'departamento_pessoal', 'intelligence'],
             array_keys(Pacotes::opcoes())
         );
         $this->assertSame('Manutenção', Pacotes::nome('manutencao'));
@@ -125,8 +125,22 @@ class PacotesVendaveisTest extends TestCase
 
         foreach (array_keys(Pacotes::opcoes()) as $codigo) {
             $this->assertContains('modulo_dashboard', Pacotes::features($codigo), $codigo);
+            if ($codigo === 'intelligence') {
+                continue; // produto à parte: o ERP completo NÃO o inclui (ver o teste abaixo)
+            }
             $this->assertSame([], array_values(array_diff(Pacotes::features($codigo), $locadora)), "locadora deve conter {$codigo}");
         }
+    }
+
+    public function test_intelligence_is_a_separate_product_the_erp_does_not_include(): void
+    {
+        $intelligence = Pacotes::features('intelligence');
+        $this->assertContains('tabela_intelligence_snapshots', $intelligence);
+        $this->assertContains('menu_intelligence_dashboard', $intelligence);
+        $this->assertNotContains('tabela_clients', $intelligence, 'não leva o ERP junto');
+
+        $locadora = Pacotes::features('locadora');
+        $this->assertSame([], array_values(array_filter($locadora, fn ($c) => str_contains($c, 'intelligence'))));
     }
 
     public function test_package_features_all_exist_in_the_module_catalog(): void

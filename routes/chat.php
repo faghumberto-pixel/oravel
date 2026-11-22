@@ -52,6 +52,7 @@ Route::prefix('assistente')->name('assistente.')->group(function () {
 
     Route::get('/', fn () => view('assistente.index'))->name('index');
     Route::get('/suprimentos', fn () => view('assistente.suprimentos'))->name('suprimentos');
+    Route::get('/intelligence', fn () => view('assistente.intelligence'))->name('intelligence');
 
     // Relatorio compartilhavel (WhatsApp): publico, so pelo token longo + validade.
     Route::get('/r/{token}', [AssistenteRelatorioController::class, 'show'])

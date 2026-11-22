@@ -20,7 +20,10 @@ use Illuminate\Support\Facades\Auth;
  */
 class Sessao
 {
-    public const AREAS = ['prospects', 'suprimentos'];
+    public const AREAS = ['prospects', 'suprimentos', 'intelligence'];
+
+    /** Apps de usuario de CLIENTE (o super admin fica so no de Prospeccao, na Central). */
+    public const AREAS_DE_CLIENTE = ['suprimentos', 'intelligence'];
 
     public static function area(Request $request): ?string
     {
@@ -47,11 +50,13 @@ class Sessao
 
     private static function deCaminho(string $caminho, string $areaInformada): string
     {
-        if ($caminho === '/assistente/suprimentos' || str_starts_with($caminho, '/assistente/suprimentos/')) {
-            return 'suprimentos';
+        foreach (self::AREAS_DE_CLIENTE as $area) {
+            if ($caminho === "/assistente/{$area}" || str_starts_with($caminho, "/assistente/{$area}/")) {
+                return $area;
+            }
         }
 
-        return $areaInformada === 'suprimentos' ? 'suprimentos' : 'prospects';
+        return in_array($areaInformada, self::AREAS_DE_CLIENTE, true) ? $areaInformada : 'prospects';
     }
 
     public static function aplicar(Request $request): void

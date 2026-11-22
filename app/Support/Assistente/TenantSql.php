@@ -35,7 +35,7 @@ class TenantSql
     public const TIMEOUT = '5s';
 
     /**
-     * Tabelas liberadas. 'tenant' => 'direct' (coluna tenant_id) ou
+     * Tabelas liberadas. 'tenant' => 'direct' (coluna tenant_id), 'global' (agregado anonimo, sem filtro) ou
      * ['pai' => tabela, 'fk' => coluna na filha] (filtra pelo tenant do pai).
      * 'soft' => true quando a tabela tem deleted_at (linhas apagadas ficam de fora,
      * igual ao Eloquent). 'desc' vai pro prompt da IA.
@@ -157,8 +157,10 @@ class TenantSql
      *
      * @return array{0: ?string, 1: ?string} [sql completo, erro]
      */
-    public static function preparar(string $tenantId, string $sql): array
+    public static function preparar(string $tenantId, string $sql, ?array $tabelas = null): array
     {
+        $tabelas ??= self::TABELAS;
+
         if (! self::tenantValido($tenantId)) {
             return [null, 'cliente invalido'];
         }
@@ -196,7 +198,7 @@ class TenantSql
         preg_match_all('/\b(?:from|join)\s+([a-z_][a-z0-9_]*)/i', $semFuncoes, $tabs);
         foreach ($tabs[1] as $tab) {
             $tab = strtolower($tab);
-            if (! isset(self::TABELAS[$tab]) && ! in_array($tab, $ctesDaIa, true)) {
+            if (! isset($tabelas[$tab]) && ! in_array($tab, $ctesDaIa, true)) {
                 return [null, "tabela ou coluna nao permitida depois de FROM/JOIN: {$tab}. Use apenas as tabelas do schema (e date_part() no lugar de EXTRACT)"];
             }
         }
@@ -207,7 +209,7 @@ class TenantSql
             return [null, 'use JOIN em vez de listar tabelas separadas por virgula no FROM'];
         }
 
-        $ctes = self::ctes($tenantId);
+        $ctes = self::ctes($tenantId, $tabelas);
 
         if (preg_match('/^\s*with\b/i', $sql)) {
             // Consulta da IA com WITH proprio: nao da pra embrulhar em subselect, entao
@@ -230,9 +232,9 @@ class TenantSql
     /**
      * @return array{0: array<int, array>, 1: ?string} [linhas, erro]
      */
-    public static function run(string $tenantId, string $sql): array
+    public static function run(string $tenantId, string $sql, ?array $tabelas = null): array
     {
-        [$final, $erro] = self::preparar($tenantId, $sql);
+        [$final, $erro] = self::preparar($tenantId, $sql, $tabelas);
 
         if ($final === null) {
             Log::warning('assistente_sql_bloqueado', ['erro' => $erro, 'sql' => $sql]);
@@ -273,20 +275,24 @@ class TenantSql
     }
 
     /** `parts AS (...), suppliers AS (...)` com o filtro do cliente, na ordem de TABELAS. */
-    public static function ctes(string $tenantId): string
+    public static function ctes(string $tenantId, ?array $tabelas = null): string
     {
+        $tabelas ??= self::TABELAS;
         $tid = "'".strtolower($tenantId)."'"; // UUID ja validado por tenantValido()
         $partes = [];
 
-        foreach (self::TABELAS as $tabela => $def) {
+        foreach ($tabelas as $tabela => $def) {
             $cols = implode(', ', $def['cols']);
 
-            if ($def['tenant'] === 'direct') {
+            if ($def['tenant'] === 'global') {
+                // Agregado anonimo entre empresas (sem tenant_id): so entra tabela que nunca guarda quem contribuiu.
+                $where = 'TRUE';
+            } elseif ($def['tenant'] === 'direct') {
                 $where = "tenant_id = {$tid}".(! empty($def['soft']) ? ' AND deleted_at IS NULL' : '');
             } else {
                 $pai = $def['tenant']['pai'];
                 $fk = $def['tenant']['fk'];
-                $paiSoft = ! empty(self::TABELAS[$pai]['soft']) ? ' AND deleted_at IS NULL' : '';
+                $paiSoft = ! empty($tabelas[$pai]['soft']) ? ' AND deleted_at IS NULL' : '';
                 $where = "{$fk} IN (SELECT id FROM {$pai} WHERE tenant_id = {$tid}{$paiSoft})";
             }
 
@@ -297,10 +303,10 @@ class TenantSql
     }
 
     /** Texto do schema pro prompt da IA (uma unica fonte de verdade: TABELAS). */
-    public static function descricaoSchema(): string
+    public static function descricaoSchema(?array $tabelas = null): string
     {
         $linhas = [];
-        foreach (self::TABELAS as $tabela => $def) {
+        foreach ($tabelas ?? self::TABELAS as $tabela => $def) {
             $cols = implode(', ', $def['cols']);
             $linhas[] = "- {$tabela}({$cols}): {$def['desc']}";
         }

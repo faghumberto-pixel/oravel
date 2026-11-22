@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
+use App\Support\Assistente\Areas;
 use App\Support\Assistente\Sessao;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,14 +44,16 @@ class AssistenteSessionController extends Controller
             throw ValidationException::withMessages(['email' => trans('auth.failed')]);
         }
 
-        $area = Sessao::area($request) === 'suprimentos' ? 'suprimentos' : 'prospects';
+        $area = Sessao::area($request) ?? 'prospects';
+        $deCliente = in_array($area, Sessao::AREAS_DE_CLIENTE, true);
+        $app = Areas::tema($area)['nome'];
 
-        // Cada app tem sessao e usuario proprios (ver Sessao). Prospeccao: so super admin. Suprimentos:
-        // so usuario de cliente (o super admin fica na Central / Oravel Mobile).
+        // Cada app tem sessao e usuario proprios (ver Sessao). Prospeccao: so super admin. Apps de cliente
+        // (Suprimentos, Intelligence): so usuario de cliente (o super admin fica na Central / Oravel Mobile).
         $erro = match (true) {
-            $area === 'suprimentos' && $user->isSuperAdmin() => 'Esta é uma conta de administrador. No Suprimentos entre com um usuário de cliente (o administrador usa o app Oravel Mobile).',
-            $area === 'suprimentos' && blank($user->tenant_id) => 'Esta conta não é de nenhum cliente.',
-            $area === 'prospects' && ! $user->isSuperAdmin() => 'Esta conta é de cliente. Para Suprimentos use o app Oravel Suprimentos.',
+            $deCliente && $user->isSuperAdmin() => "Esta é uma conta de administrador. No {$app} entre com um usuário de cliente (o administrador usa o app Oravel Mobile).",
+            $deCliente && blank($user->tenant_id) => 'Esta conta não é de nenhum cliente.',
+            ! $deCliente && ! $user->isSuperAdmin() => 'Esta conta é de cliente. Use o app da sua área (Oravel Suprimentos ou Oravel Intelligence).',
             default => null,
         };
 
@@ -63,7 +66,7 @@ class AssistenteSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route($area === 'suprimentos' ? 'assistente.suprimentos' : 'assistente.index');
+        return redirect()->route($deCliente ? "assistente.{$area}" : 'assistente.index');
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -74,6 +77,8 @@ class AssistenteSessionController extends Controller
         $request->session()->regenerateToken();
 
         // Volta ao login da mesma area (cor/icone/manifesto certos).
-        return redirect()->route('assistente.login', $request->input('area') === 'suprimentos' ? ['area' => 'suprimentos'] : []);
+        $area = (string) $request->input('area');
+
+        return redirect()->route('assistente.login', in_array($area, Sessao::AREAS_DE_CLIENTE, true) ? ['area' => $area] : []);
     }
 }

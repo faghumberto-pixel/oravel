@@ -17,7 +17,8 @@ return [
 
     // Complementos (cobrança automática, notas fiscais) são vendidos à parte: nenhum pacote os inclui, nem o ERP completo.
     // 'Inteligência de Ativos' também fica fora de todos os pacotes: é opcional por contrato (Central liga caso a caso).
-    'grupos_complementos' => ['Complementos', 'Inteligência de Ativos'],
+    // 'Intelligence' é um produto à parte (pacote próprio): o ERP completo (grupos '*') não o inclui.
+    'grupos_complementos' => ['Complementos', 'Inteligência de Ativos', 'Intelligence'],
 
     // Chaves soltas (de grupos que o pacote contém) que NUNCA entram em pacote: a Central liga contrato a contrato.
     'chaves_complementos' => ['menu_visao_geral_logistica_frota'],
@@ -110,6 +111,16 @@ return [
             'grupos' => ['Departamento Pessoal', 'EPI'],
             'features' => [],
             'inicio' => EmployeeResource::class,
+        ],
+
+        'intelligence' => [
+            'app' => ['nome' => 'Oravel Intelligence', 'curto' => 'Intelligence', 'cor' => '#4f46e5'],
+            'nome' => 'Intelligence',
+            'descricao' => 'Inteligência de negócio: importações, snapshots imutáveis, indicadores, diagnósticos, benchmark anônimo e histórico da empresa — independente do ERP.',
+            // Tabelas e telas do produto vivem no grupo "Intelligence" (ContratoResource::gruposPadrao + config/menu_modules.php).
+            'grupos' => ['Intelligence'],
+            'features' => [],
+            'inicio' => null,
         ],
     ],
 ];

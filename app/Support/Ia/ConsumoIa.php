@@ -15,6 +15,7 @@ class ConsumoIa
     /** Aplicativos que aparecem no painel (chave => rotulo). Ordem = ordem de exibicao. */
     public const AREAS = [
         'suprimentos' => 'Suprimentos',
+        'intelligence' => 'Intelligence',
         'almoxarifado' => 'Almoxarifado',
         'comercial' => 'Comercial',
         'financeiro' => 'Financeiro',
@@ -34,6 +35,7 @@ class ConsumoIa
     private const CHAMADORES = [
         'ProspectChatService' => 'prospects',
         'SuprimentosChatService' => 'suprimentos',
+        'IntelligenceChatService' => 'intelligence',
         'ProspectAnalysisService' => 'comercial',
         'CommercialLeadAnalysisService' => 'comercial',
         'PropostaComercialAiEvaluator' => 'comercial',

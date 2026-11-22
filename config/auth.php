@@ -61,6 +61,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'assistente_intelligence' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
     /*

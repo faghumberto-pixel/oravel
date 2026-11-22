@@ -160,7 +160,8 @@ class PacotesCheckoutTest extends TestCase
         $html = file_get_contents(base_path('public_html/planos/index.html'));
 
         // Desde o novo padrão do site (commit 3303998f) cada pacote leva ao contato consultivo, não ao checkout direto.
-        foreach (array_keys(Pacotes::opcoes()) as $codigo) {
+        // Intelligence ainda não é vendido no site público (sem página de planos): entra aqui quando for publicado.
+        foreach (array_diff(array_keys(Pacotes::opcoes()), ['intelligence']) as $codigo) {
             $this->assertStringContainsString('href="/contato.php?pacote='.$codigo.'"', $html, "link de {$codigo}");
         }
 
@@ -190,6 +191,6 @@ class PacotesCheckoutTest extends TestCase
 
         // Segunda vez: nada a criar.
         Livewire::test(ContratoResource\Pages\ListContratos::class)->callAction('criarVitrines')->assertNotified('Todos os pacotes já têm plano de vitrine.');
-        $this->assertSame(7, Plan::where('campaign_tag', 'vitrine')->count());
+        $this->assertSame(8, Plan::where('campaign_tag', 'vitrine')->count());
     }
 }
