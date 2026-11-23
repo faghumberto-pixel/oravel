@@ -34,18 +34,15 @@ class IntelligenceDemoService
 
     /** Evolução de propósito: frota e oficina melhoram, a inadimplência piora (o dashboard precisa mostrar os dois sentidos). */
     private const MESES = [
-        '2026-08-31' => ['Total de Equipamentos' => 120, 'Equipamentos Locados' => 70, 'Equipamentos Indisponíveis' => 26, 'Valor da Frota (R$)' => 9000000,
-            'Receita do Mês (R$)' => 380000, 'Custo de Manutenção do Mês (R$)' => 52000, 'Demais Custos do Mês (R$)' => 230000, 'Valor em Atraso (R$)' => 15000,
+        '2026-08-31' => ['Demais Custos do Mês (R$)' => 230000, 'Valor em Atraso (R$)' => 15000,
             'Propostas Emitidas no Mês' => 30, 'Propostas Ganhas no Mês' => 6, 'Receita do Maior Cliente (%)' => 32,
-            'OS Corretivas no Mês' => 58, 'OS Preventivas no Mês' => 10, 'Tempo Médio de Reparo (horas)' => 40, 'Técnicos de Manutenção' => 5, 'Entregas no Prazo (%)' => 72],
-        '2026-09-30' => ['Total de Equipamentos' => 120, 'Equipamentos Locados' => 78, 'Equipamentos Indisponíveis' => 18, 'Valor da Frota (R$)' => 9000000,
-            'Receita do Mês (R$)' => 420000, 'Custo de Manutenção do Mês (R$)' => 44000, 'Demais Custos do Mês (R$)' => 225000, 'Valor em Atraso (R$)' => 31000,
+            'Tempo Médio de Reparo (horas)' => 40, 'Técnicos de Manutenção' => 5, 'Entregas no Prazo (%)' => 72],
+        '2026-09-30' => ['Demais Custos do Mês (R$)' => 225000, 'Valor em Atraso (R$)' => 31000,
             'Propostas Emitidas no Mês' => 36, 'Propostas Ganhas no Mês' => 10, 'Receita do Maior Cliente (%)' => 27,
-            'OS Corretivas no Mês' => 46, 'OS Preventivas no Mês' => 22, 'Tempo Médio de Reparo (horas)' => 28, 'Técnicos de Manutenção' => 6, 'Entregas no Prazo (%)' => 81],
-        '2026-10-31' => ['Total de Equipamentos' => 122, 'Equipamentos Locados' => 88, 'Equipamentos Indisponíveis' => 11, 'Valor da Frota (R$)' => 9300000,
-            'Receita do Mês (R$)' => 468000, 'Custo de Manutenção do Mês (R$)' => 38000, 'Demais Custos do Mês (R$)' => 228000, 'Valor em Atraso (R$)' => 52000,
+            'Tempo Médio de Reparo (horas)' => 28, 'Técnicos de Manutenção' => 6, 'Entregas no Prazo (%)' => 81],
+        '2026-10-31' => ['Demais Custos do Mês (R$)' => 228000, 'Valor em Atraso (R$)' => 52000,
             'Propostas Emitidas no Mês' => 40, 'Propostas Ganhas no Mês' => 15, 'Receita do Maior Cliente (%)' => 22,
-            'OS Corretivas no Mês' => 34, 'OS Preventivas no Mês' => 36, 'Tempo Médio de Reparo (horas)' => 18, 'Técnicos de Manutenção' => 6, 'Entregas no Prazo (%)' => 90],
+            'Tempo Médio de Reparo (horas)' => 18, 'Técnicos de Manutenção' => 6, 'Entregas no Prazo (%)' => 90],
     ];
 
     private const PERFIL = ['Estado (UF)' => 'SP', 'Porte' => 'Médio', 'Segmento' => 'Locação de equipamentos'];
@@ -84,8 +81,9 @@ class IntelligenceDemoService
 
         $importador = app(ImportadorExcel::class);
         $ultimo = null;
+        $mes = 0;
         foreach (self::MESES as $data => $campos) {
-            $arquivo = $this->planilha($data, $campos);
+            $arquivo = $this->planilha($data, $campos, $this->frota($mes++, $data));
             try {
                 $r = $importador->importar($arquivo, $tenant, null, false, 'demo-'.$data.'.xlsx');
             } finally {
@@ -161,8 +159,83 @@ class IntelligenceDemoService
         return ['apagado' => true, 'linhas' => $linhas];
     }
 
+    /**
+     * Frota de exemplo (120, 120 e 122 equipamentos), determinística: o mesmo patrimônio em todos os meses, com perfis fixos
+     * (os 6 primeiros são "trocar ou vender", depois 10 "revisar", 15 subutilizados e o resto saudável). Frota e oficina melhoram de agosto a outubro.
+     *
+     * @return list<array<string, mixed>> título da coluna => valor
+     */
+    private function frota(int $mes, string $data): array
+    {
+        $dias = (int) Carbon::parse($data)->daysInMonth;
+        $n = [120, 120, 122][$mes] ?? 120;
+        $cats = [['Empilhadeira', 185000], ['Gerador', 120000], ['Plataforma elevatória', 240000], ['Compressor', 70000]];
+        $r = fn (int $i, string $k, float $min, float $max): float => $min + (crc32("{$i}-{$k}") % 1000) / 1000 * ($max - $min);
+        $linhas = [];
+
+        for ($i = 0; $i < $n; $i++) {
+            [$cat, $base] = $cats[$i % 4];
+            $valor = round($base * $r($i, 'v', .8, 1.2), -3);
+            $perfil = $i < 6 ? 'trocar' : ($i < 16 ? 'revisar' : ($i < 31 ? 'ocioso' : 'bom'));
+            // movimento entre os meses (para a tela mostrar tendência): 16-19 saem da ociosidade em outubro; 20-23 pioram em outubro
+            $ativouEmOutubro = $mes === 2 && $i >= 16 && $i <= 19;
+            $pioraEmOutubro = $mes === 2 && $i >= 20 && $i <= 23;
+            if ($ativouEmOutubro) {
+                $perfil = 'bom';
+            }
+            // melhora ao longo dos meses: mais dias locado e menos dias parado (exceto os ociosos, que seguem parados sem contrato)
+            $fator = [0.82, 0.94, 1.04][$mes];
+            $locado = match ($perfil) {
+                'ocioso' => (int) round($r($i, 'l', 2, 8)),
+                'trocar' => (int) round($r($i, 'l', 6, 16) * $fator),
+                'revisar' => (int) round($r($i, 'l', 12, 22) * $fator),
+                default => (int) round($r($i, 'l', 18, 27) * $fator),
+            };
+            if ($ativouEmOutubro) {
+                $locado = (int) round($r($i, 'l2', 15, 22));
+            }
+            $indisp = match ($perfil) {
+                'ocioso' => (int) round($r($i, 'i', 0, 2)),
+                'trocar' => (int) round($r($i, 'i', 8, 14) * [1.2, 1.0, 0.85][$mes]),
+                'revisar' => (int) round($r($i, 'i', 3, 8) * [1.3, 1.0, 0.7][$mes]),
+                default => (int) round($r($i, 'i', 0, 3) * [1.6, 1.0, 0.5][$mes]),
+            };
+            if ($pioraEmOutubro) {
+                $indisp = (int) round($r($i, 'i2', 10, 14));
+                $locado = (int) round($r($i, 'l3', 6, 12));
+            }
+            $locado = min($locado, $dias);
+            $indisp = min($indisp, max(0, $dias - $locado));
+            [$corMin, $corMax, $custoPct, $acumMin, $acumMax, $reincPct] = match ($perfil) {
+                'trocar' => [3, 6, 0.020, 0.62, 0.80, 0.45],
+                'revisar' => [2, 4, 0.012, 0.42, 0.56, 0.30],
+                'ocioso' => [0, 1, 0.002, 0.05, 0.25, 0.0],
+                default => [0, 2, 0.004, 0.05, 0.30, 0.10],
+            };
+            $corretivas = (int) round($r($i, 'c', $corMin, $corMax));
+            if ($pioraEmOutubro) {
+                $corretivas = (int) round($r($i, 'c2', 3, 5));
+            }
+            $reinc = (int) min($corretivas, round($corretivas * $reincPct * $r($i, 'r', .6, 1.4) * [1.25, 1.0, 0.8][$mes]));
+            $acum = $valor * $r($i, 'a', $acumMin, $acumMax) * [0.93, 0.97, 1.0][$mes];
+            if ($i >= 6 && $i <= 9) {
+                // 4 equipamentos "em revisão" cruzam os 60% do valor em outubro: passam a "trocar ou vender" (piorando)
+                $acum = $valor * 0.50 * [0.9, 1.0, 1.28][$mes];
+            }
+
+            $linhas[] = [
+                'Nº Patrimônio' => sprintf('EMP-%03d', $i + 1), 'Nome / Modelo' => $cat.' '.sprintf('%03d', $i + 1), 'Categoria' => $cat, 'Ano de Fabricação' => 2010 + ($i % 14),
+                'Valor do Equipamento (R$)' => $valor, 'Receita no Mês (R$)' => round($locado * $valor * 0.0012, 2), 'Custo de Manutenção no Mês (R$)' => round($valor * $custoPct * $r($i, 'k', .7, 1.3) * [1.15, 1.0, 0.88][$mes], 2),
+                'Custo de Manutenção Acumulado (R$)' => round($acum, 2), 'OS Corretivas no Mês' => $corretivas, 'OS Preventivas no Mês' => (int) round($r($i, 'p', 0, 1.4) * [0.5, 1.0, 1.6][$mes]),
+                'Corretivas Reincidentes no Mês' => $reinc, 'Dias Locado no Mês' => $locado, 'Dias Indisponível no Mês' => $indisp,
+            ];
+        }
+
+        return $linhas;
+    }
+
     /** Gera a planilha no mesmo formato do modelo que o cliente baixa (uma linha de dados). */
-    private function planilha(string $data, array $campos): string
+    private function planilha(string $data, array $campos, array $frota = []): string
     {
         $linha = array_merge(self::PERFIL, $campos, ['Data de Referência' => Carbon::parse($data)->format('d/m/Y')]);
         $titulos = array_column(Catalogo::campos(), 'title');
@@ -174,6 +247,14 @@ class IntelligenceDemoService
         $w->addRow(Row::fromValues(array_column(Catalogo::campos(), 'group')));
         $w->addRow(Row::fromValues($titulos));
         $w->addRow(Row::fromValues(array_map(fn ($t) => $linha[$t] ?? null, $titulos)));
+        if ($frota !== []) {
+            $w->addNewSheetAndMakeItCurrent()->setName(Catalogo::SHEET_EQUIPAMENTOS);
+            $te = array_column(Catalogo::equipamentos(), 'title');
+            $w->addRow(Row::fromValues($te));
+            foreach ($frota as $linha) {
+                $w->addRow(Row::fromValues(array_map(fn ($t) => $linha[$t] ?? null, $te)));
+            }
+        }
         $w->close();
 
         return $caminho;

@@ -18,7 +18,7 @@ class IntelligencePlano extends Page
 
     protected static ?string $navigationLabel = 'Plano de evolução';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $title = 'Plano de evolução';
 

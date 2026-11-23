@@ -25,11 +25,15 @@ class IntelligenceRelatorioController extends Controller
         $tenant = Tenancy::current();
         abort_unless($tenant, 403);
 
-        $resumo = app(EvolucaoService::class)->resumo($tenant->id);
-        abort_if($resumo === null, 404, 'Ainda não há fotografia da empresa para compartilhar.');
-
-        $tipo = in_array($request->query('tipo'), ['painel', 'diagnostico', 'plano'], true) ? $request->query('tipo') : 'painel';
-        $relatorio = app(RelatorioDoPainel::class)->criar($resumo, (string) Auth::id(), $tipo);
+        $tipo = in_array($request->query('tipo'), ['painel', 'diagnostico', 'plano', 'equipamentos'], true) ? $request->query('tipo') : 'painel';
+        if ($tipo === 'equipamentos') {
+            $relatorio = app(RelatorioDoPainel::class)->criarEquipamentos($tenant->id, (string) Auth::id());
+            abort_if($relatorio === null, 404, 'Ainda não há equipamentos analisados para compartilhar.');
+        } else {
+            $resumo = app(EvolucaoService::class)->resumo($tenant->id);
+            abort_if($resumo === null, 404, 'Ainda não há fotografia da empresa para compartilhar.');
+            $relatorio = app(RelatorioDoPainel::class)->criar($resumo, (string) Auth::id(), $tipo);
+        }
 
         if ($acao === 'ver') {
             return redirect()->to($relatorio->url());

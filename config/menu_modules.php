@@ -492,4 +492,11 @@ return [
         'slug' => 'intelligence-operacao',
         'herda' => ['__nunca__'],
     ],
+    'menu_intelligence_equipamentos' => [
+        'label' => 'Tela: Intelligence → Equipamentos',
+        'grupo' => 'Intelligence',
+        'menu' => 'Equipamentos',
+        'slug' => 'intelligence-equipamentos',
+        'herda' => ['__nunca__'],
+    ],
 ];

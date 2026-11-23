@@ -17,7 +17,7 @@ class IntelligenceOperacao extends Page
 
     protected static ?string $navigationLabel = 'Frota, finanças e oficina';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $title = 'Frota, finanças e oficina';
 

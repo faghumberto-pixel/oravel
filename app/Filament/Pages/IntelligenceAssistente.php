@@ -16,7 +16,7 @@ class IntelligenceAssistente extends Page
 
     protected static ?string $navigationLabel = 'Assistente de IA';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $title = 'Assistente de IA';
 

@@ -1,6 +1,6 @@
 # Oravel Intelligence — Análise por equipamento (desenho)
 
-Status: desenho aprovado em 22/11/2026. **F1 implementada** na branch `feat/intelligence-equipamentos-f1` (dados, importação, indicadores, classificação e modelo de planilha; sem telas), ainda sem deploy. F2 em diante: não iniciadas. Escrito para fechar o que o Intelligence ainda **não** entrega: hoje ele analisa a empresa como um todo; este desenho acrescenta o nível do equipamento.
+Status: desenho aprovado em 22/11/2026. **F1 implementada** na branch `feat/intelligence-equipamentos-f1` (dados, importação, indicadores, classificação e modelo de planilha; sem telas), ainda sem deploy. **F2 implementada** na mesma branch (telas Equipamentos e Equipamento, Pareto, bolhas valor × receita, tabela com busca/filtros/Excel, relatório para WhatsApp e impressão, frota de exemplo na empresa demo). F3 (integração com Diagnóstico, Plano, Comparação e Assistente de IA), F4 e F5: não iniciadas. Escrito para fechar o que o Intelligence ainda **não** entrega: hoje ele analisa a empresa como um todo; este desenho acrescenta o nível do equipamento.
 
 ### Decisões da F1 (onde o código se afastou ou detalhou o desenho)
 - Receita, custo, valor e OS do mês da aba geram os campos da empresa; **locados e indisponíveis** são o equivalente médio no mês (soma dos dias ÷ dias do mês), sempre limitados ao total.

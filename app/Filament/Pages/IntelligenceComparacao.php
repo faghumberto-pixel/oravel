@@ -19,7 +19,7 @@ class IntelligenceComparacao extends Page
 
     protected static ?string $navigationLabel = 'Comparação interna';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $title = 'Comparação interna';
 

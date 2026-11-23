@@ -223,4 +223,33 @@ class Catalogo
                 'Registrar o motivo de cada atraso para corrigir a causa.']],
         ];
     }
+
+    /**
+     * O que fazer com cada classificação de equipamento (tela de detalhe e relatório). Orientação geral, a revisar com especialista.
+     *
+     * @return array<string, list<string>>
+     */
+    public static function acoesPorClasse(): array
+    {
+        return [
+            'trocar_vender' => [
+                'Comparar o custo de reformar contra o valor de reposição e o preço de venda do equipamento.',
+                'Se o equipamento está locado, definir quando ele sai de contrato para a decisão.',
+                'Avaliar a venda ou a troca antes que o custo acumulado ultrapasse ainda mais o valor.'],
+            'revisar' => [
+                'Abrir uma revisão técnica completa e registrar a causa de cada corretiva.',
+                'Tratar a causa-raiz das reincidências antes de liberar o equipamento ao cliente.',
+                'Acompanhar o custo mês a mês: se o acumulado chegar a 60% do valor, considerar trocar ou vender.'],
+            'subutilizado' => [
+                'Oferecer o equipamento ativamente à carteira de clientes.',
+                'Rever preço e condições de locação, ou realocar para outra região.',
+                'Se continuar parado por vários meses, avaliar a venda.'],
+            'risco_parada' => [
+                'Priorizar o equipamento na fila da oficina.',
+                'Antecipar a preventiva e conferir as peças críticas em estoque.',
+                'Avisar o comercial para não prometer o equipamento ao cliente até a normalização.'],
+            'saudavel' => [],
+            'sem_dados' => ['Preencher valor, receita, custo e dias locado e indisponível na aba "Equipamentos" para avaliar este equipamento.'],
+        ];
+    }
 }

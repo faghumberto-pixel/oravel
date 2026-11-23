@@ -47,9 +47,9 @@ trait UsaResumoDoIntelligence
     }
 
     /** WhatsApp + versão para imprimir do relatório `$tipo` (painel, diagnostico, plano). Abrem em nova aba. */
-    protected function acoesDeRelatorio(string $tipo): array
+    protected function acoesDeRelatorio(string $tipo, ?\Closure $visivel = null): array
     {
-        $tem = fn () => $this->resumo() !== null;
+        $tem = $visivel ?? fn () => $this->resumo() !== null;
         $base = IntelligenceDashboard::getUrl().'/relatorio';
 
         return [

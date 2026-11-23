@@ -169,4 +169,42 @@ class GraficosTest extends TestCase
         $this->assertCount(4, $barras['data']['labels'], 'barras incluem o índice geral');
         $this->assertSame([77.0], array_slice($barras['data']['datasets'][1]['data'], -1));
     }
+
+    public function test_graficos_da_analise_por_equipamento(): void
+    {
+        $g = new Graficos;
+
+        $pareto = $g->paretoEquipamentos(['itens' => [
+            ['patrimonio' => 'A', 'nome' => 'a', 'custo' => 600.0, 'acumulado_pct' => 60.0, 'classificacao' => 'trocar_vender'],
+            ['patrimonio' => 'B', 'nome' => 'b', 'custo' => 300.0, 'acumulado_pct' => 90.0, 'classificacao' => 'saudavel'],
+        ], 'total' => 1000.0, 'topo_pct' => 90.0]);
+        $this->assertSame('bar', $pareto['type']);
+        $this->assertSame(['A', 'B'], $pareto['data']['labels']);
+        $this->assertSame([60.0, 90.0], $pareto['data']['datasets'][0]['data'], 'a curva é o % acumulado');
+        $this->assertSame(['#dc2626', '#16a34a'], $pareto['data']['datasets'][1]['backgroundColor'], 'barra na cor da classificação');
+        $this->assertSame('y1', $pareto['data']['datasets'][0]['yAxisID']);
+        $this->assertNull($g->paretoEquipamentos(['itens' => [], 'total' => 0.0, 'topo_pct' => 0.0]));
+
+        $pts = [
+            ['patrimonio' => 'A', 'nome' => 'a', 'valor' => 100000.0, 'receita' => 500.0, 'custo' => 4000.0, 'classificacao' => 'trocar_vender'],
+            ['patrimonio' => 'B', 'nome' => 'b', 'valor' => 50000.0, 'receita' => 5000.0, 'custo' => 100.0, 'classificacao' => 'saudavel'],
+            ['patrimonio' => 'C', 'nome' => 'c', 'valor' => 60000.0, 'receita' => 4000.0, 'custo' => 0.0, 'classificacao' => 'saudavel'],
+        ];
+        $b = $g->valorReceita($pts);
+        $this->assertSame('bubble', $b['type']);
+        $this->assertSame(['Considerar trocar ou vender', 'Saudável'], array_column($b['data']['datasets'], 'label'), 'uma série por classificação, só as que existem');
+        $maior = $b['data']['datasets'][0]['data'][0];
+        $this->assertSame(20.0, (float) $maior['r'], 'o de maior custo tem a maior bolha');
+        $this->assertSame(4.0, (float) $b['data']['datasets'][1]['data'][1]['r'], 'custo zero = bolha mínima');
+        $this->assertNull($g->valorReceita([$pts[0]]), 'um ponto só não vira gráfico');
+
+        $h = fn (string $d, float $u, float $rc, float $c) => ['data' => $d, 'utilizacao_pct' => $u, 'disponibilidade_pct' => 90.0, 'receita' => $rc, 'custo_mes' => $c, 'os_corretivas' => 2, 'os_preventivas' => 1, 'reincidencias' => 1];
+        $hist = $g->equipamentoHistorico([$h('2026-08-31', 50.0, 4000.0, 900.0), $h('2026-09-30', 60.0, 5000.0, 700.0)]);
+        $this->assertSame(['31/08/26', '30/09/26'], $hist['uso']['data']['labels']);
+        $this->assertSame([50.0, 60.0], $hist['uso']['data']['datasets'][0]['data']);
+        $this->assertSame([900.0, 700.0], $hist['dinheiro']['data']['datasets'][1]['data']);
+        $this->assertSame('line', $hist['manutencao']['data']['datasets'][2]['type']);
+        $this->assertSame(['uso' => null, 'dinheiro' => null, 'manutencao' => null], $g->equipamentoHistorico([$h('2026-08-31', 50.0, 1.0, 1.0)]), 'uma fotografia: sem evolução');
+        $this->assertSame(['trocar_vender', 'revisar', 'risco_parada', 'subutilizado', 'saudavel', 'sem_dados'], array_keys(Graficos::CLASSE_COR));
+    }
 }

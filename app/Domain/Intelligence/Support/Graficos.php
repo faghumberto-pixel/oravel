@@ -2,6 +2,7 @@
 
 namespace App\Domain\Intelligence\Support;
 
+use App\Domain\Intelligence\Services\AnaliseDeEquipamentos;
 use Carbon\Carbon;
 
 /**
@@ -13,6 +14,8 @@ class Graficos
     public const COR = ['primaria' => '#4f46e5', 'verde' => '#16a34a', 'ambar' => '#d97706', 'vermelho' => '#dc2626', 'azul' => '#0ea5e9', 'violeta' => '#8b5cf6', 'cinza' => '#94a3b8'];
 
     public const FAIXA = ['Excelente' => '#16a34a', 'Bom' => '#2563eb', 'Atenção' => '#d97706', 'Crítico' => '#dc2626'];
+
+    public const CLASSE_COR = ['trocar_vender' => '#dc2626', 'revisar' => '#d97706', 'risco_parada' => '#7c3aed', 'subutilizado' => '#0ea5e9', 'saudavel' => '#16a34a', 'sem_dados' => '#94a3b8'];
 
     private const COR_AREA = ['frota' => '#0ea5e9', 'financeira' => '#16a34a', 'comercial' => '#8b5cf6', 'oficina' => '#d97706', 'operacional' => '#ec4899', 'geral' => '#4f46e5'];
 
@@ -417,6 +420,94 @@ class Graficos
         [$r, $g, $b] = sscanf($hex, '#%02x%02x%02x');
 
         return "rgba({$r},{$g},{$b},{$alfa})";
+    }
+
+    /**
+     * Pareto do custo: barras (custo do mês de cada equipamento, na cor da classificação) e a curva do % acumulado sobre o custo total da frota.
+     *
+     * @param  array{itens: list<array>, total: float, topo_pct: float}  $p
+     */
+    public function paretoEquipamentos(array $p): ?array
+    {
+        if ($p['itens'] === []) {
+            return null;
+        }
+
+        return [
+            'type' => 'bar',
+            'data' => ['labels' => array_column($p['itens'], 'patrimonio'), 'datasets' => [
+                ['type' => 'line', 'label' => 'Acumulado (%)', 'data' => array_column($p['itens'], 'acumulado_pct'), 'yAxisID' => 'y1', 'borderColor' => self::COR['primaria'], 'backgroundColor' => self::COR['primaria'],
+                    'tension' => .3, 'borderWidth' => 3, 'pointRadius' => 3, 'order' => 0],
+                ['label' => 'Custo no mês (R$)', 'data' => array_column($p['itens'], 'custo'), 'yAxisID' => 'y', 'borderRadius' => 5, 'order' => 1,
+                    'backgroundColor' => array_map(fn ($i) => self::CLASSE_COR[$i['classificacao']] ?? self::COR['cinza'], $p['itens'])],
+            ]],
+            'options' => ['maintainAspectRatio' => false, 'interaction' => ['mode' => 'index', 'intersect' => false],
+                'scales' => ['y' => ['title' => ['display' => true, 'text' => 'R$ no mês']], 'y1' => ['position' => 'right', 'min' => 0, 'max' => 100, 'grid' => ['drawOnChartArea' => false], 'title' => ['display' => true, 'text' => '% acumulado']]],
+                'plugins' => ['legend' => ['position' => 'bottom']]],
+        ];
+    }
+
+    /**
+     * Bolhas valor × receita (tamanho = custo do mês), uma série por classificação. Equipamento caro e de receita baixa fica embaixo à direita.
+     *
+     * @param  list<array{patrimonio: string, nome: string, valor: float, receita: float, custo: float, classificacao: string}>  $pontos
+     */
+    public function valorReceita(array $pontos): ?array
+    {
+        if (count($pontos) < 2) {
+            return null;
+        }
+        $maxRaiz = max(1.0, ...array_map(fn ($p) => sqrt($p['custo']), $pontos));
+        $rotulos = AnaliseDeEquipamentos::ROTULOS;
+        $porClasse = [];
+        foreach ($pontos as $p) {
+            $porClasse[$p['classificacao']][] = ['x' => round($p['valor'], 2), 'y' => round($p['receita'], 2), 'r' => round(4 + sqrt($p['custo']) / $maxRaiz * 16, 1), 'nome' => $p['patrimonio'].' · '.$p['nome']];
+        }
+        $datasets = [];
+        foreach (array_keys(self::CLASSE_COR) as $classe) {
+            if (isset($porClasse[$classe])) {
+                $cor = self::CLASSE_COR[$classe];
+                $datasets[] = ['label' => $rotulos[$classe] ?? $classe, 'data' => $porClasse[$classe], 'backgroundColor' => $this->transparente($cor, .55), 'borderColor' => $cor, 'borderWidth' => 1.5];
+            }
+        }
+
+        return [
+            'type' => 'bubble',
+            'data' => ['datasets' => $datasets],
+            'options' => ['maintainAspectRatio' => false, 'plugins' => ['legend' => ['position' => 'bottom']],
+                'scales' => ['x' => ['title' => ['display' => true, 'text' => 'Valor do equipamento (R$)']], 'y' => ['title' => ['display' => true, 'text' => 'Receita no mês (R$)']]]],
+        ];
+    }
+
+    /**
+     * Gráficos do detalhe de um equipamento (um ponto por fotografia). Com menos de 2 fotografias não há evolução para desenhar.
+     *
+     * @param  list<array<string, mixed>>  $hist
+     * @return array{uso: ?array, dinheiro: ?array, manutencao: ?array}
+     */
+    public function equipamentoHistorico(array $hist): array
+    {
+        if (count($hist) < 2) {
+            return ['uso' => null, 'dinheiro' => null, 'manutencao' => null];
+        }
+        $rot = array_map(fn ($h) => Carbon::parse($h['data'])->format('d/m/y'), $hist);
+        $col = fn (string $k) => array_map(fn ($h) => $h[$k], $hist);
+        $linha = fn (string $label, string $k, string $cor, bool $fill = false) => ['label' => $label, 'data' => $col($k), 'borderColor' => $cor, 'backgroundColor' => $fill ? $this->transparente($cor, .15) : $cor,
+            'fill' => $fill, 'tension' => .35, 'borderWidth' => 3, 'pointRadius' => 4, 'spanGaps' => true];
+
+        return [
+            'uso' => ['type' => 'line', 'data' => ['labels' => $rot, 'datasets' => [$linha('Utilização (%)', 'utilizacao_pct', self::COR['verde'], true), $linha('Disponibilidade (%)', 'disponibilidade_pct', self::COR['azul'])]],
+                'options' => ['maintainAspectRatio' => false, 'interaction' => ['mode' => 'index', 'intersect' => false], 'scales' => ['y' => ['min' => 0, 'max' => 100]], 'plugins' => ['legend' => ['position' => 'bottom']]]],
+            'dinheiro' => ['type' => 'bar', 'data' => ['labels' => $rot, 'datasets' => [
+                ['label' => 'Receita', 'data' => $col('receita'), 'backgroundColor' => self::COR['primaria'], 'borderRadius' => 6],
+                ['label' => 'Custo de manutenção', 'data' => $col('custo_mes'), 'backgroundColor' => self::COR['ambar'], 'borderRadius' => 6]]],
+                'options' => ['maintainAspectRatio' => false, 'interaction' => ['mode' => 'index', 'intersect' => false], 'plugins' => ['legend' => ['position' => 'bottom']]]],
+            'manutencao' => ['type' => 'bar', 'data' => ['labels' => $rot, 'datasets' => [
+                ['label' => 'Corretivas', 'data' => $col('os_corretivas'), 'backgroundColor' => self::COR['vermelho'], 'stack' => 'os', 'borderRadius' => 4],
+                ['label' => 'Preventivas', 'data' => $col('os_preventivas'), 'backgroundColor' => self::COR['verde'], 'stack' => 'os', 'borderRadius' => 4],
+                ['type' => 'line', 'label' => 'Reincidentes', 'data' => $col('reincidencias'), 'borderColor' => self::COR['violeta'], 'backgroundColor' => self::COR['violeta'], 'borderWidth' => 3, 'pointRadius' => 4, 'tension' => .3]]],
+                'options' => ['maintainAspectRatio' => false, 'interaction' => ['mode' => 'index', 'intersect' => false], 'scales' => ['x' => ['stacked' => true], 'y' => ['stacked' => true]], 'plugins' => ['legend' => ['position' => 'bottom']]]],
+        ];
     }
 
     private function corDaNota(float $nota): string

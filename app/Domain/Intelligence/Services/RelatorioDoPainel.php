@@ -76,6 +76,50 @@ class RelatorioDoPainel
         return ['titulo' => "Intelligence — plano de evolução em {$data}", 'resumo' => $resumo, 'linhas' => $linhas];
     }
 
+    /**
+     * Lista de decisão da frota: tudo que NÃO está saudável, dos mais urgentes aos menos. Null se a empresa não tem equipamentos analisados.
+     *
+     * @return ?array{titulo: string, resumo: string, linhas: list<array<string, string>>}
+     */
+    public function montarEquipamentos(string $tenantId): ?array
+    {
+        $svc = app(EquipamentosService::class);
+        $snap = $svc->snapshot($tenantId);
+        if (! $snap) {
+            return null;
+        }
+        $resumo = $svc->resumo($tenantId, $snap['id']);
+        $rot = AnaliseDeEquipamentos::ROTULOS;
+        $linhas = [];
+        foreach ($svc->todas($tenantId, $snap['id']) as $e) {
+            if (in_array($e['classificacao'], ['saudavel', 'sem_dados'], true)) {
+                continue;
+            }
+            $linhas[] = ['Equipamento' => $e['patrimonio'].' · '.$e['nome'], 'Situação' => $rot[$e['classificacao']] ?? $e['classificacao'], 'Motivo' => $e['motivo'],
+                'Custo ÷ valor' => $e['razao_custo_valor'] === null ? '—' : $this->num($e['razao_custo_valor'] * 100, '%'),
+                'Utilização' => $e['utilizacao_pct'] === null ? '—' : $this->num($e['utilizacao_pct'], '%'),
+                'Tendência' => ['piorando' => '▼ piorando', 'melhorando' => '▲ melhorando', 'estavel' => '■ estável'][$e['tendencia'] ?? ''] ?? '—'];
+        }
+        $c = $resumo['por_classe'];
+        $texto = $resumo['total'].' equipamentos analisados: '.($c['trocar_vender'] ?? 0).' para considerar trocar ou vender'
+            .($resumo['valor_trocar_vender'] > 0 ? ' (R$ '.number_format($resumo['valor_trocar_vender'], 0, ',', '.').' em valor)' : '').', '.($c['revisar'] ?? 0).' para revisar, '
+            .($c['subutilizado'] ?? 0).' subutilizados e '.($c['risco_parada'] ?? 0).' em risco de parada.';
+
+        return ['titulo' => 'Intelligence — equipamentos em '.Carbon::parse($snap['data'])->format('d/m/Y'), 'resumo' => $texto, 'linhas' => $linhas];
+    }
+
+    public function criarEquipamentos(string $tenantId, ?string $userId): ?AssistenteRelatorio
+    {
+        $m = $this->montarEquipamentos($tenantId);
+        if ($m === null) {
+            return null;
+        }
+        $existente = AssistenteRelatorio::query()->where('area', self::AREA)->where('titulo', $m['titulo'])->where('user_id', $userId)
+            ->where('resumo', $m['resumo'])->where('created_at', '>', now()->subHour())->latest('created_at')->first();
+
+        return $existente ?? AssistenteRelatorio::criar(self::AREA, $m['titulo'], $m['resumo'], $m['linhas'], $userId);
+    }
+
     /** Reaproveita o relatório do mesmo usuário e da mesma fotografia gerado na última hora (clicar duas vezes não gera dois). */
     public function criar(array $r, ?string $userId, string $tipo = 'painel'): AssistenteRelatorio
     {
