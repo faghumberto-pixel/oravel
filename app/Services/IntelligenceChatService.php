@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Domain\Intelligence\Services\EquipamentosService;
 use App\Domain\Intelligence\Services\EvolucaoService;
+use App\Domain\Intelligence\Services\InsightsDeEquipamentos;
 use App\Domain\Intelligence\Support\Catalogo;
 use App\Support\Assistente\Resultado;
 use App\Support\Assistente\TenantSql;
@@ -32,6 +34,16 @@ class IntelligenceChatService extends ProspectChatService
             'cols' => ['id', 'snapshot_id', 'area', 'pontuacao', 'faixa', 'detalhes', 'created_at'],
             'tenant' => 'direct',
             'desc' => 'nota 0-100 por area e o indice geral (area = geral) de cada snapshot. faixa: Excelente, Bom, Atencao ou Critico.',
+        ],
+        'intelligence_equipamentos' => [
+            'cols' => ['id', 'snapshot_id', 'patrimonio', 'nome', 'categoria', 'ano_fabricacao', 'valor', 'receita', 'custo_mes', 'custo_acumulado', 'os_corretivas', 'os_preventivas', 'reincidencias', 'dias_locado', 'dias_indisponivel', 'created_at'],
+            'tenant' => 'direct',
+            'desc' => 'equipamentos de cada snapshot, como a empresa informou na aba "Equipamentos" (numeros do MES da data_referencia do snapshot): patrimonio, nome, categoria, valor de aquisicao, receita, custo de manutencao do mes e acumulado, OS corretivas/preventivas, corretivas reincidentes, dias locado e dias indisponivel. O mesmo patrimonio aparece uma vez por snapshot (historico).',
+        ],
+        'intelligence_equipamento_analises' => [
+            'cols' => ['id', 'snapshot_id', 'equipamento_id', 'patrimonio', 'utilizacao_pct', 'disponibilidade_pct', 'retorno_anual_pct', 'razao_custo_valor', 'custo_sobre_receita_pct', 'reincidencia_pct', 'idade_anos', 'classificacao', 'motivo', 'tendencia', 'created_at'],
+            'tenant' => 'direct',
+            'desc' => 'analise calculada de cada equipamento em cada snapshot (liga com intelligence_equipamentos por equipamento_id). classificacao: trocar_vender, revisar, risco_parada, subutilizado, saudavel ou sem_dados; motivo = texto pronto dizendo por que; tendencia: piorando, estavel ou melhorando (contra o snapshot anterior); razao_custo_valor = custo acumulado / valor (0,6 = 60%).',
         ],
         'intelligence_benchmarks' => [
             'cols' => ['indicador', 'regiao', 'porte', 'segmento', 'periodo', 'amostra', 'media', 'p25', 'mediana', 'p75'],
@@ -100,6 +112,15 @@ class IntelligenceChatService extends ProspectChatService
             'indicadores' => array_map(fn ($i) => ['chave' => $i['chave'], 'valor' => $i['valor'], 'anterior' => $i['anterior'], 'variacao' => $i['delta'], 'sentido' => $i['sentido']], $r['indicadores']),
         ];
 
+        $equip = app(EquipamentosService::class)->snapshot($this->tenantId);
+        if ($equip) {
+            $res = app(EquipamentosService::class)->resumo($this->tenantId, $equip['id']);
+            $compacto['equipamentos'] = [
+                'snapshot' => $equip['data'], 'total' => $res['total'], 'por_classificacao' => $res['por_classe'],
+                'achados' => array_map(fn ($i) => $i['texto'], array_slice(app(InsightsDeEquipamentos::class)->do_snapshot($this->tenantId, $equip['id']), 0, 6)),
+            ];
+        }
+
         return "Situação atual da empresa (já calculada, do último snapshot):\n".json_encode($compacto, JSON_UNESCAPED_UNICODE);
     }
 
@@ -166,6 +187,17 @@ class IntelligenceChatService extends ProspectChatService
 
             INDICADORES (chave = valor da coluna chave / indicador):
             {$indicadores}
+
+            EQUIPAMENTOS: se a empresa enviou a aba "Equipamentos", há uma linha por equipamento em cada snapshot
+            (intelligence_equipamentos) e a análise dela (intelligence_equipamento_analises, ligada por equipamento_id).
+            Para "quais equipamentos...", junte as duas tabelas e use o snapshot mais recente (maior data_referencia em
+            intelligence_snapshots); para o histórico de UM equipamento, filtre pelo patrimonio em vários snapshots.
+            Situações: trocar_vender (custo acumulado a partir de 60% do valor), revisar (a partir de 40%, reincidência ou custo
+            alto frente à receita), risco_parada, subutilizado (bom estado e parado sem contrato), saudavel, sem_dados.
+            SEMPRE cite o equipamento por patrimônio e nome (nunca pelo id), e use o texto de "motivo" para explicar o porquê.
+            Os limiares são de referência: apresente "trocar ou vender" como sinal para avaliar, nunca como ordem. Você não
+            conhece o que há dentro das ordens de serviço: só os números mensais enviados. Se a empresa não enviou a aba,
+            diga que a análise por equipamento depende dela.
 
             BENCHMARK: só existem linhas para grupos com pelo menos {$minimo} empresas. Para comparar, junte o
             indicador da empresa com intelligence_benchmarks pelo nome do indicador e pelo grupo dela (porte,

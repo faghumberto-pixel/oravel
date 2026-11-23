@@ -57,6 +57,31 @@
                 @if ($g['barras']) <x-filament::section heading="Nota por área"><x-intelligence.grafico :cfg="$g['barras']" :altura="300" /></x-filament::section> @endif
             </div>
 
+            @php $mq = $this->mudancasDeEquipamentos(); $rotC = \App\Domain\Intelligence\Services\AnaliseDeEquipamentos::ROTULOS; $ccC = \App\Domain\Intelligence\Support\Graficos::CLASSE_COR; @endphp
+            @if ($mq)
+                <x-filament::section heading="Equipamentos que mudaram de situação" :description="$mq['pioraram'].' pioraram, '.$mq['melhoraram'].' melhoraram, '.$mq['iguais'].' seguem iguais'.(count($mq['novos']) ? ', '.count($mq['novos']).' entraram' : '').(count($mq['sairam']) ? ' e '.count($mq['sairam']).' saíram da lista' : '').'.'">
+                    @if (! $mq['mudaram'])
+                        <p style="margin:0;opacity:.75;font-size:.9rem">Nenhum equipamento mudou de situação entre as duas fotografias.</p>
+                    @else
+                        <div style="overflow-x:auto"><table style="width:100%;font-size:.82rem;border-collapse:collapse;min-width:640px">
+                            <thead><tr style="text-align:left;opacity:.6;font-size:.7rem"><th style="padding:5px 0">Equipamento</th><th>Antes</th><th>Agora</th><th></th><th>Por quê</th></tr></thead>
+                            <tbody>
+                                @foreach (array_slice($mq['mudaram'], 0, 40) as $m)
+                                    <tr style="border-top:1px solid rgba(128,128,128,.2)">
+                                        <td style="padding:7px 0"><a href="{{ \App\Filament\Pages\IntelligenceEquipamento::getUrl(['patrimonio' => $m['patrimonio']]) }}" style="font-weight:700;text-decoration:none;color:#4f46e5">{{ $m['patrimonio'] }}</a><div style="font-size:.7rem;opacity:.65">{{ $m['nome'] }}</div></td>
+                                        <td><span style="font-size:.66rem;font-weight:700;color:#fff;background:{{ $ccC[$m['de']] ?? '#94a3b8' }};border-radius:999px;padding:2px 9px;white-space:nowrap">{{ $rotC[$m['de']] ?? $m['de'] }}</span></td>
+                                        <td><span style="font-size:.66rem;font-weight:700;color:#fff;background:{{ $ccC[$m['para']] ?? '#94a3b8' }};border-radius:999px;padding:2px 9px;white-space:nowrap">{{ $rotC[$m['para']] ?? $m['para'] }}</span></td>
+                                        <td style="font-weight:800;color:{{ ['pior' => '#dc2626', 'melhor' => '#16a34a', 'lateral' => '#64748b'][$m['sentido']] }}">{{ ['pior' => '▼', 'melhor' => '▲', 'lateral' => '■'][$m['sentido']] }}</td>
+                                        <td style="opacity:.85">{{ $m['motivo'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table></div>
+                        @if (count($mq['mudaram']) > 40)<p style="font-size:.74rem;opacity:.6;margin:8px 0 0">Mostrando os 40 primeiros de {{ count($mq['mudaram']) }}; a lista completa está em Equipamentos.</p>@endif
+                    @endif
+                </x-filament::section>
+            @endif
+
             <x-filament::section heading="Todos os indicadores" description="Verde melhorou, vermelho piorou, cinza é só informação.">
                 @foreach ($areas as $chave => $rotulo)
                     @php $itens = collect($c['indicadores'])->where('area', $chave); @endphp

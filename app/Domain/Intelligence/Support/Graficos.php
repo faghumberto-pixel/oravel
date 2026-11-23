@@ -345,6 +345,9 @@ class Graficos
     public function esforcoDoPlano(array $plano): ?array
     {
         $q = array_map('count', $plano['prazos']);
+        foreach ($plano['equip'] ?? [] as $prazo => $acoes) {
+            $q[$prazo] = ($q[$prazo] ?? 0) + count($acoes);
+        }
         if (array_sum($q) === 0) {
             return null;
         }

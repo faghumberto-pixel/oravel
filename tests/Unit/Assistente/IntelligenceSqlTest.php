@@ -62,4 +62,21 @@ class IntelligenceSqlTest extends TestCase
             $this->assertNull($final, $sql);
         }
     }
+
+    public function test_enxerga_as_duas_tabelas_de_equipamentos_isoladas_por_empresa(): void
+    {
+        [$sql, $erro] = $this->preparar("SELECT e.patrimonio, a.classificacao, a.motivo FROM intelligence_equipamentos e JOIN intelligence_equipamento_analises a ON a.equipamento_id = e.id WHERE a.classificacao = 'trocar_vender'");
+        $this->assertNull($erro);
+        $this->assertNotNull($sql);
+
+        $ctes = TenantSql::ctes(self::T, IntelligenceChatService::TABELAS);
+        foreach (['intelligence_equipamentos', 'intelligence_equipamento_analises'] as $t) {
+            $this->assertMatchesRegularExpression("/{$t} AS \\(SELECT [^)]* FROM {$t} WHERE tenant_id = '".self::T."'\\)/", $ctes, $t);
+        }
+        // nada de tabela do ERP, nem a tabela de importações, mesmo com os equipamentos liberados
+        foreach (['assets', 'maintenance_orders', 'intelligence_imports'] as $t) {
+            [$final] = $this->preparar("SELECT * FROM {$t}");
+            $this->assertNull($final, $t);
+        }
+    }
 }

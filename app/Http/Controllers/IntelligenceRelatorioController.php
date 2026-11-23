@@ -32,7 +32,7 @@ class IntelligenceRelatorioController extends Controller
         } else {
             $resumo = app(EvolucaoService::class)->resumo($tenant->id);
             abort_if($resumo === null, 404, 'Ainda não há fotografia da empresa para compartilhar.');
-            $relatorio = app(RelatorioDoPainel::class)->criar($resumo, (string) Auth::id(), $tipo);
+            $relatorio = app(RelatorioDoPainel::class)->criar($resumo, (string) Auth::id(), $tipo, $tenant->id);
         }
 
         if ($acao === 'ver') {

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Domain\Intelligence\Concerns\UsaResumoDoIntelligence;
+use App\Domain\Intelligence\Services\EquipamentosService;
 use App\Domain\Intelligence\Services\EvolucaoService;
 use App\Domain\Intelligence\Support\Graficos;
 use App\Support\Tenancy;
@@ -52,6 +53,21 @@ class IntelligenceComparacao extends Page
         $t = Tenancy::current();
 
         return ($t && $this->de && $this->para && $this->de !== $this->para) ? app(EvolucaoService::class)->comparar($t->id, $this->de, $this->para) : null;
+    }
+
+    /**
+     * Equipamentos que mudaram de situação entre as duas fotografias escolhidas (só com a aba nas duas e o contrato liberando a tela).
+     *
+     * @return ?array{mudaram: list<array<string, mixed>>, novos: list<string>, sairam: list<string>, iguais: int, pioraram: int, melhoraram: int}
+     */
+    public function mudancasDeEquipamentos(): ?array
+    {
+        $t = Tenancy::current();
+        if (! $t || ! $this->de || ! $this->para || $this->de === $this->para || ! $t->hasFeature('menu_intelligence_equipamentos') || ! $t->hasFeature('tabela_intelligence_equipamentos')) {
+            return null;
+        }
+
+        return app(EquipamentosService::class)->mudancas($t->id, $this->de, $this->para);
     }
 
     /** @return array<string, ?array> */

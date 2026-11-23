@@ -34,7 +34,16 @@ class IntelligencePlano extends Page
     /** @return array{foco: ?string, itens: list<array>, prazos: array<int, list<array>>} */
     public function plano(array $resumo): array
     {
-        return app(PlanoDeEvolucao::class)->plano($resumo);
+        $plano = app(PlanoDeEvolucao::class)->plano($resumo);
+        $plano['equip'] = [30 => [], 60 => [], 90 => []];
+        foreach ($this->insightsDeEquipamentos()['itens'] ?? [] as $i) {
+            if ($i['acao'] !== null && isset($plano['equip'][$i['prazo']])) {
+                $plano['equip'][$i['prazo']][] = $i;
+            }
+        }
+        $plano['equip_total'] = array_sum(array_map('count', $plano['equip']));
+
+        return $plano;
     }
 
     public function esforco(array $plano): ?array

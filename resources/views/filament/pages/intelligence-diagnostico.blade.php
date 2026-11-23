@@ -66,6 +66,37 @@
             @endif
         </x-filament::section>
 
+        {{-- Equipamentos que explicam os números (só com a aba "Equipamentos" e o contrato liberando a tela) --}}
+        @php $eq = $this->insightsDeEquipamentos(); @endphp
+        @if ($eq && $eq['itens'])
+            @php $corG = ['critico' => '#dc2626', 'atencao' => '#d97706', 'info' => '#2563eb']; $rotG = ['critico' => 'Decidir', 'atencao' => 'Atenção', 'info' => 'Para saber']; @endphp
+            <x-filament::section heading="Equipamentos que explicam os números" :description="'Fotografia de '.\Carbon\Carbon::parse($eq['snapshot']['data'])->format('d/m/Y').'. Cada achado aponta quais equipamentos estão por trás do problema.'">
+                <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+                    @foreach ($eq['itens'] as $it)
+                        @php $cg = $corG[$it['gravidade']]; @endphp
+                        <div style="border-radius:14px;padding:14px 16px;border:1px solid {{ $cg }}55;border-left:6px solid {{ $cg }};background:{{ $cg }}0d">
+                            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
+                                <b style="font-size:.9rem">{{ $it['titulo'] }}</b>
+                                <span style="font-size:.66rem;font-weight:700;color:#fff;background:{{ $cg }};border-radius:999px;padding:2px 10px">{{ $rotG[$it['gravidade']] }}</span>
+                            </div>
+                            <p style="font-size:.84rem;line-height:1.5;margin:0 0 8px">{{ $it['texto'] }}</p>
+                            @if ($it['patrimonios'])
+                                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+                                    @foreach ($it['patrimonios'] as $pat)
+                                        <a href="{{ \App\Filament\Pages\IntelligenceEquipamento::getUrl(['patrimonio' => $pat]) }}" style="font-size:.72rem;font-weight:700;text-decoration:none;color:{{ $cg }};background:#fff;border:1px solid {{ $cg }}66;border-radius:8px;padding:2px 9px">{{ $pat }}</a>
+                                    @endforeach
+                                    @if ($it['mais'] > 0)<span style="font-size:.72rem;opacity:.7;align-self:center">e mais {{ $it['mais'] }}</span>@endif
+                                </div>
+                            @endif
+                            @if ($it['classificacao'])
+                                <a href="{{ \App\Filament\Pages\IntelligenceEquipamentos::getUrl(['classificacao' => $it['classificacao']]) }}" style="font-size:.76rem;font-weight:600;color:#4f46e5;text-decoration:none">Ver todos na lista →</a>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </x-filament::section>
+        @endif
+
         <div style="{{ $grade }}">
             <x-filament::section heading="Pontos fortes" description="O que está bem e deve ser mantido.">
                 @forelse ($d['fortes'] as $i)

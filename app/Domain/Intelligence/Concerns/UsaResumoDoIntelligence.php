@@ -3,7 +3,9 @@
 namespace App\Domain\Intelligence\Concerns;
 
 use App\Domain\Intelligence\Models\IntelligenceSnapshot;
+use App\Domain\Intelligence\Services\EquipamentosService;
 use App\Domain\Intelligence\Services\EvolucaoService;
+use App\Domain\Intelligence\Services\InsightsDeEquipamentos;
 use App\Filament\Pages\IntelligenceDashboard;
 use App\Filament\Resources\IntelligenceImportResource;
 use App\Support\Tenancy;
@@ -15,6 +17,10 @@ trait UsaResumoDoIntelligence
     private ?array $resumoMemo = null;
 
     private bool $resumoCarregado = false;
+
+    private ?array $insightsMemo = null;
+
+    private bool $insightsCarregados = false;
 
     public static function canAccess(): bool
     {
@@ -31,6 +37,23 @@ trait UsaResumoDoIntelligence
         }
 
         return $this->resumoMemo;
+    }
+
+    /**
+     * Achados por equipamento do snapshot mais recente que tem a aba (vazio se a empresa não tem a aba ou o contrato não libera a tela).
+     *
+     * @return array{snapshot: array{id: string, data: string}, itens: list<array<string, mixed>>}|array{}
+     */
+    public function insightsDeEquipamentos(): array
+    {
+        if (! $this->insightsCarregados) {
+            $this->insightsCarregados = true;
+            $t = Tenancy::current();
+            $snap = ($t && $t->hasFeature('menu_intelligence_equipamentos') && $t->hasFeature('tabela_intelligence_equipamentos')) ? app(EquipamentosService::class)->snapshot($t->id) : null;
+            $this->insightsMemo = $snap ? ['snapshot' => $snap, 'itens' => app(InsightsDeEquipamentos::class)->do_snapshot($t->id, $snap['id'])] : [];
+        }
+
+        return $this->insightsMemo ?? [];
     }
 
     public function urlImportacoes(): string

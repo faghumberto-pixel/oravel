@@ -15,7 +15,7 @@
             cor="#16a34a"
             :itens="[['Ações priorizadas', 'Em 30, 60 e 90 dias, da mais urgente para a mais leve.'], ['Metas claras', 'Onde você está hoje, a meta do ciclo e a meta ideal de cada indicador.'], ['Acompanhamento', 'Importe de novo e meça o avanço contra o plano.']]"
             :url="$this->urlImportacoes()" />
-    @elseif (! $p['itens'])
+    @elseif (! $p['itens'] && ! $p['equip_total'])
         <x-filament::section>
             <div style="text-align:center;padding:22px">
                 <div style="font-size:2.4rem">🎯</div>
@@ -29,7 +29,7 @@
                 <div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.6">Foco do ciclo</div>
                 <div style="font-size:1.5rem;font-weight:800;margin:4px 0;color:#4f46e5">{{ $p['foco'] }}</div>
                 <p style="font-size:.84rem;opacity:.8;line-height:1.5;margin:0">É a área com a menor nota agora. Resolver as ações dela é o que mais move o índice geral.</p>
-                <div style="margin-top:12px;font-size:.8rem;opacity:.85"><b>{{ count($p['itens']) }}</b> {{ count($p['itens']) == 1 ? 'ação' : 'ações' }} no plano · reimporte a planilha em 30 dias para medir o avanço.</div>
+                <div style="margin-top:12px;font-size:.8rem;opacity:.85"><b>{{ count($p['itens']) + $p['equip_total'] }}</b> {{ count($p['itens']) + $p['equip_total'] == 1 ? 'ação' : 'ações' }} no plano · reimporte a planilha em 30 dias para medir o avanço.</div>
             </x-filament::section>
             @if ($esforco)
                 <x-filament::section heading="Esforço por prazo"><x-intelligence.grafico :cfg="$esforco" :altura="190" /></x-filament::section>
@@ -43,6 +43,21 @@
                         <div style="font-weight:800">{{ $titulo }}</div><div style="font-size:.74rem;opacity:.9">{{ $sub }}</div>
                     </div>
                     <div style="display:grid;gap:10px;padding:10px;border:1px solid {{ $cc }}44;border-top:0;border-radius:0 0 14px 14px">
+                        @foreach ($p['equip'][$dias] as $q)
+                            <div style="border-radius:12px;padding:12px 14px;border:1px solid {{ $cc }}66;background:{{ $cc }}12">
+                                <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+                                    <b style="font-size:.86rem">{{ $q['titulo'] }}</b>
+                                    <span style="font-size:.62rem;font-weight:700;color:#fff;background:#7c3aed;border-radius:999px;padding:2px 9px;white-space:nowrap">Equipamentos</span>
+                                </div>
+                                <p style="font-size:.82rem;line-height:1.5;margin:8px 0 8px"><b>{{ $q['acao'] }}</b></p>
+                                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                                    @foreach ($q['patrimonios'] as $pat)
+                                        <a href="{{ \App\Filament\Pages\IntelligenceEquipamento::getUrl(['patrimonio' => $pat]) }}" style="font-size:.7rem;font-weight:700;text-decoration:none;color:#7c3aed;background:#fff;border:1px solid #7c3aed66;border-radius:8px;padding:2px 8px">{{ $pat }}</a>
+                                    @endforeach
+                                    @if ($q['mais'] > 0)<span style="font-size:.7rem;opacity:.7;align-self:center">e mais {{ $q['mais'] }}</span>@endif
+                                </div>
+                            </div>
+                        @endforeach
                         @forelse ($p['prazos'][$dias] as $i)
                             <div style="border-radius:12px;padding:12px 14px;border:1px solid rgba(128,128,128,.25);background:{{ $cc }}0a">
                                 <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
@@ -60,7 +75,7 @@
                                 <ul style="margin:0;padding-left:18px;font-size:.8rem;line-height:1.55">@foreach ($i['acoes'] as $a) <li>{{ $a }}</li> @endforeach</ul>
                             </div>
                         @empty
-                            <p style="font-size:.8rem;opacity:.6;margin:6px;text-align:center">Nenhuma ação neste prazo.</p>
+                            @if (! count($p['equip'][$dias]))<p style="font-size:.8rem;opacity:.6;margin:6px;text-align:center">Nenhuma ação neste prazo.</p>@endif
                         @endforelse
                     </div>
                 </div>

@@ -47,17 +47,18 @@ class EquipamentosService
     /**
      * Cartões do topo: quantos em cada classificação e quanto valor está parado em "trocar ou vender".
      *
-     * @return array{total: int, por_classe: array<string, int>, valor_trocar_vender: float, valor_total: float, categorias: list<string>}
+     * @return array{total: int, por_classe: array<string, int>, valor_por_classe: array<string, float>, valor_trocar_vender: float, valor_total: float, categorias: list<string>}
      */
     public function resumo(string $tenantId, string $snapshotId): array
     {
         $b = $this->base($tenantId, $snapshotId);
         $porClasse = (clone $b)->selectRaw('a.classificacao, count(*) as n')->groupBy('a.classificacao')->pluck('n', 'classificacao')->map(fn ($n) => (int) $n)->all();
-        $valorTrocar = (float) (clone $b)->where('a.classificacao', 'trocar_vender')->sum('e.valor');
+        $valorPorClasse = (clone $b)->selectRaw('a.classificacao, coalesce(sum(e.valor), 0) as v')->groupBy('a.classificacao')->pluck('v', 'classificacao')->map(fn ($v) => (float) $v)->all();
+        $valorTrocar = $valorPorClasse['trocar_vender'] ?? 0.0;
         $valorTotal = (float) (clone $b)->sum('e.valor');
         $cats = (clone $b)->whereNotNull('e.categoria')->distinct()->orderBy('e.categoria')->pluck('e.categoria')->all();
 
-        return ['total' => array_sum($porClasse), 'por_classe' => $porClasse, 'valor_trocar_vender' => $valorTrocar, 'valor_total' => $valorTotal, 'categorias' => $cats];
+        return ['total' => array_sum($porClasse), 'por_classe' => $porClasse, 'valor_por_classe' => $valorPorClasse, 'valor_trocar_vender' => $valorTrocar, 'valor_total' => $valorTotal, 'categorias' => $cats];
     }
 
     /**
@@ -134,6 +135,65 @@ class EquipamentosService
         $historico = $rows->map(fn ($r) => $this->normalizar($r) + ['data' => substr((string) $r->data, 0, 10)])->all();
 
         return ['atual' => end($historico), 'historico' => $historico];
+    }
+
+    /**
+     * Concentração das reincidências: os `$topo` equipamentos com mais corretivas reincidentes e quanto eles pesam no total do mês.
+     *
+     * @return array{total: int, itens: list<array{patrimonio: string, nome: string, reincidencias: int}>, topo_pct: float}
+     */
+    public function reincidencias(string $tenantId, string $snapshotId, int $topo = 5): array
+    {
+        $b = $this->base($tenantId, $snapshotId)->where('e.reincidencias', '>', 0);
+        $total = (int) (clone $b)->sum('e.reincidencias');
+        $itens = (clone $b)->orderByDesc('e.reincidencias')->orderBy('e.patrimonio')->limit($topo)->get(['e.patrimonio', 'e.nome', 'e.reincidencias'])
+            ->map(fn ($r) => ['patrimonio' => $r->patrimonio, 'nome' => $r->nome, 'reincidencias' => (int) $r->reincidencias])->all();
+        $soma = array_sum(array_column($itens, 'reincidencias'));
+
+        return ['total' => $total, 'itens' => $itens, 'topo_pct' => $total > 0 ? round($soma / $total * 100, 1) : 0.0];
+    }
+
+    /**
+     * O que mudou entre duas fotografias, equipamento a equipamento (pelo patrimônio). Null se alguma das duas não tem a aba "Equipamentos".
+     *
+     * @return ?array{mudaram: list<array<string, mixed>>, novos: list<string>, sairam: list<string>, iguais: int, pioraram: int, melhoraram: int}
+     */
+    public function mudancas(string $tenantId, string $deId, string $paraId): ?array
+    {
+        $carregar = fn (string $snap) => DB::table('intelligence_equipamentos as e')
+            ->join('intelligence_equipamento_analises as a', 'a.equipamento_id', '=', 'e.id')
+            ->where('e.tenant_id', $tenantId)->where('a.tenant_id', $tenantId)->where('e.snapshot_id', $snap)
+            ->get(['e.patrimonio', 'e.nome', 'a.classificacao', 'a.motivo'])->keyBy('patrimonio');
+        $de = $carregar($deId);
+        $para = $carregar($paraId);
+        if ($de->isEmpty() || $para->isEmpty()) {
+            return null;
+        }
+
+        $grav = AnaliseDeEquipamentos::GRAVIDADE;
+        $mudaram = [];
+        $iguais = 0;
+        $pioraram = 0;
+        $melhoraram = 0;
+        foreach ($para as $pat => $depois) {
+            $antes = $de->get($pat);
+            if (! $antes) {
+                continue;
+            }
+            if ($antes->classificacao === $depois->classificacao) {
+                $iguais++;
+
+                continue;
+            }
+            $delta = ($grav[$depois->classificacao] ?? 0) - ($grav[$antes->classificacao] ?? 0);
+            $delta > 0 ? $pioraram++ : ($delta < 0 ? $melhoraram++ : null);
+            $mudaram[] = ['patrimonio' => $pat, 'nome' => $depois->nome, 'de' => $antes->classificacao, 'para' => $depois->classificacao, 'motivo' => $depois->motivo,
+                'sentido' => $delta > 0 ? 'pior' : ($delta < 0 ? 'melhor' : 'lateral'), 'delta' => $delta];
+        }
+        usort($mudaram, fn ($a, $b) => [$b['delta'], $a['patrimonio']] <=> [$a['delta'], $b['patrimonio']]);
+
+        return ['mudaram' => $mudaram, 'novos' => array_values(array_diff($para->keys()->all(), $de->keys()->all())),
+            'sairam' => array_values(array_diff($de->keys()->all(), $para->keys()->all())), 'iguais' => $iguais, 'pioraram' => $pioraram, 'melhoraram' => $melhoraram];
     }
 
     private function filtrar(Builder $q, array $f): Builder

@@ -3,6 +3,7 @@
 namespace App\Domain\Intelligence\Services;
 
 use App\Models\AssistenteRelatorio;
+use App\Models\Tenant;
 use Carbon\Carbon;
 
 /**
@@ -42,8 +43,24 @@ class RelatorioDoPainel
         return ['titulo' => "Intelligence — saúde da empresa em {$data}", 'resumo' => trim($resumo), 'linhas' => $linhas];
     }
 
+    /**
+     * Achados por equipamento da empresa (vazio se não tem a aba ou o contrato não libera a tela de equipamentos).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function achadosDeEquipamentos(?string $tenantId): array
+    {
+        $t = $tenantId ? Tenant::withoutGlobalScopes()->find($tenantId) : null;
+        if (! $t || ! $t->hasFeature('menu_intelligence_equipamentos') || ! $t->hasFeature('tabela_intelligence_equipamentos')) {
+            return [];
+        }
+        $snap = app(EquipamentosService::class)->snapshot($tenantId);
+
+        return $snap ? app(InsightsDeEquipamentos::class)->do_snapshot($tenantId, $snap['id']) : [];
+    }
+
     /** @return array{titulo: string, resumo: string, linhas: list<array<string, string>>} */
-    public function montarDiagnostico(array $r): array
+    public function montarDiagnostico(array $r, ?string $tenantId = null): array
     {
         $d = app(PlanoDeEvolucao::class)->diagnostico($r);
         $data = Carbon::parse($r['atual']['data'])->format('d/m/Y');
@@ -56,13 +73,16 @@ class RelatorioDoPainel
             $linhas[] = ['Situação' => 'Ponto forte (nota '.number_format($i['nota'], 0).')', 'Indicador' => $i['titulo'], 'Área' => $i['area_rotulo'],
                 'Hoje' => $this->num($i['valor'], $i['unidade']), 'Meta' => $this->num($i['meta'], $i['unidade']), 'Por que importa' => $i['impacto']];
         }
+        foreach ($this->achadosDeEquipamentos($tenantId) as $i) {
+            $linhas[] = ['Situação' => 'Equipamentos: '.$i['titulo'], 'Indicador' => implode(', ', $i['patrimonios']).($i['mais'] > 0 ? ' e mais '.$i['mais'] : ''), 'Área' => 'Equipamentos', 'Hoje' => '—', 'Meta' => '—', 'Por que importa' => $i['texto']];
+        }
         $resumo = $d['atencao'] ? count($d['atencao']).' ponto(s) de atenção; o mais grave é '.mb_strtolower($d['atencao'][0]['titulo']).'.' : 'Nenhum ponto crítico nesta fotografia.';
 
         return ['titulo' => "Intelligence — diagnóstico em {$data}", 'resumo' => $resumo, 'linhas' => $linhas];
     }
 
     /** @return array{titulo: string, resumo: string, linhas: list<array<string, string>>} */
-    public function montarPlano(array $r): array
+    public function montarPlano(array $r, ?string $tenantId = null): array
     {
         $p = app(PlanoDeEvolucao::class)->plano($r);
         $data = Carbon::parse($r['atual']['data'])->format('d/m/Y');
@@ -71,7 +91,12 @@ class RelatorioDoPainel
             $linhas[] = ['Prazo' => 'até '.$i['prazo'].' dias', 'Prioridade' => $i['prioridade'], 'Indicador' => $i['titulo'], 'Hoje' => $this->num($i['valor'], $i['unidade']),
                 'Meta do ciclo' => $this->num($i['alvo_ciclo'], $i['unidade']), 'Meta ideal' => $this->num($i['meta'], $i['unidade']), 'O que fazer' => implode(' • ', $i['acoes'])];
         }
-        $resumo = $p['itens'] ? 'Foco do ciclo: '.$p['foco'].'. '.count($p['itens']).' ação(ões) em 30, 60 e 90 dias. Reimporte a planilha em 30 dias para medir o avanço.' : 'Todos os indicadores com nota estão em 80 ou mais: sem ação urgente.';
+        $acoesEquip = array_values(array_filter($this->achadosDeEquipamentos($tenantId), fn ($i) => $i['acao'] !== null));
+        foreach ($acoesEquip as $i) {
+            $linhas[] = ['Prazo' => 'até '.$i['prazo'].' dias', 'Prioridade' => $i['prioridade'], 'Indicador' => 'Equipamentos: '.$i['titulo'], 'Hoje' => '—', 'Meta do ciclo' => '—', 'Meta ideal' => '—', 'O que fazer' => $i['acao']];
+        }
+        $total = count($p['itens']) + count($acoesEquip);
+        $resumo = $total > 0 ? 'Foco do ciclo: '.($p['foco'] ?? '—').'. '.$total.' ação(ões) em 30, 60 e 90 dias'.($acoesEquip ? ', incluindo '.count($acoesEquip).' por equipamento' : '').'. Reimporte a planilha em 30 dias para medir o avanço.' : 'Todos os indicadores com nota estão em 80 ou mais: sem ação urgente.';
 
         return ['titulo' => "Intelligence — plano de evolução em {$data}", 'resumo' => $resumo, 'linhas' => $linhas];
     }
@@ -121,11 +146,11 @@ class RelatorioDoPainel
     }
 
     /** Reaproveita o relatório do mesmo usuário e da mesma fotografia gerado na última hora (clicar duas vezes não gera dois). */
-    public function criar(array $r, ?string $userId, string $tipo = 'painel'): AssistenteRelatorio
+    public function criar(array $r, ?string $userId, string $tipo = 'painel', ?string $tenantId = null): AssistenteRelatorio
     {
         $m = match ($tipo) {
-            'diagnostico' => $this->montarDiagnostico($r),
-            'plano' => $this->montarPlano($r),
+            'diagnostico' => $this->montarDiagnostico($r, $tenantId),
+            'plano' => $this->montarPlano($r, $tenantId),
             default => $this->montar($r),
         };
 
