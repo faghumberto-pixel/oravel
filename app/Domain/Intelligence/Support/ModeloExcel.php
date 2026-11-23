@@ -16,7 +16,11 @@ use OpenSpout\Writer\XLSX\Writer;
  */
 class ModeloExcel
 {
-    public static function escrever(string $destino): void
+    /**
+     * @param  ?array{data_referencia: string, linhas: list<array<string, mixed>>, aviso?: string}  $exportacao  planilha PREENCHIDA (gerada pelo ERP);
+     *                                                                                                           null = modelo em branco com linhas de exemplo
+     */
+    public static function escrever(string $destino, ?array $exportacao = null): void
     {
         $dados = Catalogo::campos();
         $equip = Catalogo::equipamentos();
@@ -36,12 +40,23 @@ class ModeloExcel
         $writer->getCurrentSheet()->setName(Catalogo::SHEET);
         $writer->addRow(Row::fromValues(array_column($dados, 'group'), $grp));
         $writer->addRow(new Row(array_map(fn ($c) => Cell::fromValue($c['title'].($c['required'] ? ' *' : ''), $c['required'] ? $req : $head), $dados)));
-        $writer->addRow(new Row(array_map(fn ($c, $i) => Cell::fromValue($i === 0 ? '(EXEMPLO - apague esta linha) '.$c['example'] : $c['example'], $ex), $dados, array_keys($dados))));
+        if ($exportacao !== null) {
+            // só a data: o resto da aba "Dados" é calculado da aba "Equipamentos" (ou o cliente completa o que o ERP não tem)
+            $writer->addRow(new Row(array_map(fn ($c) => Cell::fromValue($c['key'] === 'data_referencia' ? $exportacao['data_referencia'] : null), $dados)));
+        } else {
+            $writer->addRow(new Row(array_map(fn ($c, $i) => Cell::fromValue($i === 0 ? '(EXEMPLO - apague esta linha) '.$c['example'] : $c['example'], $ex), $dados, array_keys($dados))));
+        }
 
         // ---- Equipamentos ----
         $writer->addNewSheetAndMakeItCurrent()->setName(Catalogo::SHEET_EQUIPAMENTOS);
         $writer->addRow(new Row(array_map(fn ($c) => Cell::fromValue($c['title'].($c['required'] ? ' *' : ''), $c['required'] ? $req : $head), $equip)));
-        $writer->addRow(new Row(array_map(fn ($c, $i) => Cell::fromValue($i === 0 ? '(EXEMPLO - apague esta linha) '.$c['example'] : $c['example'], $ex), $equip, array_keys($equip))));
+        if ($exportacao !== null) {
+            foreach ($exportacao['linhas'] as $linha) {
+                $writer->addRow(new Row(array_map(fn ($c) => Cell::fromValue($linha[$c['title']] ?? null), $equip)));
+            }
+        } else {
+            $writer->addRow(new Row(array_map(fn ($c, $i) => Cell::fromValue($i === 0 ? '(EXEMPLO - apague esta linha) '.$c['example'] : $c['example'], $ex), $equip, array_keys($equip))));
+        }
 
         // ---- Instruções ----
         $writer->addNewSheetAndMakeItCurrent()->setName('Instruções');
@@ -55,6 +70,13 @@ class ModeloExcel
             'Para acompanhar a evolução, envie uma planilha nova a cada mês. Nada que já foi importado é alterado.',
             '',
         ];
+        if ($exportacao !== null) {
+            array_splice($linhas, 1, 0, [
+                'PLANILHA GERADA PELO ERP DA ORAVEL: a aba "Equipamentos" já vem preenchida com os números do mês. Confira os valores antes de importar em Intelligence › Importações.',
+                'Na aba "Dados" só a data está preenchida: frota, receita, custos e OS são calculados dos equipamentos. Se quiser, complete o que o ERP não tem (valor em atraso, propostas, técnicos, entregas no prazo...).',
+                ...(isset($exportacao['aviso']) && $exportacao['aviso'] !== '' ? ['ATENÇÃO: '.$exportacao['aviso']] : []),
+            ]);
+        }
         foreach ($linhas as $i => $l) {
             $writer->addRow(Row::fromValues([$l], $i === 0 ? $grp : $wrap));
         }

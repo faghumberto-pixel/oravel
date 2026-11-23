@@ -8,12 +8,14 @@ use App\Filament\Exports\AssetExporter;
 use App\Filament\Resources\AssetResource;
 use App\Models\Asset;
 use App\Services\AssetExcelImporter;
+use App\Services\IntelligenceExportService;
 use App\Support\AssetImport\AssetImportColumns;
 use App\Support\Tenancy;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class ListAssets extends ListRecords
@@ -51,6 +53,7 @@ class ListAssets extends ListRecords
             Actions\ExportAction::make()->exporter(AssetExporter::class),
             $this->importExcelAction(),
             $this->templateAction(),
+            $this->exportarParaIntelligenceAction(),
         ];
     }
 
@@ -58,6 +61,49 @@ class ListAssets extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [];
+    }
+
+    /**
+     * "Exportar para o Intelligence": gera a planilha de equipamentos do mês já preenchida com os dados do ERP (custo, retrabalho, dias
+     * locado...). Só para quem tem o Intelligence (a mesma chave dos dados de equipamentos do contrato). Só leitura.
+     */
+    private function exportarParaIntelligenceAction(): Actions\Action
+    {
+        $meses = collect(range(1, 24))->mapWithKeys(fn ($i) => [now()->startOfMonth()->subMonths($i)->format('Y-m') => now()->startOfMonth()->subMonths($i)->translatedFormat('F/Y')])->all();
+
+        return Actions\Action::make('exportarParaIntelligence')
+            ->label('Exportar para o Intelligence')
+            ->icon('heroicon-o-presentation-chart-line')
+            ->color('gray')
+            ->visible(fn () => (bool) auth()->user()?->can('viewAny', Asset::class) && (bool) Tenancy::current()?->hasFeature('tabela_intelligence_equipamentos'))
+            ->modalHeading('Exportar equipamentos para o Intelligence')
+            ->modalDescription('Gera o Excel do mês escolhido, já preenchido com custo de manutenção, corretivas, reincidências, dias locado e indisponível de cada equipamento. Depois é só importar em Intelligence › Importações.')
+            ->modalSubmitActionLabel('Gerar planilha')
+            ->form([
+                Forms\Components\Select::make('mes')->label('Mês de referência')->options($meses)->default(array_key_first($meses))->required()->native(false)
+                    ->helperText('Escolha um mês já fechado: os números são os do mês inteiro.'),
+            ])
+            ->action(function (array $data) {
+                $tenant = Tenancy::current();
+                if (! $tenant) {
+                    Notification::make()->title('Selecione a empresa (tenant) antes de exportar.')->danger()->send();
+
+                    return null;
+                }
+                $servico = app(IntelligenceExportService::class);
+                $resultado = $servico->linhas($tenant->id, Carbon::createFromFormat('Y-m', $data['mes'])->startOfMonth());
+                if ($resultado['linhas'] === []) {
+                    Notification::make()->title('Nenhum equipamento para exportar')->body('Cadastre o Nº Patrimônio dos ativos para exportá-los.')->warning()->send();
+
+                    return null;
+                }
+                Notification::make()->title(count($resultado['linhas']).' equipamentos exportados')
+                    ->body($resultado['avisos'] ? implode('<br>', array_map('e', $resultado['avisos'])) : 'Planilha pronta para importar no Intelligence.')
+                    ->color($resultado['avisos'] ? 'warning' : 'success')->persistent()->send();
+
+                return response()->streamDownload(fn () => $servico->escrever($resultado, 'php://output'), 'intelligence-equipamentos-'.$data['mes'].'.xlsx',
+                    ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']);
+            });
     }
 
     private function templateAction(): Actions\Action

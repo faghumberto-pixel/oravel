@@ -1,6 +1,6 @@
 # Oravel Intelligence — Análise por equipamento (desenho)
 
-Status: desenho aprovado em 22/11/2026. **F1 implementada** na branch `feat/intelligence-equipamentos-f1` (dados, importação, indicadores, classificação e modelo de planilha; sem telas), ainda sem deploy. **F2 implementada** na mesma branch (telas Equipamentos e Equipamento, Pareto, bolhas valor × receita, tabela com busca/filtros/Excel, relatório para WhatsApp e impressão, frota de exemplo na empresa demo). **F3 implementada** (achados com nomes no Diagnóstico, ações nomeadas no Plano, equipamentos que mudaram de situação na Comparação interna, linhas por equipamento nos relatórios e as duas tabelas liberadas ao Assistente de IA). F4 (exportar do ERP) e F5 (site): não iniciadas. Escrito para fechar o que o Intelligence ainda **não** entrega: hoje ele analisa a empresa como um todo; este desenho acrescenta o nível do equipamento.
+Status: desenho aprovado em 22/11/2026. **F1 implementada** na branch `feat/intelligence-equipamentos-f1` (dados, importação, indicadores, classificação e modelo de planilha; sem telas), ainda sem deploy. **F2 implementada** na mesma branch (telas Equipamentos e Equipamento, Pareto, bolhas valor × receita, tabela com busca/filtros/Excel, relatório para WhatsApp e impressão, frota de exemplo na empresa demo). **F3 implementada** (achados com nomes no Diagnóstico, ações nomeadas no Plano, equipamentos que mudaram de situação na Comparação interna, linhas por equipamento nos relatórios e as duas tabelas liberadas ao Assistente de IA). **F4 implementada** (botão "Exportar para o Intelligence" na tela de Ativos do ERP, em `feat/intelligence-exportar-do-erp`). F5 (site): não iniciada. Escrito para fechar o que o Intelligence ainda **não** entrega: hoje ele analisa a empresa como um todo; este desenho acrescenta o nível do equipamento.
 
 ### Decisões da F1 (onde o código se afastou ou detalhou o desenho)
 - Receita, custo, valor e OS do mês da aba geram os campos da empresa; **locados e indisponíveis** são o equivalente médio no mês (soma dos dias ÷ dias do mês), sempre limitados ao total.
@@ -125,7 +125,7 @@ Wireframe da tela Equipamentos:
 ## 8. Como os dados chegam
 
 1. **v1 — planilha**: modelo com as duas abas (geração do modelo e importador estendidos, mesmo padrão `AssetImportColumns`/`Catalogo`). Serve a quem não usa o ERP.
-2. **v1.5 — "Exportar para o Intelligence" no ERP**: botão na tela de ativos que gera a planilha de Equipamentos já preenchida (custo, retrabalho e dias locado vêm do `CustoManutencaoService` e dos contratos). Zero digitação para quem tem os dois produtos. Mesmo contrato/permissão de hoje.
+2. **v1.5 — "Exportar para o Intelligence" no ERP** (implementado; receita pela medição aprovada do contrato no mês, senão mensal fixo proporcional aos dias ou diária × dias, e em branco para contrato por hora ou franquia sem medição): botão na tela de ativos que gera a planilha de Equipamentos já preenchida (custo, retrabalho e dias locado vêm do `CustoManutencaoService` e dos contratos). Zero digitação para quem tem os dois produtos. Mesmo contrato/permissão de hoje.
 3. **v2 — integração automática** (opcional, por contrato): o ERP envia o snapshot do mês sozinho. Só depois de v1.5 estar em uso.
 
 ## 9. Fases (tamanho relativo, sem datas)
