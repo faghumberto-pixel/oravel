@@ -8,15 +8,16 @@ use Illuminate\Notifications\Events\NotificationSending;
 
 /**
  * Ponto único de bloqueio: se a pessoa desligou a categoria em "Minhas notificações", o aviso
- * do sino nem é gravado. Retornar false cancela o envio (comportamento do Laravel).
- * Só mexe no canal "database" e em usuários internos -- e-mails/WhatsApp ao cliente não mudam.
+ * do sino nem é gravado e o e-mail do mesmo aviso também não sai. Retornar false cancela o envio
+ * (comportamento do Laravel). Só mexe nos canais "database" e "mail" e em usuários internos --
+ * e-mails/WhatsApp ao cliente (que não são User) não mudam.
  */
 class SkipMutedNotification
 {
     // Não se chama handle() de propósito (ver EnviarPushDoAviso): evita registro duplicado por descoberta automática.
     public function avaliar(NotificationSending $event): ?bool
     {
-        if ($event->channel !== 'database' || ! $event->notifiable instanceof User) {
+        if (! in_array($event->channel, ['database', 'mail'], true) || ! $event->notifiable instanceof User) {
             return null;
         }
 
