@@ -21,6 +21,7 @@ Empresa: Oravel Desenvolvimento de Software LTDA, São Paulo/SP. Contato: contat
 - [Equipamento devolvido com defeito](https://oravel.com.br/equipamento-devolvido-com-defeito/): da avaria à liberação
 - [Estoque (WMS)](https://oravel.com.br/wms/): almoxarifado e estoque
 - [CRM](https://oravel.com.br/crm/): vendas e relacionamento
+- [Oravel Intelligence](https://oravel.com.br/intelligence/): envie uma planilha e descubra onde a locadora perde dinheiro: nota de saúde, equipamentos que custam mais do que rendem, comparação mês a mês e plano de 30, 60 e 90 dias, sem trocar de sistema
 
 ## Processos
 - [Manutenção](https://oravel.com.br/processo-manutencao/): preventiva, ordens de serviço e histórico por equipamento
