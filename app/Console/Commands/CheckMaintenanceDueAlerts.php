@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Services\DestinatariosAvisos;
 use App\Models\Asset;
 use App\Models\MaintenanceDueAlert;
 use App\Models\MaintenanceOrder;
@@ -11,7 +10,10 @@ use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\MaintenanceDueNotification;
+use App\Services\DestinatariosAvisos;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Roda diariamente (App\Console\Kernel::schedule()) e avisa a role
@@ -184,7 +186,22 @@ class CheckMaintenanceDueAlerts extends Command
         $recipients = DestinatariosAvisos::para($tenant->id, 'manutencao_vencendo');
 
         foreach ($recipients as $recipient) {
-            $recipient->notify(new MaintenanceDueNotification($asset, $status));
+            // Um destinatario com caixa inexistente/recusada (SMTP 550) nao pode
+            // derrubar a rodada inteira: antes a excecao abortava o comando
+            // (exit 1), os demais ativos/empresas ficavam sem processar e o
+            // dedupe de 7 dias nao era gravado (quem recebia, recebia todo dia).
+            // O canal 'database' roda antes do 'mail', entao o sino ja foi criado.
+            try {
+                $recipient->notify(new MaintenanceDueNotification($asset, $status));
+            } catch (Throwable $e) {
+                Log::warning('Aviso de preventiva vencida nao entregue', [
+                    'tenant_id' => $tenant->id,
+                    'user_id' => $recipient->id,
+                    'email' => $recipient->email,
+                    'asset_id' => $asset->id,
+                    'erro' => $e->getMessage(),
+                ]);
+            }
         }
     }
 }
