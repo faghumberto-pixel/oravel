@@ -1,6 +1,14 @@
 # Oravel Intelligence — Análise por equipamento (desenho)
 
-Status: **desenho para revisão** (22/11/2026). Nada disto está implementado. Escrito para fechar o que o Intelligence ainda **não** entrega: hoje ele analisa a empresa como um todo; este desenho acrescenta o nível do equipamento.
+Status: desenho aprovado em 22/11/2026. **F1 implementada** na branch `feat/intelligence-equipamentos-f1` (dados, importação, indicadores, classificação e modelo de planilha; sem telas), ainda sem deploy. F2 em diante: não iniciadas. Escrito para fechar o que o Intelligence ainda **não** entrega: hoje ele analisa a empresa como um todo; este desenho acrescenta o nível do equipamento.
+
+### Decisões da F1 (onde o código se afastou ou detalhou o desenho)
+- Receita, custo, valor e OS do mês da aba geram os campos da empresa; **locados e indisponíveis** são o equivalente médio no mês (soma dos dias ÷ dias do mês), sempre limitados ao total.
+- Equipamento **sem nenhum dado avaliável** recebe a classe `sem_dados` (não estava no desenho).
+- A classe `risco_parada` exige ao menos 1 corretiva; sem mês anterior vale só a indisponibilidade acima de 25%.
+- Reincidência só vira sinal com pelo menos 2 corretivas no mês (1 de 1 seria "100%": ruído).
+- Três indicadores novos da empresa (reincidência, subutilizados e valor em trocar/vender) entram só quando a aba existe; as metas deles são referência inicial, como as demais.
+- A aba "Equipamentos" só é lida se o contrato tiver a chave `tabela_intelligence_equipamentos`; sem ela é ignorada com aviso.
 
 ## 1. O que muda para o gestor
 

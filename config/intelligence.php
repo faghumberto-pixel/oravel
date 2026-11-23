@@ -20,4 +20,22 @@ return [
 
     // Dimensões de comparação do benchmark (colunas de intelligence_benchmarks).
     'benchmark_dimensoes' => ['regiao', 'porte', 'segmento'],
+
+    // Análise por equipamento (aba "Equipamentos" da planilha). ATENÇÃO: limiares de REFERÊNCIA, ainda não validados com especialista
+    // do setor. Os de custo ÷ valor usam as MESMAS variáveis de ambiente do ERP (config/custo_manutencao.php): cliente com os dois
+    // produtos vê a mesma sinalização nos dois.
+    'equipamentos' => [
+        'versao_regras' => 1,
+        'max_linhas' => 5000,
+        'limiar_trocar_vender' => (float) env('CUSTO_MANUTENCAO_LIMIAR_TROCAR', 0.60),
+        'limiar_revisar' => (float) env('CUSTO_MANUTENCAO_LIMIAR_REVISAR', 0.40),
+        'reincidencia_revisar_pct' => 30.0,
+        'reincidencia_minimo_corretivas' => 2, // 1 reincidência em 1 corretiva seria "100%": ruído, não sinal
+        'custo_receita_revisar_pct' => 30.0,
+        'utilizacao_baixa_pct' => 40.0,
+        'disponibilidade_minima_subutilizado_pct' => 80.0,
+        'disponibilidade_risco_pct' => 75.0,
+        // divergência (em %) entre o total digitado na aba "Dados" e a soma da aba "Equipamentos" que gera aviso
+        'divergencia_aviso_pct' => 5.0,
+    ],
 ];

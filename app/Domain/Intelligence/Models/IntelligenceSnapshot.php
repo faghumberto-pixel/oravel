@@ -38,4 +38,14 @@ class IntelligenceSnapshot extends Model
     {
         return $this->hasMany(IntelligenceDiagnostic::class, 'snapshot_id');
     }
+
+    public function equipamentos(): HasMany
+    {
+        return $this->hasMany(IntelligenceEquipamento::class, 'snapshot_id');
+    }
+
+    public function analisesDeEquipamentos(): HasMany
+    {
+        return $this->hasMany(IntelligenceEquipamentoAnalise::class, 'snapshot_id');
+    }
 }

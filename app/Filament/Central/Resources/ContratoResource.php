@@ -162,6 +162,7 @@ class ContratoResource extends Resource
             'tabela_intelligence_snapshots' => 'Intelligence',
             'tabela_intelligence_indicators' => 'Intelligence',
             'tabela_intelligence_diagnostics' => 'Intelligence',
+            'tabela_intelligence_equipamentos' => 'Intelligence',
             'tabela_courses' => 'Academia e Comunicação',
             'caixa_email' => 'Academia e Comunicação',
             'tabela_client_messages' => 'Comercial',

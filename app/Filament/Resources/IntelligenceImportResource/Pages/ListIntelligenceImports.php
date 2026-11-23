@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\IntelligenceImportResource\Pages;
 
 use App\Domain\Intelligence\Models\IntelligenceImport;
+use App\Domain\Intelligence\Services\AnaliseDeEquipamentos;
 use App\Domain\Intelligence\Services\ImportadorExcel;
-use App\Domain\Intelligence\Support\Catalogo;
+use App\Domain\Intelligence\Support\ModeloExcel;
 use App\Filament\Resources\IntelligenceImportResource;
-use App\Support\AssetImport\AssetImportColumns;
 use App\Support\Tenancy;
 use Filament\Actions;
 use Filament\Forms;
@@ -31,14 +31,7 @@ class ListIntelligenceImports extends ListRecords
             ->color('gray')
             ->visible(fn () => auth()->user()?->can('viewAny', IntelligenceImport::class))
             ->action(fn () => response()->streamDownload(
-                fn () => AssetImportColumns::writeTemplate('php://output', Catalogo::colunasDoModelo(), Catalogo::SHEET, [
-                    'Modelo de importação do Oravel Intelligence',
-                    'Preencha a aba "Dados" a partir da linha 3, com UMA linha: a fotografia da empresa na data de referência. Não altere os títulos das colunas.',
-                    'Só "Data de Referência" é obrigatória, mas quanto mais campos preenchidos, mais indicadores e áreas do diagnóstico são calculados.',
-                    'Para acompanhar a evolução, envie uma planilha nova a cada período. Nada que já foi importado é alterado.',
-                    'Números com ponto ou vírgula decimal, sem R$ nem %.',
-                    '',
-                ], true),
+                fn () => ModeloExcel::escrever('php://output'),
                 'modelo-importacao-intelligence.xlsx',
                 ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
             ));
@@ -81,9 +74,20 @@ class ListIntelligenceImports extends ListRecords
                     return;
                 }
                 $geral = $r['diagnostico']['geral'] ?? null;
+                $linhas = [];
+                if ($geral) {
+                    $linhas[] = 'Índice geral: '.number_format($geral['pontuacao'], 0).' ('.$geral['faixa'].')';
+                }
+                if ($r['equipamentos'] > 0) {
+                    $rot = AnaliseDeEquipamentos::ROTULOS;
+                    $linhas[] = $r['equipamentos'].' equipamentos analisados: '.collect($r['classificacoes'])->map(fn ($n, $k) => $n.' '.mb_strtolower($rot[$k] ?? $k))->implode(', ').'.';
+                }
+                foreach ($r['avisos'] as $aviso) {
+                    $linhas[] = 'Aviso: '.e($aviso);
+                }
                 Notification::make()
                     ->title(($r['simulacao'] ? 'SIMULAÇÃO (nada foi gravado): ' : 'Importação concluída: ').count($r['indicadores']).' indicadores calculados')
-                    ->body($geral ? 'Índice geral: '.number_format($geral['pontuacao'], 0).' ('.$geral['faixa'].')' : null)
+                    ->body($linhas ? implode('<br>', $linhas) : null)
                     ->success()->persistent()->send();
             });
     }

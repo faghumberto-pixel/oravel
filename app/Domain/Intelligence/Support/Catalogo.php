@@ -55,6 +55,37 @@ class Catalogo
         ];
     }
 
+    public const SHEET_EQUIPAMENTOS = 'Equipamentos';
+
+    /**
+     * Colunas da aba "Equipamentos" (uma linha por equipamento; números do MÊS da data de referência). Sem o campo, o indicador que
+     * depende dele simplesmente não é calculado.
+     *
+     * @return list<array{key:string, group:string, title:string, type:string, required:bool, help:string, example:string}>
+     */
+    public static function equipamentos(): array
+    {
+        $c = fn (string $key, string $title, string $type, string $help, string $example, bool $required = false) => [
+            'key' => $key, 'group' => 'Equipamento', 'title' => $title, 'type' => $type, 'help' => $help, 'example' => $example, 'required' => $required,
+        ];
+
+        return [
+            $c('patrimonio', 'Nº Patrimônio', 'text', 'Código único do equipamento na empresa. É o que liga o equipamento de um mês ao seguinte: mantenha o mesmo código sempre.', 'EMP-0042', true),
+            $c('nome', 'Nome / Modelo', 'text', 'Nome comercial ou modelo.', 'Empilhadeira Elétrica 2,5t', true),
+            $c('categoria', 'Categoria', 'text', 'Tipo do equipamento. Ex.: Empilhadeira, Gerador.', 'Empilhadeira'),
+            $c('ano_fabricacao', 'Ano de Fabricação', 'int', 'Ano de fabricação (4 dígitos). Usado para a idade.', '2018'),
+            $c('valor', 'Valor do Equipamento (R$)', 'decimal', 'Valor de aquisição do equipamento. Base do retorno e da regra de trocar ou vender.', '185000'),
+            $c('receita', 'Receita no Mês (R$)', 'decimal', 'O que este equipamento faturou no mês.', '9200'),
+            $c('custo_mes', 'Custo de Manutenção no Mês (R$)', 'decimal', 'Peças, mão de obra e terceiros gastos neste equipamento no mês.', '1800'),
+            $c('custo_acumulado', 'Custo de Manutenção Acumulado (R$)', 'decimal', 'Tudo que já foi gasto em manutenção neste equipamento desde que foi comprado.', '112000'),
+            $c('os_corretivas', 'OS Corretivas no Mês', 'int', 'Ordens de serviço de quebra ou defeito neste equipamento.', '3'),
+            $c('os_preventivas', 'OS Preventivas no Mês', 'int', 'Ordens de serviço de revisão programada.', '1'),
+            $c('reincidencias', 'Corretivas Reincidentes no Mês', 'int', 'Das corretivas, quantas foram o mesmo defeito voltando (retrabalho). Não pode passar das corretivas.', '2'),
+            $c('dias_locado', 'Dias Locado no Mês', 'int', 'Quantos dias do mês o equipamento esteve locado.', '12'),
+            $c('dias_indisponivel', 'Dias Indisponível no Mês', 'int', 'Quantos dias esteve na oficina, sem peça ou parado por outro motivo.', '9'),
+        ];
+    }
+
     /** Colunas no formato do gerador de modelo .xlsx (AssetImportColumns::writeTemplate). */
     public static function colunasDoModelo(): array
     {
@@ -107,6 +138,14 @@ class Catalogo
                 'calc' => fn ($d) => $d['tempo_medio_reparo_h'] ?? null],
             'equipamentos_por_tecnico' => ['area' => 'oficina', 'titulo' => 'Equipamentos por Técnico', 'unidade' => 'un', 'ruim' => null, 'bom' => null,
                 'calc' => fn ($d) => $div($d['frota_total'] ?? null, $d['tecnicos'] ?? null)],
+
+            // Vêm da aba "Equipamentos" (a classificação por equipamento): só existem quando a empresa a envia.
+            'reincidencia_pct' => ['area' => 'oficina', 'titulo' => 'Corretivas Reincidentes', 'unidade' => '%', 'ruim' => 40, 'bom' => 10,
+                'calc' => fn ($d) => $d['equip_reincidencia_pct'] ?? null],
+            'subutilizados_pct' => ['area' => 'frota', 'titulo' => 'Equipamentos Subutilizados', 'unidade' => '%', 'ruim' => 30, 'bom' => 8,
+                'calc' => fn ($d) => $d['equip_subutilizados_pct'] ?? null],
+            'valor_trocar_vender_pct' => ['area' => 'frota', 'titulo' => 'Valor da Frota em Trocar ou Vender', 'unidade' => '%', 'ruim' => 25, 'bom' => 3,
+                'calc' => fn ($d) => $d['equip_valor_trocar_vender_pct'] ?? null],
 
             'entregas_no_prazo_pct' => ['area' => 'operacional', 'titulo' => 'Entregas no Prazo', 'unidade' => '%', 'ruim' => 60, 'bom' => 95,
                 'calc' => fn ($d) => $d['entregas_no_prazo_pct'] ?? null],
@@ -166,6 +205,18 @@ class Catalogo
                 'Medir onde o tempo se perde: espera de peça, fila ou mão de obra.',
                 'Manter estoque mínimo das peças mais usadas.',
                 'Redistribuir a carga entre os técnicos.']],
+            'reincidencia_pct' => ['impacto' => 'Corretiva que volta pelo mesmo defeito é custo duplicado e equipamento parado de novo.', 'acoes' => [
+                'Listar os equipamentos com mais reincidência e tratar a causa-raiz de cada um.',
+                'Exigir o registro da causa em toda OS corretiva.',
+                'Conferir o reparo e testar o equipamento antes de liberá-lo ao cliente.']],
+            'subutilizados_pct' => ['impacto' => 'Equipamento em boas condições e sem contrato é capital parado.', 'acoes' => [
+                'Oferecer ativamente os equipamentos subutilizados à carteira de clientes.',
+                'Rever preço e condições dos equipamentos com menor giro.',
+                'Avaliar a venda dos que permanecem ociosos por vários meses.']],
+            'valor_trocar_vender_pct' => ['impacto' => 'Dinheiro imobilizado em equipamento que já custa mais do que rende.', 'acoes' => [
+                'Avaliar a venda ou a troca dos equipamentos na faixa "considerar trocar ou vender".',
+                'Comparar o custo de reformar contra o valor de reposição de cada um.',
+                'Definir um teto de custo de manutenção por equipamento para decidir antes de passar do limite.']],
             'entregas_no_prazo_pct' => ['impacto' => 'Atraso na entrega prejudica a obra do cliente e a reputação da empresa.', 'acoes' => [
                 'Planejar rota e agenda de entregas com antecedência.',
                 'Confirmar a disponibilidade do equipamento antes de prometer o prazo.',
