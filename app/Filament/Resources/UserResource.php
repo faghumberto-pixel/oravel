@@ -234,7 +234,7 @@ class UserResource extends Resource
                         // sendToDatabase() enfileira (DatabaseNotification
                         // implementa ShouldQueue) -- sem worker de fila
                         // rodando a notificacao nunca chega, sem erro
-                        // (mesmo achado de Login::notifyTenantAdmins()).
+                        // (mesmo achado de o antigo autocadastro).
                         // sendNow() entrega na hora.
                         NotificationFacade::sendNow(
                             $record,

@@ -3,8 +3,6 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Filament\Pages\PainelGestao;
-use App\Models\Role;
-use App\Models\Tenant;
 use App\Models\User;
 use App\Support\AppProfile;
 use App\Support\Campo;
@@ -16,22 +14,16 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BaseLogin;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Notification as NotificationFacade;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Casca visual (glassmorphism sobre foto industrial, ver
+ * Casca visual (foto industrial com camada verde da marca, ver
  * resources/views/filament/pages/auth/login.blade.php) por cima da
  * autenticacao real do Filament -- authenticate()/rate limit/2FA
  * continuam herdados sem alteracao (so authenticate() e sobrescrito, ver
  * comentario no metodo), so trocamos $view + a aparencia dos campos do
- * form. O formulario de Cadastro dessa mesma tela tambem vive aqui
- * (register()) -- cria conta de verdade, mas pendente de aprovacao do
- * admin do tenant (is_approved=false ate alguem aprovar em UserResource).
+ * form. Nao ha autocadastro: contas sao criadas internamente.
  */
 class Login extends BaseLogin
 {
@@ -50,18 +42,6 @@ class Login extends BaseLogin
     {
         return ['guest'];
     }
-
-    public string $registerName = '';
-
-    public string $registerEmail = '';
-
-    public string $registerTenantSlug = '';
-
-    public string $registerPassword = '';
-
-    public string $registerPasswordConfirmation = '';
-
-    public bool $registerTerms = false;
 
     protected function getLayoutData(): array
     {
@@ -99,7 +79,7 @@ class Login extends BaseLogin
     /**
      * "Lembrar de mim" sai do form gerenciado pelo Filament -- vira um
      * checkbox simples com wire:model="data.remember" na view, pra poder
-     * ficar na mesma linha dos links "Esqueceu a senha?"/"Criar Conta"
+     * ficar na mesma linha dos links "Esqueceu a senha?"
      * (layout do spec). authenticate() na classe pai ja le
      * $data['remember'] ?? false, entao continua funcionando sem mudar
      * aquele metodo.
@@ -200,110 +180,5 @@ class Login extends BaseLogin
         }
 
         return app(LoginResponse::class);
-    }
-
-    /**
-     * Cria a conta de verdade, mas pendente (is_approved=false) --
-     * precisa do admin do tenant aprovar em UserResource antes de
-     * conseguir logar (authenticate() acima bloqueia com mensagem clara
-     * enquanto isso). O tenant e' resolvido pelo "Código da Empresa"
-     * (mesmo slug usado em /admin/login hoje) porque essa tela e'
-     * compartilhada por todos os tenants -- sem esse campo nao da pra
-     * saber a qual empresa o cadastro pertence.
-     */
-    public function register(): void
-    {
-        try {
-            $this->rateLimit(5);
-        } catch (TooManyRequestsException $exception) {
-            $this->getRateLimitedNotification($exception)?->send();
-
-            return;
-        }
-
-        $this->validate([
-            'registerName' => ['required', 'string', 'max:255'],
-            'registerEmail' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'registerTenantSlug' => ['required', 'string', 'exists:tenants,slug'],
-            'registerPassword' => ['required', 'string', 'min:8', 'same:registerPasswordConfirmation'],
-            'registerTerms' => ['accepted'],
-        ], [], [
-            'registerName' => 'nome completo',
-            'registerEmail' => 'e-mail',
-            'registerTenantSlug' => 'código da empresa',
-            'registerPassword' => 'senha',
-            'registerTerms' => 'termos de uso',
-        ]);
-
-        $tenant = Tenant::where('slug', Str::slug($this->registerTenantSlug))->first();
-
-        $user = User::create([
-            'name' => $this->registerName,
-            'email' => $this->registerEmail,
-            'password' => Hash::make($this->registerPassword),
-            'tenant_id' => $tenant->id,
-            'is_approved' => false,
-        ]);
-        $user->forceFill(['email_verified_at' => now()])->save();
-
-        $this->notifyTenantAdmins($tenant, $user);
-
-        $this->reset([
-            'registerName',
-            'registerEmail',
-            'registerTenantSlug',
-            'registerPassword',
-            'registerPasswordConfirmation',
-            'registerTerms',
-        ]);
-
-        Notification::make()
-            ->title('Cadastro enviado!')
-            ->body('Aguarde a aprovação do administrador da sua empresa pra poder entrar.')
-            ->success()
-            ->send();
-
-        $this->dispatch('oravel-registered');
-    }
-
-    /**
-     * Mesmo cuidado documentado em EquipmentDamageObserver::notifyRole():
-     * nao usar User::role('admin') direto, o Spatie resolve o papel por
-     * nome globalmente (ignora tenant_id) -- resolve o Role scoped por
-     * tenant primeiro.
-     */
-    private function notifyTenantAdmins(Tenant $tenant, User $newUser): void
-    {
-        $adminRole = Role::where('name', 'admin')
-            ->where('guard_name', 'web')
-            ->where('tenant_id', $tenant->id)
-            ->first();
-
-        if (! $adminRole) {
-            return;
-        }
-
-        $admins = User::role($adminRole)->where('tenant_id', $tenant->id)->get();
-
-        if ($admins->isEmpty()) {
-            return;
-        }
-
-        // ->sendToDatabase() enfileira por baixo dos panos
-        // (Filament\Notifications\DatabaseNotification implementa
-        // ShouldQueue) -- em qualquer ambiente sem QUEUE_CONNECTION=sync
-        // e sem worker de fila rodando, a notificacao simplesmente nunca
-        // chega, sem erro nenhum (achado real: reproduzido em DEV
-        // forcando QUEUE_CONNECTION=database sem worker, o job ficava
-        // parado na tabela jobs pra sempre). sendNow() entrega na hora,
-        // sem depender de worker.
-        NotificationFacade::sendNow(
-            $admins,
-            Notification::make()
-                ->title('Novo cadastro aguardando aprovação')
-                ->body($newUser->name.' ('.$newUser->email.') pediu acesso à sua empresa.')
-                ->warning()
-                ->toDatabase(),
-        );
     }
 }
