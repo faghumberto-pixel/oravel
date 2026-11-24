@@ -116,6 +116,8 @@ async function principal() {
   const caminhoHome = path.join(RAIZ, '_site', 'index.html');
   if (!fs.existsSync(caminhoHome)) falhar('_site/index.html nao foi gerado.');
   ok('build concluido');
+  // O conteudo so' para cadastrados fica FORA do site publico (e' entregue pelo portal: npm run membros:enviar).
+  fs.rmSync(path.join(RAIZ, '_site', '_membros'), { recursive: true, force: true });
 
   // 3 e 4. Home local
   console.log('\n3. Home gerada');

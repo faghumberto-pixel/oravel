@@ -7,7 +7,9 @@
     "build": "npx @11ty/eleventy && npx pagefind --site _site",
     "novo": "node scripts/novo-post.js",
     "deploy": "node scripts/deploy.js",
-    "deploy:conferir": "node scripts/deploy.js --so-conferir"
+    "deploy:conferir": "node scripts/deploy.js --so-conferir",
+    "membros:empacotar": "node scripts/entregar-membros.js",
+    "membros:enviar": "node scripts/entregar-membros.js --enviar"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0",

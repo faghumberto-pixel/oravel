@@ -165,7 +165,7 @@
       if (hist) spec.series.push({ rot: 'Histórico anterior a 2025 (simulação)', tipo: 'simulado', valores: hist.valores.map(function (v) { return v * f; }).concat([null, null]) });
       spec.fonte = 'KPMG, Rental Market Report (a pedido da Analoc, com apoio da Sobratema), divulgado pela Sobratema em 26/03/2026';
       spec.periodo = hist ? '2025 e 2026 (publicados); 2021 a 2024 (simulação)' : '2025 (realizado) e 2026 (projeção)'; spec.coleta = '26/03/2026';
-      if (!reg) spec.csv = { href: '/observatorio/dados/faturamento-setor.csv' };
+      if (!reg) spec.csv = { href: 'dados/faturamento-setor.csv' };
       spec.nota = (reg ? 'Estimativa: participação da região × faturamento nacional; a fonte não mede faturamento por região. ' : '') +
         (hist ? 'Simulação: ' + hist.metodo : 'O histórico anterior a 2025 não está publicado nas fontes: em breve.');
       return Promise.resolve(spec);
@@ -183,7 +183,7 @@
       }
       spec.labels = D.vendas.anos;
       spec.series.push({ rot: amarela ? 'Linha amarela (mil unidades)' : 'Total de máquinas para construção (mil unidades)', tipo: 'real', valores: serie });
-      spec.csv = { href: '/observatorio/dados/' + (amarela ? 'vendas-linha-amarela' : 'vendas-maquinas') + '.csv' };
+      spec.csv = { href: 'dados/' + (amarela ? 'vendas-linha-amarela' : 'vendas-maquinas') + '.csv' };
       if (amarela) spec.nota = 'A linha amarela de 2023 é aproximada ("quase 32,3 mil").';
       return Promise.resolve(spec);
     }
@@ -191,7 +191,7 @@
     spec.labels = D.frotaParada.anos;
     spec.series.push({ rot: 'Frota parada (%)', tipo: 'real', valores: D.frotaParada.valores });
     spec.fonte = 'Estudo Sobratema do Mercado Brasileiro de Equipamentos para Construção, via Analoc (03/01/2025)';
-    spec.periodo = '2017, 2023 e 2024'; spec.coleta = '03/01/2025'; spec.csv = { href: '/observatorio/dados/frota-parada.csv' };
+    spec.periodo = '2017, 2023 e 2024'; spec.coleta = '03/01/2025'; spec.csv = { href: 'dados/frota-parada.csv' };
     if (reg) spec.nota = 'A frota parada é um dado nacional: o filtro de região não se aplica a este indicador.';
     return Promise.resolve(spec);
   }
@@ -345,7 +345,7 @@
       '<p class="op-d-val num">' + esc(ind.valor) + '</p><p class="op-nota">' + (ind.rotuloValor ? esc(ind.rotuloValor) + ' · ' : '') + esc(ind.unidade) + (ind.variacao ? ' · <span class="op-delta">▲ ' + esc(ind.variacao) + '</span>' : '') + '</p>';
     var visual = ind.tipo === 'barras' ? '<ul class="op-barras" role="list">' + ind.barras.map(function (b) { return '<li><span class="op-barra-rot">' + esc(b.rot) + '</span><span class="op-barra-trilho"><span class="op-barra-pre" style="width:' + (b.v / ind.max * 100).toFixed(1) + '%"></span></span><span class="op-barra-val num">' + esc(b.txt) + '</span></li>'; }).join('') + '</ul>'
       : '<div class="op-d-grafico"><canvas id="op-d-canvas" role="img" aria-label="' + esc(ind.titulo) + '"></canvas></div>';
-    var acoes = '<div class="op-d-acoes">' + (ind.csv ? '<a class="op-btn" href="/observatorio/dados/' + esc(ind.csv) + '.csv" download>Baixar CSV</a>' : (ind.tipo === 'bcb' ? '<button type="button" class="op-btn" id="op-d-csv" disabled>Baixar CSV</button>' : '')) +
+    var acoes = '<div class="op-d-acoes">' + (ind.csv ? '<a class="op-btn" href="dados/' + esc(ind.csv) + '.csv" download>Baixar CSV</a>' : (ind.tipo === 'bcb' ? '<button type="button" class="op-btn" id="op-d-csv" disabled>Baixar CSV</button>' : '')) +
       '<a class="op-btn op-btn--ghost" href="' + esc(D.metodologia) + '">Ver metodologia</a></div>';
     corpo.innerHTML = topo + visual + info + acoes;
     if (grafDialogo) { grafDialogo.destroy(); grafDialogo = null; }

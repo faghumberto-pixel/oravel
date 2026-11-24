@@ -1,9 +1,9 @@
 ---
-layout: base.njk
+layout: membros.njk
+permalink: /_membros/observatorio/index.html
+eleventyExcludeFromCollections: true
 pagefind: false
-permalink: false
-title: "Observatório Oravel — painel de dados do mercado de locação"
-description: "Painel de inteligência de mercado da locação de equipamentos no Brasil: indicadores com fonte, período e metodologia em cada número, séries do Banco Central e download dos dados em CSV."
+title: "Observatório Oravel"
 ---
 {#- Conteudo do Observatorio que passara a ser SO PARA CADASTRADOS (entregue pelo portal). Fica no repositorio, sem publicar (permalink: false) e fora do pagefind, ate a Fase 2. -#}
 {%- set P = observatorioPainel -%}
@@ -24,31 +24,16 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 
 <div class="op" id="topo">
 
-<div class="op-sub" aria-label="Observatório Oravel">
-<div class="op-wrap op-sub-in">
-<a class="op-marca" href="/observatorio/"><span class="op-marca-ico" aria-hidden="true"></span><span>Observatório <strong>Oravel</strong></span></a>
-<nav class="op-menu" aria-label="Seções do Observatório">
-<a href="#painel">Painel de Mercado</a>
-<a href="#indicadores">Indicadores</a>
-<a href="#estudos">Estudos</a>
-<a href="#radar">Radar de Locação</a>
-</nav>
-<a class="op-btn op-sub-cta" href="https://participe.oravel.org/cadastro">Participar</a>
-<p class="op-badge"><span class="op-badge-ponto" aria-hidden="true"></span>Dados de mercado atualizados em <time datetime="2026-03-26">{{ P.atualizadoEm }}</time></p>
-</div>
-</div>
-
 <div class="op-wrap">
 
 <header class="op-hero" id="painel">
-<h1 class="op-h1">Painel de Mercado de Locação</h1>
-<p class="op-hero-txt">Dados públicos do mercado brasileiro de locação de equipamentos. Cada número traz fonte e período. <a href="{{ P.metodologia }}">Metodologia</a> · <a href="/manifesto/">Quem somos</a></p>
-<p class="op-hero-cta"><a class="op-btn" href="https://participe.oravel.org/cadastro">Participar</a><span>Pesquisa aberta a locadoras: 10 perguntas, respostas sempre anônimas e agregadas, só divulgadas com no mínimo 10 empresas por grupo. <a href="/observatorio/participantes/">Como funciona</a></span></p>
+<h1 class="op-h1">Observatório Oravel</h1>
+<p class="op-hero-txt">Séries, radar, estudos e ferramentas para quem administra locadoras. Cada número traz fonte e período. <a href="{{ P.metodologia }}">Metodologia</a></p>
 </header>
 
-<noscript><p class="op-aviso">Os gráficos interativos e as séries do Banco Central precisam de JavaScript. Os indicadores, as fontes e os downloads em CSV abaixo funcionam sem ele.</p></noscript>
+<noscript><p class="op-aviso">Os gráficos interativos e as séries do Banco Central precisam de JavaScript. As fontes e os downloads em CSV abaixo funcionam sem ele.</p></noscript>
 
-<div class="op-filtros" role="group" aria-label="Filtros do painel">
+<div class="op-filtros" role="group" aria-label="Filtros do painel" hidden>
 <label class="op-campo"><span>Região</span>
 <select id="op-regiao"><option value="brasil">Brasil</option>{% for r in P.regioes %}<option value="{{ r.id }}">{{ r.rot }}</option>{% endfor %}</select></label>
 <p class="op-filtros-nota" id="op-regiao-nota">A região recalcula o faturamento por participação regional. É uma estimativa: a fonte não mede faturamento por região.</p>
@@ -56,7 +41,7 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 </div>
 
 <h2 class="op-oculto">Indicadores principais</h2>
-<ul class="op-kpis" role="list">
+<ul class="op-kpis" role="list" hidden>
 {%- for k in P.kpis %}
 <li class="op-kpi" data-kpi="{{ k.id }}">
 <p class="op-kpi-rot">{{ k.rotulo }}</p>
@@ -72,7 +57,7 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 <h2 id="op-h-grafico">Séries do mercado</h2>
 <div class="op-controles" role="group" aria-label="Controles do gráfico">
 <label class="op-campo"><span>Indicador</span>
-<select id="op-ind">{% for g in P.grafico %}<option value="{{ g.id }}">{{ g.rot }}</option>{% endfor %}</select></label>
+<select id="op-ind">{% for g in P.grafico %}{% if g.tipo == 'bcb' %}<option value="{{ g.id }}">{{ g.rot }}</option>{% endif %}{% endfor %}</select></label>
 <label class="op-campo"><span>Período</span>
 <select id="op-per">{% for p in P.periodos %}<option value="{{ p.id }}"{% if p.id == '24m' %} selected{% endif %}>{{ p.rot }}</option>{% endfor %}</select></label>
 <label class="op-campo" id="op-eq-campo" hidden><span>Tipo de equipamento</span>
@@ -106,9 +91,9 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 
 <div class="op-corpo">
 <section class="op-indicadores" id="indicadores" aria-labelledby="op-h-ind">
-<div class="op-bloco-cab"><h2 id="op-h-ind">Indicadores</h2><p class="op-bloco-sub">Cada card traz fonte, período e data da coleta. “Ver detalhes” abre a metodologia e o download.</p></div>
+<div class="op-bloco-cab"><h2 id="op-h-ind">Macroeconomia</h2><p class="op-bloco-sub">Selic, INCC e dólar, direto do Banco Central. Cada card traz fonte, período e data da coleta. “Ver detalhes” abre a metodologia e o download. Os indicadores do setor estão no <a href="/painel-mercado/">Painel do Mercado</a>.</p></div>
 <ul class="op-grade" role="list">
-{%- for i in P.indicadores %}
+{%- for i in P.indicadores %}{%- if i.tipo == 'bcb' %}
 <li class="op-card" data-ind="{{ i.id }}" data-tipo="{{ i.tipo }}">
 <div class="op-card-cab"><h3 class="op-card-tit">{{ i.titulo }}</h3>{% if i.regional %}<span class="op-tag op-tag--est" data-tag-est hidden>Estimativa</span>{% endif %}</div>
 {%- if i.tipo == 'bcb' %}
@@ -141,6 +126,7 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 {%- elif i.tipo == 'bcb' %}<button type="button" class="op-btn op-btn--ghost" data-csv-bcb="{{ i.codigo }}" disabled>Baixar CSV</button>{% endif %}
 </div>
 </li>
+{%- endif %}
 {%- endfor %}
 </ul>
 
@@ -247,6 +233,7 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 </div>
 </section>
 
+{%- if obsReal %}
 <section class="op-bloco" id="dados-observatorio" aria-labelledby="op-h-obs">
 <div class="op-bloco-cab"><h2 id="op-h-obs">Dados do Observatório</h2><p class="op-bloco-sub">O que as locadoras participantes informam, sempre agregado e anônimo (mínimo de 10 empresas por grupo).</p></div>
 {%- if obsReal %}
@@ -287,7 +274,9 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 {{ embreve("Indicadores próprios do Observatório", "Empresas entrevistadas, respostas e distribuição por estado, porte e tema. Aparecem quando houver amostra mínima de 10 empresas por grupo.") }}
 {%- endif %}
 </section>
+{%- endif %}
 
+{%- if obsReal %}
 <section class="op-bloco" id="benchmark" aria-labelledby="op-h-bench">
 <div class="op-bloco-cab"><h2 id="op-h-bench">Benchmark de gestão</h2><p class="op-bloco-sub">Quartis de indicadores informados pelas locadoras. Quem participa compara a própria empresa com o grupo.</p></div>
 {%- if obsReal and observatorioPublico.benchmark.length %}
@@ -312,6 +301,7 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 {{ embreve("Benchmark de gestão", "Mediana e quartis de utilização, disponibilidade, custo de manutenção e idade da frota, por porte e região. Aparece quando houver amostra mínima de 10 empresas por grupo.") }}
 {%- endif %}
 </section>
+{%- endif %}
 
 <section class="op-bloco" id="ferramentas" aria-labelledby="op-h-ferr">
 <div class="op-bloco-cab"><h2 id="op-h-ferr">Ferramentas relacionadas</h2><p class="op-bloco-sub">Do indicador do mercado para a decisão na sua empresa.</p></div>
@@ -328,9 +318,8 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 </section>
 
 <details class="op-transp" id="transparencia">
-<summary>Transparência: como participar, calendário editorial e cronologia</summary>
+<summary>Transparência: calendário editorial e cronologia</summary>
 <div class="op-transp-corpo">
-<p>Gestores de locadoras podem contribuir com indicadores da própria empresa. Os dados são anonimizados e só aparecem agregados. <a href="/observatorio/participantes/">Como funciona a participação</a> · <a href="/painel-mercado/contribuir/">Contribuir com dados</a> · <a href="/observatorio/fontes/">Todas as fontes</a></p>
 <div class="op-duas">
 <div><h3>Calendário permanente</h3>
 <dl class="op-dl">{%- for c in observatorio.calendario %}<dt>{{ c.ciclo }}</dt><dd>{{ c.itens }}</dd>{%- endfor %}</dl></div>
@@ -340,7 +329,7 @@ description: "Painel de inteligência de mercado da locação de equipamentos no
 </div>
 </details>
 
-<p class="op-rodape">Correções e dúvidas sobre os dados: <a href="mailto:dados@oravel.org">dados@oravel.org</a> · <a href="{{ P.metodologia }}">Metodologia</a> · <a href="/painel-mercado/historico/">Histórico de atualizações</a>{% if P.simulacao.ativa %}<br>Blocos e séries marcados como “Simulação” usam valores ilustrativos, não são dados publicados e não têm download.{% endif %}</p>
+<p class="op-rodape">Correções e dúvidas sobre os dados: <a href="mailto:dados@oravel.org">dados@oravel.org</a> · <a href="{{ P.metodologia }}">Metodologia</a> · <a href="/painel-mercado/historico/">Histórico de atualizações</a></p>
 
 </div>
 

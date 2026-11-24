@@ -3,3 +3,4 @@ _site/
 .firebase/
 .DS_Store
 logs/
+dist-membros/

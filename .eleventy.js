@@ -206,6 +206,15 @@ module.exports = function(eleventyConfig) {
       { '@type': 'ListItem', position: 3, name: title, item: url } ] }] });
   });
 
+  // Conteudo so' para cadastrados (entregue pelo portal em participe.oravel.org/observatorio/conteudo/): assets e CSV viram caminhos
+  // relativos ao pacote e os links para o site publico viram absolutos, abrindo em outra aba.
+  eleventyConfig.addTransform('membros-links', function(content) {
+    if (!this.page.outputPath || !this.page.outputPath.endsWith('.html') || !this.page.outputPath.includes('/_membros/')) return content;
+    return content
+      .replace(/(href|src)="\/assets\//g, '$1="assets/')
+      .replace(/<a ([^>]*?)href="\/(?!\/)([^"]*)"/g, '<a $1href="https://oravel.org/$2" target="_blank" rel="noopener"');
+  });
+
   // Shortcodes
   eleventyConfig.addShortcode('year', () => new Date().getFullYear());
 
