@@ -39,6 +39,33 @@
           }
         ]
       }
+    ],
+    "redirects": [
+      {
+        "source": "/observatorio/fontes",
+        "destination": "/painel-mercado/",
+        "type": 301
+      },
+      {
+        "source": "/observatorio/fontes/",
+        "destination": "/painel-mercado/",
+        "type": 301
+      },
+      {
+        "source": "/observatorio/participantes",
+        "destination": "/observatorio/",
+        "type": 301
+      },
+      {
+        "source": "/observatorio/participantes/",
+        "destination": "/observatorio/",
+        "type": 301
+      },
+      {
+        "source": "/observatorio/dados/**",
+        "destination": "/observatorio/",
+        "type": 301
+      }
     ]
   },
   "firestore": {
