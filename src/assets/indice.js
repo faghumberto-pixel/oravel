@@ -10,7 +10,7 @@
   var telas = {};
   Array.prototype.forEach.call(raiz.querySelectorAll('[data-tela]'), function (el) { telas[el.getAttribute('data-tela')] = el; });
 
-  var estado = { edicao: null, perguntas: [], i: 0, respostas: {}, token: '', ultimo: null };
+  var estado = { edicao: null, perguntas: [], i: 0, respostas: {}, token: '', ultimo: null, vinculo: '' };
   var widgetId = null;
 
   /* Turnstile: o token vale para UM envio. Espera ele chegar e pede outro depois de cada chamada. */
@@ -108,7 +108,7 @@
       });
     }).then(function (r) {
       renovarToken();
-      if (r.status === 201) { marcarParticipou(); evento('Indice concluido'); return finalizar(false); }
+      if (r.status === 201) { estado.vinculo = (r.corpo && r.corpo.vinculo) || ''; marcarParticipou(); evento('Indice concluido'); return finalizar(false); }
       if (r.status === 409) { estado.respostas = {}; return erro('A pesquisa foi atualizada enquanto você respondia. Vamos recomeçar do início.', carregar); }
       if (r.status === 410) return mostrar('indisponivel');
       if (r.status === 429) return erro('Muitos envios em pouco tempo. Aguarde um minuto e tente de novo.', enviar);
@@ -121,33 +121,47 @@
 
   function finalizar(jaTinha) {
     $('[data-ja]').hidden = !jaTinha;
-    $('[data-bloco-contato]').hidden = !!jaTinha;
-    $('[data-sucesso-contato]').hidden = true;
+    $('[data-bloco-contato]').hidden = !!jaTinha || !estado.vinculo;
+    $('[data-sucesso-cadastro]').hidden = true;
     $('[data-explorar]').hidden = false;
     mostrar('obrigado');
   }
 
-  /* ---------- contato opcional ---------- */
-  var form = $('[data-form-contato]');
+  /* ---------- cadastro no Observatorio (opcional, no fim) ---------- */
+  var form = $('[data-form-cadastro]');
+  function mensagensDoServidor(corpo) {
+    if (corpo && corpo.errors) {
+      var msgs = []; Object.keys(corpo.errors).forEach(function (k) { if (corpo.errors[k] && corpo.errors[k][0]) msgs.push(corpo.errors[k][0]); });
+      if (msgs.length) return msgs.join(' ');
+    }
+    return (corpo && (corpo.mensagem || corpo.message)) || '';
+  }
   form.addEventListener('submit', function (ev) {
     ev.preventDefault();
-    var msg = $('[data-erro-contato]'); msg.hidden = true;
-    var d = {}; new FormData(form).forEach(function (valor, nome) { if (nome !== 'consentimento') d[nome] = String(valor).trim(); });
-    if (!d.email && !d.whatsapp) { msg.textContent = 'Informe e-mail ou WhatsApp para receber o relatório.'; msg.hidden = false; return; }
-    if (!form.elements.consentimento.checked) { msg.textContent = 'Marque a caixa de concordância para receber o relatório.'; msg.hidden = false; return; }
-    Object.keys(d).forEach(function (k) { if (d[k] === '') delete d[k]; });
-    d.consentimento = true; d.website = form.elements.website.value;
+    var msg = $('[data-erro-cadastro]'); msg.hidden = true;
+    var mostrarErro = function (t) { msg.textContent = t; msg.hidden = false; msg.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+    var d = {}; new FormData(form).forEach(function (valor, nome) { d[nome] = (nome === 'password' || nome === 'password_confirmation') ? String(valor) : String(valor).trim(); });
+    var faltando = [['nome', 'o nome'], ['empresa', 'a empresa'], ['cnpj', 'o CNPJ'], ['cidade', 'a cidade'], ['uf', 'o estado'], ['email', 'o e-mail'], ['password', 'a senha']].filter(function (c) { return !d[c[0]]; });
+    if (faltando.length) return mostrarErro('Preencha ' + faltando.map(function (c) { return c[1]; }).join(', ') + '.');
+    if (d.password.length < 10 || !/[A-Za-z]/.test(d.password) || !/[0-9]/.test(d.password)) return mostrarErro('A senha precisa ter no mínimo 10 caracteres, com letras e números.');
+    if (d.password !== d.password_confirmation) return mostrarErro('As senhas não conferem.');
+    if (!form.elements.aceite_lgpd.checked || !form.elements.aceite_politica.checked) return mostrarErro('Marque as duas autorizações para criar o cadastro.');
+    ['cargo', 'telefone'].forEach(function (k) { if (d[k] === '') delete d[k]; });
+    d.aceite_lgpd = '1'; d.aceite_politica = '1'; d.vinculo = estado.vinculo; d.website = form.elements.website.value;
     var botao = form.querySelector('button[type="submit"]'); botao.disabled = true;
     tokenPronto(12000).then(function (pronto) {
       if (!pronto) { return Promise.reject(new Error('sem-token')); }
-      return chamar('/contato', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(corpoComToken(d)) });
+      return chamar('/cadastro', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(corpoComToken(d)) });
     }).then(function (r) {
-        renovarToken();
-        botao.disabled = false;
-        if (r.status === 201) { evento('Indice contato'); $('[data-bloco-contato]').hidden = true; $('[data-sucesso-contato]').hidden = false; return; }
-        msg.textContent = (r.corpo && r.corpo.mensagem) || (r.status === 422 ? 'Confira os dados informados (e-mail ou WhatsApp válido).' : r.status === 429 ? 'Muitos envios em pouco tempo. Aguarde um minuto.' : 'Não foi possível enviar agora. Tente de novo.');
-        msg.hidden = false;
-      }).catch(function (e) { renovarToken(); botao.disabled = false; msg.textContent = e && e.message === 'sem-token' ? 'A verificação de segurança ainda não terminou. Aguarde alguns segundos e tente de novo.' : 'Verifique a sua conexão e tente de novo.'; msg.hidden = false; });
+      renovarToken(); botao.disabled = false;
+      if (r.status === 201) { evento('Indice cadastro'); $('[data-bloco-contato]').hidden = true; $('[data-sucesso-cadastro]').hidden = false; $('[data-sucesso-cadastro]').scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+      if (r.status === 422 && r.corpo && r.corpo.erro === 'vinculo_invalido') return mostrarErro(r.corpo.mensagem || 'Sua resposta expirou. Responda de novo e se cadastre em seguida.');
+      if (r.status === 429) return mostrarErro('Muitas tentativas em pouco tempo. Aguarde um minuto e tente de novo.');
+      mostrarErro(mensagensDoServidor(r.corpo) || 'Não foi possível concluir o cadastro agora. Tente de novo em instantes.');
+    }).catch(function (e) {
+      renovarToken(); botao.disabled = false;
+      mostrarErro(e && e.message === 'sem-token' ? 'A verificação de segurança ainda não terminou. Aguarde alguns segundos e tente de novo.' : 'Verifique a sua conexão e tente de novo.');
+    });
   });
 
   /* ---------- acoes ---------- */
@@ -157,7 +171,7 @@
     if (acao === 'iniciar') { evento('Indice inicio'); estado.i = 0; estado.respostas = {}; pergunta(); }
     else if (acao === 'voltar' && estado.i > 0) { estado.i -= 1; pergunta(); }
     else if (acao === 'tentar-de-novo') { (estado.retorno || carregar)(); }
-    else if (acao === 'pular-contato') { $('[data-bloco-contato]').hidden = true; $('[data-explorar]').scrollIntoView({ behavior: 'smooth' }); }
+    else if (acao === 'pular-cadastro') { $('[data-bloco-contato]').hidden = true; $('[data-explorar]').scrollIntoView({ behavior: 'smooth' }); }
   });
 
   /* ---------- Turnstile (so' quando a chave estiver configurada) ---------- */

@@ -26,7 +26,7 @@ description: "Responda 5 perguntas rápidas e ajude a construir os indicadores q
 <p class="ix-lead">Ajude a construir o retrato real do mercado brasileiro de locação de equipamentos.</p>
 <p class="ix-texto">Responda <strong data-total>5</strong> perguntas rápidas e ajude a construir os indicadores que vão mostrar como o setor está evoluindo.</p>
 <button type="button" class="ix-btn ix-btn--principal" data-acao="iniciar">Iniciar participação</button>
-<p class="ix-nota">Participação anônima. Resultado consolidado e publicado pela Oravel.org.</p>
+<p class="ix-nota">Responder não exige cadastro. As respostas individuais são confidenciais e os resultados são publicados só de forma consolidada pela Oravel.org.</p>
 <details class="ix-detalhes">
 <summary>Por que isso importa</summary>
 <p>A Oravel está criando um painel permanente de inteligência do setor de locação. Com a participação dos gestores, vamos acompanhar tendências, desafios e expectativas de quem vive diariamente a operação das locadoras.</p>
@@ -58,29 +58,37 @@ description: "Responda 5 perguntas rápidas e ajude a construir os indicadores q
 <p class="ix-texto">Você acaba de contribuir para a construção da primeira visão consolidada do mercado brasileiro de locação de equipamentos.</p>
 
 <div class="ix-contato" data-bloco-contato>
-<h3>Gostaria de receber o relatório do Índice Oravel?</h3>
-<p class="ix-nota">Opcional. Seus dados de contato ficam separados das suas respostas, que continuam anônimas.</p>
-<form data-form-contato novalidate>
+<h3>Quer fazer parte do Observatório Oravel?</h3>
+<ul class="ix-beneficios">
+<li>Sua resposta passa a contar no painel da sua empresa</li>
+<li>Você recebe o relatório do Índice Oravel</li>
+<li>Acesso ao benchmark e aos certificados de participação</li>
+</ul>
+<p class="ix-nota">Ao se cadastrar, sua resposta fica ligada ao seu cadastro e só a equipe da Oravel a vê. Os resultados são sempre publicados de forma consolidada. Se preferir, siga sem cadastro: sua resposta conta do mesmo jeito.</p>
+<form data-form-cadastro novalidate>
 <div class="ix-campos">
-<label>Nome<input name="nome" autocomplete="name" maxlength="120"></label>
-<label>Empresa<input name="empresa" autocomplete="organization" maxlength="160"></label>
+<label>Nome *<input name="nome" autocomplete="name" maxlength="200"></label>
 <label>Cargo<input name="cargo" autocomplete="organization-title" maxlength="120"></label>
-<label>Cidade<input name="cidade" autocomplete="address-level2" maxlength="120"></label>
-<label>Estado
-<select name="uf" autocomplete="address-level1"><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></label>
-<label>E-mail<input name="email" type="email" autocomplete="email" maxlength="190" inputmode="email"></label>
-<label>WhatsApp<input name="whatsapp" type="tel" autocomplete="tel" maxlength="30" inputmode="tel"></label>
+<label>Empresa *<input name="empresa" autocomplete="organization" maxlength="200"></label>
+<label>CNPJ *<input name="cnpj" inputmode="numeric" autocomplete="off" maxlength="18" placeholder="00.000.000/0000-00"></label>
+<label>Cidade *<input name="cidade" autocomplete="address-level2" maxlength="120"></label>
+<label>Estado *<select name="uf" autocomplete="address-level1"><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></label>
+<label>E-mail *<input name="email" type="email" autocomplete="email" maxlength="200" inputmode="email"></label>
+<label>WhatsApp<input name="telefone" type="tel" autocomplete="tel" maxlength="40" inputmode="tel"></label>
+<label>Senha *<input name="password" type="password" autocomplete="new-password" minlength="10" maxlength="100"><small>No mínimo 10 caracteres, com letras e números.</small></label>
+<label>Repita a senha *<input name="password_confirmation" type="password" autocomplete="new-password" maxlength="100"></label>
 </div>
 <input class="ix-isca" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-<label class="ix-aceite"><input type="checkbox" name="consentimento"> <span>Concordo em receber o relatório e que a Oravel use estes dados para esse fim. <a href="/privacidade/">Política de privacidade</a>.</span></label>
-<p class="ix-erro" data-erro-contato role="alert" hidden></p>
+<label class="ix-aceite"><input type="checkbox" name="aceite_lgpd" value="1"> <span>Autorizo o tratamento dos meus dados conforme a LGPD, para participação e estatísticas agregadas e anônimas. <a href="https://participe.oravel.org/privacidade" target="_blank" rel="noopener">Política de privacidade</a>.</span></label>
+<label class="ix-aceite"><input type="checkbox" name="aceite_politica" value="1"> <span>Li e aceito a Política de Participação.</span></label>
+<p class="ix-erro" data-erro-cadastro role="alert" hidden></p>
 <div class="ix-acoes">
-<button type="submit" class="ix-btn ix-btn--principal">Quero receber</button>
-<button type="button" class="ix-link" data-acao="pular-contato">Agora não</button>
+<button type="submit" class="ix-btn ix-btn--principal">Fazer parte do Observatório</button>
+<button type="button" class="ix-link" data-acao="pular-cadastro">Agora não, seguir sem cadastro</button>
 </div>
 </form>
 </div>
-<p class="ix-sucesso" data-sucesso-contato role="status" hidden>Pronto! Você receberá o relatório quando ele for publicado.</p>
+<p class="ix-sucesso" data-sucesso-cadastro role="status" hidden><strong>Cadastro recebido.</strong> Confirme o e-mail que enviamos; a equipe do Observatório libera o seu acesso em seguida. <a href="https://participe.oravel.org/entrar" rel="noopener">Entrar na área do participante</a>.</p>
 </section>
 
 <!-- Sem edicao ativa -->
