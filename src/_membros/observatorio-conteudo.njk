@@ -130,9 +130,6 @@ title: "Observatório Oravel"
 {%- endfor %}
 </ul>
 
-<div class="op-filtro-vazio">
-{{ embreve("Filtro por tipo de equipamento e por estado", "As fontes publicam vendas só no total e na linha amarela, e o faturamento só por região. Quando houver séries por tipo de equipamento e por estado, os filtros passam a valer para todos os cards.") }}
-</div>
 </section>
 
 <aside class="op-estudos" id="estudos" aria-labelledby="op-h-est">
@@ -197,16 +194,6 @@ title: "Observatório Oravel"
 <li><span>{{ t.tema }}</span><span class="num">{{ rotuloRadar[t.status] }}{% if t.variacao_pp !== null %} · {% if t.variacao_pp > 0 %}+{% endif %}{{ t.variacao_pp }} p.p.{% endif %}</span></li>
 {%- endfor %}
 </ul>
-{%- elif P.simulacao.ativa %}
-<div class="op-sim" data-simulado>
-<span class="op-tag op-tag--sim">Simulação</span>
-<p class="op-nota">Valores ilustrativos. O radar real exige 10 empresas por período.</p>
-<ul role="list">
-{%- for t in P.simulacao.proprios.radar %}
-<li><span>{{ t.tema }}</span><span class="num">{{ t.status }}{% if t.variacao %} · {{ t.variacao }}{% endif %}</span></li>
-{%- endfor %}
-</ul>
-</div>
 {%- else %}
 {{ embreve("Radar das entrevistas", "Compara os temas citados pelas empresas entrevistadas entre dois períodos. Aparece quando cada período tiver ao menos 10 empresas.") }}
 {%- endif %}
