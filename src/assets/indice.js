@@ -11,6 +11,20 @@
   Array.prototype.forEach.call(raiz.querySelectorAll('[data-tela]'), function (el) { telas[el.getAttribute('data-tela')] = el; });
 
   var estado = { edicao: null, perguntas: [], i: 0, respostas: {}, token: '', ultimo: null };
+  var widgetId = null;
+
+  /* Turnstile: o token vale para UM envio. Espera ele chegar e pede outro depois de cada chamada. */
+  function tokenPronto(ms) {
+    return new Promise(function (ok) {
+      if (!SITEKEY) return ok(true);
+      var t0 = Date.now();
+      (function olhar() { if (estado.token) return ok(true); if (Date.now() - t0 > ms) return ok(false); setTimeout(olhar, 150); })();
+    });
+  }
+  function renovarToken() {
+    estado.token = '';
+    if (SITEKEY && widgetId !== null && window.turnstile) { try { window.turnstile.reset(widgetId); } catch (e) { /* o widget pede outro sozinho */ } }
+  }
 
   function evento(nome) { try { if (window.plausible) window.plausible(nome); } catch (e) { /* sem analytics, segue */ } }
   function jaParticipou() { try { return !!localStorage.getItem('indice-oravel-' + (estado.edicao && estado.edicao.id)); } catch (e) { return false; } }
@@ -86,16 +100,23 @@
   function enviar() {
     mostrar('enviando', false);
     var lista = estado.perguntas.map(function (q) { return { pergunta_id: q.id, valor: estado.respostas[q.id] }; });
-    chamar('/respostas', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(corpoComToken({ edicao_id: estado.edicao.id, versao: estado.edicao.versao, respostas: lista, website: '' })),
+    tokenPronto(12000).then(function (pronto) {
+      if (!pronto) { return Promise.reject(new Error('sem-token')); }
+      return chamar('/respostas', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(corpoComToken({ edicao_id: estado.edicao.id, versao: estado.edicao.versao, respostas: lista, website: '' })),
+      });
     }).then(function (r) {
+      renovarToken();
       if (r.status === 201) { marcarParticipou(); evento('Indice concluido'); return finalizar(false); }
       if (r.status === 409) { estado.respostas = {}; return erro('A pesquisa foi atualizada enquanto você respondia. Vamos recomeçar do início.', carregar); }
       if (r.status === 410) return mostrar('indisponivel');
       if (r.status === 429) return erro('Muitos envios em pouco tempo. Aguarde um minuto e tente de novo.', enviar);
       erro('Não foi possível enviar agora. Suas respostas estão guardadas nesta página; tente de novo.', enviar);
-    }).catch(function () { erro('Verifique a sua conexão e tente de novo. Suas respostas estão guardadas nesta página.', enviar); });
+    }).catch(function (e) {
+      renovarToken();
+      erro(e && e.message === 'sem-token' ? 'A verificação de segurança ainda não terminou. Aguarde alguns segundos e tente de novo. Suas respostas estão guardadas nesta página.' : 'Verifique a sua conexão e tente de novo. Suas respostas estão guardadas nesta página.', enviar);
+    });
   }
 
   function finalizar(jaTinha) {
@@ -117,13 +138,16 @@
     Object.keys(d).forEach(function (k) { if (d[k] === '') delete d[k]; });
     d.consentimento = true; d.website = form.elements.website.value;
     var botao = form.querySelector('button[type="submit"]'); botao.disabled = true;
-    chamar('/contato', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(corpoComToken(d)) })
-      .then(function (r) {
+    tokenPronto(12000).then(function (pronto) {
+      if (!pronto) { return Promise.reject(new Error('sem-token')); }
+      return chamar('/contato', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(corpoComToken(d)) });
+    }).then(function (r) {
+        renovarToken();
         botao.disabled = false;
         if (r.status === 201) { evento('Indice contato'); $('[data-bloco-contato]').hidden = true; $('[data-sucesso-contato]').hidden = false; return; }
         msg.textContent = (r.corpo && r.corpo.mensagem) || (r.status === 422 ? 'Confira os dados informados (e-mail ou WhatsApp válido).' : r.status === 429 ? 'Muitos envios em pouco tempo. Aguarde um minuto.' : 'Não foi possível enviar agora. Tente de novo.');
         msg.hidden = false;
-      }).catch(function () { botao.disabled = false; msg.textContent = 'Verifique a sua conexão e tente de novo.'; msg.hidden = false; });
+      }).catch(function (e) { renovarToken(); botao.disabled = false; msg.textContent = e && e.message === 'sem-token' ? 'A verificação de segurança ainda não terminou. Aguarde alguns segundos e tente de novo.' : 'Verifique a sua conexão e tente de novo.'; msg.hidden = false; });
   });
 
   /* ---------- acoes ---------- */
@@ -141,7 +165,7 @@
     window.__ixTurnstile = function () {
       var el = document.createElement('div'); el.style.cssText = 'position:fixed;bottom:8px;right:8px;z-index:50';
       document.body.appendChild(el);
-      window.turnstile.render(el, { sitekey: SITEKEY, callback: function (t) { estado.token = t; }, 'expired-callback': function () { estado.token = ''; } });
+      widgetId = window.turnstile.render(el, { sitekey: SITEKEY, callback: function (t) { estado.token = t; }, 'expired-callback': function () { estado.token = ''; } });
     };
     var s = document.createElement('script'); s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__ixTurnstile'; s.async = true; document.head.appendChild(s);
   }
