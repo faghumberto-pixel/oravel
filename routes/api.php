@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Crm\ContatoController;
 use App\Http\Controllers\Api\Crm\EuController;
 use App\Http\Controllers\Api\Crm\InteracaoController;
 use App\Http\Controllers\Api\Crm\LeadController;
+use App\Http\Controllers\Api\Internal\ObservatorioVisitasIndiceController;
 use App\Http\Controllers\Api\SignatureController;
 use App\Http\Controllers\Api\V1\HourMeterPreloadController;
 use App\Http\Controllers\Api\V1\HourMeterSyncController;
@@ -28,6 +29,9 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
+
+// Resumo agregado das visitas ao Indice Oravel, lido pelo painel do Observatorio (chave em OBSERVATORIO_STATS_TOKEN).
+Route::get('/internal/observatorio/visitas-indice', ObservatorioVisitasIndiceController::class)->middleware('throttle:30,1');
 
 Route::get('/health', function () {
     return response()->json(['status' => 'ok']);

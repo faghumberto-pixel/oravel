@@ -125,6 +125,9 @@ return [
     | próprio site institucional. Qualquer outra origem é ignorada em silêncio.
     */
 
+    // Chave que o painel do Observatorio usa para ler o resumo de visitas a pagina do Indice (aplicacao separada). Sem chave, a rota nao existe.
+    'observatorio_stats' => ['token' => env('OBSERVATORIO_STATS_TOKEN')],
+
     'site_tracking' => [
         // Hosts do oravel.org (conteudo). Fixos aqui, e nao no .env, para o rastreamento do .org nao depender de a PROD
         // ter SITE_TRACKING_HOSTS atualizado (essa variavel continua valendo so para o institucional).
