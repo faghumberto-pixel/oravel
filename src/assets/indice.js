@@ -54,6 +54,7 @@
       estado.edicao = r.corpo.edicao; estado.perguntas = r.corpo.perguntas; estado.i = 0; estado.respostas = {};
       Array.prototype.forEach.call(raiz.querySelectorAll('[data-total]'), function (el) { el.textContent = String(estado.perguntas.length); });
       if (jaParticipou()) { return finalizar(true); }
+      iniciarTurnstile();
       mostrar('intro');
     }).catch(function () { erro('Verifique a sua conexão e tente de novo.'); });
   }
@@ -174,8 +175,11 @@
     else if (acao === 'pular-cadastro') { $('[data-bloco-contato]').hidden = true; $('[data-explorar]').scrollIntoView({ behavior: 'smooth' }); }
   });
 
-  /* ---------- Turnstile (so' quando a chave estiver configurada) ---------- */
-  if (SITEKEY) {
+  /* ---------- Turnstile (so' com a chave configurada e so' quando ha edicao aberta) ---------- */
+  var turnstileIniciado = false;
+  function iniciarTurnstile() {
+    if (!SITEKEY || turnstileIniciado) return;
+    turnstileIniciado = true;
     window.__ixTurnstile = function () {
       var el = document.createElement('div'); el.style.cssText = 'position:fixed;bottom:8px;right:8px;z-index:50';
       document.body.appendChild(el);
