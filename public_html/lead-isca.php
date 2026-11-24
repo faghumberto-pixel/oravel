@@ -44,22 +44,38 @@ function voltar(string $pagina, string $query): never
     exit;
 }
 
-function turnstile_ok(string $token, string $secret, string $ip): bool
+function turnstile_ok(string $token, string $secret, string $ip, array $hostnames): bool
 {
-    if ($token === '') {
+    // Token vazio ou absurdamente grande (limite documentado: 2048) nem vai para a Cloudflare.
+    if ($token === '' || strlen($token) > 2048) {
         return false;
     }
     $ch = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 5,
         CURLOPT_TIMEOUT => 10,
         CURLOPT_POSTFIELDS => http_build_query(['secret' => $secret, 'response' => $token, 'remoteip' => $ip]),
     ]);
     $resp = curl_exec($ch);
     curl_close($ch);
 
-    return $resp !== false && (bool) (json_decode($resp, true)['success'] ?? false);
+    $r = $resp === false ? null : json_decode($resp, true);
+    if (! is_array($r) || empty($r['success'])) {
+        return false;
+    }
+
+    // O token precisa ter sido resolvido em uma pagina NOSSA (impede reaproveitar token de outro site/widget).
+    return in_array(strtolower((string) ($r['hostname'] ?? '')), $hostnames, true);
+}
+
+// Hostnames em que o widget pode ser resolvido. Sobrescreva em inc/lead-config.php ('turnstile_hostnames') se preciso.
+function turnstile_hostnames(array $config): array
+{
+    $h = $config['turnstile_hostnames'] ?? ['oravel.com.br', 'www.oravel.com.br'];
+
+    return array_map('strtolower', (array) $h);
 }
 
 // POST /api/inbound/leads (canal identificado pelo token). lead_id torna o reenvio idempotente. Devolve o JSON do app
@@ -152,7 +168,7 @@ if (
     voltar($pagina, 'erro=dados');
 }
 
-if (! turnstile_ok((string) ($_POST['cf-turnstile-response'] ?? ''), $config['turnstile_secret'], $_SERVER['REMOTE_ADDR'] ?? '')) {
+if (! turnstile_ok((string) ($_POST['cf-turnstile-response'] ?? ''), $config['turnstile_secret'], $_SERVER['REMOTE_ADDR'] ?? '', turnstile_hostnames($config))) {
     voltar($pagina, 'erro=captcha');
 }
 
