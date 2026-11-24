@@ -1,0 +1,119 @@
+---
+layout: base.njk
+permalink: /indice/
+title: "Índice Oravel: o pulso do mercado brasileiro de locação de equipamentos"
+description: "Responda 5 perguntas rápidas e ajude a construir os indicadores que mostram como o setor de locação de equipamentos está evoluindo. Participação anônima."
+---
+<link rel="stylesheet" href="/assets/indice.css">
+
+<div class="ix" id="indice" data-api="{{ indice.api }}" data-turnstile="{{ indice.turnstile }}">
+<div class="ix-palco">
+<div class="ix-cartao" aria-live="polite">
+
+<noscript><p class="ix-aviso">O Índice Oravel precisa de JavaScript para funcionar. Ative-o no navegador e recarregue a página.</p></noscript>
+
+<!-- Carregando -->
+<section class="ix-tela" data-tela="carregando" hidden>
+<p class="ix-eyebrow">Índice Oravel</p>
+<p class="ix-texto">Carregando…</p>
+</section>
+
+<!-- Tela inicial -->
+<section class="ix-tela" data-tela="intro" hidden>
+<p class="ix-eyebrow">Iniciativa Oravel.org</p>
+<h1 class="ix-titulo" tabindex="-1">Índice Oravel</h1>
+<p class="ix-sub">O pulso do mercado brasileiro de locação de equipamentos.</p>
+<p class="ix-lead">Ajude a construir o retrato real do mercado brasileiro de locação de equipamentos.</p>
+<p class="ix-texto">Responda <strong data-total>5</strong> perguntas rápidas e ajude a construir os indicadores que vão mostrar como o setor está evoluindo.</p>
+<button type="button" class="ix-btn ix-btn--principal" data-acao="iniciar">Iniciar participação</button>
+<p class="ix-nota">Participação anônima. Resultado consolidado e publicado pela Oravel.org.</p>
+<details class="ix-detalhes">
+<summary>Por que isso importa</summary>
+<p>A Oravel está criando um painel permanente de inteligência do setor de locação. Com a participação dos gestores, vamos acompanhar tendências, desafios e expectativas de quem vive diariamente a operação das locadoras.</p>
+</details>
+</section>
+
+<!-- Pergunta (uma por tela) -->
+<section class="ix-tela" data-tela="pergunta" hidden>
+<div class="ix-topo">
+<p class="ix-passo" data-passo></p>
+<p class="ix-tempo">Tempo médio: 90 segundos</p>
+</div>
+<div class="ix-barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso da participação"><span data-barra></span></div>
+<h2 class="ix-pergunta" tabindex="-1" data-pergunta></h2>
+<div class="ix-opcoes" role="group" data-opcoes></div>
+<button type="button" class="ix-link" data-acao="voltar">Voltar</button>
+</section>
+
+<!-- Enviando -->
+<section class="ix-tela" data-tela="enviando" hidden>
+<p class="ix-eyebrow">Índice Oravel</p>
+<p class="ix-texto">Enviando a sua participação…</p>
+</section>
+
+<!-- Obrigado + captura opcional -->
+<section class="ix-tela" data-tela="obrigado" hidden>
+<p class="ix-eyebrow" data-ja hidden>Você já participou desta edição</p>
+<h2 class="ix-titulo" tabindex="-1">Obrigado por participar.</h2>
+<p class="ix-texto">Você acaba de contribuir para a construção da primeira visão consolidada do mercado brasileiro de locação de equipamentos.</p>
+
+<div class="ix-contato" data-bloco-contato>
+<h3>Gostaria de receber o relatório do Índice Oravel?</h3>
+<p class="ix-nota">Opcional. Seus dados de contato ficam separados das suas respostas, que continuam anônimas.</p>
+<form data-form-contato novalidate>
+<div class="ix-campos">
+<label>Nome<input name="nome" autocomplete="name" maxlength="120"></label>
+<label>Empresa<input name="empresa" autocomplete="organization" maxlength="160"></label>
+<label>Cargo<input name="cargo" autocomplete="organization-title" maxlength="120"></label>
+<label>Cidade<input name="cidade" autocomplete="address-level2" maxlength="120"></label>
+<label>Estado
+<select name="uf" autocomplete="address-level1"><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></label>
+<label>E-mail<input name="email" type="email" autocomplete="email" maxlength="190" inputmode="email"></label>
+<label>WhatsApp<input name="whatsapp" type="tel" autocomplete="tel" maxlength="30" inputmode="tel"></label>
+</div>
+<input class="ix-isca" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+<label class="ix-aceite"><input type="checkbox" name="consentimento"> <span>Concordo em receber o relatório e que a Oravel use estes dados para esse fim. <a href="/privacidade/">Política de privacidade</a>.</span></label>
+<p class="ix-erro" data-erro-contato role="alert" hidden></p>
+<div class="ix-acoes">
+<button type="submit" class="ix-btn ix-btn--principal">Quero receber</button>
+<button type="button" class="ix-link" data-acao="pular-contato">Agora não</button>
+</div>
+</form>
+</div>
+<p class="ix-sucesso" data-sucesso-contato role="status" hidden>Pronto! Você receberá o relatório quando ele for publicado.</p>
+</section>
+
+<!-- Sem edicao ativa -->
+<section class="ix-tela" data-tela="indisponivel" hidden>
+<p class="ix-eyebrow">Índice Oravel</p>
+<h2 class="ix-titulo" tabindex="-1">A próxima edição abre em breve.</h2>
+<p class="ix-texto">No momento não há uma edição aberta para participação. Enquanto isso, explore os conteúdos da Oravel.org.</p>
+<a class="ix-btn ix-btn--principal" href="/observatorio/">Conhecer o Observatório</a>
+</section>
+
+<!-- Erro -->
+<section class="ix-tela" data-tela="erro" hidden>
+<p class="ix-eyebrow">Índice Oravel</p>
+<h2 class="ix-titulo" tabindex="-1">Não foi possível continuar agora.</h2>
+<p class="ix-texto" data-msg-erro>Verifique a sua conexão e tente de novo. Suas respostas não se perderam.</p>
+<button type="button" class="ix-btn ix-btn--principal" data-acao="tentar-de-novo">Tentar de novo</button>
+</section>
+
+</div>
+</div>
+
+<!-- Continue explorando -->
+<section class="ix-explorar" data-explorar hidden>
+<div class="container">
+<h2>Continue explorando inteligência para sua locadora</h2>
+<div class="ix-cards">
+<a class="ix-card" href="/gazeta/"><h3>Gazeta Oravel</h3><p>Conteúdo mensal sobre gestão e tendências do mercado.</p></a>
+<a class="ix-card" href="/ferramentas/"><h3>Ferramentas</h3><p>Calculadoras e ferramentas práticas para gestores.</p></a>
+<a class="ix-card" href="/publicacoes/"><h3>Artigos</h3><p>Conhecimento aplicado ao dia a dia da locação.</p></a>
+<a class="ix-card" href="https://oravel.com.br/intelligence/" rel="noopener"><h3>Oravel Intelligence</h3><p>Uma nova camada de inteligência para transformar dados da sua empresa em decisões melhores.</p></a>
+</div>
+</div>
+</section>
+</div>
+
+<script src="/assets/indice.js" defer></script>
