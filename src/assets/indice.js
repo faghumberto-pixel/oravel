@@ -96,6 +96,9 @@
   }
 
   /* ---------- envio ---------- */
+  /* Link personalizado da empresa (?c=codigo): marca a resposta com a empresa convidada, sem pedir nada a mais. */
+  var convite = (function () { try { var c = new URLSearchParams(window.location.search).get('c') || ''; return /^[A-Za-z0-9]{6,40}$/.test(c) ? c : ''; } catch (e) { return ''; } })();
+
   function corpoComToken(dados) { if (estado.token) dados['cf-turnstile-response'] = estado.token; return dados; }
 
   function enviar() {
@@ -105,7 +108,7 @@
       if (!pronto) { return Promise.reject(new Error('sem-token')); }
       return chamar('/respostas', {
         method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(corpoComToken({ edicao_id: estado.edicao.id, versao: estado.edicao.versao, respostas: lista, website: '' })),
+        body: JSON.stringify(corpoComToken({ edicao_id: estado.edicao.id, versao: estado.edicao.versao, respostas: lista, website: '', convite: convite })),
       });
     }).then(function (r) {
       renovarToken();
@@ -123,6 +126,7 @@
   function finalizar(jaTinha) {
     $('[data-ja]').hidden = !jaTinha;
     $('[data-bloco-contato]').hidden = !!jaTinha || !estado.vinculo;
+    $('[data-escolha]').hidden = false; $('[data-form-cadastro]').hidden = true; $('[data-recusa]').hidden = true;
     $('[data-sucesso-cadastro]').hidden = true;
     $('[data-explorar]').hidden = false;
     mostrar('obrigado');
@@ -172,7 +176,14 @@
     if (acao === 'iniciar') { evento('Indice inicio'); estado.i = 0; estado.respostas = {}; pergunta(); }
     else if (acao === 'voltar' && estado.i > 0) { estado.i -= 1; pergunta(); }
     else if (acao === 'tentar-de-novo') { (estado.retorno || carregar)(); }
-    else if (acao === 'pular-cadastro') { $('[data-bloco-contato]').hidden = true; $('[data-explorar]').scrollIntoView({ behavior: 'smooth' }); }
+    else if (acao === 'quero-cadastrar') { $('[data-escolha]').hidden = true; form.hidden = false; evento('Indice quer cadastrar'); var primeiro = form.querySelector('input'); if (primeiro) primeiro.focus(); }
+    else if (acao === 'pular-cadastro') {
+      /* A resposta ja esta registrada; so' avisamos o servidor da decisao (sem dados pessoais) e paramos de convidar. */
+      if (estado.vinculo) { chamar('/recusa', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ vinculo: estado.vinculo, website: '' }) }).catch(function () {}); }
+      evento('Indice sem cadastro');
+      $('[data-bloco-contato]').hidden = true; $('[data-recusa]').hidden = false;
+      $('[data-explorar]').scrollIntoView({ behavior: 'smooth' });
+    }
   });
 
   /* ---------- Turnstile (so' com a chave configurada e so' quando ha edicao aberta) ---------- */

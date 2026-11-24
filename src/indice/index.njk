@@ -58,14 +58,20 @@ description: "Responda 5 perguntas rápidas e ajude a construir os indicadores q
 <p class="ix-texto">Você acaba de contribuir para a construção da primeira visão consolidada do mercado brasileiro de locação de equipamentos.</p>
 
 <div class="ix-contato" data-bloco-contato>
-<h3>Quer fazer parte do Observatório Oravel?</h3>
+<h3>Se quiser, vale conhecer o Observatório Oravel</h3>
+<p class="ix-texto">O Observatório é a área exclusiva das locadoras cadastradas. Quem se cadastra recebe:</p>
 <ul class="ix-beneficios">
-<li>Sua resposta passa a contar no painel da sua empresa</li>
-<li>Você recebe o relatório do Índice Oravel</li>
-<li>Acesso ao benchmark e aos certificados de participação</li>
+<li>O relatório do Índice Oravel, assim que houver respostas suficientes para publicá-lo</li>
+<li>Conteúdo exclusivo de mercado: radar de locação, estudos e séries</li>
+<li>Benchmark de gestão, para comparar a sua empresa com o seu segmento</li>
+<li>A Gazeta Oravel, selos e certificado de participação</li>
 </ul>
-<p class="ix-nota">Ao se cadastrar, sua resposta fica ligada ao seu cadastro e só a equipe da Oravel a vê. Os resultados são sempre publicados de forma consolidada. Se preferir, siga sem cadastro: sua resposta conta do mesmo jeito.</p>
-<form data-form-cadastro novalidate>
+<p class="ix-nota">Seu nome e os dados da sua empresa ficam em sigilo: nenhuma locadora vê outra, e só aparecem resultados consolidados. Sua resposta já está registrada e conta do mesmo jeito, com ou sem cadastro.</p>
+<div class="ix-acoes" data-escolha>
+<button type="button" class="ix-btn ix-btn--principal" data-acao="quero-cadastrar">Quero me cadastrar</button>
+<button type="button" class="ix-link" data-acao="pular-cadastro">Não tenho interesse em me cadastrar</button>
+</div>
+<form data-form-cadastro novalidate hidden>
 <div class="ix-campos">
 <label>Nome *<input name="nome" autocomplete="name" maxlength="200"></label>
 <label>Cargo<input name="cargo" autocomplete="organization-title" maxlength="120"></label>
@@ -84,10 +90,11 @@ description: "Responda 5 perguntas rápidas e ajude a construir os indicadores q
 <p class="ix-erro" data-erro-cadastro role="alert" hidden></p>
 <div class="ix-acoes">
 <button type="submit" class="ix-btn ix-btn--principal">Fazer parte do Observatório</button>
-<button type="button" class="ix-link" data-acao="pular-cadastro">Agora não, seguir sem cadastro</button>
+<button type="button" class="ix-link" data-acao="pular-cadastro">Não tenho interesse em me cadastrar</button>
 </div>
 </form>
 </div>
+<p class="ix-sucesso" data-recusa role="status" hidden><strong>Tudo bem.</strong> Sua resposta foi registrada e já conta nos resultados. Obrigado por participar.</p>
 <p class="ix-sucesso" data-sucesso-cadastro role="status" hidden><strong>Cadastro recebido.</strong> Confirme o e-mail que enviamos; a equipe do Observatório libera o seu acesso em seguida. <a href="https://participe.oravel.org/entrar" rel="noopener">Entrar na área do participante</a>.</p>
 </section>
 
