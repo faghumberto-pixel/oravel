@@ -207,10 +207,6 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn () => view('filament.login-background'),
-            )
-            ->renderHook(
-                PanelsRenderHook::HEAD_END,
                 fn () => view('filament.brand-header-background'),
             )
             ->renderHook(
