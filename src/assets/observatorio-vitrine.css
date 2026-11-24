@@ -1,0 +1,40 @@
+/* Vitrine do Observatorio (publica): explica o que e, como funciona, beneficios e sigilo. Escopo .ob. */
+.ob{--ob-verde:var(--verde-escuro,#0B2B2A);--ob-verde2:var(--verde-escuro-claro,#0F3B38);--ob-laranja:var(--laranja,#F28C1B);--ob-creme:var(--creme,#FAF6EE);--ob-linha:var(--cinza-claro,#E4DFD3);--ob-texto:var(--texto-escuro,#12201F);--ob-suave:var(--texto-secundario,#5B6B69)}
+.ob .container{max-width:1100px}.ob .ob-estreito{max-width:760px}
+.ob-hero{background:radial-gradient(900px 400px at 85% -10%,rgba(242,140,27,.18),transparent 60%),var(--ob-verde);color:#F4F1E8;padding:72px 0 64px}
+.ob-eyebrow,.ob-rotulo{font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin:0 0 12px}
+.ob-eyebrow{color:var(--ob-laranja)}.ob-rotulo{color:#B45309}
+.ob-hero h1{font-family:var(--font-titulo,Georgia,serif);font-size:clamp(2rem,4.6vw,3.25rem);line-height:1.1;letter-spacing:-.02em;color:#fff;margin:0 0 18px;max-width:820px}
+.ob-sub{font-size:1.15rem;line-height:1.6;color:rgba(244,241,232,.88);max-width:720px;margin:0 0 28px}
+.ob-acoes{display:flex;gap:14px;flex-wrap:wrap}.ob-centro{justify-content:center}
+.ob-claro{color:#fff;border-color:rgba(255,255,255,.5)}.ob-claro:hover{background:rgba(255,255,255,.1);color:#fff}
+.ob-nota{margin:22px 0 0;font-size:.95rem;color:rgba(244,241,232,.75)}.ob-nota a{color:#fff;text-decoration:underline}
+.ob-sec{padding:72px 0;background:#fff}.ob-alt{background:var(--ob-creme)}
+.ob-sec h2,.ob-final h2{font-family:var(--font-titulo,Georgia,serif);font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.15;letter-spacing:-.01em;margin:0 0 18px;color:var(--ob-texto)}
+.ob-sec p{font-size:1.05rem;line-height:1.7;color:var(--ob-texto)}
+.ob-passos{list-style:none;margin:28px 0 36px;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.ob-passos li{background:#fff;border:1px solid var(--ob-linha);border-radius:14px;padding:22px}
+.ob-num{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--ob-verde);color:#fff;font-weight:700;align-items:center;justify-content:center;margin-bottom:12px}
+.ob-passos h3,.ob-card h3{font-family:var(--font-titulo,Georgia,serif);font-size:1.2rem;margin:0 0 8px;color:var(--ob-texto)}
+.ob-passos p,.ob-card p{font-size:.98rem;line-height:1.6;margin:0;color:var(--ob-suave)}
+.ob-niveis{border:1px solid var(--ob-linha);border-radius:14px;background:#fff;overflow:hidden}
+.ob-niveis>div{display:grid;grid-template-columns:minmax(200px,1fr) 2fr}
+.ob-niveis>div+div{border-top:1px solid var(--ob-linha)}
+.ob-niveis [role=columnheader]{padding:12px 20px;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ob-suave);background:#F6F3EA}
+.ob-niveis [role=cell]{padding:16px 20px;font-size:.98rem;line-height:1.55}
+.ob-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-top:28px}
+.ob-card{background:var(--ob-creme);border:1px solid var(--ob-linha);border-radius:14px;padding:24px}
+.ob-sigilo{background:var(--ob-verde);color:#F4F1E8}
+.ob-sigilo h2{color:#fff}.ob-sigilo .ob-rotulo{color:var(--ob-laranja)}
+.ob-sigilo .ob-lead{color:rgba(244,241,232,.9);max-width:720px}.ob-sigilo p{color:rgba(244,241,232,.9)}
+.ob-lista{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:12px;max-width:820px}
+.ob-lista li{position:relative;padding-left:30px;font-size:1.02rem;line-height:1.6;color:rgba(244,241,232,.92)}
+.ob-lista li::before{content:"✓";position:absolute;left:0;top:0;color:var(--ob-laranja);font-weight:800}
+.ob-lista strong{color:#fff}
+.ob-faq details{border:1px solid var(--ob-linha);border-radius:12px;margin-bottom:10px;background:#fff}
+.ob-faq summary{cursor:pointer;padding:16px 20px;font-weight:600;font-size:1.02rem}
+.ob-faq details p{padding:0 20px 18px;margin:0;color:var(--ob-suave);font-size:1rem}
+.ob-final{background:var(--ob-creme);padding:72px 0;text-align:center;border-top:1px solid var(--ob-linha)}
+.ob-final p{font-size:1.1rem;color:var(--ob-suave);margin:0 0 26px}
+.ob-final .ob-claro{color:var(--ob-texto);border-color:var(--ob-texto)}.ob-final .ob-claro:hover{background:var(--ob-texto);color:#fff}
+@media(max-width:700px){.ob-hero{padding:48px 0 44px}.ob-sec{padding:52px 0}.ob-niveis>div{grid-template-columns:1fr}.ob-niveis [role=columnheader]:last-child{display:none}.ob-acoes .btn{width:100%;text-align:center}}
