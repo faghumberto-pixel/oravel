@@ -1,7 +1,8 @@
+    <div class="oravel-login-root relative min-h-screen w-full overflow-hidden">
+        {{-- IMPORTANTE: o Livewire exige UM ÚNICO elemento raiz. Estes <link> ficavam soltos antes do <div> e viravam a "raiz" do
+             componente: o formulário ficava de fora, o Livewire não o interceptava e o login enviava POST nativo (erro 405). --}}
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=playfair-display:600,700&display=swap" rel="stylesheet" />
-
-    <div class="oravel-login-root relative min-h-screen w-full overflow-hidden">
         {{-- Foto do patio de equipamentos + camada verde da marca (maturidade, sem perder o setor) --}}
         <div
             class="absolute inset-0 bg-cover bg-center"
