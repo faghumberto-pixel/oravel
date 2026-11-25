@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\IntelligenceExemploController;
 use App\Http\Controllers\IntelligencePlanoController;
 use App\Http\Controllers\IntelligenceTrialController;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,9 @@ Route::prefix('intelligence')->name('intelligence.trial.')->middleware('auth')->
     Route::get('/plano', [IntelligencePlanoController::class, 'show'])->name('plano');
     Route::get('/contratar', [IntelligencePlanoController::class, 'contratar'])->name('contratar');
     Route::post('/contratar', [IntelligencePlanoController::class, 'salvar'])->middleware('throttle:10,1')->name('contratar.store');
+    Route::post('/exemplo/limpar', [IntelligenceExemploController::class, 'limpar'])->middleware('throttle:10,1')->name('exemplo.limpar');
+    Route::post('/exemplo/gerar', [IntelligenceExemploController::class, 'gerar'])->middleware('throttle:5,1')->name('exemplo.gerar');
+    Route::post('/trocar-plano', [IntelligencePlanoController::class, 'trocar'])->middleware('throttle:10,1')->name('trocar');
     Route::post('/cancelar', [IntelligencePlanoController::class, 'cancelar'])->middleware('throttle:5,1')->name('cancelar');
     Route::get('/contrato/{id}', [IntelligencePlanoController::class, 'contratoPdf'])->name('contrato');
 });

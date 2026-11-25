@@ -33,7 +33,7 @@ class IntelligenceDemoService
     public const EMAIL = 'intelligence.demo@oravel.test';
 
     /** Evolução de propósito: frota e oficina melhoram, a inadimplência piora (o dashboard precisa mostrar os dois sentidos). */
-    private const MESES = [
+    public const MESES = [
         '2026-08-31' => ['Demais Custos do Mês (R$)' => 230000, 'Valor em Atraso (R$)' => 15000,
             'Propostas Emitidas no Mês' => 30, 'Propostas Ganhas no Mês' => 6, 'Receita do Maior Cliente (%)' => 32,
             'Tempo Médio de Reparo (horas)' => 40, 'Técnicos de Manutenção' => 5, 'Entregas no Prazo (%)' => 72],
@@ -165,7 +165,7 @@ class IntelligenceDemoService
      *
      * @return list<array<string, mixed>> título da coluna => valor
      */
-    private function frota(int $mes, string $data): array
+    public function frota(int $mes, string $data): array
     {
         $dias = (int) Carbon::parse($data)->daysInMonth;
         $n = [120, 120, 122][$mes] ?? 120;
@@ -235,7 +235,7 @@ class IntelligenceDemoService
     }
 
     /** Gera a planilha no mesmo formato do modelo que o cliente baixa (uma linha de dados). */
-    private function planilha(string $data, array $campos, array $frota = []): string
+    public function planilha(string $data, array $campos, array $frota = []): string
     {
         $linha = array_merge(self::PERFIL, $campos, ['Data de Referência' => Carbon::parse($data)->format('d/m/Y')]);
         $titulos = array_column(Catalogo::campos(), 'title');

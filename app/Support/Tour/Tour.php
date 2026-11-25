@@ -2,6 +2,7 @@
 
 namespace App\Support\Tour;
 
+use App\Domain\Intelligence\Services\DadosDeExemplo;
 use App\Domain\Intelligence\Trial\Services\TrialCiclo;
 use App\Models\Tenant;
 use App\Models\User;
@@ -85,10 +86,21 @@ class Tour
         return 0;
     }
 
-    /** Frase extra do passo, só para quem está no teste grátis. */
+    /** Frases extras do passo, só para quem está no teste grátis; o aviso de dados de exemplo vem primeiro e só enquanto eles existem. */
     public function notaTrial(array $passo): ?string
     {
-        return ! empty($passo['nota_trial']) && TrialCiclo::doTenant($this->tenant) ? $passo['nota_trial'] : null;
+        if (! TrialCiclo::doTenant($this->tenant)) {
+            return null;
+        }
+        $notas = [];
+        if (! empty($passo['nota_exemplo']) && $this->tenant && DadosDeExemplo::existe((string) (is_object($this->tenant) ? $this->tenant->id : $this->tenant))) {
+            $notas[] = $passo['nota_exemplo'];
+        }
+        if (! empty($passo['nota_trial'])) {
+            $notas[] = $passo['nota_trial'];
+        }
+
+        return $notas === [] ? null : implode(' ', $notas);
     }
 
     // ---- o que o usuário já viu ----

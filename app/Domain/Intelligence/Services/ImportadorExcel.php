@@ -29,7 +29,7 @@ class ImportadorExcel
     /**
      * @return array{ok: bool, simulacao: bool, erros: list<string>, import: ?IntelligenceImport, snapshot: ?IntelligenceSnapshot, indicadores: array, diagnostico: array}
      */
-    public function importar(string $caminho, Tenant $tenant, ?User $usuario = null, bool $simular = false, ?string $nomeArquivo = null): array
+    public function importar(string $caminho, Tenant $tenant, ?User $usuario = null, bool $simular = false, ?string $nomeArquivo = null, string $origem = 'arquivo'): array
     {
         $r = ['ok' => false, 'simulacao' => $simular, 'erros' => [], 'avisos' => [], 'import' => null, 'snapshot' => null, 'indicadores' => [], 'diagnostico' => [], 'equipamentos' => 0, 'classificacoes' => []];
 
@@ -84,14 +84,15 @@ class ImportadorExcel
 
         // Teste grátis encerrado, cobrança em atraso ou plano cancelado: somente leitura (nada é apagado, só novos envios param).
         $ciclo = new TrialCiclo;
-        if ($bloqueio = $ciclo->motivoDoBloqueio($tenant)) {
+        $demonstracao = $origem === DadosDeExemplo::ORIGEM;
+        if (! $demonstracao && ($bloqueio = $ciclo->motivoDoBloqueio($tenant))) {
             $r['erros'][] = $bloqueio;
 
             return $r;
         }
 
         $import = IntelligenceImport::withoutGlobalScopes()->create([
-            'tenant_id' => $tenant->id, 'user_id' => $usuario?->id, 'origem' => 'arquivo', 'arquivo' => $nomeArquivo, 'status' => 'processando',
+            'tenant_id' => $tenant->id, 'user_id' => $usuario?->id, 'origem' => $origem, 'arquivo' => $nomeArquivo, 'status' => 'processando',
         ]);
         $r['import'] = $import;
 
@@ -118,7 +119,9 @@ class ImportadorExcel
                 $r['snapshot'] = $snapshot;
             });
             $r['ok'] = true;
-            $ciclo->aoEnviarPlanilha($tenant); // o 1º envio com sucesso começa a contar os dias do teste
+            if (! $demonstracao) {
+                $ciclo->aoEnviarPlanilha($tenant); // o 1º envio REAL com sucesso começa a contar os dias do teste (exemplo nunca conta)
+            }
         } catch (Throwable $e) {
             report($e);
             $import->update(['status' => 'falhou', 'erro' => mb_substr($e->getMessage(), 0, 500)]);

@@ -255,7 +255,7 @@ class IntelligenceTrialTest extends TestCase
         $this->travel(3)->days();
         $this->assertTrue($imp->importar($this->planilha(120), $tenant, $trial->user, false, 'b.xlsx')['ok']); // reenvio a qualquer momento
         $this->assertTrue($trial->fresh()->trial_started_at->equalTo($inicio));
-        $this->assertSame(2, IntelligenceImport::withoutGlobalScopes()->where('tenant_id', $tenant->id)->count());
+        $this->assertSame(2, IntelligenceImport::withoutGlobalScopes()->where('tenant_id', $tenant->id)->where('origem', 'arquivo')->count()); // sem os 3 de exemplo da 1ª abertura
     }
 
     public function test_inicio_pode_ser_desde_o_cadastro_por_config(): void
@@ -278,7 +278,7 @@ class IntelligenceTrialTest extends TestCase
         $r = $imp->importar($this->planilha(130), $trial->tenant, $trial->user, false, 'c.xlsx');
         $this->assertFalse($r['ok']);
         $this->assertStringContainsString('teste grátis terminou', $r['erros'][0]);
-        $this->assertSame(1, IntelligenceImport::withoutGlobalScopes()->where('tenant_id', $trial->tenant_id)->count(), 'histórico preservado, nada novo gravado');
+        $this->assertSame(1, IntelligenceImport::withoutGlobalScopes()->where('tenant_id', $trial->tenant_id)->where('origem', 'arquivo')->count(), 'histórico preservado, nada novo gravado');
     }
 
     public function test_status_trial_expiring_nos_ultimos_dias(): void

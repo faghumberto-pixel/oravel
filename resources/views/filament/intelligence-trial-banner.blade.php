@@ -36,4 +36,27 @@
             <p class="mt-2 text-xs">Guarde este link para voltar sem senha: <a class="break-all underline" href="{{ $link }}">{{ $link }}</a></p>
         @endif
     </div>
+    @php
+        $tenantId = (string) auth()->user()->tenant_id;
+        $temExemplo = \App\Domain\Intelligence\Services\DadosDeExemplo::existe($tenantId);
+        $podeGerar = ! $temExemplo && \App\Domain\Intelligence\Services\DadosDeExemplo::podeGerar($trial);
+        $diasExemplo = \App\Domain\Intelligence\Services\DadosDeExemplo::diasRestantes($trial);
+    @endphp
+    @if ($temExemplo)
+        <div class="mb-4 rounded-xl px-4 py-3 text-sm" style="background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.5)" data-intelligence-exemplo>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <p><strong>Você está vendo dados de DEMONSTRAÇÃO.</strong> Eles são fictícios e servem só para mostrar como as telas ficam com dados. Limpe-os assim que for começar com os seus{{ $diasExemplo !== null ? ' (somem sozinhos em '.$diasExemplo.' dia(s))' : '' }}.</p>
+                <form method="POST" action="{{ route('intelligence.trial.exemplo.limpar') }}" onsubmit="return confirm('Apagar os dados de exemplo? Os seus próprios dados não são afetados.')">
+                    @csrf
+                    <button class="rounded-lg px-3 py-1.5 font-semibold" style="background:#d97706;color:#fff">Limpar dados de exemplo</button>
+                </form>
+            </div>
+        </div>
+    @elseif ($podeGerar)
+        <div class="mb-4 text-right text-xs" data-intelligence-exemplo-voltar>
+            <form method="POST" action="{{ route('intelligence.trial.exemplo.gerar') }}" class="inline">@csrf
+                <button class="underline opacity-80">Ver dados de exemplo</button>
+            </form>
+        </div>
+    @endif
 @endif

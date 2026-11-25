@@ -4,12 +4,14 @@ namespace App\Filament\Resources\IntelligenceImportResource\Pages;
 
 use App\Domain\Intelligence\Models\IntelligenceImport;
 use App\Domain\Intelligence\Services\AnaliseDeEquipamentos;
+use App\Domain\Intelligence\Services\DadosDeExemplo;
 use App\Domain\Intelligence\Services\ImportadorExcel;
 use App\Domain\Intelligence\Support\ModeloExcel;
 use App\Filament\Resources\IntelligenceImportResource;
 use App\Support\Tenancy;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Storage;
@@ -50,7 +52,11 @@ class ListIntelligenceImports extends ListRecords
                 Forms\Components\FileUpload::make('arquivo')->label('Planilha (.xlsx)')->disk('local')->directory('intelligence-imports')
                     ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])->maxSize(10240)->required(),
                 Forms\Components\Toggle::make('simular')->label('Apenas validar (não grava nada)')
-                    ->helperText('Mostra se a planilha está correta e quantos indicadores seriam calculados.')->default(true),
+                    ->helperText('Mostra se a planilha está correta e quantos indicadores seriam calculados.')->default(true)->live(),
+                // Só pergunta quando vai gravar de verdade e há dados de exemplo na conta.
+                Forms\Components\Toggle::make('limpar_exemplo')->label('Apagar os dados de exemplo antes de importar')
+                    ->helperText('Você tem dados de demonstração na conta. Se mantiver, os números fictícios se misturam com os seus na evolução.')->default(true)
+                    ->visible(fn (Get $get) => ! $get('simular') && ($t = Tenancy::current()) && DadosDeExemplo::existe((string) $t->id)),
             ])
             ->action(function (array $data) {
                 $tenant = Tenancy::current();
@@ -62,7 +68,19 @@ class ListIntelligenceImports extends ListRecords
 
                         return;
                     }
+                    // Dados de exemplo saem ANTES da importação (senão entrariam como "fotografia anterior" nas análises do cliente).
+                    $apagouExemplo = ! $data['simular'] && ($data['limpar_exemplo'] ?? false) && DadosDeExemplo::existe((string) $tenant->id);
+                    if ($apagouExemplo) {
+                        app(DadosDeExemplo::class)->limpar($tenant);
+                    }
                     $r = app(ImportadorExcel::class)->importar($path, $tenant, auth()->user(), (bool) $data['simular'], basename($data['arquivo']));
+                    if ($apagouExemplo && ! $r['ok']) {
+                        // A importação não aconteceu: devolve o exemplo para o cliente não ficar com a tela vazia por causa de uma planilha com erro.
+                        try {
+                            app(DadosDeExemplo::class)->gerar($tenant);
+                        } catch (\Throwable) {
+                        }
+                    }
                 } finally {
                     Storage::disk('local')->delete($data['arquivo']);
                 }

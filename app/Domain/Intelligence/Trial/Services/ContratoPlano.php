@@ -6,6 +6,7 @@ use App\Domain\Intelligence\Trial\Mail\ContratoAceitoMail;
 use App\Domain\Intelligence\Trial\Models\IntelligenceContrato;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Domain\Intelligence\Trial\Support\AposResposta;
+use App\Domain\Intelligence\Trial\Support\Planos;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -30,8 +31,9 @@ class ContratoPlano
     }
 
     /** @return array{texto: string, hash: string, versao: string} */
-    public function renderizar(array $d, Carbon $inicioCobranca): array
+    public function renderizar(array $d, Carbon $inicioCobranca, ?array $plano = null): array
     {
+        $plano ??= Planos::achar('basico');
         $versao = (string) config('intelligence_trial.contrato_versao');
         $arquivo = resource_path("contratos/intelligence/{$versao}.txt");
         if (! is_file($arquivo)) {
@@ -46,8 +48,8 @@ class ContratoPlano
             '{responsavel}' => $d['responsavel'],
             '{contratada_nome}' => $empresa['legal_name'],
             '{contratada_cnpj}' => $empresa['cnpj'],
-            '{plano_nome}' => config('intelligence_trial.plano.nome'),
-            '{preco}' => number_format((float) config('intelligence_trial.plano.preco'), 2, ',', '.'),
+            '{plano_nome}' => $plano['nome'],
+            '{preco}' => number_format($plano['preco'], 2, ',', '.'),
             '{dias_teste}' => (string) config('intelligence_trial.dias'),
             '{inicio_cobranca}' => $inicioCobranca->format('d/m/Y'),
             '{carencia_dias}' => (string) config('intelligence_trial.carencia_dias'),
@@ -58,7 +60,7 @@ class ContratoPlano
         return ['texto' => $texto, 'hash' => hash('sha256', $texto), 'versao' => $versao];
     }
 
-    public function registrarAceite(IntelligenceTrial $trial, array $d, array $contrato, Carbon $inicio, ?string $ip, ?string $ua): IntelligenceContrato
+    public function registrarAceite(IntelligenceTrial $trial, array $d, array $contrato, Carbon $inicio, ?string $ip, ?string $ua, ?float $preco = null): IntelligenceContrato
     {
         $registro = IntelligenceContrato::withoutGlobalScopes()->create([
             'trial_id' => $trial->id,
@@ -71,7 +73,7 @@ class ContratoPlano
             'email' => $d['email'],
             'responsavel' => $d['responsavel'],
             'forma_pagamento' => $d['forma_pagamento'],
-            'preco' => config('intelligence_trial.plano.preco'),
+            'preco' => $preco ?? Planos::achar('basico')['preco'],
             'billing_starts_on' => $inicio->toDateString(),
             'aceite_em' => now(),
             'ip' => $ip,

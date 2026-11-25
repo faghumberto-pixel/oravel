@@ -1,9 +1,9 @@
 @extends('intelligence-trial.layout')
-@section('titulo', 'Contratar plano básico')
+@section('titulo', 'Contratar '.$plano['nome'])
 @section('conteudo')
-    <h1 class="text-2xl font-bold">Contratar plano básico</h1>
+    <h1 class="text-2xl font-bold">Contratar {{ $plano['nome'] }}</h1>
     <p class="mt-2 text-sm text-white/70">
-        R$ {{ number_format(config('intelligence_trial.plano.preco'), 2, ',', '.') }} por mês.
+        R$ {{ number_format($plano['preco'], 2, ',', '.') }} por mês, com {{ $plano['ia_por_dia'] }} perguntas por dia ao assistente.
         Primeira cobrança em <strong>{{ $inicio->format('d/m/Y') }}</strong>. Nada é cobrado antes disso.
     </p>
 
@@ -13,6 +13,7 @@
 
     <form method="POST" action="{{ route('intelligence.trial.contratar.store') }}" class="mt-6 space-y-3">
         @csrf
+        <input type="hidden" name="plano" value="{{ $plano['chave'] }}">
         @foreach ([['razao_social', 'Razão social'], ['cnpj', 'CNPJ'], ['email', 'E-mail'], ['responsavel', 'Responsável']] as [$campo, $rotulo])
             <label class="block text-sm">{{ $rotulo }}
                 <input name="{{ $campo }}" value="{{ old($campo) }}" required class="mt-1 w-full rounded-lg border-0 bg-white/10 px-3 py-2 text-white">
