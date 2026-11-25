@@ -72,6 +72,7 @@ class AssinaturaPlano
             ])->save();
             $trial->user?->forceFill(['email' => $d['email']])->save();
 
+            app(TrialCiclo::class)->iniciarContagem($trial); // contratou sem ter enviado planilha: o teste começa a contar agora
             $trial->sincronizarStatus();
             TenantTimeline::record($trial->tenant_id, TenantEvent::ASSINATURA_CRIADA, 'Plano básico contratado', 'Primeira cobrança em '.$inicio->format('d/m/Y').'.', dedupeKey: 'intelligence-contratou:'.($assinatura['id'] ?? $trial->id));
             Log::info('Intelligence trial: plano contratado.', ['trial_id' => $trial->id, 'primeira_cobranca' => $inicio->toDateString()]);

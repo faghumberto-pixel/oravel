@@ -5,10 +5,11 @@
 @endphp
 @if ($trial)
     @php
-        $cor = match ($status->cor()) { 'danger' => 'bg-red-50 text-red-900 ring-red-200', 'warning' => 'bg-amber-50 text-amber-900 ring-amber-200', 'success' => 'bg-emerald-50 text-emerald-900 ring-emerald-200', default => 'bg-indigo-50 text-indigo-900 ring-indigo-200' };
+        // Fundo translúcido + texto herdado do tema: legível no modo claro e no escuro (classes novas do Tailwind não existem no CSS compilado).
+        $rgb = match ($status->cor()) { 'danger' => '239,68,68', 'warning' => '245,158,11', 'success' => '16,185,129', default => '99,102,241' };
         $contratado = $trial->contratou() && ! $trial->canceled_at;
     @endphp
-    <div class="mb-4 rounded-xl px-4 py-3 text-sm ring-1 {{ $cor }}" data-intelligence-trial-banner>
+    <div class="mb-4 rounded-xl px-4 py-3 text-sm" style="background:rgba({{ $rgb }},.14);border:1px solid rgba({{ $rgb }},.5)" data-intelligence-trial-banner>
         <div class="flex flex-wrap items-center justify-between gap-3">
             <p>
                 @if ($trial->somenteLeitura())
@@ -27,7 +28,7 @@
                     <strong>Teste grátis de {{ config('intelligence_trial.dias') }} dias.</strong> Os dias começam a contar quando você enviar a primeira planilha.
                 @endif
             </p>
-            <a href="{{ $contratado ? route('intelligence.trial.plano') : route('intelligence.trial.contratar') }}" class="rounded-lg bg-indigo-600 px-3 py-1.5 font-semibold text-white">
+            <a href="{{ $contratado ? route('intelligence.trial.plano') : route('intelligence.trial.contratar') }}" class="rounded-lg px-3 py-1.5 font-semibold" style="background:#4f46e5;color:#fff">
                 {{ $contratado ? 'Meu plano' : 'Contratar plano básico' }}
             </a>
         </div>

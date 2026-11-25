@@ -116,6 +116,7 @@ class IntelligenceTrialTest extends TestCase
         $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
         $r->assertRedirect(IntelligenceImportResource::getUrl('index'));
         $this->assertAuthenticatedAs($trial->user);
+        $this->assertTrue((bool) $trial->user->two_factor_exempt, 'sem senha/app autenticador: 2FA não pode barrar o cliente do teste');
         $this->assertSame('Locadora Teste', $trial->tenant->name);
         $this->assertNull($trial->trial_started_at, 'a contagem só começa no 1º envio');
         $this->assertSame($leads + 1, SalesLead::count());
@@ -286,6 +287,17 @@ class IntelligenceTrialTest extends TestCase
         Mail::assertSent(ContratoAceitoMail::class, fn ($m) => $m->hasTo('fin@locadora.test'));
         $this->assertNotSame(StatusConta::Active, $trial->statusAtual(), 'só vira ativo na 1ª cobrança confirmada');
         $this->assertFalse($trial->somenteLeitura());
+    }
+
+    public function test_contratar_antes_do_primeiro_envio_cobra_so_apos_os_30_dias(): void
+    {
+        $this->fakeAsaas();
+        $trial = $this->trial(); // trial_ends_at ainda nulo
+
+        app(AssinaturaPlano::class)->contratar($trial, $this->dadosContrato(), null, null);
+
+        Http::assertSent(fn ($req) => str_ends_with($req->url(), '/subscriptions') && $req['nextDueDate'] === today()->addDays(30)->toDateString());
+        $this->assertNotNull($trial->fresh()->trial_started_at, 'contratar começa o relógio do teste');
     }
 
     public function test_contratar_depois_do_fim_do_teste_cobra_hoje(): void

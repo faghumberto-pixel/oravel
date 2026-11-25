@@ -4,6 +4,7 @@ namespace App\Domain\Intelligence\Trial\Services;
 
 use App\Domain\Intelligence\Trial\Mail\NovoCadastroTrialMail;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
+use App\Domain\Intelligence\Trial\Support\AposResposta;
 use App\Models\Plan;
 use App\Models\SalesLead;
 use App\Models\SalesLeadInteraction;
@@ -80,7 +81,9 @@ class TrialCadastro
             'email' => 'teste-'.Str::lower(Str::random(10)).'@intelligence.oravel.invalid',
             'password' => Str::random(40),
         ]);
-        $user->forceFill(['is_approved' => true])->save();
+        // two_factor_exempt: o acesso é pelo link pessoal; não existe senha nem app autenticador para exigir 2FA (senão o cliente
+        // cai em "Minha conta" e nunca chega ao upload).
+        $user->forceFill(['is_approved' => true, 'two_factor_exempt' => true])->save();
 
         $trial = IntelligenceTrial::create([
             'tenant_id' => $tenant->id,
@@ -174,10 +177,12 @@ class TrialCadastro
         if (! $para) {
             return;
         }
-        try {
-            Mail::to($para)->send(new NovoCadastroTrialMail($trial));
-        } catch (Throwable $e) {
-            Log::warning('Intelligence trial: aviso ao dono não enviado.', ['trial_id' => $trial->id, 'erro' => $e->getMessage()]);
-        }
+        AposResposta::executar(function () use ($trial, $para) {
+            try {
+                Mail::to($para)->send(new NovoCadastroTrialMail($trial));
+            } catch (Throwable $e) {
+                Log::warning('Intelligence trial: aviso ao dono não enviado.', ['trial_id' => $trial->id, 'erro' => $e->getMessage()]);
+            }
+        });
     }
 }

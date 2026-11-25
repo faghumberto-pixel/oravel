@@ -5,6 +5,7 @@ namespace App\Domain\Intelligence\Trial\Services;
 use App\Domain\Intelligence\Trial\Mail\ContratoAceitoMail;
 use App\Domain\Intelligence\Trial\Models\IntelligenceContrato;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
+use App\Domain\Intelligence\Trial\Support\AposResposta;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,12 @@ class ContratoPlano
     {
         $fim = $trial->trial_ends_at;
 
-        return $fim && $fim->isFuture() ? $fim->copy()->startOfDay() : today();
+        // Ainda não enviou planilha (teste sem data): contratar começa o relógio agora, então a 1ª cobrança é daqui a N dias.
+        if ($fim === null) {
+            return today()->addDays((int) config('intelligence_trial.dias'));
+        }
+
+        return $fim->isFuture() ? $fim->copy()->startOfDay() : today();
     }
 
     /** @return array{texto: string, hash: string, versao: string} */
@@ -74,11 +80,19 @@ class ContratoPlano
 
         try {
             $registro->update(['pdf_path' => $this->gerarPdf($registro)]);
-            Mail::to($registro->email)->send(new ContratoAceitoMail($registro, Storage::disk('local')->path($registro->pdf_path)));
         } catch (Throwable $e) {
-            // O aceite já vale (texto + hash gravados); PDF/e-mail podem ser refeitos.
-            Log::warning('Intelligence trial: PDF/e-mail do contrato falhou.', ['contrato_id' => $registro->id, 'erro' => $e->getMessage()]);
+            // O aceite já vale (texto + hash gravados); o PDF pode ser refeito (a tela do plano gera sob demanda).
+            Log::warning('Intelligence trial: PDF do contrato falhou.', ['contrato_id' => $registro->id, 'erro' => $e->getMessage()]);
         }
+        AposResposta::executar(function () use ($registro) {
+            try {
+                if ($registro->pdf_path) {
+                    Mail::to($registro->email)->send(new ContratoAceitoMail($registro, Storage::disk('local')->path($registro->pdf_path)));
+                }
+            } catch (Throwable $e) {
+                Log::warning('Intelligence trial: e-mail do contrato falhou.', ['contrato_id' => $registro->id, 'erro' => $e->getMessage()]);
+            }
+        });
         Log::info('Intelligence trial: contrato aceito.', ['trial_id' => $trial->id, 'versao' => $registro->versao, 'hash' => $registro->hash]);
 
         return $registro;
