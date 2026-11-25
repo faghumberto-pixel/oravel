@@ -19,6 +19,8 @@ class SiteIntelligenceGerar extends Command
     protected $signature = 'site:intelligence
         {--out= : pasta de saída (padrão: public_html/intelligence)}
         {--app-url= : troca o endereço do app só nesta geração (para testar o formulário em DEV)}
+        {--turnstile-key= : chave PÚBLICA do Turnstile para o widget do formulário (padrão: TURNSTILE_SITE_KEY do .env)}
+        {--exigir-turnstile : falha se não houver chave pública (use ao gerar a página para publicar: sem o widget o app recusa todo cadastro)}
         {--check : não escreve; falha se o index.html versionado estiver diferente do que seria gerado}
         {--forcar : regenera também o modelo .xlsx e a imagem OG, mesmo que já existam}';
 
@@ -32,6 +34,17 @@ class SiteIntelligenceGerar extends Command
     {
         if ($url = $this->option('app-url')) {
             config(['intelligence_site.app_url' => rtrim($url, '/')]);
+        }
+        if ($chave = $this->option('turnstile-key')) {
+            config(['services.turnstile.site_key' => $chave]);
+        }
+        if (blank(config('services.turnstile.site_key'))) {
+            if ($this->option('exigir-turnstile')) {
+                $this->error('Sem chave pública do Turnstile (TURNSTILE_SITE_KEY ou --turnstile-key). Nada foi gerado.');
+
+                return self::FAILURE;
+            }
+            $this->warn('ATENÇÃO: gerando SEM o widget do Turnstile. Não publique esta página se o app exigir o Turnstile (use --exigir-turnstile para publicar).');
         }
         $pasta = rtrim($this->option('out') ?: base_path('public_html/intelligence'), '/');
         $html = self::renderizar();
@@ -82,6 +95,7 @@ class SiteIntelligenceGerar extends Command
             'site' => rtrim((string) config('intelligence_site.site_url'), '/'),
             'preco' => 'R$ '.number_format((float) config('intelligence_trial.plano.preco'), 2, ',', '.'),
             'dias' => (int) config('intelligence_trial.dias'),
+            'turnstileKey' => (string) config('services.turnstile.site_key'),
             'empresa' => (array) config('oravel.company'),
             'fonteDepoimentos' => rtrim((string) config('intelligence_site.app_url'), '/').'/api/intelligence/depoimentos',
             'css' => file_get_contents(resource_path('site/intelligence.css')),

@@ -122,7 +122,7 @@ dialog.form::backdrop{background:rgba(2,6,23,.7)}
 dialog.form form{padding:24px;display:grid;gap:14px}
 dialog.form h2{font-size:24px}dialog.form .micro{color:var(--ink-soft);font-size:14px}
 dialog.form label.c{display:grid;gap:5px;font-size:14px;font-weight:600}
-dialog.form input[type=text],dialog.form input[type=tel]{font:inherit;padding:12px;border:1.5px solid #cbd5e1;border-radius:8px;min-height:48px;width:100%}
+dialog.form input[type=text],dialog.form input[type=tel],dialog.form input[type=email]{font:inherit;padding:12px;border:1.5px solid #cbd5e1;border-radius:8px;min-height:48px;width:100%}
 dialog.form .aceite{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-soft);font-weight:400}
 dialog.form .aceite input{margin-top:3px;width:18px;height:18px;flex:none}
 dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;color:var(--ink-soft)}
@@ -158,7 +158,7 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
                 <a class="btn" href="https://app.oravel.com.br/intelligence/teste-gratis" data-cta data-pos="topo" data-track="Teste grátis: CTA topo">Enviar minha planilha</a>
                 <a class="link-sec" href="modelo-planilha-intelligence.xlsx" download data-track="Teste grátis: baixou o modelo (topo)">Baixar modelo da planilha</a>
             </div>
-            <p class="micro">Leva 1 minuto. Sem senha e sem cartão.</p>
+            <p class="micro">Leva 1 minuto. Sem senha e sem cartão. Você confirma pelo e-mail.</p>
         </div>
         <figure class="mock">
     <div class="tela" role="img" aria-label="Tela de exemplo do Índice de Saúde: nota 77, subiu +16 pontos em dois meses"><div aria-hidden="true"><h4>Índice de Saúde</h4>
@@ -364,7 +364,7 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
         <h2 id="h-final">Veja onde e como sua locadora pode melhorar.</h2>
         <p>Envie sua planilha e receba a leitura em minutos. Sem trocar de sistema.</p>
         <a class="btn" href="https://app.oravel.com.br/intelligence/teste-gratis" data-cta data-pos="final" data-track="Teste grátis: CTA final">Enviar minha planilha</a>
-        <p class="micro" style="margin-top:12px;font-size:13px;margin-bottom:0">Leva 1 minuto. Sem senha e sem cartão.</p>
+        <p class="micro" style="margin-top:12px;font-size:13px;margin-bottom:0">Leva 1 minuto. Sem senha e sem cartão. Você confirma pelo e-mail.</p>
     </div>
 </section>
 
@@ -384,11 +384,13 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
     <button type="button" class="fechar" data-fechar aria-label="Fechar">×</button>
     <form method="post" action="https://app.oravel.com.br/intelligence/teste-gratis">
         <h2 id="tg-t">Enviar minha planilha</h2>
-        <p class="micro">Leva 1 minuto. Sem senha e sem cartão.</p>
+        <p class="micro">Leva 1 minuto. Sem senha e sem cartão. Você confirma pelo e-mail.</p>
         <label class="c" for="f-nome">Seu nome<input id="f-nome" type="text" name="nome" required autocomplete="name" maxlength="120"></label>
         <label class="c" for="f-empresa">Empresa<input id="f-empresa" type="text" name="empresa" required autocomplete="organization" maxlength="120"></label>
         <label class="c" for="f-whats">WhatsApp<input id="f-whats" type="tel" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="(19) 99999-9999" maxlength="20"></label>
-        <label class="aceite"><input type="checkbox" name="aceite" value="1" required><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> (LGPD).</span></label>
+        <label class="c" for="f-email">E-mail<input id="f-email" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="voce@suaempresa.com.br" maxlength="160"></label>
+        <p class="micro" style="margin:-6px 0 0;font-size:13px">Enviamos um link para você confirmar o e-mail e entrar. Sem senha.</p>
+                <label class="aceite"><input type="checkbox" name="aceite" value="1" required><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> (LGPD).</span></label>
         <div class="hp" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
         <button class="btn" type="submit">Continuar</button>
     </form>
@@ -406,13 +408,30 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
       e.preventDefault();
       track('Teste grátis: abriu o formulário (' + (a.getAttribute('data-pos') || '') + ')');
       dlg.showModal();
+      carregarTurnstile();
       var n = $('input[name=nome]', dlg); if (n) { n.focus(); }
     });
   });
+  // Turnstile (anti-robô): o script só carrega quando o formulário abre, para não pesar na página. Sem o widget no HTML, nada acontece.
+  var tsOk = false, tsCarregado = false;
+  window.ovTsOk = function () { tsOk = true; var a = $('[data-ts-aviso]', dlg); if (a) { a.hidden = true; } };
+  window.ovTsExp = function () { tsOk = false; };
+  function carregarTurnstile() {
+    if (tsCarregado || !$('.cf-turnstile', dlg)) { return; }
+    tsCarregado = true;
+    var s = d.createElement('script'); s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js'; s.async = true; s.defer = true; d.head.appendChild(s);
+  }
   all('[data-fechar]').forEach(function (b) { b.addEventListener('click', function () { dlg.close(); }); });
   if (dlg) { dlg.addEventListener('click', function (e) { if (e.target === dlg) { dlg.close(); } }); }
   if (form) {
-    form.addEventListener('submit', function () {
+    form.addEventListener('submit', function (e) {
+      if ($('.cf-turnstile', form) && !tsOk) {
+        e.preventDefault();
+        var a = $('[data-ts-aviso]', form);
+        if (!a) { a = d.createElement('p'); a.setAttribute('data-ts-aviso', ''); a.setAttribute('role', 'alert'); a.className = 'micro'; a.style.color = '#b91c1c'; a.textContent = 'Aguarde a verificação anti-robô terminar (alguns segundos) e envie de novo.'; $('.cf-turnstile', form).insertAdjacentElement('afterend', a); }
+        a.hidden = false;
+        return;
+      }
       track('Teste grátis: enviou o formulário');
       var b = $('button[type=submit]', form); if (b) { b.disabled = true; b.textContent = 'Enviando...'; }
     });

@@ -47,7 +47,7 @@ return [
         'hero_titulo' => 'Veja onde e como sua locadora pode melhorar.',
         'hero_subtitulo' => 'Envie sua planilha e receba a leitura em minutos. Sem trocar de sistema.',
         'cta' => 'Enviar minha planilha',
-        'microtexto' => 'Leva 1 minuto. Sem senha e sem cartão.',
+        'microtexto' => 'Leva 1 minuto. Sem senha e sem cartão. Você confirma pelo e-mail.',
         'baixar_modelo' => 'Baixar modelo da planilha',
 
         'descobre_titulo' => 'O que você descobre',

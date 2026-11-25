@@ -10,13 +10,30 @@
       e.preventDefault();
       track('Teste grátis: abriu o formulário (' + (a.getAttribute('data-pos') || '') + ')');
       dlg.showModal();
+      carregarTurnstile();
       var n = $('input[name=nome]', dlg); if (n) { n.focus(); }
     });
   });
+  // Turnstile (anti-robô): o script só carrega quando o formulário abre, para não pesar na página. Sem o widget no HTML, nada acontece.
+  var tsOk = false, tsCarregado = false;
+  window.ovTsOk = function () { tsOk = true; var a = $('[data-ts-aviso]', dlg); if (a) { a.hidden = true; } };
+  window.ovTsExp = function () { tsOk = false; };
+  function carregarTurnstile() {
+    if (tsCarregado || !$('.cf-turnstile', dlg)) { return; }
+    tsCarregado = true;
+    var s = d.createElement('script'); s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js'; s.async = true; s.defer = true; d.head.appendChild(s);
+  }
   all('[data-fechar]').forEach(function (b) { b.addEventListener('click', function () { dlg.close(); }); });
   if (dlg) { dlg.addEventListener('click', function (e) { if (e.target === dlg) { dlg.close(); } }); }
   if (form) {
-    form.addEventListener('submit', function () {
+    form.addEventListener('submit', function (e) {
+      if ($('.cf-turnstile', form) && !tsOk) {
+        e.preventDefault();
+        var a = $('[data-ts-aviso]', form);
+        if (!a) { a = d.createElement('p'); a.setAttribute('data-ts-aviso', ''); a.setAttribute('role', 'alert'); a.className = 'micro'; a.style.color = '#b91c1c'; a.textContent = 'Aguarde a verificação anti-robô terminar (alguns segundos) e envie de novo.'; $('.cf-turnstile', form).insertAdjacentElement('afterend', a); }
+        a.hidden = false;
+        return;
+      }
       track('Teste grátis: enviou o formulário');
       var b = $('button[type=submit]', form); if (b) { b.disabled = true; b.textContent = 'Enviando...'; }
     });

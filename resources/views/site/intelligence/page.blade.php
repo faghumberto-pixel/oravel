@@ -179,7 +179,7 @@
 {{-- Botão fixo no rodapé (só no celular) --}}
 <div class="fixo"><x-site.cta pos="fixo" :texto="$t['cta']" :app="$app" /></div>
 
-{{-- Formulário (abre pelo CTA): 3 campos, sem sair do site. Envia para o app, que cria a conta e abre a tela de envio da planilha. --}}
+{{-- Formulário (abre pelo CTA): 4 campos, sem sair do site. Envia para o app, que manda um link de confirmação para o e-mail; a conta só nasce depois do clique. --}}
 <dialog class="form" id="teste-gratis" aria-labelledby="tg-t">
     <button type="button" class="fechar" data-fechar aria-label="Fechar">×</button>
     <form method="post" action="{{ $app }}/intelligence/teste-gratis">
@@ -188,6 +188,11 @@
         <label class="c" for="f-nome">Seu nome<input id="f-nome" type="text" name="nome" required autocomplete="name" maxlength="120"></label>
         <label class="c" for="f-empresa">Empresa<input id="f-empresa" type="text" name="empresa" required autocomplete="organization" maxlength="120"></label>
         <label class="c" for="f-whats">WhatsApp<input id="f-whats" type="tel" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="(19) 99999-9999" maxlength="20"></label>
+        <label class="c" for="f-email">E-mail<input id="f-email" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="voce@suaempresa.com.br" maxlength="160"></label>
+        <p class="micro" style="margin:-6px 0 0;font-size:13px">Enviamos um link para você confirmar o e-mail e entrar. Sem senha.</p>
+        @if (! empty($turnstileKey))
+        <div class="cf-turnstile" data-sitekey="{{ $turnstileKey }}" data-callback="ovTsOk" data-expired-callback="ovTsExp" data-error-callback="ovTsExp" data-language="pt-br"></div>
+        @endif
         <label class="aceite"><input type="checkbox" name="aceite" value="1" required><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> (LGPD).</span></label>
         <div class="hp" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
         <button class="btn" type="submit">Continuar</button>
