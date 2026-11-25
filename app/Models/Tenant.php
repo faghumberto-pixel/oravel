@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Models\Concerns\HasSignatures;
 use App\Services\AsaasService;
 use App\Services\TenantTimeline;
@@ -107,7 +108,7 @@ class Tenant extends Model
 
     public function intelligenceTrial(): HasOne
     {
-        return $this->hasOne(\App\Domain\Intelligence\Trial\Models\IntelligenceTrial::class)->withoutGlobalScopes();
+        return $this->hasOne(IntelligenceTrial::class)->withoutGlobalScopes();
     }
 
     public function taxas(): HasMany
