@@ -187,6 +187,14 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 PanelsRenderHook::TOPBAR_END,
+                fn () => view('filament.tour-botao'),
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => view('filament.tour-mount'),
+            )
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_END,
                 fn () => view('filament.help-icon'),
             )
             ->renderHook(
