@@ -4,6 +4,7 @@ namespace App\Domain\Intelligence\Trial\Services;
 
 use App\Domain\Intelligence\Trial\Mail\NovoCadastroTrialMail;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
+use App\Models\Plan;
 use App\Models\SalesLead;
 use App\Models\SalesLeadInteraction;
 use App\Models\Tenant;
@@ -25,6 +26,8 @@ use Throwable;
  */
 class TrialCadastro
 {
+    public const TAG_PLANO_TESTE = 'intelligence_trial';
+
     public function __construct(private TrialCiclo $ciclo) {}
 
     /**
@@ -59,7 +62,7 @@ class TrialCadastro
 
     private function criar(array $d, ?string $ip, ?string $ua): IntelligenceTrial
     {
-        $plano = Pacotes::planoDeVitrine((string) config('intelligence_trial.pacote'));
+        $plano = $this->planoDeTeste();
 
         $tenant = Tenant::create([
             'name' => $d['empresa'],
@@ -99,6 +102,30 @@ class TrialCadastro
         TenantTimeline::record($tenant, TenantEvent::ANOTACAO, 'Teste grátis do Intelligence iniciado', 'Cadastro rápido pelo site.', dedupeKey: 'intelligence-trial-cadastro');
 
         return $trial;
+    }
+
+    /**
+     * Contrato (Plan) interno do teste: sempre ATIVO e com os módulos do pacote. O plano de vitrine não serve: nasce inativo até a
+     * Central abri-lo para venda, e Plan::hasFeature() nega tudo de plano inativo (o cliente cairia em 403). Preço 0 e tag própria
+     * mantêm este plano fora da listagem pública e do checkout.
+     */
+    private function planoDeTeste(): Plan
+    {
+        $pacote = (string) config('intelligence_trial.pacote');
+        $features = array_fill_keys(Pacotes::features($pacote), true);
+
+        $plano = Plan::withoutGlobalScopes()->where('campaign_tag', self::TAG_PLANO_TESTE)->where('pacote', $pacote)->first();
+        if (! $plano) {
+            return Plan::create([
+                'name' => 'Oravel Intelligence - Teste grátis', 'pacote' => $pacote, 'campaign_tag' => self::TAG_PLANO_TESTE,
+                'level' => 1, 'price' => 0, 'base_price' => 0, 'billing_cycle' => 'monthly', 'features' => $features, 'is_active' => true,
+            ]);
+        }
+        if ($plano->features != $features || ! $plano->is_active) {
+            $plano->update(['features' => $features, 'is_active' => true]);
+        }
+
+        return $plano;
     }
 
     private function slugUnico(string $nome): string
