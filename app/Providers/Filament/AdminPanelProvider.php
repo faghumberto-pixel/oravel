@@ -289,6 +289,7 @@ class AdminPanelProvider extends PanelProvider
             ->plugin(
                 BreezyCore::make()
                     ->myProfile(hasAvatars: true)
+                    ->myProfileComponents(['plano_no_perfil' => \App\Livewire\PlanoNoPerfil::class])
                     ->enableTwoFactorAuthentication(action: TwoFactorPage::class)
             )
             ->userMenuItems([

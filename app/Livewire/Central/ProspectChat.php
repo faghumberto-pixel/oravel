@@ -72,6 +72,12 @@ class ProspectChat extends Component
             return;
         }
 
+        if (($bloqueio = $this->reservarCota()) !== null) {
+            $this->messages[] = ['role' => 'assistant', 'content' => $bloqueio, 'data' => [], 'sql' => ''];
+
+            return;
+        }
+
         $this->isLoading = true;
         $history = $this->messages;
         $this->messages[] = ['role' => 'user', 'content' => $question, 'data' => [], 'sql' => ''];
@@ -79,6 +85,11 @@ class ProspectChat extends Component
 
         try {
             $result = $this->servico()->ask($question, $history);
+
+            // Falha da IA volta como resultado (raw.error), sem exceção: o cliente não recebeu resposta, a pergunta do dia é devolvida.
+            if (! empty($result['raw']['error'])) {
+                $this->devolverCota();
+            }
 
             $mensagem = [
                 'role' => 'assistant',
@@ -104,6 +115,7 @@ class ProspectChat extends Component
             $this->lastData = $result['data'];
             $this->lastSql = $result['sql'];
         } catch (\Throwable $e) {
+            $this->devolverCota();
             $this->messages[] = [
                 'role' => 'assistant',
                 'content' => $this->mensagemErro($e),
@@ -182,6 +194,15 @@ class ProspectChat extends Component
     {
         return null;
     }
+
+    /** Gancho de cota própria da área: devolve a mensagem de bloqueio quando a cota acabou (null = pode perguntar). */
+    protected function reservarCota(): ?string
+    {
+        return null;
+    }
+
+    /** Gancho: a pergunta falhou, devolve a cota reservada em reservarCota(). */
+    protected function devolverCota(): void {}
 
     protected function mensagemErro(\Throwable $e): string
     {

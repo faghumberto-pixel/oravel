@@ -34,6 +34,7 @@ return [
                     'porque' => 'Sem planilha enviada, as outras telas ficam vazias. Cada envio gera uma nova leitura e nada é sobrescrito.',
                     'quando' => 'Na primeira vez, para ver a leitura, e depois sempre que atualizar os dados.',
                     'como' => 'Baixe o "Modelo de importação (Excel)", preencha a linha com os números do mês (e, se quiser, uma linha por equipamento) e use "Importar Excel". Se faltar algo, o sistema avisa em português.',
+                    'nota_exemplo' => 'ATENÇÃO: os números que você vê agora são dados de DEMONSTRAÇÃO, só para mostrar como fica a tela com dados. Assim que for começar com os seus, clique em "Limpar dados de exemplo" (no aviso no topo) ou envie sua planilha e confirme a limpeza.',
                     'nota_trial' => 'O teste grátis de 30 dias começa a contar no seu primeiro envio. O aviso no alto da tela mostra os dias restantes.',
                     'tela' => IntelligenceImportResource::class,
                 ],

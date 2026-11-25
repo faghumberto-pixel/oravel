@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Intelligence\Services\DadosDeExemplo;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Domain\Intelligence\Trial\Services\RecuperacaoDeAcesso;
 use App\Domain\Intelligence\Trial\Services\TrialCadastro;
@@ -74,6 +75,7 @@ class IntelligenceTrialController extends Controller
     {
         Auth::guard('web')->login($trial->user, true); // lembrar = sessão persistente de longa duração
         $request->session()->regenerate();
+        app(DadosDeExemplo::class)->aoAbrir($trial); // 1ª abertura: mostra os dados de exemplo; fora do prazo: apaga o que sobrou
 
         return redirect(IntelligenceImportResource::getUrl('index'))
             ->with('intelligence_link', route('intelligence.trial.entrar', $token))

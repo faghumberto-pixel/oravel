@@ -3,6 +3,7 @@
 namespace App\Livewire\Assistente;
 
 use App\Domain\Intelligence\Models\IntelligenceSnapshot;
+use App\Domain\Intelligence\Trial\Services\CotaDiariaIa;
 use App\Livewire\Central\ProspectChat;
 use App\Models\Tenant;
 use App\Services\IntelligenceChatService;
@@ -51,6 +52,27 @@ class IntelligenceChat extends ProspectChat
     protected function limitePorHora(): ?int
     {
         return 60;
+    }
+
+    /** Cota diária de perguntas por cliente (CotaDiariaIa): pequena no teste, maior no plano básico. */
+    protected function reservarCota(): ?string
+    {
+        $cota = app(CotaDiariaIa::class);
+        $tenantId = (string) Auth::user()?->tenant_id;
+        if (! $cota->aplica($tenantId)) {
+            return null;
+        }
+
+        return $cota->reservar($tenantId) ? null : $cota->mensagemEsgotada($tenantId);
+    }
+
+    protected function devolverCota(): void
+    {
+        $cota = app(CotaDiariaIa::class);
+        $tenantId = (string) Auth::user()?->tenant_id;
+        if ($cota->aplica($tenantId)) {
+            $cota->devolver($tenantId);
+        }
     }
 
     protected function mensagemErro(\Throwable $e): string

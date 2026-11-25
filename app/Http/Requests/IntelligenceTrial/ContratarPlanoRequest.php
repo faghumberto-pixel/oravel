@@ -16,6 +16,7 @@ class ContratarPlanoRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'plano' => ['nullable', 'string', 'max:20'],
             'razao_social' => ['required', 'string', 'min:3', 'max:160'],
             'cnpj' => ['required', 'string', new CpfCnpj],
             'email' => ['required', 'email', 'max:160'],

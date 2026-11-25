@@ -121,7 +121,11 @@ class IntelligenceChatService extends ProspectChatService
             ];
         }
 
-        return "Situação atual da empresa (já calculada, do último snapshot):\n".json_encode($compacto, JSON_UNESCAPED_UNICODE);
+        $aviso = \App\Domain\Intelligence\Services\DadosDeExemplo::soExemplo($this->tenantId)
+            ? "ATENÇÃO: todos os dados abaixo são de DEMONSTRAÇÃO (fictícios, gerados para o cliente conhecer o sistema), não da empresa real. Diga isso na resposta e lembre que ele pode limpar os dados de exemplo e enviar a própria planilha.\n\n"
+            : '';
+
+        return $aviso."Situação atual da empresa (já calculada, do último snapshot):\n".json_encode($compacto, JSON_UNESCAPED_UNICODE);
     }
 
     private function catalogoParaPrompt(): string

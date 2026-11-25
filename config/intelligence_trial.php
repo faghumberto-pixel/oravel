@@ -35,6 +35,26 @@ return [
     // Limites de cadastro por IP (tentativas por minuto).
     'rate_limit_por_minuto' => (int) env('INTELLIGENCE_RATE_LIMIT', 5),
 
+    // Perguntas ao agente de IA por dia, por cliente, durante o teste grátis (os planos pagos têm a cota em 'planos').
+    'ia_consultas_por_dia' => (int) env('INTELLIGENCE_TRIAL_IA_POR_DIA', 1),
+
+    /*
+     | Degraus de plano, em ordem. CUMULATIVOS: cada um inclui tudo do anterior ('modulos' lista só o que ele ACRESCENTA).
+     | 'basico' lê nome/preço/ciclo de 'plano' acima (uma fonte só). Módulos ainda não construídos aparecem nos degraus mas
+     | só devem ser vendidos quando existirem (ver 'modulos_prontos').
+     */
+    'planos' => [
+        'basico' => ['ia_por_dia' => (int) env('INTELLIGENCE_PLANO_IA_POR_DIA', 10), 'modulos' => ['base'], 'relatorios' => 'Relatórios do painel e link para WhatsApp'],
+        'standard' => ['nome' => env('INTELLIGENCE_STANDARD_NOME', 'Oravel Intelligence - Standard'), 'preco' => (float) env('INTELLIGENCE_STANDARD_PRECO', 99.00), 'ia_por_dia' => (int) env('INTELLIGENCE_STANDARD_IA_POR_DIA', 25), 'modulos' => ['suprimentos'], 'relatorios' => 'Mais relatórios'],
+        'premium' => ['nome' => env('INTELLIGENCE_PREMIUM_NOME', 'Oravel Intelligence - Premium'), 'preco' => (float) env('INTELLIGENCE_PREMIUM_PRECO', 199.00), 'ia_por_dia' => (int) env('INTELLIGENCE_PREMIUM_IA_POR_DIA', 50), 'modulos' => ['comercial', 'logistica'], 'relatorios' => 'Todos os relatórios'],
+    ],
+    'modulos_rotulos' => ['base' => 'Frota, financeira, oficina e operacional', 'suprimentos' => 'Suprimentos', 'comercial' => 'Comercial', 'logistica' => 'Logística'],
+    // Módulos que já existem de verdade. Só planos com todos os módulos prontos podem ser contratados.
+    'modulos_prontos' => ['base'],
+
+    // Dados de exemplo (demonstração) mostrados na 1ª abertura: somem de vez N dias depois, sem volta.
+    'exemplo_dias' => (int) env('INTELLIGENCE_EXEMPLO_DIAS', 30),
+
     'termos_url' => env('INTELLIGENCE_TERMOS_URL', 'https://oravel.com.br/termos'),
     'privacidade_url' => env('INTELLIGENCE_PRIVACIDADE_URL', 'https://oravel.com.br/privacidade'),
 ];
