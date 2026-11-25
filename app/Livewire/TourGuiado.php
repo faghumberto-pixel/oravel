@@ -16,10 +16,11 @@ class TourGuiado extends Component
 
     public ?string $chave = null;
 
-    public function mount(): void
+    /** @param  ?string  $caminho  caminho da tela (só os testes informam; no painel vale a URL real) */
+    public function mount(?string $caminho = null): void
     {
         $tour = Tour::para(auth()->user());
-        $passo = $tour?->passoDaTela(request()->path());
+        $passo = $tour?->passoDaTela($caminho ?? request()->path());
         if (! $tour || ! $passo) {
             return;
         }
