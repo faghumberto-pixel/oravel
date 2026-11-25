@@ -31,6 +31,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/styles.css">
+<script>
+/* Equipe sem contagem: abrir qualquer pagina com ?notrack (ou /sem-contagem/) marca este navegador para NAO contar em nenhum
+   medidor (Central, sinais das ferramentas e Plausible); ?track desfaz. Roda antes dos medidores. */
+(function(){try{var q=location.search;if(q.indexOf('notrack')!==-1){localStorage.setItem('oravel:notrack','1');localStorage.setItem('plausible_ignore','true')}else if(/[?&]track(=|&|$)/.test(q)){localStorage.removeItem('oravel:notrack');localStorage.removeItem('plausible_ignore')}}catch(e){}})();
+</script>
 <!-- Privacy-friendly analytics by Plausible -->
 <script async src="https://plausible.io/js/pa-OrrxHOqJlZvhZmdXDoovK.js"></script>
 <script>

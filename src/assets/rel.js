@@ -16,7 +16,7 @@
   function gravar(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
   function apagar(k) { try { localStorage.removeItem(k); } catch (e) {} }
 
-  function ativo() { return !!url && !dnt && ler(CONSENT) === 'sim'; }
+  function ativo() { return !!url && !dnt && ler('oravel:notrack') !== '1' && ler(CONSENT) === 'sim'; }
 
   function novo() {
     try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}

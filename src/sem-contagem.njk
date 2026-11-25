@@ -1,0 +1,35 @@
+---
+layout: base.njk
+noindex: true
+title: Sem contagem de visitas
+permalink: /sem-contagem/
+---
+<section class="auth-page">
+<div class="container">
+<div class="form-card">
+<div class="form-card__header">
+<h1 class="form-card__title">Sem contagem de visitas</h1>
+<p class="form-card__subtitle" id="sc-estado">Verificando este navegador...</p>
+</div>
+<p style="font-size:14px">Página para a equipe da Oravel. Neste navegador, as visitas ao oravel.org deixam de entrar nas estatísticas (Central, sinais das ferramentas e Plausible). Repita uma vez em cada navegador e aparelho que você usa.</p>
+<p><button type="button" class="btn" id="sc-alternar">...</button></p>
+</div>
+</div>
+</section>
+<script>
+(function(){
+  var estado=document.getElementById('sc-estado'),botao=document.getElementById('sc-alternar');
+  function ler(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function ligar(){try{localStorage.setItem('oravel:notrack','1');localStorage.setItem('plausible_ignore','true')}catch(e){}}
+  function desligar(){try{localStorage.removeItem('oravel:notrack');localStorage.removeItem('plausible_ignore')}catch(e){}}
+  function pintar(){
+    var off=ler('oravel:notrack')==='1';
+    estado.textContent=off?'Pronto: este navegador NÃO está sendo contado.':'Este navegador está sendo contado como visitante comum.';
+    botao.textContent=off?'Voltar a contar este navegador':'Parar de contar este navegador';
+  }
+  try{localStorage.setItem('oravel:teste','1');localStorage.removeItem('oravel:teste')}catch(e){estado.textContent='Este navegador bloqueia o armazenamento local; não é possível marcar.';botao.hidden=true;return}
+  if(ler('oravel:notrack')!=='1')ligar(); /* abrir a pagina ja marca */
+  pintar();
+  botao.onclick=function(){ler('oravel:notrack')==='1'?desligar():ligar();pintar()};
+})();
+</script>
