@@ -134,4 +134,10 @@ return [
         ],
     ],
 
+    // Cloudflare Turnstile do cadastro do teste grátis do Intelligence. Sem a chave secreta, o cadastro não exige o desafio.
+    'turnstile' => [
+        'site_key' => env('TURNSTILE_SITE_KEY'),
+        'secret' => env('TURNSTILE_SECRET_KEY'),
+    ],
+
 ];

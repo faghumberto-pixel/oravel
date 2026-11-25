@@ -55,6 +55,10 @@ return [
     // Dados de exemplo (demonstração) mostrados na 1ª abertura: somem de vez N dias depois, sem volta.
     'exemplo_dias' => (int) env('INTELLIGENCE_EXEMPLO_DIAS', 30),
 
+    // Confirmação de e-mail do cadastro: validade do link e domínios de e-mail descartável que não são aceitos.
+    'confirmacao_horas' => (int) env('INTELLIGENCE_CONFIRMACAO_HORAS', 24),
+    'email_bloqueados' => ['mailinator.com', 'yopmail.com', 'guerrillamail.com', '10minutemail.com', 'tempmail.com', 'temp-mail.org', 'trashmail.com', 'sharklasers.com', 'getnada.com', 'dispostable.com', 'maildrop.cc', 'throwawaymail.com'],
+
     'termos_url' => env('INTELLIGENCE_TERMOS_URL', 'https://oravel.com.br/termos'),
     'privacidade_url' => env('INTELLIGENCE_PRIVACIDADE_URL', 'https://oravel.com.br/privacidade'),
 ];

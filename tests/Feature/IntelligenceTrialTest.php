@@ -47,13 +47,26 @@ class IntelligenceTrialTest extends TestCase
     private function cadastrar(array $over = [])
     {
         return $this->post('/intelligence/teste-gratis', array_merge([
-            'nome' => 'Maria Silva', 'empresa' => 'Locadora Teste', 'whatsapp' => '(19) 99999-1234', 'aceite' => '1',
+            'nome' => 'Maria Silva', 'empresa' => 'Locadora Teste', 'whatsapp' => '(19) 99999-1234', 'email' => 'maria@locadora.test', 'aceite' => '1',
         ], $over));
+    }
+
+    /** Link de confirmação do último e-mail enviado ao cliente. */
+    private function linkDeConfirmacao(): ?string
+    {
+        return Mail::sent(TrialMail::class)->filter(fn ($m) => str_contains((string) $m->link, '/intelligence/confirmar/'))->last()?->link;
+    }
+
+    /** O clique do cliente no botão do e-mail (o link do e-mail só abre a tela; quem confirma é o POST). */
+    private function confirmar(?string $link = null)
+    {
+        return $this->post(parse_url($link ?? $this->linkDeConfirmacao(), PHP_URL_PATH));
     }
 
     private function trial(): IntelligenceTrial
     {
         $this->cadastrar();
+        $this->confirmar();
 
         return IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
     }
@@ -79,7 +92,7 @@ class IntelligenceTrialTest extends TestCase
     /** E-mails de lembrete (exclui o aviso ao dono e o contrato, que também herdam de TrialMail). */
     private function lembretesEnviados(): int
     {
-        return Mail::sent(TrialMail::class)->filter(fn ($m) => ! $m instanceof NovoCadastroTrialMail && ! $m instanceof ContratoAceitoMail)->count();
+        return Mail::sent(TrialMail::class)->filter(fn ($m) => ! $m instanceof NovoCadastroTrialMail && ! $m instanceof ContratoAceitoMail && ! str_contains((string) $m->link, '/intelligence/confirmar/'))->count();
     }
 
     private function dadosContrato(array $over = []): array
@@ -115,12 +128,21 @@ class IntelligenceTrialTest extends TestCase
     public function test_cadastro_cria_conta_autentica_registra_lead_e_avisa_o_dono(): void
     {
         $leads = SalesLead::count();
-        $r = $this->cadastrar();
+        $this->cadastrar()->assertRedirect(route('intelligence.trial.verifique'));
+        // antes do clique no e-mail NADA é criado: sem conta, sem lead, sem aviso ao dono, sem login
+        $this->assertFalse(IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->exists());
+        $this->assertSame($leads, SalesLead::count());
+        $this->assertGuest();
+        Mail::assertNotSent(NovoCadastroTrialMail::class);
+
+        $r = $this->confirmar();
 
         $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
         $r->assertRedirect(IntelligenceImportResource::getUrl('index'));
         $this->assertAuthenticatedAs($trial->user);
         $this->assertTrue((bool) $trial->user->two_factor_exempt, 'sem senha/app autenticador: 2FA não pode barrar o cliente do teste');
+        $this->assertSame('maria@locadora.test', $trial->user->email, 'o usuário nasce com o e-mail confirmado, não com um provisório');
+        $this->assertNotNull($trial->user->email_verified_at);
         $this->assertSame('Locadora Teste', $trial->tenant->name);
         $this->assertNull($trial->trial_started_at, 'a contagem só começa no 1º envio');
         $this->assertSame($leads + 1, SalesLead::count());
@@ -134,7 +156,8 @@ class IntelligenceTrialTest extends TestCase
         // O navegador ainda guarda a sessão de um usuário que não existe mais.
         $fantasma = (string) Str::uuid();
 
-        $r = $this->withSession([Auth::guard('web')->getName() => $fantasma])->cadastrar();
+        $this->cadastrar();
+        $r = $this->withSession([Auth::guard('web')->getName() => $fantasma])->confirmar();
 
         $r->assertRedirect(IntelligenceImportResource::getUrl('index'));
         $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
@@ -152,6 +175,8 @@ class IntelligenceTrialTest extends TestCase
         $this->cadastrar(['whatsapp' => '123'])->assertSessionHasErrors('whatsapp');
         $this->cadastrar(['aceite' => null])->assertSessionHasErrors('aceite');
         $this->cadastrar(['site' => 'http://spam'])->assertSessionHasErrors('site');
+        $this->cadastrar(['email' => null])->assertSessionHasErrors('email');
+        $this->cadastrar(['email' => 'sem-arroba'])->assertSessionHasErrors('email');
         $this->assertSame($antes, IntelligenceTrial::withoutGlobalScopes()->count());
     }
 
@@ -165,9 +190,10 @@ class IntelligenceTrialTest extends TestCase
 
         $r = $this->cadastrar(['empresa' => 'Outra Empresa']);
 
-        $r->assertRedirect(route('intelligence.trial.novo-link'))->assertSessionHas('enviado')->assertSessionMissing('intelligence_link')->assertSessionMissing('link');
+        $r->assertRedirect(route('intelligence.trial.verifique'))->assertSessionMissing('intelligence_link')->assertSessionMissing('link');
         $this->assertGuest();   // quem digitou o número NÃO entra na conta
-        $this->assertSame($hashDoDono, $trial->fresh()->access_token_hash, 'o link do dono não pode ser trocado por quem só sabe o número');
+        // quem só sabe o número nunca recebe o link: ele só vai para o e-mail do dono (que continua conseguindo entrar)
+        Mail::assertSent(TrialMail::class, fn ($m) => $m->hasTo('maria@locadora.test') && str_contains((string) $m->link, '/intelligence/entrar/'));
         $this->assertSame($tenants, Tenant::withoutGlobalScopes()->count());
         $this->assertSame(1, IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->count());
         $this->assertEqualsWithDelta(25, $trial->fresh()->diasRestantes(), 1);
@@ -310,7 +336,8 @@ class IntelligenceTrialTest extends TestCase
 
     public function test_lembrete_sem_canal_fica_registrado_e_nao_repete(): void
     {
-        $trial = $this->trial(); // e-mail ainda é o provisório (.invalid) e não há WhatsApp da Oravel
+        $trial = $this->trial();
+        $trial->user->forceFill(['email' => 'teste-abc@intelligence.oravel.invalid'])->save(); // conta antiga: e-mail provisório e sem WhatsApp da Oravel
         $trial->forceFill(['trial_started_at' => now()->startOfDay(), 'trial_ends_at' => now()->startOfDay()->addDays(30)])->save();
         $svc = app(TrialLembretes::class);
 
@@ -501,7 +528,7 @@ class IntelligenceTrialTest extends TestCase
 
     public function test_telas_publicas_e_do_plano_renderizam(): void
     {
-        $this->get('/intelligence/teste-gratis')->assertOk()->assertSee('Enviar minha planilha')->assertSee('Termos de Uso');
+        $this->get('/intelligence/teste-gratis')->assertOk()->assertSee('Receber link de acesso')->assertSee('E-mail')->assertSee('Termos de Uso');
         $this->get('/intelligence/novo-link')->assertOk();
 
         $trial = $this->trial();
@@ -512,8 +539,7 @@ class IntelligenceTrialTest extends TestCase
 
     public function test_banner_aparece_dentro_do_sistema_com_o_link_pessoal(): void
     {
-        $this->cadastrar();
-        $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
+        $trial = $this->trial();
         $trial->forceFill(['trial_started_at' => now(), 'trial_ends_at' => now()->addDays(30)])->save();
 
         // A tela inteira do painel (ChatWidget) usa SQL de Postgres e não roda neste ambiente de teste: renderiza só o banner.

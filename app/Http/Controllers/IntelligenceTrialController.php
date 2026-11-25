@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Domain\Intelligence\Services\DadosDeExemplo;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
+use App\Domain\Intelligence\Trial\Services\ConfirmacaoDeEmail;
 use App\Domain\Intelligence\Trial\Services\RecuperacaoDeAcesso;
-use App\Domain\Intelligence\Trial\Services\TrialCadastro;
+use App\Domain\Intelligence\Trial\Services\Turnstile;
 use App\Filament\Resources\IntelligenceImportResource;
 use App\Http\Requests\IntelligenceTrial\CadastroTrialRequest;
 use App\Http\Requests\IntelligenceTrial\NovoLinkRequest;
@@ -13,6 +14,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 /** Cadastro rápido sem senha do teste grátis do Intelligence, entrada por link pessoal e novo link por WhatsApp. */
 class IntelligenceTrialController extends Controller
@@ -22,22 +24,50 @@ class IntelligenceTrialController extends Controller
         return view('intelligence-trial.cadastro');
     }
 
-    public function store(CadastroTrialRequest $request, TrialCadastro $cadastro, RecuperacaoDeAcesso $recuperacao): RedirectResponse
+    /** Recebe o cadastro (do site ou da tela do app). Não cria conta: manda o link de confirmação ao e-mail e mostra a tela "verifique seu e-mail". */
+    public function store(CadastroTrialRequest $request, ConfirmacaoDeEmail $confirmacao, Turnstile $turnstile): RedirectResponse
     {
         if (! $this->origemPermitida($request)) {
             return redirect()->route('intelligence.trial.create')->withErrors(['nome' => 'Não foi possível enviar por aqui. Preencha o cadastro nesta página.']);
         }
+        if (! $turnstile->verificar($request->input('cf-turnstile-response'), $request->ip())) {
+            return redirect()->route('intelligence.trial.create')->withInput($request->except('cf-turnstile-response'))
+                ->withErrors(['nome' => 'Não conseguimos confirmar que você não é um robô. Tente de novo.']);
+        }
 
-        $r = $cadastro->cadastrar([
+        $confirmacao->solicitar([
             'nome' => trim($request->string('nome')),
             'empresa' => trim($request->string('empresa')),
             'whatsapp' => $request->whatsappE164(),
+            'email' => trim($request->string('email')),
         ], $request->ip(), $request->userAgent());
 
-        if (! $r['novo']) {
-            // WhatsApp que já tem conta: NÃO loga e NÃO mostra link (quem digitou pode não ser o dono do número).
-            $recuperacao->solicitar($r['trial']);
+        // Mesma resposta exista conta ou não: a tela nunca revela se o e-mail ou o WhatsApp já têm teste.
+        return redirect()->route('intelligence.trial.verifique')->with('email_enviado_para', Str::lower(trim($request->string('email'))));
+    }
 
+    public function verifique(): View
+    {
+        return view('intelligence-trial.verifique-email');
+    }
+
+    /** O link do e-mail só mostra a tela com o botão: quem confirma é o POST (leitores de e-mail e antivírus abrem links sozinhos e gastariam o link). */
+    public function confirmarTela(string $token, ConfirmacaoDeEmail $confirmacao): View|RedirectResponse
+    {
+        if (! $confirmacao->valido($token)) {
+            return redirect()->route('intelligence.trial.create')->withErrors(['nome' => 'Este link de confirmação não vale mais (venceu ou já foi usado). Faça o cadastro de novo.']);
+        }
+
+        return view('intelligence-trial.confirmar', ['token' => $token]);
+    }
+
+    public function confirmar(Request $request, string $token, ConfirmacaoDeEmail $confirmacao): RedirectResponse
+    {
+        $r = $confirmacao->confirmar($token, $request->ip(), $request->userAgent());
+        if ($r === null) {
+            return redirect()->route('intelligence.trial.create')->withErrors(['nome' => 'Este link de confirmação não vale mais (venceu ou já foi usado). Faça o cadastro de novo.']);
+        }
+        if (! $r['novo']) {
             return redirect()->route('intelligence.trial.novo-link')->with('enviado', true);
         }
 
