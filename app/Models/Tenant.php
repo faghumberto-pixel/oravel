@@ -105,6 +105,11 @@ class Tenant extends Model
         return (float) TenantComplemento::withoutGlobalScopes()->where('tenant_id', $tenant->id)->whereIn('status', [TenantComplemento::ATIVO, TenantComplemento::ENCERRANDO])->sum('valor_mensal');
     }
 
+    public function intelligenceTrial(): HasOne
+    {
+        return $this->hasOne(\App\Domain\Intelligence\Trial\Models\IntelligenceTrial::class)->withoutGlobalScopes();
+    }
+
     public function taxas(): HasMany
     {
         return $this->hasMany(TenantTaxa::class);
@@ -333,6 +338,11 @@ class Tenant extends Model
     public function isAccessBlockedForNonPayment(): bool
     {
         if (Auth::user()?->isSuperAdmin()) {
+            return false;
+        }
+
+        // Teste grátis do Intelligence: o acesso é decidido pela própria conta de teste (somente leitura, não bloqueio total).
+        if ($this->intelligenceTrial !== null) {
             return false;
         }
 

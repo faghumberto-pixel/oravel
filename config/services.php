@@ -39,7 +39,8 @@ return [
 
     'asaas' => [
         'api_key' => env('ASAAS_API_KEY'),
-        'base_url' => env('ASAAS_BASE_URL', 'https://sandbox.asaas.com/api/v3'),
+        // ASAAS_ENV=production|sandbox escolhe o endereço quando ASAAS_BASE_URL não está definida.
+        'base_url' => env('ASAAS_BASE_URL', env('ASAAS_ENV') === 'production' ? 'https://api.asaas.com/v3' : 'https://sandbox.asaas.com/api/v3'),
         'webhook_token' => env('ASAAS_WEBHOOK_TOKEN'),
     ],
 

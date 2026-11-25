@@ -7,6 +7,7 @@ use App\Domain\Intelligence\Models\IntelligenceImport;
 use App\Domain\Intelligence\Models\IntelligenceIndicator;
 use App\Domain\Intelligence\Models\IntelligenceSnapshot;
 use App\Domain\Intelligence\Support\Catalogo;
+use App\Domain\Intelligence\Trial\Services\TrialCiclo;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\AssetImport\AssetImportColumns as Norm;
@@ -81,6 +82,14 @@ class ImportadorExcel
             return $r;
         }
 
+        // Teste grátis encerrado, cobrança em atraso ou plano cancelado: somente leitura (nada é apagado, só novos envios param).
+        $ciclo = new TrialCiclo;
+        if ($bloqueio = $ciclo->motivoDoBloqueio($tenant)) {
+            $r['erros'][] = $bloqueio;
+
+            return $r;
+        }
+
         $import = IntelligenceImport::withoutGlobalScopes()->create([
             'tenant_id' => $tenant->id, 'user_id' => $usuario?->id, 'origem' => 'arquivo', 'arquivo' => $nomeArquivo, 'status' => 'processando',
         ]);
@@ -109,6 +118,7 @@ class ImportadorExcel
                 $r['snapshot'] = $snapshot;
             });
             $r['ok'] = true;
+            $ciclo->aoEnviarPlanilha($tenant); // o 1º envio com sucesso começa a contar os dias do teste
         } catch (Throwable $e) {
             report($e);
             $import->update(['status' => 'falhou', 'erro' => mb_substr($e->getMessage(), 0, 500)]);

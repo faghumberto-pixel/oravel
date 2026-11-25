@@ -104,6 +104,11 @@ class AsaasWebhookController extends Controller
             return;
         }
 
+        // Conta de teste do Intelligence (idempotente; cancelamento de assinatura chega como SUBSCRIPTION_*).
+        if (app(\App\Domain\Intelligence\Trial\Services\TrialWebhook::class)->tratar($payload)) {
+            return;
+        }
+
         $payment = $payload['payment'] ?? null;
 
         if (! is_array($payment)) {
