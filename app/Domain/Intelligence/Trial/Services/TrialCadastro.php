@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
 use Throwable;
 
 /**
- * Cadastro ultrarrápido (nome, empresa, WhatsApp): cria Tenant + usuário pelo caminho padrão (TenantProvisioner), a conta de
+ * Cadastro (nome, empresa, WhatsApp e e-mail confirmado): cria Tenant + usuário pelo caminho padrão (TenantProvisioner), a conta de
  * teste e o lead no CRM da Oravel. WhatsApp que já tem conta NÃO cria teste novo (não reinicia os 30 dias): devolve o acesso da existente.
  */
 class TrialCadastro
@@ -33,7 +33,7 @@ class TrialCadastro
     public function __construct(private TrialCiclo $ciclo) {}
 
     /**
-     * @param  array{nome: string, empresa: string, whatsapp: string}  $dados  whatsapp já em E.164
+     * @param  array{nome: string, empresa: string, whatsapp: string, email?: string}  $dados  whatsapp já em E.164; e-mail já confirmado
      * @return array{trial: IntelligenceTrial, token: ?string, novo: bool} token só existe quando a conta foi criada agora
      */
     public function cadastrar(array $dados, ?string $ip = null, ?string $userAgent = null): array
@@ -84,14 +84,15 @@ class TrialCadastro
         ]);
 
         // Sem senha: o acesso é pelo link pessoal. A senha existe só para a coluna não ficar vazia e nunca é mostrada.
+        // O e-mail é o confirmado pelo cliente (ConfirmacaoDeEmail); sem ele (uso interno) vale um provisório .invalid.
         $user = TenantProvisioner::provision($tenant, [
             'name' => $d['nome'],
-            'email' => 'teste-'.Str::lower(Str::random(10)).'@intelligence.oravel.invalid',
+            'email' => ! empty($d['email']) ? Str::lower($d['email']) : 'teste-'.Str::lower(Str::random(10)).'@intelligence.oravel.invalid',
             'password' => Str::random(40),
         ]);
         // two_factor_exempt: o acesso é pelo link pessoal; não existe senha nem app autenticador para exigir 2FA (senão o cliente
         // cai em "Minha conta" e nunca chega ao upload).
-        $user->forceFill(['is_approved' => true, 'two_factor_exempt' => true])->save();
+        $user->forceFill(['is_approved' => true, 'two_factor_exempt' => true, 'email_verified_at' => ! empty($d['email']) ? now() : null])->save();
 
         $trial = IntelligenceTrial::create([
             'tenant_id' => $tenant->id,

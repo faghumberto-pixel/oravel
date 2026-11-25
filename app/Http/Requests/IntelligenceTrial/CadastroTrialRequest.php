@@ -25,6 +25,12 @@ class CadastroTrialRequest extends FormRequest
                     $fail('Informe um WhatsApp com DDD, por exemplo (19) 99999-9999.');
                 }
             }],
+            'email' => ['required', 'string', 'email:rfc', 'max:160', function ($attr, $value, $fail) {
+                $dominio = strtolower(substr(strrchr((string) $value, '@') ?: '', 1));
+                if (in_array($dominio, (array) config('intelligence_trial.email_bloqueados', []), true)) {
+                    $fail('Use um e-mail da sua empresa ou pessoal fixo (e-mails temporários não são aceitos).');
+                }
+            }],
             'aceite' => ['accepted'],
             // Honeypot: humano nunca preenche.
             'site' => ['prohibited'],
@@ -37,6 +43,8 @@ class CadastroTrialRequest extends FormRequest
             'nome.required' => 'Informe seu nome.',
             'empresa.required' => 'Informe o nome da empresa.',
             'whatsapp.required' => 'Informe seu WhatsApp.',
+            'email.required' => 'Informe seu e-mail.',
+            'email.email' => 'Informe um e-mail válido.',
             'aceite.accepted' => 'Para continuar, aceite os Termos de Uso e a Política de Privacidade.',
             'site.prohibited' => 'Não foi possível enviar.',
         ];

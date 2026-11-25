@@ -14,6 +14,9 @@ $limite = 'throttle:'.max(1, (int) config('intelligence_trial.rate_limit_por_min
 Route::prefix('intelligence')->name('intelligence.trial.')->group(function () use ($limite) {
     Route::get('/teste-gratis', [IntelligenceTrialController::class, 'create'])->name('create');
     Route::post('/teste-gratis', [IntelligenceTrialController::class, 'store'])->middleware($limite)->name('store');
+    Route::get('/verifique-seu-email', [IntelligenceTrialController::class, 'verifique'])->name('verifique');
+    Route::get('/confirmar/{token}', [IntelligenceTrialController::class, 'confirmarTela'])->where('token', '[A-Za-z0-9]{48}')->name('confirmar');
+    Route::post('/confirmar/{token}', [IntelligenceTrialController::class, 'confirmar'])->middleware($limite)->where('token', '[A-Za-z0-9]{48}')->name('confirmar.enviar');
     Route::get('/entrar/{token}', [IntelligenceTrialController::class, 'acessar'])->middleware($limite)->where('token', '[A-Za-z0-9]{48}')->name('entrar');
     Route::get('/novo-link', [IntelligenceTrialController::class, 'novoLink'])->name('novo-link');
     Route::post('/novo-link', [IntelligenceTrialController::class, 'enviarNovoLink'])->middleware($limite)->name('novo-link.enviar');

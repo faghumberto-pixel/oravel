@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Console\Commands\SiteIntelligenceGerar;
 use App\Domain\Intelligence\Models\IntelligenceTestimonial;
+use App\Domain\Intelligence\Trial\Mail\TrialMail;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Filament\Resources\IntelligenceImportResource;
 use App\Support\IntelligenceSite\Exemplo;
@@ -304,14 +305,18 @@ class IntelligenceSitePaginaTest extends TestCase
     private function cadastrarSite(array $over = [], array $headers = [])
     {
         return $this->withHeaders($headers)->post('/intelligence/teste-gratis', array_merge([
-            'nome' => 'Maria Silva', 'empresa' => 'Locadora Site', 'whatsapp' => '(11) 99999-0777', 'aceite' => '1',
+            'nome' => 'Maria Silva', 'empresa' => 'Locadora Site', 'whatsapp' => '(11) 99999-0777', 'email' => 'maria@locadora-site.test', 'aceite' => '1',
         ], $over));
     }
 
-    public function test_cadastro_vindo_do_site_cria_a_conta_e_abre_a_tela_de_envio(): void
+    public function test_cadastro_vindo_do_site_so_cria_a_conta_depois_de_confirmar_o_email(): void
     {
         Mail::fake();
-        $this->cadastrarSite([], ['Origin' => 'https://oravel.com.br'])->assertRedirect(IntelligenceImportResource::getUrl('index'));
+        $this->cadastrarSite([], ['Origin' => 'https://oravel.com.br'])->assertRedirect(route('intelligence.trial.verifique'));
+        $this->assertFalse(IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5511999990777')->exists());
+
+        $link = Mail::sent(TrialMail::class)->last()->link;
+        $this->post(parse_url($link, PHP_URL_PATH))->assertRedirect(IntelligenceImportResource::getUrl('index'));
         $this->assertTrue(IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5511999990777')->exists());
     }
 
