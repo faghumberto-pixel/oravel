@@ -18,6 +18,7 @@ use App\Filament\Resources\IntelligenceImportResource;
 use App\Models\SalesLead;
 use App\Models\Tenant;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -134,15 +135,19 @@ class IntelligenceTrialTest extends TestCase
         $this->assertSame($antes, IntelligenceTrial::withoutGlobalScopes()->count());
     }
 
-    public function test_whatsapp_repetido_nao_cria_novo_teste_nem_reinicia_os_dias(): void
+    public function test_whatsapp_repetido_nao_cria_teste_nao_loga_e_nao_troca_o_link_do_dono(): void
     {
         $trial = $this->trial();
         $trial->forceFill(['trial_started_at' => now()->subDays(5), 'trial_ends_at' => now()->addDays(25)])->save();
+        $hashDoDono = $trial->fresh()->access_token_hash;
         $tenants = Tenant::withoutGlobalScopes()->count();
         auth()->logout();
 
-        $this->cadastrar(['empresa' => 'Outra Empresa'])->assertRedirect();
+        $r = $this->cadastrar(['empresa' => 'Outra Empresa']);
 
+        $r->assertRedirect(route('intelligence.trial.novo-link'))->assertSessionHas('enviado')->assertSessionMissing('intelligence_link')->assertSessionMissing('link');
+        $this->assertGuest();   // quem digitou o número NÃO entra na conta
+        $this->assertSame($hashDoDono, $trial->fresh()->access_token_hash, 'o link do dono não pode ser trocado por quem só sabe o número');
         $this->assertSame($tenants, Tenant::withoutGlobalScopes()->count());
         $this->assertSame(1, IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->count());
         $this->assertEqualsWithDelta(25, $trial->fresh()->diasRestantes(), 1);
@@ -165,13 +170,49 @@ class IntelligenceTrialTest extends TestCase
         $this->assertAuthenticatedAs($trial->user);
     }
 
-    public function test_pedir_novo_link_pelo_whatsapp_mostra_o_link_quando_nao_ha_canal(): void
+    public function test_novo_link_nunca_aparece_na_tela_e_a_resposta_nao_revela_se_o_numero_tem_conta(): void
     {
-        $this->trial();
+        $trial = $this->trial();
+        $hash = $trial->fresh()->access_token_hash;
         auth()->logout();
 
-        $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234'])->assertSessionHas('link');
-        $this->post('/intelligence/novo-link', ['whatsapp' => '19988887777'])->assertSessionHasErrors('whatsapp');
+        $existe = $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234']);
+        $naoExiste = $this->post('/intelligence/novo-link', ['whatsapp' => '19988887777']);
+
+        foreach ([$existe, $naoExiste] as $r) {
+            $r->assertSessionHas('enviado')->assertSessionMissing('link')->assertSessionHasNoErrors();
+        }
+        $this->get('/intelligence/novo-link')->assertOk()->assertDontSee('/intelligence/entrar/');
+        $this->assertSame($hash, $trial->fresh()->access_token_hash, 'sem canal seguro o link não é trocado');
+        $this->assertGuest();
+        Mail::assertSent(TrialMail::class, fn ($m) => str_contains($m->assunto, 'Pedido de novo link') && ! str_contains(implode(' ', $m->paragrafos), '/intelligence/entrar/'));
+    }
+
+    public function test_novo_link_vai_para_o_email_cadastrado_do_dono_e_nunca_para_a_tela(): void
+    {
+        $trial = $this->trial();
+        $trial->user->forceFill(['email' => 'dono@empresa.test'])->save();
+        $velho = $trial->fresh()->access_token_hash;
+        auth()->logout();
+
+        $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234'])->assertSessionMissing('link');
+
+        Mail::assertSent(TrialMail::class, fn ($m) => $m->hasTo('dono@empresa.test') && str_contains((string) $m->link, '/intelligence/entrar/'));
+        $this->assertNotSame($velho, $trial->fresh()->access_token_hash);
+    }
+
+    public function test_pedido_de_novo_link_e_limitado_a_um_a_cada_10_minutos(): void
+    {
+        $trial = $this->trial();
+        $trial->user->forceFill(['email' => 'dono@empresa.test'])->save();
+        Cache::flush();
+        auth()->logout();
+
+        $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234']);
+        $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234']);
+
+        Mail::assertSent(TrialMail::class, fn ($m) => $m->hasTo('dono@empresa.test'));
+        $this->assertSame(1, Mail::sent(TrialMail::class, fn ($m) => $m->hasTo('dono@empresa.test'))->count());
     }
 
     // ---- contagem dos 30 dias e somente leitura ----

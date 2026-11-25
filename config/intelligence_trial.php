@@ -32,11 +32,6 @@ return [
     // Quem recebe o aviso de cada novo cadastro (e-mail do dono).
     'notificar_email' => env('INTELLIGENCE_NOTIFICAR_EMAIL'),
 
-    // Pedir novo link informando o WhatsApp: enquanto não houver canal de envio por WhatsApp (nem e-mail do cliente no
-    // cadastro), o link é mostrado na tela. ATENÇÃO: quem souber o número consegue entrar na conta. Desligue assim que
-    // houver envio por WhatsApp (então o link só é enviado, nunca mostrado).
-    'mostrar_link_na_tela' => (bool) env('INTELLIGENCE_MOSTRAR_LINK_NA_TELA', true),
-
     // Limites de cadastro por IP (tentativas por minuto).
     'rate_limit_por_minuto' => (int) env('INTELLIGENCE_RATE_LIMIT', 5),
 

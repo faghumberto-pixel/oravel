@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 
 /** Central › Testes do Intelligence: cadastros de teste grátis, dias restantes, status, plano e link da assinatura no Asaas. Só super admin. */
 class IntelligenceTrialResource extends Resource
@@ -82,6 +83,16 @@ class IntelligenceTrialResource extends Resource
                     ->query(fn (Builder $q) => $q->whereBetween('trial_ends_at', [now(), now()->addDays(7)])->whereNull('contracted_at')),
             ])
             ->actions([
+                // Único lugar onde o link aparece em claro, e só para super admin: a Oravel envia ao WhatsApp cadastrado do cliente.
+                Tables\Actions\Action::make('gerar_link')->label('Gerar link de acesso')->icon('heroicon-o-link')
+                    ->requiresConfirmation()
+                    ->modalHeading('Gerar novo link de acesso')
+                    ->modalDescription('O link anterior deixa de valer. Envie o novo somente ao WhatsApp cadastrado do cliente.')
+                    ->action(function (IntelligenceTrial $r) {
+                        $link = route('intelligence.trial.entrar', $r->novoTokenDeAcesso());
+                        Log::info('Intelligence trial: link gerado pela Central.', ['trial_id' => $r->id, 'por' => auth()->id()]);
+                        Notification::make()->title('Link de acesso (envie para '.TelefoneBr::formatar($r->whatsapp).')')->body($link)->persistent()->success()->send();
+                    }),
                 Tables\Actions\Action::make('estender')->label('Estender teste')->icon('heroicon-o-clock')
                     ->form([
                         Forms\Components\TextInput::make('dias')->label('Dias a somar')->numeric()->minValue(1)->maxValue(90)->default(7)->required(),

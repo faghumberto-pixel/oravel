@@ -33,15 +33,16 @@ class TrialCadastro
 
     /**
      * @param  array{nome: string, empresa: string, whatsapp: string}  $dados  whatsapp já em E.164
-     * @return array{trial: IntelligenceTrial, token: string, novo: bool}
+     * @return array{trial: IntelligenceTrial, token: ?string, novo: bool} token só existe quando a conta foi criada agora
      */
     public function cadastrar(array $dados, ?string $ip = null, ?string $userAgent = null): array
     {
         $existente = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', $dados['whatsapp'])->first();
         if ($existente) {
-            Log::info('Intelligence trial: cadastro repetido, acesso da conta existente.', ['trial_id' => $existente->id]);
+            // Saber o WhatsApp não dá acesso: não troca o link do dono nem devolve token (ver RecuperacaoDeAcesso).
+            Log::info('Intelligence trial: cadastro repetido, nada criado.', ['trial_id' => $existente->id]);
 
-            return ['trial' => $existente, 'token' => $existente->novoTokenDeAcesso(), 'novo' => false];
+            return ['trial' => $existente, 'token' => null, 'novo' => false];
         }
 
         try {
@@ -50,7 +51,7 @@ class TrialCadastro
             // Duas requisições simultâneas com o mesmo número: a segunda cai aqui e usa a conta da primeira.
             $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', $dados['whatsapp'])->firstOrFail();
 
-            return ['trial' => $trial, 'token' => $trial->novoTokenDeAcesso(), 'novo' => false];
+            return ['trial' => $trial, 'token' => null, 'novo' => false];
         }
 
         $token = $trial->novoTokenDeAcesso();

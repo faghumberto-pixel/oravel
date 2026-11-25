@@ -2,19 +2,17 @@
 @section('titulo', 'Meu link de acesso - Oravel Intelligence')
 @section('conteudo')
     <h1 class="text-2xl font-bold">Meu link de acesso</h1>
-    <p class="mt-2 text-sm text-white/70">Informe o WhatsApp usado no cadastro.</p>
+    <p class="mt-2 text-sm text-white/70">Informe o WhatsApp usado no cadastro. Por segurança, o link é enviado ao dono da conta, nunca mostrado na tela.</p>
 
     @if ($errors->any())
         <div class="mt-4 rounded-lg bg-red-500/20 p-3 text-sm text-red-100">@foreach ($errors->all() as $erro)<p>{{ $erro }}</p>@endforeach</div>
     @endif
 
-    @if (session('link'))
+    @if (session('enviado'))
         <div class="mt-4 rounded-lg bg-emerald-500/20 p-3 text-sm">
-            <p>Seu link pessoal. Guarde-o e não compartilhe:</p>
-            <a class="mt-2 block break-all underline" href="{{ session('link') }}">{{ session('link') }}</a>
+            Se esse número tem um teste, o link de acesso é enviado ao dono da conta. Por segurança, ele não aparece aqui.
+            Se não chegar, fale com a Oravel que liberamos o acesso.
         </div>
-    @elseif (session('enviado'))
-        <div class="mt-4 rounded-lg bg-emerald-500/20 p-3 text-sm">Se esse número tem uma conta, enviamos o link de acesso.</div>
     @endif
 
     <form method="POST" action="{{ route('intelligence.trial.novo-link.enviar') }}" class="mt-6 space-y-4">
