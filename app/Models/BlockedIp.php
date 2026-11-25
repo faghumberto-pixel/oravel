@@ -23,6 +23,22 @@ class BlockedIp extends Model
         'blocked_by_user_id',
     ];
 
+    /**
+     * Motivo pelo qual NAO se pode bloquear este IP (ou null se pode). Bloquear o proprio IP, ou o de alguem da equipe/cliente que
+     * entra logado, derruba o acesso a TODO o sistema (o bloqueio roda antes do login e o desbloqueio so existe na Central).
+     */
+    public static function motivoParaNaoBloquear(string $ip, ?string $ipDeQuemBloqueia = null): ?string
+    {
+        if ($ipDeQuemBloqueia !== null && $ip === $ipDeQuemBloqueia) {
+            return 'Este é o seu próprio IP. Bloqueá-lo tiraria você do sistema.';
+        }
+        if (SiteVisit::where('ip_address', $ip)->whereNotNull('user_id')->exists()) {
+            return 'Este IP já foi usado por um usuário logado no sistema (equipe ou cliente). Bloqueá-lo tiraria o acesso dele.';
+        }
+
+        return null;
+    }
+
     public function blockedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'blocked_by_user_id');

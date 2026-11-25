@@ -6,6 +6,7 @@ use App\Filament\Central\Resources\SiteVisitResource\Pages;
 use App\Models\BlockedIp;
 use App\Models\SiteVisit;
 use App\Models\Tenant;
+use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -39,7 +40,13 @@ class SiteVisitResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->withoutGlobalScopes();
+        // A lista nao mostra o uso da propria equipe (super admins) nem o IP de quem esta olhando a tela: assim ninguem bloqueia o proprio IP sem querer.
+        $admins = User::withoutGlobalScopes()->whereIn('email', (array) config('oravel.super_admins'))->pluck('id')->all();
+        $meuIp = request()->ip();
+
+        return parent::getEloquentQuery()->withoutGlobalScopes()
+            ->when($admins, fn (Builder $q) => $q->where(fn ($w) => $w->whereNull('user_id')->orWhereNotIn('user_id', $admins)))
+            ->when($meuIp, fn (Builder $q) => $q->where(fn ($w) => $w->whereNull('ip_address')->orWhere('ip_address', '!=', $meuIp)));
     }
 
     public static function form(Form $form): Form
@@ -186,13 +193,19 @@ class SiteVisitResource extends Resource
                     ->visible(fn (SiteVisit $record) => filled($record->ip_address)
                         && ! BlockedIp::where('ip_address', $record->ip_address)->exists())
                     ->requiresConfirmation()
-                    ->modalDescription(fn (SiteVisit $record) => "Bloqueia o IP {$record->ip_address} de acessar QUALQUER parte do sistema (admin, central, portal do cliente, site público) -- afeta todo mundo que usa esse IP, não só este visitante.")
+                    ->modalDescription(fn (SiteVisit $record) => "Bloqueia o IP {$record->ip_address} de acessar QUALQUER parte do sistema (admin, central, portal do cliente, site público) -- afeta todo mundo que usa esse IP, não só este visitante. O sistema recusa bloquear o seu próprio IP e IPs de usuários logados.")
                     ->form([
                         TextInput::make('reason')
                             ->label('Motivo (opcional)')
                             ->maxLength(255),
                     ])
                     ->action(function (SiteVisit $record, array $data) {
+                        if ($proibido = BlockedIp::motivoParaNaoBloquear($record->ip_address, request()->ip())) {
+                            Notification::make()->title('IP não bloqueado')->body($proibido)->danger()->send();
+
+                            return;
+                        }
+
                         BlockedIp::create([
                             'ip_address' => $record->ip_address,
                             'reason' => $data['reason'] ?? null,

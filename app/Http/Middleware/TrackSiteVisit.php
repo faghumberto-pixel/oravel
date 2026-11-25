@@ -70,6 +70,11 @@ class TrackSiteVisit
             return;
         }
 
+        // O uso da propria equipe Oravel (super admin logado, ou qualquer tela da Central) nao e' visita: nao conta nos acessos.
+        if (Auth::user()?->isSuperAdmin() || $request->is('central', 'central/*')) {
+            return;
+        }
+
         $visitorToken = $request->cookie(self::VISITOR_COOKIE) ?: (string) Str::uuid();
 
         if (! $request->cookie(self::VISITOR_COOKIE)) {
