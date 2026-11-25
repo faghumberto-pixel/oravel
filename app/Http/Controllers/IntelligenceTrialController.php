@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
+use App\Domain\Intelligence\Trial\Services\RecuperacaoDeAcesso;
 use App\Domain\Intelligence\Trial\Services\TrialCadastro;
 use App\Filament\Resources\IntelligenceImportResource;
 use App\Http\Requests\IntelligenceTrial\CadastroTrialRequest;
@@ -11,7 +12,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 /** Cadastro rápido sem senha do teste grátis do Intelligence, entrada por link pessoal e novo link por WhatsApp. */
 class IntelligenceTrialController extends Controller
@@ -21,7 +21,7 @@ class IntelligenceTrialController extends Controller
         return view('intelligence-trial.cadastro');
     }
 
-    public function store(CadastroTrialRequest $request, TrialCadastro $cadastro): RedirectResponse
+    public function store(CadastroTrialRequest $request, TrialCadastro $cadastro, RecuperacaoDeAcesso $recuperacao): RedirectResponse
     {
         $r = $cadastro->cadastrar([
             'nome' => trim($request->string('nome')),
@@ -29,7 +29,14 @@ class IntelligenceTrialController extends Controller
             'whatsapp' => $request->whatsappE164(),
         ], $request->ip(), $request->userAgent());
 
-        return $this->entrar($request, $r['trial'], $r['token'], $r['novo']);
+        if (! $r['novo']) {
+            // WhatsApp que já tem conta: NÃO loga e NÃO mostra link (quem digitou pode não ser o dono do número).
+            $recuperacao->solicitar($r['trial']);
+
+            return redirect()->route('intelligence.trial.novo-link')->with('enviado', true);
+        }
+
+        return $this->entrar($request, $r['trial'], $r['token'], true);
     }
 
     /** Link pessoal: autentica e vai para o upload. */
@@ -48,21 +55,14 @@ class IntelligenceTrialController extends Controller
         return view('intelligence-trial.novo-link');
     }
 
-    public function enviarNovoLink(NovoLinkRequest $request): RedirectResponse
+    public function enviarNovoLink(NovoLinkRequest $request, RecuperacaoDeAcesso $recuperacao): RedirectResponse
     {
         $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', $request->whatsappE164())->first();
-        if (! $trial) {
-            return back()->withInput()->withErrors(['whatsapp' => 'Não encontramos um teste com esse WhatsApp.']);
+        if ($trial) {
+            $recuperacao->solicitar($trial);
         }
 
-        $token = $trial->novoTokenDeAcesso();
-        Log::info('Intelligence trial: novo link de acesso pedido.', ['trial_id' => $trial->id]);
-
-        // Sem canal de envio ao cliente (sem WhatsApp da Oravel e sem e-mail no cadastro), o link só pode ser mostrado.
-        if (config('intelligence_trial.mostrar_link_na_tela')) {
-            return back()->with('link', route('intelligence.trial.entrar', $token));
-        }
-
+        // Mesma resposta exista a conta ou não: a tela nunca revela se o número tem teste e nunca mostra o link.
         return back()->with('enviado', true);
     }
 
