@@ -730,6 +730,19 @@ class AsaasService
         return $response->json();
     }
 
+    /** Cliente do Asaas pelo CPF/CNPJ (só dígitos), ou null. Evita criar cliente duplicado. */
+    public function findCustomerByCpfCnpj(string $cpfCnpj): ?array
+    {
+        $response = Http::withHeaders(['access_token' => $this->apiKey])
+            ->get("{$this->baseUrl}/customers", ['cpfCnpj' => preg_replace('/\D/', '', $cpfCnpj), 'limit' => 1]);
+
+        if ($response->failed()) {
+            throw new \Exception('ASAAS Error: '.$response->body());
+        }
+
+        return $response->json('data.0');
+    }
+
     public function createSubscription(array $data): array
     {
         $response = Http::withHeaders([

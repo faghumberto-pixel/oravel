@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Intelligence\Trial\Services\TrialWebhook;
 use App\Models\AccountReceivable;
 use App\Models\ImplementationCharge;
 use App\Models\Tenant;
@@ -101,6 +102,11 @@ class AsaasWebhookController extends Controller
                 $this->processTenantCheckout($checkout, $event);
             }
 
+            return;
+        }
+
+        // Conta de teste do Intelligence (idempotente; cancelamento de assinatura chega como SUBSCRIPTION_*).
+        if (app(TrialWebhook::class)->tratar($payload)) {
             return;
         }
 

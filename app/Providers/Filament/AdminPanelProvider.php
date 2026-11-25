@@ -174,6 +174,10 @@ class AdminPanelProvider extends PanelProvider
                 fn () => new HtmlString("<script>try{var g=JSON.parse(localStorage.getItem('collapsedGroups')||'[]');if(Array.isArray(g)){var f=g.filter(function(x){return x&&x!=='null'});if(f.length!==g.length)localStorage.setItem('collapsedGroups',JSON.stringify(f));}}catch(e){}</script>"),
             )
             ->renderHook(
+                PanelsRenderHook::CONTENT_START,
+                fn () => view('filament.intelligence-trial-banner'),
+            )
+            ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
                 fn () => view('filament.topbar-brand-and-ticker'),
             )

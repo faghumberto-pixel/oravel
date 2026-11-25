@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Models\Concerns\HasSignatures;
 use App\Services\AsaasService;
 use App\Services\TenantTimeline;
@@ -103,6 +104,11 @@ class Tenant extends Model
         }
 
         return (float) TenantComplemento::withoutGlobalScopes()->where('tenant_id', $tenant->id)->whereIn('status', [TenantComplemento::ATIVO, TenantComplemento::ENCERRANDO])->sum('valor_mensal');
+    }
+
+    public function intelligenceTrial(): HasOne
+    {
+        return $this->hasOne(IntelligenceTrial::class)->withoutGlobalScopes();
     }
 
     public function taxas(): HasMany
@@ -333,6 +339,11 @@ class Tenant extends Model
     public function isAccessBlockedForNonPayment(): bool
     {
         if (Auth::user()?->isSuperAdmin()) {
+            return false;
+        }
+
+        // Teste grátis do Intelligence: o acesso é decidido pela própria conta de teste (somente leitura, não bloqueio total).
+        if ($this->intelligenceTrial !== null) {
             return false;
         }
 

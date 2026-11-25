@@ -677,6 +677,7 @@ Route::middleware(['web', 'auth'])->get('/leads', function () {
 require __DIR__.'/auth.php';
 require __DIR__.'/chat.php';
 require __DIR__.'/checkout.php';
+require __DIR__.'/intelligence_trial.php';
 
 // Central: ver/baixar o contrato assinado de cada cliente (só administrador da plataforma).
 Route::middleware([\App\Http\Middleware\CentralPanelAuth::class])

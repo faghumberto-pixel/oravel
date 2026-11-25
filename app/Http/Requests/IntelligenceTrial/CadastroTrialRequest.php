@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Requests\IntelligenceTrial;
+
+use App\Domain\Intelligence\Trial\Support\TelefoneBr;
+use Illuminate\Foundation\Http\FormRequest;
+
+class CadastroTrialRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'nome' => ['required', 'string', 'min:2', 'max:120'],
+            'empresa' => ['required', 'string', 'min:2', 'max:120'],
+            'whatsapp' => ['required', 'string', function ($attr, $value, $fail) {
+                if (TelefoneBr::e164($value) === null) {
+                    $fail('Informe um WhatsApp com DDD, por exemplo (19) 99999-9999.');
+                }
+            }],
+            'aceite' => ['accepted'],
+            // Honeypot: humano nunca preenche.
+            'site' => ['prohibited'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'nome.required' => 'Informe seu nome.',
+            'empresa.required' => 'Informe o nome da empresa.',
+            'whatsapp.required' => 'Informe seu WhatsApp.',
+            'aceite.accepted' => 'Para continuar, aceite os Termos de Uso e a Política de Privacidade.',
+            'site.prohibited' => 'Não foi possível enviar.',
+        ];
+    }
+
+    public function whatsappE164(): string
+    {
+        return TelefoneBr::e164($this->input('whatsapp'));
+    }
+}
