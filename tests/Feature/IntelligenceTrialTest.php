@@ -17,11 +17,14 @@ use App\Domain\Intelligence\Trial\Support\TelefoneBr;
 use App\Filament\Resources\IntelligenceImportResource;
 use App\Models\SalesLead;
 use App\Models\Tenant;
+use App\Models\TenantEvent;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Writer\XLSX\Writer;
 use Tests\TestCase;
@@ -124,6 +127,23 @@ class IntelligenceTrialTest extends TestCase
         $this->assertSame('Intelligence – teste grátis', SalesLead::latest('created_at')->first()->inbound_details['origem']);
         Mail::assertSent(NovoCadastroTrialMail::class, fn ($m) => $m->hasTo('dono@example.test'));
         $r->assertSessionHas('intelligence_link');
+    }
+
+    public function test_cadastro_com_sessao_antiga_de_usuario_removido_funciona_e_nao_herda_o_autor(): void
+    {
+        // O navegador ainda guarda a sessão de um usuário que não existe mais.
+        $fantasma = (string) Str::uuid();
+
+        $r = $this->withSession([Auth::guard('web')->getName() => $fantasma])->cadastrar();
+
+        $r->assertRedirect(IntelligenceImportResource::getUrl('index'));
+        $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
+        $this->assertAuthenticatedAs($trial->user);
+
+        // o evento "cadastro" foi gravado, sem apontar para o usuário fantasma (a chave estrangeira o recusaria)
+        $evento = TenantEvent::where('tenant_id', $trial->tenant_id)->where('dedupe_key', 'cadastro')->first();
+        $this->assertNotNull($evento, 'o evento de cadastro não foi gravado');
+        $this->assertNotSame($fantasma, $evento->actor_user_id);
     }
 
     public function test_cadastro_valida_whatsapp_aceite_e_honeypot(): void

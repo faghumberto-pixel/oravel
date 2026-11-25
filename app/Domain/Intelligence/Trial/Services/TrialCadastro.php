@@ -15,6 +15,7 @@ use App\Services\TenantProvisioner;
 use App\Services\TenantTimeline;
 use App\Support\Pacotes;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -37,6 +38,12 @@ class TrialCadastro
      */
     public function cadastrar(array $dados, ?string $ip = null, ?string $userAgent = null): array
     {
+        // Cadastro novo começa com a sessão limpa. Uma sessão antiga (de um usuário que já foi removido, por exemplo) fazia o evento da
+        // linha do tempo ser gravado com um autor inexistente: a chave estrangeira falha e, no Postgres, a transação aborta (erro 500).
+        if (app()->bound('request') && request()->hasSession()) {
+            Auth::guard('web')->logout();
+        }
+
         $existente = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', $dados['whatsapp'])->first();
         if ($existente) {
             // Saber o WhatsApp não dá acesso: não troca o link do dono nem devolve token (ver RecuperacaoDeAcesso).
