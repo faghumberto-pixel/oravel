@@ -51,7 +51,7 @@ class IntelligenceSitePaginaTest extends TestCase
     public function test_pagina_tem_titulo_descricao_e_open_graph_para_compartilhar(): void
     {
         $h = $this->html();
-        $this->assertStringContainsString('Veja onde sua locadora está perdendo dinheiro.', $h);
+        $this->assertStringContainsString('Veja onde e como sua locadora pode melhorar.', $h);
         foreach (['<title>', 'name="description"', 'rel="canonical"', 'property="og:title"', 'property="og:description"', 'property="og:image"', 'name="twitter:card"'] as $tag) {
             $this->assertStringContainsString($tag, $h, "falta $tag");
         }

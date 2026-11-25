@@ -44,7 +44,7 @@ return [
     'textos' => [
         'marca' => 'Oravel Intelligence',
         'eyebrow' => 'Para locadoras de equipamentos',
-        'hero_titulo' => 'Veja onde sua locadora está perdendo dinheiro.',
+        'hero_titulo' => 'Veja onde e como sua locadora pode melhorar.',
         'hero_subtitulo' => 'Envie sua planilha e receba a leitura em minutos. Sem trocar de sistema.',
         'cta' => 'Enviar minha planilha',
         'microtexto' => 'Leva 1 minuto. Sem senha e sem cartão.',
@@ -73,7 +73,7 @@ return [
             ['p' => 'Posso reenviar a planilha depois?', 'r' => 'Pode, quando quiser. Cada envio fica no histórico e nada é sobrescrito. Se o arquivo for idêntico a um que você já enviou, o sistema avisa e não grava de novo.'],
         ],
 
-        'titulo_pagina' => 'Oravel Intelligence: veja onde sua locadora está perdendo dinheiro',
+        'titulo_pagina' => 'Oravel Intelligence: veja onde e como sua locadora pode melhorar',
         'descricao_pagina' => 'Envie sua planilha e receba a leitura da sua locadora em minutos: equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Primeira leitura grátis.',
     ],
 ];
