@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Crm\InteracaoController;
 use App\Http\Controllers\Api\Crm\LeadController;
 use App\Http\Controllers\Api\Internal\ObservatorioVisitasIndiceController;
 use App\Http\Controllers\Api\SignatureController;
+use App\Http\Controllers\IntelligenceDepoimentosController;
 use App\Http\Controllers\Api\V1\HourMeterPreloadController;
 use App\Http\Controllers\Api\V1\HourMeterSyncController;
 use App\Http\Controllers\Api\V1\TimeClockSyncController;
@@ -132,3 +133,6 @@ Route::prefix('crm/v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/leads/{id}/interacoes', [InteracaoController::class, 'store']);
     });
 });
+
+// Depoimentos reais da página oravel.com.br/intelligence (só o que foi aprovado e autorizado). Público e sem sessão.
+Route::get('/intelligence/depoimentos', [IntelligenceDepoimentosController::class, 'index'])->middleware('throttle:60,1')->name('intelligence.depoimentos');

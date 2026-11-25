@@ -23,6 +23,10 @@ class IntelligenceTrialController extends Controller
 
     public function store(CadastroTrialRequest $request, TrialCadastro $cadastro, RecuperacaoDeAcesso $recuperacao): RedirectResponse
     {
+        if (! $this->origemPermitida($request)) {
+            return redirect()->route('intelligence.trial.create')->withErrors(['nome' => 'Não foi possível enviar por aqui. Preencha o cadastro nesta página.']);
+        }
+
         $r = $cadastro->cadastrar([
             'nome' => trim($request->string('nome')),
             'empresa' => trim($request->string('empresa')),
@@ -74,5 +78,25 @@ class IntelligenceTrialController extends Controller
         return redirect(IntelligenceImportResource::getUrl('index'))
             ->with('intelligence_link', route('intelligence.trial.entrar', $token))
             ->with('intelligence_novo', $novo);
+    }
+
+    /**
+     * O cadastro recebe POST do site oravel.com.br sem token CSRF. Aceita só quando Origin/Referer é o próprio app ou uma origem
+     * permitida (config intelligence_site.origens_permitidas). Navegador que não manda nenhum dos dois passa (honeypot e throttle seguem valendo).
+     */
+    private function origemPermitida(Request $request): bool
+    {
+        $origem = $request->headers->get('Origin') ?: $request->headers->get('Referer');
+        if (! $origem || $origem === 'null') {
+            return true;
+        }
+        $partes = parse_url($origem);
+        if (empty($partes['host'])) {
+            return false;
+        }
+        $base = ($partes['scheme'] ?? 'https').'://'.$partes['host'].(isset($partes['port']) ? ':'.$partes['port'] : '');
+        $permitidas = array_merge((array) config('intelligence_site.origens_permitidas'), [$request->getSchemeAndHttpHost(), rtrim((string) config('intelligence_site.app_url'), '/')]);
+
+        return in_array($base, $permitidas, true);
     }
 }
