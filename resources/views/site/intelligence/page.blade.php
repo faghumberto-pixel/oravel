@@ -146,7 +146,6 @@
         <div class="precocard">
             <p class="big">Primeira leitura grátis. Plano Básico: <b>{{ $preco }}/mês</b>.</p>
             <p>A cobrança só começa {{ $dias }} dias após o seu primeiro envio e você cancela quando quiser. Seus dados são privados e usados só para gerar a sua leitura.</p>
-            <p class="fim">{{ $t['preco_linha_final'] }}</p>
         </div>
     </div>
 </section>

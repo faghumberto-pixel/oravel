@@ -121,7 +121,7 @@ class IntelligenceSitePaginaTest extends TestCase
     public function test_sem_whatsapp_chat_nem_textos_proibidos(): void
     {
         $h = $this->html();
-        foreach (['wa.me', 'whatsapp.com/send', 'Online agora', 'wa-chat', '#contato', '/contato.php', 'Sem cadastro', 'sem cadastro', 'Quem fez', 'Humberto'] as $proibido) {
+        foreach (['wa.me', 'whatsapp.com/send', 'Online agora', 'wa-chat', '#contato', '/contato.php', 'Sem cadastro', 'sem cadastro', 'Quem fez', 'Humberto', 'não substitui seu contador', 'Não compara com outras locadoras'] as $proibido) {
             $this->assertStringNotContainsString($proibido, $h, "não pode aparecer: $proibido");
         }
         $this->assertStringContainsString('Leva 1 minuto. Sem senha e sem cartão.', $h);

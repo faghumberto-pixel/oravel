@@ -62,7 +62,6 @@ return [
         'leitura_titulo' => 'O que vem na leitura',
 
         'preco_titulo' => 'Preço e confiança',
-        'preco_linha_final' => 'Não compara com outras locadoras e não substitui seu contador.',
 
         'faq_titulo' => 'Perguntas frequentes',
         'faq' => [
