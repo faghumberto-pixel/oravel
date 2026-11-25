@@ -135,6 +135,16 @@
     }
   }, true);
 
+  // Evento próprio de uma página (ex.: formulário do teste grátis abriu/foi enviado). Mesmo canal e mesmas regras dos cliques acima.
+  window.ovTrack = function (label) {
+    try {
+      label = String(label || '').slice(0, 120);
+      if (!label) { return; }
+      send({ t: 'click', label: label, path: location.pathname });
+      if (/^Teste grátis: enviou o formulário/.test(label)) { ga('generate_lead', { method: 'teste_gratis_intelligence', page_path: location.pathname }); }
+    } catch (e) { /* medir nunca pode atrapalhar a página */ }
+  };
+
   // Widget flutuante de WhatsApp das páginas do site: não é <a>, abre o chat com window.open('https://wa.me/...') ao
   // enviar a mensagem. O listener de clique acima não o enxerga, então contamos a abertura aqui (1 por envio).
   var nativeOpen = window.open;

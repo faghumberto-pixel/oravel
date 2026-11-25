@@ -58,6 +58,10 @@ return Application::configure(basePath: dirname(__DIR__))
             TrackSiteVisit::class,
         ]);
 
+        // Cadastro rápido do teste grátis recebe o POST do formulário da página oravel.com.br/intelligence (outro domínio, então
+        // sem token CSRF). A defesa é a checagem de Origin no controller + honeypot + throttle (ver IntelligenceTrialController).
+        $middleware->validateCsrfTokens(except: ['intelligence/teste-gratis']);
+
         // Bloqueio de IP (pedido do usuário 2026-09-27) -- prepend pra
         // rodar ANTES de tudo o mais na pilha web (rotas públicas, painéis).
         $middleware->web(prepend: [

@@ -7,6 +7,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CadastroTrialRequest extends FormRequest
 {
+    /** Erro de validação nunca volta para a página do site (que não mostra erros): vai para a tela de cadastro do app, com os dados preenchidos. */
+    protected $redirectRoute = 'intelligence.trial.create';
+
     public function authorize(): bool
     {
         return true;
