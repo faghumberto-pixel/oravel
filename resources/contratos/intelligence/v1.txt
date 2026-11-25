@@ -1,0 +1,23 @@
+CONTRATO DE PRESTAÇÃO DE SERVIÇOS (SaaS) - ORAVEL INTELLIGENCE
+Versão {versao}
+
+RASCUNHO - o texto jurídico será revisado por advogado antes da cobrança real.
+
+CONTRATANTE: {razao_social}, CNPJ {cnpj}, e-mail {email}, representada por {responsavel}.
+CONTRATADA: {contratada_nome}, CNPJ {contratada_cnpj}.
+
+1. OBJETO. Acesso ao software Oravel Intelligence, plataforma que recebe planilhas da CONTRATANTE, calcula indicadores e mantém o histórico de cada envio.
+
+2. PREÇO E PERIODICIDADE. O plano "{plano_nome}" custa R$ {preco} por mês, cobrado mensalmente pelo Asaas. A forma de pagamento (Pix, boleto ou cartão) é escolhida pela CONTRATANTE ao receber a cobrança.
+
+3. TESTE GRÁTIS E INÍCIO DA COBRANÇA. O teste grátis dura {dias_teste} dias. Nenhum valor é cobrado durante o teste. A primeira cobrança vence em {inicio_cobranca}; as seguintes vencem a cada mês, no mesmo dia.
+
+4. CANCELAMENTO. A CONTRATANTE pode cancelar a qualquer momento pela própria conta. O acesso continua até o fim do período já pago. Não há multa.
+
+5. INADIMPLÊNCIA. Após {carencia_dias} dias de atraso, a conta passa para somente leitura: o histórico e os painéis continuam visíveis, mas novos envios ficam bloqueados até a regularização. Nenhum dado é apagado.
+
+6. DADOS E LGPD. Os dados enviados pertencem à CONTRATANTE. A CONTRATADA os trata apenas para prestar o serviço, conforme a Lei nº 13.709/2018 (LGPD) e a Política de Privacidade. Indicadores de benchmark são sempre agregados e anônimos.
+
+7. ACEITE ELETRÔNICO. O aceite online, com registro de data, hora, endereço IP e dispositivo, tem validade como assinatura do contrato.
+
+Foro: {foro}.
