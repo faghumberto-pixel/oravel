@@ -69,7 +69,7 @@ return [
             ['p' => 'Preciso trocar de sistema?', 'r' => 'Não. Você envia uma planilha, venham os números de onde vierem. Quem usa o ERP da Oravel exporta a planilha com 1 clique.'],
             ['p' => 'Quanto custa?', 'r' => '__PRECO__'],
             ['p' => 'E se eu não tiver todos os dados?', 'r' => 'Comece com o que tiver. Só a data de referência é obrigatória, e é preciso preencher ao menos um bloco completo (por exemplo, total de equipamentos e equipamentos locados). O que você não informar fica fora da leitura, e o sistema diz o que faltou.'],
-            ['p' => 'Meus dados ficam seguros?', 'r' => 'Só a sua empresa vê os seus números. Nenhuma outra locadora enxerga os seus dados, e o assistente de IA só consulta, nunca altera nada.'],
+            ['p' => 'Meus dados ficam seguros?', 'r' => 'Sim. O Intelligence roda em infraestrutura do Google Cloud, na região de São Paulo, com conexão criptografada (HTTPS) e proteção da Cloudflare. Os discos do Google Cloud são criptografados por padrão. Os dados são copiados todo dia: backup diário do banco, com um arquivo por cliente guardado por 30 dias, e snapshot diário do disco no Google Cloud. Cada envio fica no histórico e nada é sobrescrito. O assistente de IA só consulta os seus números e nunca altera nada.'],
             ['p' => 'Posso reenviar a planilha depois?', 'r' => 'Pode, quando quiser. Cada envio fica no histórico e nada é sobrescrito. Se o arquivo for idêntico a um que você já enviou, o sistema avisa e não grava de novo.'],
         ],
 

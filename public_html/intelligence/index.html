@@ -1,740 +1,466 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oravel Intelligence: veja onde a sua locadora está perdendo dinheiro | Oravel</title>
-<meta name="description" content="Envie uma planilha e descubra onde a sua locadora perde dinheiro: nota de saúde, equipamentos que custam mais do que rendem, comparação mês a mês e plano de ação. Sem trocar de sistema.">
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oravel Intelligence: veja onde sua locadora está perdendo dinheiro | Oravel</title>
+<meta name="description" content="Envie sua planilha e receba a leitura da sua locadora em minutos: equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Primeira leitura grátis.">
 <link rel="canonical" href="https://oravel.com.br/intelligence/">
-<meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><meta property="og:site_name" content="Oravel"><meta property="og:title" content="Oravel Intelligence: veja onde a sua locadora está perdendo dinheiro | Oravel"><meta property="og:description" content="Envie uma planilha e descubra onde a sua locadora perde dinheiro: nota de saúde, equipamentos que custam mais do que rendem, comparação mês a mês e plano de ação. Sem trocar de sistema."><meta property="og:url" content="https://oravel.com.br/intelligence/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Oravel">
+<meta property="og:title" content="Oravel Intelligence: veja onde sua locadora está perdendo dinheiro">
+<meta property="og:description" content="Envie sua planilha e receba a leitura da sua locadora em minutos: equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Primeira leitura grátis.">
+<meta property="og:url" content="https://oravel.com.br/intelligence/">
+<meta property="og:image" content="https://oravel.com.br/intelligence/og-intelligence.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Veja onde sua locadora está perdendo dinheiro.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oravel Intelligence: veja onde sua locadora está perdendo dinheiro">
+<meta name="twitter:description" content="Envie sua planilha e receba a leitura da sua locadora em minutos: equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Primeira leitura grátis.">
+<meta name="twitter:image" content="https://oravel.com.br/intelligence/og-intelligence.png">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Oravel Intelligence: veja onde a sua locadora está perdendo dinheiro | Oravel","description":"Envie uma planilha e descubra onde a sua locadora perde dinheiro: nota de saúde, equipamentos que custam mais do que rendem, comparação mês a mês e plano de ação. Sem trocar de sistema.","url":"https://oravel.com.br/intelligence/"}</script>
-<style>
-:root{--paper:#fff;--surface:#f6f7f9;--ink:#0f172a;--ink-soft:#5b6472;--ink-faint:#8891a0;--line:#e4e7ec;
---accent:#f97316;--accent-ink:#c2410c;--accent-soft:#fff1e4;--navy:#0f172a;--navy-2:#08142c;--ok:#16a34a}
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"<?php $__contextArgs = [];\nif (context()->has($__contextArgs[0])) :\nif (isset($value)) { $__contextPrevious[] = $value; }\n$value = context()->get($__contextArgs[0]); ?>":"https://schema.org","@type":"WebPage","name":"Oravel Intelligence: veja onde sua locadora está perdendo dinheiro","description":"Envie sua planilha e receba a leitura da sua locadora em minutos: equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Primeira leitura grátis.","url":"https://oravel.com.br/intelligence/","inLanguage":"pt-BR"}</script>
+<style>:root{--paper:#fff;--surface:#f4f6f9;--ink:#0f172a;--ink-soft:#4b5563;--line:#e2e6ec;--accent:#f97316;--accent-ink:#b8420a;--accent-soft:#fff1e4;--navy:#0f172a;--navy-2:#0a1226;--ok:#15803d;--ok-soft:#dcfce7;--bad:#b91c1c;--bad-soft:#fee2e2;--warn:#a16207;--warn-soft:#fef3c7;--r:12px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.5}
-h1,h2,h3,h4{font-family:"Manrope","Inter",sans-serif;font-weight:800;letter-spacing:-.02em;margin:0;text-wrap:balance}
-p,ul{margin:0}a{color:inherit}img,svg,video{max-width:100%}
+body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:84px}
+h1,h2,h3{font-family:"Manrope","Inter",sans-serif;font-weight:800;letter-spacing:-.02em;margin:0;text-wrap:balance;line-height:1.15}
+p{margin:0}a{color:inherit}img,svg{max-width:100%}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.skip{position:absolute;left:-9999px}.skip:focus{left:8px;top:8px;background:var(--navy);color:#fff;padding:10px 14px;border-radius:8px;z-index:100}
-.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
-.eyebrow{font-family:"Manrope",sans-serif;font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink)}
-.on-dark .eyebrow,.hero .eyebrow{color:#fdba74}
+.skip{position:absolute;left:-9999px}.skip:focus{left:8px;top:8px;background:var(--navy);color:#fff;padding:10px 14px;border-radius:8px;z-index:200}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+/* topo */
+.top{background:var(--navy);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:"Manrope",sans-serif;font-weight:800;font-size:22px;text-decoration:none;color:#fff;letter-spacing:-.02em}.logo i{font-style:normal;color:var(--accent)}
+.top small{color:#cbd5e1;font-size:13px}
 /* botões */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;border:1.5px solid transparent;cursor:pointer;min-height:48px;font-family:inherit;transition:.15s}
-.btn-p{background:var(--accent);color:#0f172a}.btn-p:hover{background:#ea580c}
-.btn-o{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}.btn-o:hover{border-color:#fff}
-.btn-d{background:var(--navy);color:#fff}.btn-d:hover{background:#1a2540}
-.btn-l{background:#fff;color:var(--ink);border-color:var(--line)}.btn-l:hover{border-color:var(--ink-faint)}
-/* cabeçalho */
-.top{position:sticky;top:0;z-index:60;background:rgba(8,20,44,.97);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1)}
-.top .logo{color:#fff}
-.top-in{max-width:1180px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;gap:28px}
-.logo{font-family:"Manrope",sans-serif;font-weight:900;font-size:22px;text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;flex:none}
-.logo i{color:var(--accent);font-style:normal}
-.logo::before{content:"";display:inline-block;width:38px;height:10px;margin-right:10px;background:radial-gradient(circle at 5px 5px,#ef4444 4.5px,transparent 5px) 0 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#f59e0b 4.5px,transparent 5px) 14px 0/10px 10px no-repeat,radial-gradient(circle at 5px 5px,#22c55e 4.5px,transparent 5px) 28px 0/10px 10px no-repeat}
-.nav{display:none;align-items:center;gap:6px;flex:1}
-.nav>a,.nav .dd>button{font:600 14.5px "Inter",sans-serif;color:#cbd5e1;text-decoration:none;background:none;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
-.nav>a:hover,.nav .dd>button:hover,.nav a[aria-current]{color:#fff;background:rgba(255,255,255,.09)}
-.dd{position:relative}.dd>button::after{content:"▾";margin-left:6px;font-size:11px}
-.dd-menu{position:absolute;top:100%;left:0;min-width:300px;background:#0b1a36;border:1px solid rgba(255,255,255,.14);border-radius:14px;box-shadow:0 24px 50px -24px rgba(15,23,42,.35);padding:8px;opacity:0;visibility:hidden;transform:translateY(6px);transition:.15s}
-.dd:hover .dd-menu,.dd:focus-within .dd-menu{opacity:1;visibility:visible;transform:none}
-.dd-menu a{display:block;padding:10px 12px;border-radius:9px;text-decoration:none}
-.dd-menu a:hover{background:rgba(255,255,255,.08)}.dd-menu strong{display:block;font-size:14px;color:#fff}.dd-menu span{display:block;font-size:12.5px;color:#94a3b8}
-.top-cta{display:none;gap:10px;margin-left:auto}
-.top-cta .btn{padding:10px 16px;min-height:42px;font-size:14px}
-.burger{margin-left:auto;background:none;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:10px;padding:10px 12px;font-weight:700;cursor:pointer}
-.mnav{display:none;border-top:1px solid rgba(255,255,255,.1);padding:12px 24px 20px;background:#08142c}.mnav.open{display:block}
-.mnav a{display:block;padding:11px 4px;text-decoration:none;font-weight:600;color:#e2e8f0;border-bottom:1px solid rgba(255,255,255,.1)}.mnav a.btn{border-bottom:0;text-align:center}.mnav a.btn-p{color:#0f172a}
-.mnav h4{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin:14px 0 4px}
-@media(min-width:1000px){.nav,.top-cta{display:flex}.burger,.mnav{display:none!important}}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:14px 26px;border-radius:10px;border:0;font:800 16px/1 "Manrope","Inter",sans-serif;background:var(--accent);color:var(--ink);text-decoration:none;cursor:pointer;transition:background .15s,transform .15s}
+.btn:hover{background:#ea580c;transform:translateY(-1px)}
+.btn[disabled]{opacity:.6;cursor:wait}
+.link-sec{color:#cbd5e1;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.link-sec:hover{color:#fff}
 /* hero */
-.hero{background:radial-gradient(900px 420px at 85% 0%,rgba(99,102,241,.3),transparent 60%),radial-gradient(700px 420px at 0% 100%,rgba(249,115,22,.22),transparent 60%),var(--navy-2);color:#fff;padding:56px 0 64px;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(ellipse at 50% 20%,#000 25%,transparent 75%);mask-image:radial-gradient(ellipse at 50% 20%,#000 25%,transparent 75%)}
-.hero .wrap{position:relative;display:grid;gap:40px;align-items:center}
-.hero h1{font-size:clamp(32px,5.2vw,56px);line-height:1.06;margin:14px 0 18px}
-.hero .sub{font-size:18px;color:rgba(226,232,240,.88);max-width:54ch}
-.hero-act{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-.trust{display:flex;gap:10px 24px;flex-wrap:wrap;margin-top:26px;list-style:none;padding:0;font-size:14px;color:rgba(226,232,240,.85)}
-.trust li::before{content:"✓";color:var(--accent);font-weight:800;margin-right:8px}
-@media(min-width:1000px){.hero .wrap{grid-template-columns:1fr 1.05fr}.hero{padding:84px 0 92px}}
-/* seções */
-.sec{padding:72px 0}.sec.alt{background:var(--surface)}.sec.dark{background:var(--navy-2);color:#fff}
-.sec-h{max-width:720px;margin-bottom:38px}.sec-h h2{font-size:clamp(26px,4vw,40px);line-height:1.12;margin-top:10px}
-.sec-h p{font-size:17px;color:var(--ink-soft);margin-top:14px}.dark .sec-h p{color:rgba(226,232,240,.8)}
-.center{text-align:center;margin-left:auto;margin-right:auto}
-.strip{padding:22px 0;border-bottom:1px solid var(--line);background:#fff}
-.strip .wrap{display:flex;gap:10px 12px;flex-wrap:wrap;align-items:center}
-.strip span{font-size:13px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;margin-right:6px}
-.chip-l{padding:8px 14px;border:1px solid var(--line);border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink-soft);background:#fff}
-.chip-l:hover{border-color:var(--accent);color:var(--ink)}
-.grid3{display:grid;gap:18px}.grid4{display:grid;gap:18px}
-@media(min-width:700px){.grid3{grid-template-columns:repeat(2,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:1000px){.grid3{grid-template-columns:repeat(3,1fr)}.grid4{grid-template-columns:repeat(4,1fr)}}
-.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;text-decoration:none;display:block;transition:.15s}
-a.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 18px 36px -24px rgba(15,23,42,.35)}
-.card .ic{width:42px;height:42px;border-radius:11px;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.card h3{font-size:18px}.card p{font-size:14.5px;color:var(--ink-soft);margin-top:8px}
-.dark .card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12)}.dark .card p{color:rgba(226,232,240,.75)}
-.more{display:inline-block;margin-top:26px;font-weight:700;color:var(--accent-ink);text-decoration:none}.more::after{content:" →"}
-.split{display:grid;gap:40px;align-items:center}
-@media(min-width:1000px){.split{grid-template-columns:1fr 1.15fr;gap:64px}.split.rev .split-t{order:2}}
-.split h2{font-size:clamp(26px,3.6vw,38px);line-height:1.12;margin:10px 0 16px}.split p{color:var(--ink-soft);font-size:17px}
-.ticks{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px}
-.ticks li{position:relative;padding-left:30px;font-size:16px}
-.ticks li::before{content:"✓";position:absolute;left:0;top:0;width:21px;height:21px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
-.steps{display:grid;gap:18px;counter-reset:s}
-@media(min-width:900px){.steps{grid-template-columns:repeat(3,1fr)}}
-.step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;position:relative}
-.step::before{counter-increment:s;content:counter(s);width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-family:"Manrope",sans-serif}
-.step h3{font-size:18px}.step p{font-size:14.5px;color:var(--ink-soft);margin-top:8px}
-.faq{max-width:820px;display:grid;gap:10px}
-.faq details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 22px}
-.faq summary{cursor:pointer;font-family:"Manrope",sans-serif;font-weight:700;font-size:16.5px;padding:18px 0;list-style:none}
-.faq summary::-webkit-details-marker{display:none}.faq summary::after{content:"+";float:right;color:var(--accent);font-size:22px;line-height:1}
-.faq details[open] summary::after{content:"–"}.faq p{font-size:15px;color:var(--ink-soft);padding-bottom:18px}
-.cta{background:var(--navy-2);color:#fff;border-radius:26px;padding:48px 28px;text-align:center}
-.cta h2{font-size:clamp(26px,4vw,40px)}.cta p{color:rgba(226,232,240,.82);margin:14px auto 0;max-width:56ch;font-size:17px}
-.cta .hero-act{justify-content:center}.cta ul{list-style:none;padding:0;margin:22px 0 0;display:flex;gap:8px 24px;justify-content:center;flex-wrap:wrap;font-size:14px;color:rgba(226,232,240,.85)}
-.cta li::before{content:"✓";color:var(--accent);margin-right:6px;font-weight:800}
+.hero{background:radial-gradient(800px 380px at 90% -10%,rgba(99,102,241,.28),transparent 60%),var(--navy);color:#fff;padding:36px 0 44px}
+.hero .grid{display:grid;gap:34px}
+.eyebrow{font:800 12px/1 "Manrope",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#fdba74}
+.hero h1{font-size:clamp(32px,8vw,52px);margin:14px 0 14px}
+.hero .sub{font-size:18px;color:#e2e8f0;max-width:34ch}
+.hero .preco{margin-top:18px;font-size:15px;color:#e2e8f0}.hero .preco b{color:#fdba74}
+.hero .acoes{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-top:22px}
+.hero .micro{margin-top:12px;font-size:13px;color:#cbd5e1}
+/* blocos */
+.bloco{padding:52px 0}.bloco.alt{background:var(--surface)}
+.bloco h2{font-size:clamp(26px,5vw,36px);margin-bottom:10px}
+.lead{font-size:17px;color:var(--ink-soft);max-width:60ch}
+.cards{display:grid;gap:18px;margin-top:26px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card h3{font-size:19px}.card p{color:var(--ink-soft);font-size:15px}
+.card .ex{color:var(--ink);font-size:15px}
+.card .ex b{color:var(--accent-ink)}
+/* mock-ups (telas ilustrativas) */
+.mock{margin:0;min-width:0}
+.mock .tela{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 18px 40px -26px rgba(15,23,42,.45);color:var(--ink);font-size:13px}
+.hero .mock .tela{border-color:rgba(255,255,255,.2)}
+.mock .ilustrativo{display:block;margin-top:8px;font-size:12px;color:var(--ink-soft);font-style:italic}
+.hero .mock .ilustrativo{color:#cbd5e1}
+.tela h4{margin:0 0 10px;font:800 13px/1.2 "Manrope",sans-serif;letter-spacing:.02em;text-transform:uppercase;color:var(--ink-soft)}
+.nota{display:flex;align-items:baseline;gap:10px}.nota b{font:800 52px/1 "Manrope",sans-serif}.nota span{font-weight:700;color:var(--ok)}
+.barras{display:flex;align-items:flex-end;gap:10px;height:74px;margin:12px 0 4px}
+.barras div{flex:1;background:#c7d2fe;border-radius:6px 6px 0 0;position:relative;min-height:6px}
+.barras div:last-child{background:var(--accent)}
+.barras em{position:absolute;top:-18px;left:0;right:0;text-align:center;font-style:normal;font-weight:700;font-size:12px}
+.meses{display:flex;gap:10px;font-size:11px;color:var(--ink-soft)}.meses span{flex:1;text-align:center}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:8px}.kpi small{display:block;color:var(--ink-soft);font-size:11px}.kpi b{font:800 17px/1.2 "Manrope",sans-serif}.kpi i{display:block;font-style:normal;font-size:11px;font-weight:700;color:var(--ok)}
+table.t{width:100%;border-collapse:collapse}table.t th,table.t td{padding:7px 6px;text-align:left;border-bottom:1px solid var(--line);font-size:12.5px}table.t th{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700}.tag.bad{background:var(--bad-soft);color:var(--bad)}.tag.warn{background:var(--warn-soft);color:var(--warn)}.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.plano{display:grid;gap:8px}.plano .col{border:1px solid var(--line);border-radius:8px;padding:8px 10px}.plano .col b{display:block;font-size:12px;margin-bottom:4px}.plano .col span{display:block;font-size:12px;color:var(--ink-soft);padding:2px 0}
+.foco{background:var(--accent-soft);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:12.5px}
+.balao{border-radius:12px;padding:10px 12px;font-size:13px;max-width:92%}.balao.q{background:var(--surface);margin-left:auto}.balao.a{background:#eef2ff;margin-top:8px}.balao.a b{color:var(--accent-ink)}
+/* calculadora */
+.calc{margin-top:30px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:18px}
+.calc h3{font-size:20px}
+.calc .campos{display:grid;gap:12px}.calc label{display:grid;gap:4px;font-size:14px;font-weight:600}
+.calc input{font:inherit;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;min-height:46px;width:100%}
+.calc .res{background:var(--surface);border-radius:10px;padding:14px;display:grid;gap:4px}.calc .res b{font:800 28px/1.1 "Manrope",sans-serif;color:var(--accent-ink)}.calc .res small{color:var(--ink-soft)}
+/* passos */
+.passos{display:grid;gap:18px;margin-top:26px;counter-reset:p}
+.passo{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.passo::before{counter-increment:p;content:counter(p);display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--accent);color:var(--ink);font:800 18px/1 "Manrope",sans-serif;margin-bottom:12px}
+.passo h3{font-size:18px;margin-bottom:6px}.passo p{color:var(--ink-soft);font-size:15px}
+.nota-erp{margin-top:18px;padding:14px 16px;border-left:4px solid var(--accent);background:#fff;border-radius:8px;font-size:15px}
+/* carrossel */
+.car-wrap{position:relative;margin-top:24px}
+.carrossel{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:thin}
+.slide{flex:0 0 min(88%,430px);scroll-snap-align:start;min-width:0}
+.slide .leg{font-weight:800;font-family:"Manrope",sans-serif;margin-top:12px;font-size:16px}
+.slide p{color:var(--ink-soft);font-size:14px}
+.car-nav{display:flex;gap:10px;margin-top:12px}.car-nav button{min-height:44px;min-width:44px;border:1.5px solid var(--line);background:#fff;border-radius:10px;font:700 16px/1 "Inter",sans-serif;cursor:pointer}.car-nav button:hover{border-color:var(--accent)}
+/* depoimentos */
+.deps{margin-top:26px;display:grid;gap:14px}.dep{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px}.dep p{font-size:16px}.dep footer{margin-top:10px;font-size:13px;color:var(--ink-soft)}
+/* preço */
+.precocard{background:var(--navy);color:#e2e8f0;border-radius:16px;padding:26px;max-width:760px}
+.precocard .big{font:800 clamp(24px,5vw,34px)/1.15 "Manrope",sans-serif;color:#fff}.precocard .big b{color:#fdba74}
+.precocard p{margin-top:12px;font-size:16px}.precocard .fim{font-size:14px;color:#cbd5e1}
+/* faq */
+.faq details{border-bottom:1px solid var(--line);padding:14px 0}.faq summary{cursor:pointer;font:800 17px/1.3 "Manrope",sans-serif;list-style:none;display:flex;justify-content:space-between;gap:12px}.faq summary::-webkit-details-marker{display:none}.faq summary::after{content:"+";font-size:22px;line-height:1;color:var(--accent-ink)}.faq details[open] summary::after{content:"−"}.faq p{margin-top:10px;color:var(--ink-soft);max-width:70ch}
+.final{background:var(--navy);color:#fff;text-align:center;padding:52px 0}.final h2{font-size:clamp(26px,5vw,36px);margin-bottom:10px}.final p{color:#cbd5e1;margin-bottom:22px}
 /* rodapé */
-.foot{background:var(--navy-2);color:#cbd5e1;padding:56px 0 28px}
-.foot-g{display:grid;gap:34px}@media(min-width:900px){.foot-g{grid-template-columns:1.4fr 1fr 1fr 1fr 1fr}}
-.foot h4{color:#fff;font-size:14px;margin-bottom:14px}.foot a{display:block;color:#cbd5e1;text-decoration:none;font-size:14px;line-height:2}.foot a:hover{color:var(--accent)}
-.foot p{font-size:14px;color:#94a3b8}.foot .logo{color:#fff;margin-bottom:12px;font-size:22px;line-height:1.2}
-.foot-b{border-top:1px solid rgba(255,255,255,.14);margin-top:34px;padding-top:20px;font-size:12.5px;color:#94a3b8}
-/* mockups */
-.mk{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 40px 70px -40px rgba(15,23,42,.55);overflow:hidden;font-size:13px;color:var(--ink)}
-.mk-bar{display:flex;align-items:center;gap:6px;padding:11px 14px;background:#f1f4f8;border-bottom:1px solid var(--line)}
-.mk-bar i{width:10px;height:10px;border-radius:50%;background:#cbd5e1}.mk-bar i:nth-child(1){background:#f87171}.mk-bar i:nth-child(2){background:#fbbf24}.mk-bar i:nth-child(3){background:#4ade80}
-.mk-bar b{margin-left:12px;font-weight:600;color:var(--ink-faint);font-size:12px;background:#fff;border:1px solid var(--line);border-radius:7px;padding:3px 12px}
-.mk-body{display:grid}
-.mk-2{grid-template-columns:1fr}@media(min-width:620px){.mk-2{grid-template-columns:.9fr 1.1fr}}
-.mk-l{border-right:1px solid var(--line);padding:14px;background:#fafbfc}.mk-r{padding:18px}
-.mk h5{font-family:"Manrope",sans-serif;font-size:13px;margin:0 0 10px;color:var(--ink)}
-.oi{background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;align-items:center}
-.oi.on{border-color:var(--accent);box-shadow:0 0 0 3px rgba(249,115,22,.14)}
-.oi b{display:block;font-size:12.5px}.oi small{color:var(--ink-faint);font-size:11.5px}
-.tg{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
-.tg.o{background:var(--accent-soft);color:var(--accent-ink)}.tg.g{background:#dcfce7;color:#166534}.tg.y{background:#fef3c7;color:#92400e}.tg.r{background:#fee2e2;color:#991b1b}
-.tl{list-style:none;padding:0;margin:12px 0;display:grid;gap:10px}
-.tl li{display:flex;gap:10px;align-items:flex-start;font-size:12.5px}.tl li i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-top:5px}
-.tl li.d i{background:var(--ok)}.tl li.n i{background:#cbd5e1}
-.cst{border:1px solid var(--line);border-radius:11px;overflow:hidden}.cst div{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--line);font-size:12.5px}.cst div:last-child{border:0;background:var(--accent-soft);font-weight:800}
-.bar{height:7px;border-radius:4px;background:#e6ebf1;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:16px 16px 4px}
-@media(min-width:620px){.stats{grid-template-columns:repeat(4,1fr)}}
-.st{border:1px solid var(--line);border-radius:12px;padding:12px}.st small{color:var(--ink-faint);font-size:11px;display:block}.st b{font-family:"Manrope",sans-serif;font-size:22px}
-.st.o{background:var(--accent-soft);border-color:#fed7aa}
-.mk-t{padding:8px 16px 16px}.mk-t .oi{margin:0 0 6px}
-.phone{width:min(300px,100%);margin:0 auto;border-radius:38px;border:9px solid #0f172a;background:#fff;box-shadow:0 40px 70px -40px rgba(15,23,42,.6);overflow:hidden;position:relative}
-.phone::before{content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);width:84px;height:20px;background:#0f172a;border-radius:12px;z-index:2}
-.ph-h{background:var(--navy-2);color:#fff;padding:36px 16px 14px;font-family:"Manrope",sans-serif;font-weight:800;font-size:15px}
-.ph-b{padding:14px;background:#f6f7f9;display:grid;gap:9px;font-size:12.5px}
-.ph-c{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 12px}.ph-c b{display:block}
-.ph-k{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px}
-.ph-k i{width:17px;height:17px;border-radius:50%;background:var(--ok);color:#fff;font-size:10px;font-style:normal;display:flex;align-items:center;justify-content:center}
-.ph-s{background:#fff;border:1px dashed #cbd5e1;border-radius:10px;padding:10px;color:var(--ink-faint);font-size:11.5px}
-.ph-s svg{display:block;margin-top:4px}.ph-btn{background:var(--accent);color:#0f172a;text-align:center;font-weight:800;border-radius:11px;padding:11px}
-.vs{display:grid;gap:16px}@media(min-width:700px){.vs{grid-template-columns:1fr 1fr}}
-.vs>div{border-radius:18px;padding:24px;border:1px solid var(--line);background:#fff}
-.vs .antes{background:#fff7f7;border-color:#fecaca}.vs .depois{background:#f0fdf4;border-color:#bbf7d0}
-.vs h3{font-size:17px;margin-bottom:12px}.vs ul{list-style:none;padding:0;display:grid;gap:10px;font-size:14.5px}
-.vs .antes li::before{content:"✕";color:#dc2626;font-weight:800;margin-right:10px}.vs .depois li::before{content:"✓";color:#16a34a;font-weight:800;margin-right:10px}
-.nota{font-size:12.5px;color:var(--ink-faint);margin-top:12px}
+footer.rod{background:var(--navy-2);color:#94a3b8;padding:26px 0;font-size:13px}footer.rod .wrap{display:grid;gap:10px}footer.rod nav{display:flex;flex-wrap:wrap;gap:6px 18px}footer.rod a{color:#cbd5e1}
+/* botão fixo (mobile) */
+.fixo{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(15,23,42,.97);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(255,255,255,.12)}
+.fixo .btn{width:100%}
+/* modal */
+dialog.form{border:0;border-radius:16px;padding:0;width:min(440px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto}
+dialog.form::backdrop{background:rgba(2,6,23,.7)}
+dialog.form form{padding:24px;display:grid;gap:14px}
+dialog.form h2{font-size:24px}dialog.form .micro{color:var(--ink-soft);font-size:14px}
+dialog.form label.c{display:grid;gap:5px;font-size:14px;font-weight:600}
+dialog.form input[type=text],dialog.form input[type=tel]{font:inherit;padding:12px;border:1.5px solid #cbd5e1;border-radius:8px;min-height:48px;width:100%}
+dialog.form .aceite{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-soft);font-weight:400}
+dialog.form .aceite input{margin-top:3px;width:18px;height:18px;flex:none}
+dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;color:var(--ink-soft)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+@media(min-width:760px){
+ body{padding-bottom:0}.fixo{display:none}
+ .hero{padding:56px 0 64px}.hero .grid{grid-template-columns:1.05fr .95fr;align-items:center}
+ .cards{grid-template-columns:repeat(3,1fr)}.passos{grid-template-columns:repeat(3,1fr)}
+ .calc{grid-template-columns:1.1fr .9fr;align-items:center}
+ .plano{grid-template-columns:repeat(3,1fr)}
+ .slide{flex-basis:calc(50% - 8px)}
+ .bloco{padding:72px 0}
+}
+@media(min-width:1000px){.slide{flex-basis:calc(33.333% - 11px)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+<header class="top"><div class="wrap"><a class="logo" href="https://oravel.com.br/" aria-label="Oravel">O<i>r</i>avel</a><small>Oravel Intelligence</small></div></header>
 
-/* compatibilidade com o corpo das páginas geradas */
-:root{--border:var(--line)}
-.section{padding:64px 0}.section-surface{background:var(--surface)}
-.section-head{max-width:720px;margin:0 0 34px}.section-head h2{font-size:clamp(26px,4vw,38px);line-height:1.12;margin-top:10px}
-.section-head p{font-size:17px;color:var(--ink-soft);margin-top:12px}
-.section .eyebrow{color:var(--accent-ink)}
-.solve{display:grid;gap:28px;align-items:center;padding:36px 0;border-top:1px solid var(--line)}.solve:first-of-type{border-top:0;padding-top:0}
-@media(min-width:1000px){.solve{grid-template-columns:1fr 1.1fr;gap:56px}.solve.rev .mock{order:-1}}
-.solve h3{font-size:clamp(22px,3.2vw,30px);line-height:1.15;margin-top:8px}.solve p{font-size:16.5px;color:var(--ink-soft);margin-top:12px}
-.solve .result{color:var(--ink);font-weight:600}
-.mock{margin:0;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px}
-.mock svg{display:block;width:100%;height:auto;border-radius:12px}.mock figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:10px;text-align:center}
-.who-grid{display:grid;gap:14px}@media(min-width:700px){.who-grid{grid-template-columns:repeat(2,1fr)}}@media(min-width:1000px){.who-grid{grid-template-columns:repeat(4,1fr)}}
-.who{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:20px 22px;display:block;text-decoration:none}
-a.who:hover{border-color:var(--accent)}.who h3{font-size:16px}.who p{font-size:14px;color:var(--ink-soft);margin-top:6px}
-.porte{margin-top:18px;background:var(--accent-soft);border-radius:12px;padding:16px 20px;font-size:15px}
-.texto{max-width:760px;font-size:16.5px;color:var(--ink-soft)}.texto p+p{margin-top:14px}
-.vt{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;margin-top:26px;color:var(--ink-soft)}.vt a{color:var(--accent-ink);font-weight:600}
-.wide{margin:0}.wide img{width:100%;height:auto;display:block;border-radius:18px;border:1px solid var(--line);box-shadow:0 30px 60px -36px rgba(15,23,42,.45)}
-.wide figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:10px;text-align:center}
-.hero-art svg,.hero-art img,.hero-art video{width:100%;height:auto;display:block;border-radius:22px;box-shadow:0 30px 60px -24px rgba(0,0,0,.55)}
-html{-webkit-user-select:none;user-select:none}input,textarea{-webkit-user-select:text;user-select:text}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
-.oi-root{
-  color-scheme:dark;
-  --bg-dark:#0b0f0d; --bg-card:#1a1a18; --bg-soft:rgba(244,242,234,.04);
-  --text-primary:#c9c5b6; --text-light:#f4f2ea;
-  --accent:#ff6a1a; --accent-hover:#ff7d38; --accent-ink:#1a0d05;
-  --border:rgba(244,242,234,.14); --success:#10b981;
-  --indigo-soft:#a5b4fc;
-  
-  --mk-bg:#f8fafc; --mk-card:#ffffff; --mk-ink:#0f172a; --mk-soft:#5b6472; --mk-faint:#8891a0; --mk-line:#e4e7ec;
-  --st-ok:#16a34a; --st-good:#2563eb; --st-warn:#d97706; --st-bad:#dc2626; --st-violet:#7c3aed; --st-sky:#0ea5e9; --st-indigo:#4f46e5;
-  --font-body:"Inter","Segoe UI",system-ui,sans-serif; --font-head:"Syne","Inter",system-ui,sans-serif;
-}.oi-root *{box-sizing:border-box}.oi-root{overflow-x:clip}.oi-root{margin:0;background:var(--bg-dark);color:var(--text-primary);font-family:var(--font-body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}.oi-root h1,.oi-root h2,.oi-root h3,.oi-root h4{font-family:var(--font-head);font-weight:700;color:var(--text-light);margin:0;text-wrap:balance}.oi-root a{color:inherit}.oi-root .oi-wrap{max-width:1200px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}.oi-root section{scroll-margin-top:84px}.oi-root .oi-band{padding-block:88px}.oi-root .oi-band.oi-alt{background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}.oi-root .oi-eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}.oi-root .oi-sec-title{font-size:clamp(28px,4.2vw,40px);letter-spacing:-1px;line-height:1.15;margin:10px 0 14px;max-width:820px}.oi-root .oi-sec-lead{font-size:18px;max-width:760px;margin:0 0 36px}.oi-root .oi-sm{font-size:13px}.oi-root .oi-mk-soft{color:var(--mk-soft)}.oi-root .oi-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(11,15,13,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding-top:env(safe-area-inset-top,0px)}.oi-root .oi-nav .oi-wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;height:68px}.oi-root .oi-logo{font-family:var(--font-head);font-size:24px;color:var(--text-light);text-decoration:none;display:flex;align-items:center;gap:10px;flex:none}.oi-root .oi-logo i{font-style:normal;color:var(--accent)}.oi-root .oi-logo .oi-dots{display:inline-flex;gap:5px}.oi-root .oi-logo .oi-dots b{width:9px;height:9px;border-radius:50%}.oi-root .oi-logo .oi-dots b:nth-child(1){background:var(--st-bad)}.oi-root .oi-logo .oi-dots b:nth-child(2){background:var(--st-warn)}.oi-root .oi-logo .oi-dots b:nth-child(3){background:var(--st-ok)}.oi-root .oi-links{display:flex;gap:30px;font-size:14px;font-weight:600}.oi-root .oi-links a{text-decoration:none;color:var(--text-primary);transition:color .2s}.oi-root .oi-links a:hover{color:var(--accent)}.oi-root .oi-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 30px;border-radius:8px;font:700 14px/1 var(--font-body);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:all .3s ease}.oi-root .oi-btn-primary{background:var(--accent);color:var(--accent-ink)}.oi-root .oi-btn-primary:hover{background:var(--accent-hover);transform:translateY(-3px)}.oi-root .oi-btn-secondary{background:transparent;border-color:var(--accent);color:var(--accent)}.oi-root .oi-btn-secondary:hover{background:rgba(255,106,26,.1);transform:translateY(-3px)}.oi-root .oi-btn-sm{padding:11px 20px;font-size:12.5px}.oi-root :focus-visible{outline:3px solid var(--accent);outline-offset:3px}.oi-root .oi-hero{padding-top:calc(150px + env(safe-area-inset-top,0px));padding-bottom:84px}.oi-root .oi-hero .oi-hero-top{display:grid;grid-template-columns:1.02fr 1fr;gap:56px;align-items:center}.oi-root .oi-hero .oi-hero-top>*{min-width:0}.oi-root .oi-hero h1{font-size:clamp(34px,5.2vw,54px);letter-spacing:-1.2px;line-height:1.1}.oi-root .oi-hero .oi-hl{color:var(--accent)}.oi-root .oi-hero p.oi-sub{font-size:19px;margin:22px 0 30px;max-width:620px}.oi-root .oi-hero .oi-acts{display:flex;gap:14px;flex-wrap:wrap}.oi-root .oi-trust{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:8px;font-size:14.5px}.oi-root .oi-trust li{padding-left:26px;position:relative}.oi-root .oi-trust li::before{content:"✓";position:absolute;left:0;color:var(--success);font-weight:800}.oi-root .oi-illus{font-size:12px;color:var(--text-primary);opacity:.75;margin:12px 0 0;text-align:center}.oi-root .oi-grid{display:grid;gap:22px}.oi-root .oi-g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}.oi-root .oi-g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}.oi-root .oi-card{background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:28px;transition:all .3s ease;min-width:0}.oi-root .oi-card:hover{background:rgba(244,242,234,.08);border-color:var(--accent);transform:translateY(-6px)}.oi-root .oi-card h3{font-size:19px;line-height:1.3;margin-bottom:10px}.oi-root .oi-card p{margin:0;font-size:15px}.oi-root .oi-dor{display:flex;gap:16px;align-items:flex-start}.oi-root .oi-dor .oi-ic{flex:none;width:40px;height:40px;border-radius:8px;background:rgba(255,106,26,.12);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--font-head)}.oi-root .oi-fechamento{margin:34px 0 0;padding:20px 24px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;background:var(--bg-soft);font-size:17px;color:var(--text-light)}.oi-root .oi-tres{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:46px}.oi-root .oi-tres .oi-t{border:1px solid var(--border);border-radius:8px;padding:22px;background:var(--bg-soft);min-width:0}.oi-root .oi-tres .oi-t b{display:block;font-family:var(--font-head);font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}.oi-root .oi-tres .oi-t p{margin:0;font-size:15px;color:var(--text-light)}.oi-root .oi-t1 b{color:var(--st-sky)}.oi-root .oi-t2 b{color:var(--st-warn)}.oi-root .oi-t3 b{color:var(--success)}.oi-root .oi-perg{border:1px solid var(--border);border-radius:8px;background:var(--bg-soft);padding:26px;min-width:0}.oi-root .oi-perg h3{font-size:21px;margin-bottom:12px}.oi-root .oi-perg .oi-an{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;align-items:center}.oi-root .oi-perg .oi-an small{font-size:12px;font-weight:700;opacity:.7;margin-right:4px}.oi-root .oi-perg .oi-an span{font-size:12.5px;font-weight:600;background:rgba(165,180,252,.14);color:var(--indigo-soft);border-radius:999px;padding:3px 11px}.oi-root .oi-perg .oi-r{display:grid;gap:9px}.oi-root .oi-perg .oi-r div{border-radius:8px;padding:11px 14px;font-size:14.5px;line-height:1.5;color:var(--text-light);border:1px solid var(--border)}.oi-root .oi-perg .oi-r b{display:block;font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:2px}.oi-root .oi-perg .oi-o b{color:var(--st-sky)}.oi-root .oi-perg .oi-p b{color:var(--st-warn)}.oi-root .oi-perg .oi-f b{color:var(--success)}.oi-root .oi-entrega{display:grid;grid-template-columns:1fr 1.12fr;gap:54px;align-items:center;padding-block:44px}.oi-root .oi-entrega.oi-rev{grid-template-columns:1.12fr 1fr}.oi-root .oi-entrega.oi-rev>.oi-tx{order:2}.oi-root .oi-entrega .oi-num{font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}.oi-root .oi-entrega h3{font-size:clamp(25px,3.2vw,34px);letter-spacing:-.6px;line-height:1.18;margin:8px 0 14px}.oi-root .oi-entrega .oi-tx p{font-size:17px;margin:0 0 16px}.oi-root .oi-entrega .oi-tx ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}.oi-root .oi-entrega .oi-tx li{padding-left:28px;position:relative;font-size:15.5px;color:var(--text-light)}.oi-root .oi-entrega .oi-tx li::before{content:"✓";position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:50%;background:rgba(16,185,129,.18);color:var(--success);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}.oi-root .oi-tx,.oi-root .oi-vis{min-width:0}.oi-root .oi-situ{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:14px;margin-top:18px}.oi-root .oi-situ div{border:1px solid var(--border);border-radius:8px;padding:14px 16px;background:var(--bg-soft);font-size:14px;color:var(--text-primary);min-width:0}.oi-root .oi-situ b{display:block;font-size:14.5px;color:var(--text-light);margin-bottom:3px}.oi-root .oi-situ i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}.oi-root .oi-duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:34px;margin-top:20px}.oi-root .oi-duo>div{min-width:0}.oi-root .oi-duo h3{font-size:22px;margin-bottom:8px}.oi-root .oi-duo>div>p{margin:0 0 16px;font-size:15.5px}.oi-root .oi-dia{position:relative;display:grid;gap:0;max-width:880px}.oi-root .oi-dia .oi-p{display:grid;grid-template-columns:86px 1fr;gap:18px;padding:0 0 26px;position:relative}.oi-root .oi-dia .oi-p::before{content:"";position:absolute;left:94px;top:8px;bottom:-4px;width:2px;background:var(--border)}.oi-root .oi-dia .oi-p:last-child::before{display:none}.oi-root .oi-dia .oi-h{font-family:var(--font-head);font-size:20px;color:var(--accent);padding-top:2px}.oi-root .oi-dia .oi-c{border:1px solid var(--border);border-radius:8px;padding:16px 20px;background:var(--bg-soft);margin-left:18px;position:relative}.oi-root .oi-dia .oi-c::before{content:"";position:absolute;left:-26px;top:14px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--bg-dark)}.oi-root .oi-dia .oi-c b{display:block;color:var(--text-light);font-size:16px;margin-bottom:3px}.oi-root .oi-dia .oi-c span{font-size:14.5px}.oi-root .oi-calc{border:1px solid var(--border);border-radius:8px;background:var(--bg-card);padding:30px;min-width:0}.oi-root .oi-calc h3{font-size:22px;margin-bottom:6px}.oi-root .oi-calc>p{margin:0 0 20px;font-size:15px}.oi-root .oi-campos{display:grid;gap:16px}.oi-root .oi-campo label{display:block;font-size:13px;font-weight:600;color:var(--text-light);margin-bottom:6px}.oi-root .oi-campo input[type=number]{width:100%;font:600 17px var(--font-body);color:var(--text-light);background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.oi-root .oi-campo input[type=range]{width:100%;accent-color:var(--accent)}.oi-root .oi-campo output{font-weight:700;color:var(--accent);float:right}.oi-root .oi-res{margin-top:22px;padding:20px;border-radius:8px;background:rgba(255,106,26,.08);border:1px solid rgba(255,106,26,.35)}.oi-root .oi-res .oi-big{font-family:var(--font-head);font-size:clamp(28px,4vw,38px);color:var(--accent);line-height:1.1}.oi-root .oi-res .oi-lbl{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--text-light);margin-bottom:4px}.oi-root .oi-res .oi-txt{font-size:14.5px;margin:10px 0 0}.oi-root .oi-res .oi-dois{display:grid;grid-template-columns:1fr 1fr;gap:16px}.oi-root .oi-faixa{height:12px;border-radius:999px;margin:16px 0 4px;position:relative;background:linear-gradient(90deg,var(--st-ok) 0%,var(--st-ok) 38%,var(--st-warn) 40%,var(--st-warn) 58%,var(--st-bad) 60%,var(--st-bad) 100%)}.oi-root .oi-faixa i{position:absolute;top:-5px;width:22px;height:22px;border-radius:50%;background:var(--text-light);border:4px solid var(--bg-dark);box-shadow:0 0 0 2px var(--text-light);transition:left .3s ease;left:0}.oi-root .oi-faixa-leg{display:flex;justify-content:space-between;font-size:11.5px;opacity:.8}.oi-root .oi-nota{font-size:13px;opacity:.75;margin:14px 0 0}.oi-root .oi-passos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:22px}.oi-root .oi-passo{border:1px solid var(--border);border-radius:8px;padding:26px;background:var(--bg-soft);min-width:0}.oi-root .oi-passo .oi-n{width:44px;height:44px;border-radius:8px;background:var(--accent);color:var(--accent-ink);font:700 20px var(--font-head);display:flex;align-items:center;justify-content:center;margin-bottom:14px}.oi-root .oi-passo h3{font-size:19px;margin-bottom:8px}.oi-root .oi-passo p{margin:0;font-size:15px}.oi-root .oi-box{margin-top:26px;padding:20px 24px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;background:var(--bg-soft)}.oi-root .oi-box b{color:var(--text-light)}.oi-root .oi-box p{margin:6px 0 0;font-size:15px}.oi-root .oi-cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:26px}.oi-root .oi-painel{border:1px solid var(--border);border-radius:8px;padding:30px;background:var(--bg-soft);min-width:0}.oi-root .oi-painel h3{font-size:22px;margin-bottom:14px}.oi-root .oi-painel ul{margin:0;padding:0;list-style:none;display:grid;gap:12px}.oi-root .oi-painel li{padding-left:28px;position:relative;font-size:15.5px}.oi-root .oi-painel.oi-sim li::before{content:"✓";position:absolute;left:0;color:var(--success);font-weight:800}.oi-root .oi-painel.oi-nao li::before{content:"–";position:absolute;left:4px;color:var(--st-warn);font-weight:800}.oi-root .oi-painel li b{color:var(--text-light)}.oi-root .oi-faq{max-width:900px}.oi-root .oi-faq details{border:1px solid var(--border);border-radius:8px;background:var(--bg-soft);margin-bottom:10px}.oi-root .oi-faq summary{cursor:pointer;list-style:none;padding:18px 22px;font-weight:600;color:var(--text-light);font-size:16.5px;display:flex;justify-content:space-between;gap:16px}.oi-root .oi-faq summary::-webkit-details-marker{display:none}.oi-root .oi-faq summary::after{content:"+";color:var(--accent);font-weight:800;font-size:22px;line-height:1}.oi-root .oi-faq details[open] summary::after{content:"–"}.oi-root .oi-faq details p{margin:0;padding:0 22px 20px;font-size:15.5px}.oi-root .oi-final{text-align:center}.oi-root .oi-final .oi-sec-title{margin-inline:auto}.oi-root .oi-final .oi-sec-lead{margin-inline:auto}.oi-root .oi-contatos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px;max-width:900px;margin:36px auto 0;text-align:left}.oi-root .oi-ct{border:1px solid var(--border);border-radius:8px;padding:22px;background:var(--bg-soft);min-width:0}.oi-root .oi-ct small{display:block;font-size:12px;letter-spacing:.07em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:6px}.oi-root .oi-ct .oi-v{font-size:18px;color:var(--text-light);font-weight:600;word-break:break-word;user-select:all}.oi-root .oi-ct button{margin-top:12px;font:600 12.5px var(--font-body);background:transparent;color:var(--text-primary);border:1px solid var(--border);border-radius:8px;padding:7px 14px;cursor:pointer;transition:all .3s ease}.oi-root .oi-ct button:hover{border-color:var(--accent);color:var(--accent)}.oi-root .oi-rodape{padding-block:36px;border-top:1px solid var(--border);font-size:13px;opacity:.85}.oi-root .oi-rodape .oi-wrap{display:flex;flex-wrap:wrap;gap:8px 28px;justify-content:space-between}.oi-root .oi-qual{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:30px;box-shadow:0 30px 70px -36px rgba(255,106,26,.45)}.oi-root .oi-qual h2{font-size:24px;margin-bottom:6px;line-height:1.2}.oi-root .oi-qual .oi-s{font-size:14.5px;margin:0 0 6px}.oi-root .oi-qual label{display:block;font-size:13px;font-weight:600;color:var(--text-light);margin:16px 0 6px}.oi-root .oi-qual select{width:100%;font:500 15px var(--font-body);color:var(--text-light);background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:13px 14px}.oi-root .oi-qual .oi-btn{width:100%;margin-top:22px}.oi-root .oi-qual small{display:block;margin-top:12px;font-size:12.5px;opacity:.75;text-align:center}.oi-root .oi-nums{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border);border-radius:8px;background:var(--bg-soft);margin-top:8px}.oi-root .oi-nums div{padding:26px 18px;text-align:center;border-right:1px solid var(--border);min-width:0}.oi-root .oi-nums div:last-child{border-right:0}.oi-root .oi-nums b{display:block;font:700 clamp(28px,3.4vw,40px) var(--font-head);color:var(--accent);line-height:1.1;margin-bottom:6px}.oi-root .oi-nums span{font-size:14px;line-height:1.4;display:block}.oi-root .oi-prova-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:44px;align-items:center}.oi-root .oi-prova-grid>*{min-width:0}.oi-root .oi-big3{display:grid;gap:16px}.oi-root .oi-b3{border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;padding:20px 24px;background:var(--bg-soft)}.oi-root .oi-b3 b{display:block;font:700 clamp(32px,4.4vw,46px) var(--font-head);color:var(--accent);line-height:1.1;margin-bottom:6px}.oi-root .oi-b3 span{font-size:16px;color:var(--text-light);line-height:1.5}.oi-root .oi-cta-linha{margin-top:36px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}.oi-root .oi-cta-linha p{margin:0;font-size:15px;max-width:520px}.oi-root .oi-comp-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}.oi-root .oi-comp{width:100%;border-collapse:collapse;min-width:720px;background:var(--bg-soft)}.oi-root .oi-comp th{font-family:var(--font-head);text-align:left;padding:18px 22px;font-size:16px;color:var(--text-light);border-bottom:1px solid var(--border)}.oi-root .oi-comp th.oi-nos{color:var(--accent)}.oi-root .oi-comp td{padding:16px 22px;font-size:15px;border-top:1px solid var(--border);vertical-align:top}.oi-root .oi-comp td:first-child{font-weight:600;color:var(--text-light);width:28%}.oi-root .oi-comp td.oi-hoje{color:var(--text-primary);opacity:.85;width:32%}.oi-root .oi-comp td.oi-nos{color:var(--text-light);background:rgba(255,106,26,.06);border-left:3px solid var(--accent)}.oi-root .oi-comp td.oi-nos::before{content:"✓ ";color:var(--success);font-weight:800}.oi-root .oi-quando{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);background:rgba(255,106,26,.1);border-radius:999px;padding:4px 12px;margin-bottom:12px}.oi-root .oi-demo-wrap{max-width:760px;margin:0 auto 46px}.oi-root .oi-demo-kg{grid-template-columns:repeat(4,1fr)}.oi-root .oi-demo-ctl{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:12px;font-size:12.5px;opacity:.9}.oi-root .oi-demo-body{position:relative;min-height:420px}.oi-root .oi-demo-load{display:none;padding:30px 12px}.oi-root .oi-dl-file{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--mk-line);border-radius:12px;padding:14px 16px;max-width:420px;margin:0 auto 18px}.oi-root .oi-dl-ico{width:42px;height:42px;border-radius:8px;background:var(--st-ok);color:#fff;font:800 12px var(--font-head);display:flex;align-items:center;justify-content:center}.oi-root .oi-dl-file b{display:block;font-size:13px;color:var(--mk-ink)}.oi-root .oi-dl-file small{font-size:11px;color:var(--mk-soft)}.oi-root .oi-dl-bar{height:8px;border-radius:99px;background:var(--mk-line);max-width:420px;margin:0 auto 22px;overflow:hidden}.oi-root .oi-dl-bar i{display:block;height:100%;width:100%;background:var(--st-indigo);border-radius:99px}.oi-root .oi-dl-list{list-style:none;margin:0 auto;padding:0;max-width:420px;display:grid;gap:10px;font-size:13px;color:var(--mk-ink)}.oi-root .oi-dl-list li{display:flex;gap:10px;align-items:center}.oi-root .oi-dl-list .oi-ok{width:20px;height:20px;border-radius:50%;background:var(--st-ok);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}.oi-root .oi-demo-eq{margin-top:10px}.oi-root .oi-de-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid #eef0f4;font-size:12px}.oi-root .oi-de-row:first-of-type{border-top:0}.oi-root .oi-de-row b{width:74px}.oi-root .oi-de-row em{font-style:normal;margin-left:auto;font-weight:700}.oi-root .oi-demo.oi-go .oi-demo-load{display:block}.oi-root .oi-demo.oi-go .oi-demo-dash{visibility:hidden;position:absolute;inset:0}.oi-root .oi-demo.oi-go .oi-dl-bar i{width:0;animation:dlbar 2.4s ease-out forwards}.oi-root .oi-demo.oi-go .oi-dl-file{animation:dlin .5s ease-out both}.oi-root .oi-demo.oi-go .oi-dl-list li{opacity:0;animation:dlitem .4s ease-out forwards}.oi-root .oi-demo.oi-go .oi-dl-list li:nth-child(1){animation-delay:.5s}.oi-root .oi-demo.oi-go .oi-dl-list li:nth-child(2){animation-delay:1.0s}.oi-root .oi-demo.oi-go .oi-dl-list li:nth-child(3){animation-delay:1.5s}.oi-root .oi-demo.oi-go .oi-dl-list li:nth-child(4){animation-delay:2.0s}.oi-root .oi-demo.oi-show .oi-demo-load{display:none}.oi-root .oi-demo.oi-show .oi-demo-dash{visibility:visible;position:static}.oi-root .oi-demo.oi-show .oi-mk-k{animation:kpop .55s cubic-bezier(.2,.9,.3,1.2) both}.oi-root .oi-demo.oi-show .oi-mk-k:nth-child(2){animation-delay:.12s}.oi-root .oi-demo.oi-show .oi-mk-k:nth-child(3){animation-delay:.24s}.oi-root .oi-demo.oi-show .oi-mk-k:nth-child(4){animation-delay:.36s}.oi-root .oi-demo.oi-show .oi-mk-card{animation:cin .6s ease-out both}.oi-root .oi-demo.oi-show .oi-mk-row .oi-mk-card:nth-child(2){animation-delay:.15s}.oi-root .oi-demo.oi-show .oi-demo-eq{animation-delay:.5s}.oi-root .oi-demo.oi-show .oi-g-arc{animation:arc 1.5s .25s cubic-bezier(.3,.7,.2,1) both}.oi-root .oi-demo.oi-show .oi-r-now{transform-box:view-box;transform-origin:100px 100px;animation:rgrow 1.1s .35s cubic-bezier(.3,.7,.2,1) both}.oi-root .oi-demo.oi-show .oi-r-ant{transform-box:view-box;transform-origin:100px 100px;animation:rgrow 1.1s .2s cubic-bezier(.3,.7,.2,1) both}.oi-root .oi-demo.oi-show .oi-de-row{animation:cin .5s ease-out both}.oi-root .oi-demo.oi-show .oi-de-row:nth-of-type(1){animation-delay:.8s}.oi-root .oi-demo.oi-show .oi-de-row:nth-of-type(2){animation-delay:1.0s}.oi-root .oi-demo.oi-show .oi-de-row:nth-of-type(3){animation-delay:1.2s}@keyframes dlbar{to{width:100%}}@keyframes dlin{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}@keyframes dlitem{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}@keyframes kpop{from{opacity:0;transform:scale(.88) translateY(8px)}to{opacity:1;transform:none}}@keyframes cin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}@keyframes arc{from{stroke-dasharray:0 251.3}to{stroke-dasharray:193.5 251.3}}@keyframes rgrow{from{transform:scale(0)}to{transform:scale(1)}}@media(prefers-reduced-motion:reduce){.oi-root .oi-demo.oi-go .oi-demo-load{display:none}.oi-root .oi-demo.oi-go .oi-demo-dash{visibility:visible;position:static}.oi-root .oi-demo *{animation:none!important}}.oi-root .oi-mk-win{background:var(--mk-card);border:1px solid var(--mk-line);border-radius:12px;overflow:hidden;box-shadow:0 30px 60px -24px rgba(0,0,0,.7);color:var(--mk-ink);text-align:left;min-width:0}.oi-root .oi-mk-bar{display:flex;align-items:center;gap:6px;background:#f1f3f6;border-bottom:1px solid var(--mk-line);padding:10px 14px}.oi-root .oi-mk-bar i{width:10px;height:10px;border-radius:50%}.oi-root .oi-mk-bar i:nth-child(1){background:#f87171}.oi-root .oi-mk-bar i:nth-child(2){background:#fbbf24}.oi-root .oi-mk-bar i:nth-child(3){background:#34d399}.oi-root .oi-mk-bar b{margin-left:10px;font-size:12px;font-weight:600;color:var(--mk-soft);background:#fff;border:1px solid var(--mk-line);border-radius:6px;padding:3px 12px}.oi-root .oi-mk-app{padding:14px;background:var(--mk-bg);font-size:12px;line-height:1.45}.oi-root .oi-mk-app *{min-width:0}.oi-root .oi-mk-kg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.oi-root .oi-mk-k{border-radius:12px;padding:10px 11px;color:#fff;background-color:var(--k);background-image:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,0) 60%)}.oi-root .oi-mk-k small{display:block;font-size:10px;font-weight:600;opacity:.92}.oi-root .oi-mk-k b{display:block;font-family:var(--font-head);font-size:16px;line-height:1.2;margin-top:2px;color:#fff}.oi-root .oi-mk-k span{display:block;font-size:9.5px;margin-top:3px}.oi-root .oi-mk-k em{font-style:normal;font-weight:700;background:rgba(255,255,255,.24);border-radius:99px;padding:1px 6px;white-space:nowrap}.oi-root .oi-mk-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.oi-root .oi-mk-card{background:var(--mk-card);border:1px solid var(--mk-line);border-radius:12px;padding:12px}.oi-root .oi-mk-card h6{margin:0 0 6px;font:700 12px var(--font-body);color:var(--mk-ink)}.oi-root .oi-mk-c{text-align:center}.oi-root .oi-mk-up{margin:4px 0 0;text-align:center;color:var(--st-ok);font-weight:600;font-size:11px}.oi-root .oi-svg-g,.oi-root .oi-svg-r,.oi-root .oi-svg-l{width:100%;max-width:240px;height:auto}.oi-root .oi-svg-l{max-width:none}.oi-root .oi-g-track{fill:none;stroke:var(--mk-line);stroke-width:16;stroke-linecap:round}.oi-root .oi-g-arc{fill:none;stroke-width:16;stroke-linecap:round}.oi-root .oi-g-num{font:800 40px var(--font-head)}.oi-root .oi-g-lab{font:700 12px var(--font-body)}.oi-root .oi-r-grid{fill:none;stroke:var(--mk-line)}.oi-root .oi-r-now{fill:var(--st-indigo);fill-opacity:.24;stroke:var(--st-indigo);stroke-width:2}.oi-root .oi-r-ant{fill:#94a3b8;fill-opacity:.14;stroke:#94a3b8;stroke-width:2;stroke-dasharray:4 3}.oi-root .oi-r-lab{font:600 9.5px var(--font-body);fill:var(--mk-soft)}.oi-root .oi-l-grid{stroke:var(--mk-line);stroke-width:1}.oi-root .oi-l-fill{fill:var(--st-indigo);fill-opacity:.12}.oi-root .oi-l-line{fill:none;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.oi-root .oi-l-main{stroke-width:3.2}.oi-root .oi-lc-indigo{stroke:var(--st-indigo)}.oi-root .oi-lc-sky{stroke:var(--st-sky)}.oi-root .oi-lc-ok{stroke:var(--st-ok)}.oi-root .oi-lc-warn{stroke:var(--st-warn)}.oi-root .oi-l-dot{fill:#fff;stroke:var(--st-indigo);stroke-width:2.2}.oi-root .oi-l-lab{font:500 9px var(--font-body);fill:var(--mk-faint)}.oi-root .oi-mk-heat{border-collapse:separate;border-spacing:3px;width:100%}.oi-root .oi-mk-heat th{font-weight:600;color:var(--mk-faint);font-size:10px}.oi-root .oi-mk-heat td{text-align:center;color:#fff;font-weight:800;border-radius:6px;padding:6px 3px}.oi-root .oi-mk-heat td:first-child{color:var(--mk-ink);text-align:left;font-weight:700;background:none}.oi-root .oi-bg-ok{background:var(--st-ok);color:#fff}.oi-root .oi-bg-good{background:var(--st-good);color:#fff}.oi-root .oi-bg-warn{background:var(--st-warn);color:#fff}.oi-root .oi-bg-bad{background:var(--st-bad);color:#fff}.oi-root .oi-bg-violet{background:var(--st-violet);color:#fff}.oi-root .oi-bg-sky{background:var(--st-sky);color:#fff}.oi-root .oi-t-ok{color:var(--st-ok)}.oi-root .oi-t-good{color:var(--st-good)}.oi-root .oi-t-warn{color:var(--st-warn)}.oi-root .oi-t-bad{color:var(--st-bad)}.oi-root .oi-t-violet{color:var(--st-violet)}.oi-root .oi-t-indigo{color:var(--st-indigo)}.oi-root .oi-s-ok{stroke:var(--st-ok)}.oi-root .oi-s-good{stroke:var(--st-good)}.oi-root .oi-s-warn{stroke:var(--st-warn)}.oi-root .oi-s-bad{stroke:var(--st-bad)}.oi-root .oi-g-num.oi-t-good,.oi-root .oi-g-lab.oi-t-good{fill:var(--st-good)}.oi-root .oi-g-num.oi-t-ok,.oi-root .oi-g-lab.oi-t-ok{fill:var(--st-ok)}.oi-root .oi-mk-fx{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}.oi-root .oi-mk-fx5{grid-template-columns:repeat(5,1fr)}.oi-root .oi-mk-fx div{border-radius:10px;padding:8px 10px}.oi-root .oi-mk-fx small{display:block;font-size:9.5px;font-weight:600;opacity:.95}.oi-root .oi-mk-fx b{font:700 21px var(--font-head);color:#fff}.oi-root .oi-mk-al{margin-bottom:8px;border-left-width:5px}.oi-root .oi-al-bad{border-left-color:var(--st-bad)}.oi-root .oi-al-warn{border-left-color:var(--st-warn)}.oi-root .oi-mk-hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px}.oi-root .oi-mk-hd span{font-size:9.5px;font-weight:800;letter-spacing:.05em;color:var(--mk-faint)}.oi-root .oi-mk-hd em{font-style:normal;font-weight:700;font-size:10px;border-radius:99px;padding:2px 9px;color:#fff}.oi-root .oi-mk-al p{margin:7px 0 2px;font-size:11px}.oi-root .oi-mk-t>div:first-child{display:flex;justify-content:space-between;gap:6px;font-size:11px}.oi-root .oi-mk-bar2{position:relative;height:9px;border-radius:99px;margin:7px 0 3px;background:linear-gradient(90deg,var(--st-bad) 0%,var(--st-warn) 40%,var(--st-good) 70%,var(--st-ok) 100%)}.oi-root .oi-mk-bar2 i{position:absolute;top:-5px;width:19px;height:19px;border-radius:50%;background:#fff;border:4px solid;box-shadow:0 1px 3px rgba(0,0,0,.35)}.oi-root .oi-b-bad{border-color:var(--st-bad)}.oi-root .oi-b-warn{border-color:var(--st-warn)}.oi-root .oi-b-ok{border-color:var(--st-ok)}.oi-root .oi-b-good{border-color:var(--st-good)}.oi-root .oi-b-violet{border-color:var(--st-violet)}.oi-root .oi-mk-t small{display:flex;justify-content:space-between;font-size:9px;color:var(--mk-faint)}.oi-root .oi-mk-pareto{display:flex;align-items:flex-end;gap:5px;height:84px;padding:4px 2px 2px;border-bottom:1px solid var(--mk-line)}.oi-root .oi-mk-pareto i{flex:1;border-radius:4px 4px 0 0;border:0;background:var(--st-ok)}.oi-root .oi-mk-pareto i.oi-b-bad{background:var(--st-bad)}.oi-root .oi-mk-pareto i.oi-b-warn{background:var(--st-warn)}.oi-root .oi-mk-pareto i.oi-b-violet{background:var(--st-violet)}.oi-root .oi-mk-tb{width:100%;margin-top:10px;border-collapse:collapse;background:var(--mk-card);border:1px solid var(--mk-line);font-size:11px}.oi-root .oi-mk-tb th{text-align:left;color:var(--mk-faint);font-size:10px;padding:6px 8px}.oi-root .oi-mk-tb td{padding:6px 8px;border-top:1px solid #eef0f4;vertical-align:middle}.oi-root .oi-chip{display:inline-block;font-size:9.5px;font-weight:700;border-radius:99px;padding:2px 8px;white-space:nowrap;color:#fff}.oi-root .oi-mk-why{margin:10px 0 0;border-radius:10px;padding:9px 12px;border:1px solid rgba(220,38,38,.35);border-left:4px solid var(--st-bad);background:rgba(220,38,38,.07);font-size:11px;color:var(--mk-ink)}.oi-root .oi-mk-sel{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}.oi-root .oi-mk-sel span:not(.oi-mk-vs){background:#fff;border:1px solid #cfd5df;border-radius:8px;padding:5px 12px}.oi-root .oi-mk-vs{font-weight:800;color:var(--mk-faint)}.oi-root .oi-mk-pb{display:grid;grid-template-columns:62px 1fr;gap:6px;align-items:center;margin:6px 0;font-size:10.5px}.oi-root .oi-mk-pb div{display:grid;gap:2px}.oi-root .oi-mk-pb i{display:block;height:6px;border-radius:4px}.oi-root .oi-bar-ant{background:#94a3b8}.oi-root .oi-bar-now{background:var(--st-indigo)}.oi-root .oi-mk-foco{background:#fff;border:1px solid var(--mk-line);border-radius:12px;padding:9px 12px;margin-bottom:9px}.oi-root .oi-mk-foco small{font-size:9.5px;font-weight:800;letter-spacing:.06em;color:var(--mk-faint)}.oi-root .oi-mk-foco b{display:block;font:700 16px var(--font-head);color:var(--st-indigo)}.oi-root .oi-mk-foco span{font-size:11px;color:var(--mk-soft)}.oi-root .oi-mk-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.oi-root .oi-mk-ch{color:#fff;font-weight:800;font-size:11px;padding:7px 9px;border-radius:10px 10px 0 0}.oi-root .oi-mk-pl{background:#fff;border:1px solid var(--mk-line);border-radius:0 0 10px 10px;padding:9px}.oi-root .oi-mk-pl small{color:var(--mk-faint);font-size:9.5px}.oi-root .oi-mk-pl .oi-mk-hd b{font-size:11.5px}.oi-root .oi-mk-pl ul{margin:6px 0 0;padding-left:15px;font-size:10px;line-height:1.45;color:var(--mk-ink)}.oi-root .oi-mk-eq{margin-top:8px;border-radius:10px;border-color:var(--st-violet)}.oi-root .oi-mk-eq p{margin:4px 0 0;font-size:10.5px}.oi-root .oi-mk-meta{display:flex;align-items:center;gap:3px;margin:8px 0 2px;text-align:center}.oi-root .oi-mk-meta span{display:block;line-height:1.1}.oi-root .oi-mk-meta b{display:block;font-size:12px;font-weight:800;color:var(--mk-ink)}.oi-root .oi-mk-meta i{font-size:8px;color:var(--mk-faint);font-style:normal}.oi-root .oi-mk-meta u{flex:1;border-top:2px dashed;min-width:6px;text-decoration:none}.oi-root .oi-u-bad{border-color:var(--st-bad)}.oi-root .oi-u-warn{border-color:var(--st-warn)}.oi-root .oi-u-good{border-color:var(--st-good)}.oi-root .oi-u-ok{border-color:var(--st-ok)}.oi-root .oi-mk-chat{display:grid;gap:8px}.oi-root .oi-mk-chat p{margin:0;padding:9px 12px;border-radius:14px;line-height:1.45;font-size:11.5px;max-width:90%}.oi-root .oi-mk-u{background:var(--st-indigo);color:#fff;justify-self:end;border-bottom-right-radius:4px!important}.oi-root .oi-mk-b{background:#fff;border:1px solid var(--mk-line);border-bottom-left-radius:4px!important;color:var(--mk-ink)}.oi-root .oi-mk-in{display:flex;justify-content:space-between;align-items:center;margin-top:4px;background:#fff;border:1px solid #cfd5df;border-radius:10px;padding:8px 10px;color:var(--mk-faint);font-size:11px}.oi-root .oi-mk-in b{background:var(--st-indigo);color:#fff;border-radius:8px;padding:5px 11px}.oi-root .oi-mk-zap{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end}.oi-root .oi-mk-ph{background:#e5ddd5;border-radius:18px;padding:22px 12px;min-height:170px;display:flex;align-items:flex-start;color:#111}.oi-root .oi-mk-bub{background:#dcf8c6;border-radius:10px 10px 10px 2px;padding:9px 11px;font-size:11px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.12)}.oi-root .oi-mk-bub u{color:var(--st-good)}.oi-root .oi-mk-paper{background:#fff;border:1px solid var(--mk-line);border-radius:6px;padding:14px;box-shadow:0 8px 20px -10px rgba(15,23,42,.35);transform:rotate(1.5deg);color:var(--mk-ink)}.oi-root .oi-mk-paper b{display:block;font:700 12px var(--font-head);margin-bottom:3px;color:var(--mk-ink)}.oi-root .oi-mk-paper small{display:block;font-size:10px;color:var(--mk-soft);margin-bottom:8px}.oi-root .oi-mk-paper i{display:block;height:6px;background:var(--mk-line);border-radius:3px;margin:6px 0}.oi-root .oi-mk-paper span{display:inline-block;margin-top:8px;background:var(--mk-line);border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700}@media(max-width:960px){.oi-root .oi-hero .oi-hero-top,.oi-root .oi-entrega,.oi-root .oi-entrega.oi-rev{grid-template-columns:1fr;gap:34px}.oi-root .oi-entrega.oi-rev>.oi-tx{order:0}.oi-root .oi-tres{grid-template-columns:1fr}.oi-root .oi-links{display:none}.oi-root .oi-band{padding-block:60px}.oi-root .oi-prova-grid{grid-template-columns:1fr;gap:30px}.oi-root .oi-nums{grid-template-columns:repeat(2,1fr)}.oi-root .oi-nums div:nth-child(2){border-right:0}.oi-root .oi-nums div:nth-child(-n+2){border-bottom:1px solid var(--border)}
-}@media(max-width:560px){.oi-root .oi-mk-kg,.oi-root .oi-demo-kg{grid-template-columns:repeat(2,1fr)}.oi-root .oi-mk-fx,.oi-root .oi-mk-fx5{grid-template-columns:repeat(2,1fr)}.oi-root .oi-mk-cols,.oi-root .oi-mk-row,.oi-root .oi-mk-zap{grid-template-columns:1fr}.oi-root .oi-res .oi-dois{grid-template-columns:1fr}.oi-root .oi-qual{padding:22px}.oi-root .oi-dia .oi-p{grid-template-columns:64px 1fr;gap:10px}.oi-root .oi-dia .oi-p::before{left:72px}.oi-root .oi-dia .oi-h{font-size:16px}.oi-root .oi-nav .oi-wrap{height:60px}.oi-root .oi-btn{padding:14px 20px;width:100%}.oi-root .oi-hero .oi-acts .oi-btn{width:100%}.oi-root .oi-card,.oi-root .oi-perg,.oi-root .oi-painel,.oi-root .oi-calc{padding:20px}
-}@media(prefers-reduced-motion:reduce){.oi-root *{transition:none!important}}
-/* tema do site: seções claras, herói e fecho em azul-marinho (mesma paleta das outras páginas) */
-.oi-root{color-scheme:light;--bg-dark:#fff;--bg-card:#fff;--bg-soft:#f6f7f9;--text-primary:#5b6472;--text-light:#0f172a;--accent:#f97316;--accent-hover:#ea580c;--accent-ink:#0f172a;--border:#e4e7ec;--success:#16a34a;--font-head:"Manrope","Inter",system-ui,sans-serif;background:#fff}
-.oi-root h1,.oi-root h2,.oi-root h3,.oi-root h4{font-weight:800;letter-spacing:-.02em}
-.oi-root .oi-eyebrow{color:#c2410c;font-family:var(--font-head);font-weight:800}
-.oi-root .oi-sec-title{letter-spacing:-.02em}
-.oi-root .oi-btn{text-transform:none;letter-spacing:0;font-size:15px;font-weight:700;border-radius:10px;padding:14px 24px}
-.oi-root .oi-btn-sm{font-size:14px;padding:11px 18px}
-.oi-root .oi-btn-secondary{color:#c2410c;border-color:#c2410c}.oi-root .oi-btn-secondary:hover{background:#fff1e4}
-.oi-root .oi-nums b,.oi-root .oi-b3 b,.oi-root .oi-quando{color:#c2410c}
-.oi-root .oi-b3,.oi-root .oi-comp{background:#fff}
-.oi-root .oi-band.oi-alt{background:#f6f7f9}
-.oi-root .oi-card,.oi-root .oi-passo,.oi-root .oi-box{box-shadow:0 1px 2px rgba(15,23,42,.04)}
-.oi-root .oi-qual{box-shadow:0 30px 70px -36px rgba(0,0,0,.6)}
-/* herói e fecho: azul-marinho, como o resto do site */
-.oi-root .oi-hero,.oi-root .oi-band.oi-final{--bg-card:rgba(255,255,255,.07);--bg-soft:rgba(255,255,255,.06);--text-primary:rgba(226,232,240,.9);--text-light:#fff;--border:rgba(255,255,255,.16);background:radial-gradient(900px 420px at 85% 0%,rgba(99,102,241,.3),transparent 60%),radial-gradient(700px 420px at 0% 100%,rgba(249,115,22,.22),transparent 60%),#08142c;color:var(--text-primary);border-color:transparent}
-.oi-root .oi-hero{padding-top:56px;padding-bottom:64px}
-.oi-root .oi-hero .oi-eyebrow,.oi-root .oi-final .oi-eyebrow{color:#fdba74}
-.oi-root .oi-hero .oi-hl{color:#f97316}
-.oi-root .oi-hero .oi-nums b,.oi-root .oi-final b{color:#fdba74}
-.oi-root .oi-hero .oi-qual select{background:#08142c;color:#fff}
-.oi-root .oi-final .oi-btn-secondary,.oi-root .oi-hero .oi-btn-secondary{color:#fff;border-color:rgba(255,255,255,.4)}
-.oi-root .oi-final .oi-btn-secondary:hover{background:rgba(255,255,255,.08)}
-.oi-root .oi-final button{color:#fff}
+<main id="conteudo">
 
-</style></head><body>
-<a class="skip" href="#conteudo">Ir para o conteúdo</a><header class="top"><div class="top-in"><a class="logo" href="/" aria-label="Oravel">O<i>r</i>avel</a><nav class="nav" aria-label="Principal"><div class="dd"><button type="button" aria-haspopup="true">Recursos</button><div class="dd-menu"><a href="/recursos/"><strong>Todos os recursos</strong><span>Visão completa da plataforma</span></a><a href="/crm/"><strong>CRM e vendas</strong><span>Funil, propostas e retorno no prazo</span></a><a href="/inteligencia-artificial/"><strong>IA no campo e na gestão</strong><span>Diagnóstico, rotas e decisão com dados</span></a><a href="/processo-manutencao/"><strong>Preventiva e ordens de serviço</strong><span>Revisão no prazo, ordem por equipamento</span></a><a href="/processo-gestao-de-equipes/"><strong>Gestão de equipes</strong><span>Agenda, carga e desempenho dos técnicos</span></a><a href="/processo-gestao-de-estoques/"><strong>Gestão de estoques</strong><span>Peça certa, na hora certa</span></a><a href="/processo-cobranca-automatica/"><strong>Cobrança automática</strong><span>Da medição ao pagamento</span></a><a href="/nr-13-inspecao-equipamentos/"><strong>Inspeções NR-13</strong><span>Datas, laudos e alertas</span></a><a href="/equipamento-devolvido-com-defeito/"><strong>Devolução com defeito</strong><span>Do bloqueio à liberação</span></a></div></div><a href="/reforma-tributaria/" style="color:#fdba74">Reforma tributária<span style="margin-left:6px;padding:2px 7px;border-radius:999px;background:#f97316;color:#0f172a;font-size:11px;font-weight:800">2027</span></a><a href="/materiais-gratuitos/">Materiais gratuitos</a><div class="dd"><button type="button" aria-haspopup="true">Soluções</button><div class="dd-menu"><a href="/pequenas-locadoras.html"><strong>Pequenas locadoras</strong><span>ERP completo no tamanho da sua operação</span></a><a href="/erp-cmms/"><strong>ERP CMMS</strong><span>Contratos, manutenção, avarias, estoque e cobrança</span></a><a href="/modulos-individuais/"><strong>Módulos individuais</strong><span>Comece por uma área e amplie depois</span></a></div></div><a href="/intelligence/" style="color:#c7d2fe;white-space:nowrap">Intelligence IA</a><a href="/contato.php">Contato</a></nav><div class="top-cta"><a class="btn btn-p" href="/diagnostico/">Diagnóstico gratuito</a></div><button class="burger" type="button" aria-expanded="false" aria-controls="mnav">Menu</button></div><div class="mnav" id="mnav"><h4>Recursos</h4><a href="/recursos/">Todos os recursos</a><a href="/crm/">CRM e vendas</a><a href="/inteligencia-artificial/">IA no campo e na gestão</a><a href="/processo-manutencao/">Preventiva e ordens de serviço</a><a href="/processo-gestao-de-equipes/">Gestão de equipes</a><a href="/processo-gestao-de-estoques/">Gestão de estoques</a><a href="/processo-cobranca-automatica/">Cobrança automática</a><a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a><a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a><h4>Soluções</h4><a href="/pequenas-locadoras.html">Pequenas locadoras</a><a href="/erp-cmms/">ERP CMMS</a><a href="/modulos-individuais/">Módulos individuais</a><h4>Intelligence</h4><a href="/intelligence/">Oravel Intelligence</a><h4>Mais</h4><a href="/reforma-tributaria/">Reforma tributária (2027)</a><a href="/materiais-gratuitos/">Materiais gratuitos</a><a href="/contato.php">Contato</a><div style="display:grid;gap:10px;margin-top:16px"><a class="btn btn-p" href="/diagnostico/">Solicitar um diagnóstico gratuito</a></div></div></header>
-<main id="conteudo" class="oi-root">
 
-<section class="oi-hero">
-  <div class="oi-wrap oi-hero-top">
-    <div>
-      <div class="oi-eyebrow">Oravel Intelligence · para locadoras de equipamentos</div>
-      <h1 style="margin-top:14px">O dinheiro da sua locadora já está nos seus números. <span class="oi-hl">O Intelligence mostra onde.</span></h1>
-      <p class="oi-sub">Equipamento parado, manutenção que já passou do valor da máquina, cliente que atrasa. Decidir no palpite custa caro. Você envia uma planilha e descobre, no mesmo dia, onde a sua locadora está perdendo dinheiro e o que fazer primeiro.</p>
-      <ul class="oi-trust">
-        <li>Funciona com a planilha que você já tem, sem trocar de sistema</li>
-        <li>Os seus números ficam só na sua empresa</li>
-        <li>Resultado no mesmo dia, e todo mês com histórico guardado</li>
-      </ul>
-    </div>
-    <form class="oi-qual" id="qual" onsubmit="return false" aria-labelledby="qual-t">
-      <h2 id="qual-t">Veja a sua locadora em 30 minutos</h2>
-      <p class="oi-s">Responda três perguntas e abra a conversa já com a sua mensagem pronta. Sem cadastro.</p>
-      <label for="q-frota">Quantos equipamentos você tem?</label>
-      <select id="q-frota"><option value="">Escolha uma faixa</option><option>até 50</option><option>de 50 a 150</option><option>de 150 a 500</option><option>mais de 500</option></select>
-      <label for="q-dor">O que mais tira o seu sono hoje?</label>
-      <select id="q-dor"><option value="">Escolha uma opção</option><option>equipamento parado</option><option>manutenção cara</option><option>cliente que atrasa</option><option>decidir entre vender, trocar ou reformar</option><option>não saber se a empresa está melhorando</option></select>
-      <label for="q-ctrl">Como você controla os números hoje?</label>
-      <select id="q-ctrl"><option value="">Escolha uma opção</option><option>planilhas</option><option>um sistema</option><option>sistema e planilhas</option><option>quase nada</option></select>
-      <a class="oi-btn oi-btn-primary" id="q-go" href="https://wa.me/5519999332615" target="_blank" rel="noopener noreferrer">Quero ver a minha locadora</a>
-      <small>Abre o WhatsApp da Oravel com a mensagem pronta.</small>
-    </form>
-  </div>
-  <div class="oi-wrap" style="margin-top:56px">
-    <div class="oi-nums" aria-label="O que o Intelligence entrega">
-      <div><b>1 planilha</b><span>e o resultado sai no mesmo dia</span></div>
-      <div><b>5 situações</b><span>para cada equipamento, com o motivo escrito</span></div>
-      <div><b>6 telas</b><span>índice, diagnóstico, equipamentos, comparação, plano e assistente</span></div>
-      <div><b>30 · 60 · 90</b><span>dias de plano de ação, com metas</span></div>
-    </div>
-  </div>
-</section>
-
-<section id="prova" class="oi-band oi-alt">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">O que acontece quando você enxerga os números</div>
-    <h2 class="oi-sec-title">O que o Intelligence encontrou na locadora de exemplo</h2>
-    <p class="oi-sec-lead">Uma locadora fictícia, usada nas demonstrações, com 122 equipamentos. Os números da sua vão contar a sua própria história.</p>
-    <div class="oi-prova-grid">
-      <div class="oi-big3">
-        <div class="oi-b3"><b>10 equipamentos</b><span>já custam mais de 60% do valor em manutenção. São candidatos a reforma, troca ou venda.</span></div>
-        <div class="oi-b3"><b>R$ 52 mil</b><span>em faturas atrasadas, contra R$ 31 mil no mês anterior. O ponto mais crítico da empresa.</span></div>
-        <div class="oi-b3"><b>61 → 77</b><span>foi o índice de saúde em dois meses. A oficina foi a única área que piorou.</span></div>
-      </div>
-      <div><div class="oi-mk-win"><div class="oi-mk-bar"><i></i><i></i><i></i><b>Índice de Saúde</b></div><div class="oi-mk-app"><div class="oi-mk-kg"><div class="oi-mk-k" style="--k:var(--st-indigo)"><small>Receita do mês</small><b>R$ 468.000</b><span>faturamento <em>▲ R$ 48.000</em></span></div><div class="oi-mk-k" style="--k:var(--st-ok)"><small>Resultado do mês</small><b>R$ 202.000</b><span>receita menos custos <em>▲ R$ 31.000</em></span></div><div class="oi-mk-k" style="--k:var(--st-sky)"><small>Disponibilidade</small><b>90,9%</b><span>frota pronta <em>▲ 6,1%</em></span></div><div class="oi-mk-k" style="--k:var(--st-violet)"><small>Utilização</small><b>72,1%</b><span>frota rendendo <em>▲ 8,4%</em></span></div><div class="oi-mk-k" style="--k:var(--st-bad)"><small>Valor em atraso</small><b>R$ 52.000</b><span>faturas vencidas <em>▲ R$ 21.000</em></span></div><div class="oi-mk-k" style="--k:var(--st-warn)"><small>OS corretivas</small><b>34</b><span>quebras no mês <em>▼ 12</em></span></div></div><div class="oi-mk-row"><div class="oi-mk-card"><h6>Índice geral</h6><div class="oi-mk-c"><svg viewBox="0 0 200 118" class="oi-svg-g" role="img" aria-label="Índice geral 77, Bom"><path d="M20 100A80 80 0 0 1 180 100" class="oi-g-track"/><path d="M20 100A80 80 0 0 1 180 100" class="oi-g-arc oi-s-good" stroke-dasharray="193.5 251.3"/><text x="100" y="86" text-anchor="middle" class="oi-g-num oi-t-good">77</text><text x="100" y="108" text-anchor="middle" class="oi-g-lab oi-t-good">Bom</text></svg></div><p class="oi-mk-up">▲ 8 pontos desde setembro</p></div><div class="oi-mk-card"><h6>Saúde por área</h6><div class="oi-mk-c"><svg viewBox="-30 0 260 200" class="oi-svg-r" role="img" aria-label="Nota de cada área"><polygon class="oi-r-grid" points="100.0,82.5 116.6,94.6 110.3,114.2 89.7,114.2 83.4,94.6"/><polygon class="oi-r-grid" points="100.0,65.0 133.3,89.2 120.6,128.3 79.4,128.3 66.7,89.2"/><polygon class="oi-r-grid" points="100.0,47.5 149.9,83.8 130.9,142.5 69.1,142.5 50.1,83.8"/><polygon class="oi-r-grid" points="100.0,30.0 166.6,78.4 141.1,156.6 58.9,156.6 33.4,78.4"/><line class="oi-r-grid" x1="100" y1="100" x2="100.0" y2="30.0"/><line class="oi-r-grid" x1="100" y1="100" x2="166.6" y2="78.4"/><line class="oi-r-grid" x1="100" y1="100" x2="141.1" y2="156.6"/><line class="oi-r-grid" x1="100" y1="100" x2="58.9" y2="156.6"/><line class="oi-r-grid" x1="100" y1="100" x2="33.4" y2="78.4"/><polygon class="oi-r-ant" points="100.0,48.2 138.6,87.5 127.2,137.4 78.6,129.4 53.4,84.9"/><polygon class="oi-r-now" points="100.0,37.0 141.3,86.6 128.8,139.6 80.3,127.2 45.4,82.3"/><text class="oi-r-lab" x="100.0" y="16.2" text-anchor="middle">Frota</text><text class="oi-r-lab" x="182.6" y="76.2" text-anchor="middle">Finanças</text><text class="oi-r-lab" x="151.0" y="173.2" text-anchor="middle">Comercial</text><text class="oi-r-lab" x="49.0" y="173.2" text-anchor="middle">Oficina</text><text class="oi-r-lab" x="17.4" y="76.2" text-anchor="middle">Operação</text></svg></div></div></div></div></div><p class="oi-illus">Tela ilustrativa, com dados fictícios.</p></div>
-    </div>
-    <div class="oi-cta-linha"><a class="oi-btn oi-btn-primary" href="#contato">Quero ver o que aparece na minha locadora</a><p>Em 30 minutos, com os seus números ou com uma planilha de exemplo.</p></div>
-  </div>
-</section>
-
-<section id="problema" class="oi-band">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">A rotina de quem opera uma locadora</div>
-    <h2 class="oi-sec-title">Sua locadora não pode decidir no palpite</h2>
-    <p class="oi-sec-lead">Os números existem, só que espalhados entre sistema, planilhas e a memória de quem toca o dia a dia. O resultado é conhecido.</p>
-    <div class="oi-grid oi-g3">
-      <div class="oi-card oi-dor"><div class="oi-ic">1</div><div><h3>Você não sabe quanto um equipamento parado custa por mês</h3><p>Na oficina esperando peça. Sem contrato há semanas. Cada dia parado é diária que não volta.</p></div></div>
-      <div class="oi-card oi-dor"><div class="oi-ic">2</div><div><h3>A máquina que mais dá trabalho é a que mais custa, e ninguém fez a conta</h3><p>Corretiva atrás de corretiva, o mesmo defeito voltando. Quando alguém soma, ela já gastou mais do que vale.</p></div></div>
-      <div class="oi-card oi-dor"><div class="oi-ic">3</div><div><h3>Vender ou reformar vira discussão de opinião</h3><p>Sem número na mesa, é o palpite do sócio contra o do encarregado da oficina.</p></div></div>
-      <div class="oi-card oi-dor"><div class="oi-ic">4</div><div><h3>O cliente atrasa e você descobre quando o caixa já apertou</h3><p>O valor em atraso cresce devagar, mês a mês, em silêncio.</p></div></div>
-      <div class="oi-card oi-dor"><div class="oi-ic">5</div><div><h3>O dinheiro está na sua frota, só que invisível</h3><p>Equipamentos em bom estado, parados, sem contrato. A equipe passa por eles todo dia e ninguém oferece.</p></div></div>
-      <div class="oi-card oi-dor"><div class="oi-ic">6</div><div><h3>Quando o gestor sai, o histórico vai junto</h3><p>O número de cada mês fica em planilhas soltas e na cabeça de quem toca a operação. Quem chega recomeça do zero.</p></div></div>
-    </div>
-    <p class="oi-fechamento">Esses problemas já estão nos números da sua empresa. O Oravel Intelligence junta tudo, mostra o que está acontecendo e diz o que fazer primeiro.</p>
-    <div class="oi-cta-linha"><a class="oi-btn oi-btn-primary" href="#contato">Quero decidir com número, não com palpite</a></div>
-  </div>
-</section>
-
-<section id="perguntas" class="oi-band oi-alt">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">Respostas, não só números</div>
-    <h2 class="oi-sec-title">Perguntas que o Oravel Intelligence responde</h2>
-    <p class="oi-sec-lead">Cada resposta vem em três partes, sempre na mesma ordem. Você sabe o que mudou, por que isso pesa e qual é o próximo passo.</p>
-    <div class="oi-tres">
-      <div class="oi-t oi-t1"><b>O que está acontecendo</b><p>"A sua disponibilidade subiu de 78% para 91% em dois meses."</p></div>
-      <div class="oi-t oi-t2"><b>Por que importa</b><p>"Equipamento parado não gera receita e compromete a entrega ao cliente."</p></div>
-      <div class="oi-t oi-t3"><b>O que fazer</b><p>"Listar os equipamentos indisponíveis há mais tempo e dar um prazo de retorno para cada um."</p></div>
-    </div>
-    <div class="oi-grid oi-g2">
-      <article class="oi-perg"><h3>Minha frota está saudável?</h3><div class="oi-an"><small>Analisa:</small><span>disponibilidade</span><span>utilização</span><span>receita média por equipamento</span><span>custo médio de manutenção</span><span>retorno sobre o valor da frota</span></div><div class="oi-r"><div class="oi-o"><b>O que está acontecendo</b>Sua disponibilidade subiu de 78,3% para 90,9% em dois meses, e a utilização está em 72,1%.</div><div class="oi-p"><b>Por que importa</b>Equipamento parado não gera receita e compromete a entrega ao cliente.</div><div class="oi-f"><b>O que fazer</b>Listar os equipamentos indisponíveis há mais tempo e definir um prazo de retorno para cada um.</div></div></article>
-      <article class="oi-perg"><h3>Onde estou perdendo dinheiro?</h3><div class="oi-an"><small>Analisa:</small><span>margem operacional</span><span>custo de manutenção sobre a receita</span><span>valor em atraso</span><span>retorno anual da frota</span></div><div class="oi-r"><div class="oi-o"><b>O que está acontecendo</b>O valor em atraso passou de R$ 31.000 para R$ 52.000, o equivalente a 11,1% da receita do mês.</div><div class="oi-p"><b>Por que importa</b>Receita faturada e não recebida pressiona o caixa.</div><div class="oi-f"><b>O que fazer</b>Criar uma rotina de cobrança logo após o vencimento e rever o limite dos clientes que atrasam sempre.</div></div></article>
-      <article class="oi-perg"><h3>Minha manutenção está eficiente?</h3><div class="oi-an"><small>Analisa:</small><span>preventiva e corretiva</span><span>corretivas por 100 equipamentos</span><span>tempo médio de reparo</span><span>equipamentos por técnico</span></div><div class="oi-r"><div class="oi-o"><b>O que está acontecendo</b>Só 26,9% das suas ordens de serviço são preventivas, e a meta ideal é 60%.</div><div class="oi-p"><b>Por que importa</b>A preventiva evita quebra em campo e reduz o custo de manutenção.</div><div class="oi-f"><b>O que fazer</b>Montar o plano de preventiva por tipo de equipamento e acompanhar o cumprimento toda semana.</div></div></article>
-      <article class="oi-perg"><h3>Quais equipamentos devo avaliar vender ou reformar?</h3><div class="oi-an"><small>Analisa:</small><span>custo acumulado sobre o valor</span><span>reincidência</span><span>retorno de cada equipamento</span><span>utilização</span></div><div class="oi-r"><div class="oi-o"><b>O que está acontecendo</b>10 equipamentos já custam mais de 60% do valor em manutenção: EMP-001, EMP-004, EMP-003 e mais 7.</div><div class="oi-p"><b>Por que importa</b>É dinheiro imobilizado em equipamento que já custa mais do que rende.</div><div class="oi-f"><b>O que fazer</b>Avaliar a venda ou a reforma dos patrimônios apontados, começando pelos de maior custo.</div></div></article>
-      <article class="oi-perg"><h3>Minha empresa está melhorando?</h3><div class="oi-an"><small>Analisa:</small><span>nota geral e das 5 áreas</span><span>evolução a cada mês</span></div><div class="oi-r"><div class="oi-o"><b>O que está acontecendo</b>O índice geral subiu de 61 para 77 em dois meses, mas a oficina é a única área que piorou (de 54 para 48).</div><div class="oi-p"><b>Por que importa</b>Mostra se o que você faz está dando resultado e onde a evolução trava.</div><div class="oi-f"><b>O que fazer</b>Começar o Plano de evolução pela área de menor nota.</div></div></article>
-      <article class="oi-perg"><h3>Dependo demais de um cliente?</h3><div class="oi-an"><small>Analisa:</small><span>participação do maior cliente</span><span>conversão de propostas</span></div><div class="oi-r"><div class="oi-o"><b>O que está acontecendo</b>Seu maior cliente responde por 22% da receita, contra 32% em agosto.</div><div class="oi-p"><b>Por que importa</b>Depender de um só cliente expõe a empresa se ele reduzir ou sair.</div><div class="oi-f"><b>O que fazer</b>Definir uma participação máxima por cliente e renovar com antecedência o contrato do maior.</div></div></article>
-    </div>
-    <p class="oi-illus" style="text-align:left;margin-top:18px">Exemplos ilustrativos, com dados fictícios.</p>
-  </div>
-</section>
-<section id="calculadoras" class="oi-band">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">Veja o tamanho do problema na sua locadora</div>
-    <h2 class="oi-sec-title">Faça a conta com os seus números, agora</h2>
-    <p class="oi-sec-lead">Mude os valores para os da sua locadora. É uma conta simples, para você enxergar o tamanho do assunto. Não é promessa de resultado.</p>
-    <div class="oi-grid oi-g2">
-      <div class="oi-calc">
-        <h3>Quanto custa deixar equipamento parado?</h3>
-        <p>Equipamentos que poderiam estar locados e não estão, vezes a diária, vezes os dias parados.</p>
-        <div class="oi-campos">
-          <div class="oi-campo"><label for="c1-qtd">Equipamentos parados sem contrato</label><input id="c1-qtd" type="number" min="0" step="1" value="8" inputmode="numeric"></div>
-          <div class="oi-campo"><label for="c1-diaria">Diária média de locação (R$)</label><input id="c1-diaria" type="number" min="0" step="10" value="180" inputmode="decimal"></div>
-          <div class="oi-campo"><label for="c1-dias">Dias parados no mês</label><input id="c1-dias" type="number" min="0" max="31" step="1" value="20" inputmode="numeric"></div>
-          <div class="oi-campo"><label for="c1-rec">Se voltassem a trabalhar <output id="c1-rec-o">50%</output> desses dias</label><input id="c1-rec" type="range" min="10" max="100" step="10" value="50"></div>
+<section class="hero" aria-labelledby="h-hero">
+    <div class="wrap grid">
+        <div>
+            <div class="eyebrow">Para locadoras de equipamentos</div>
+            <h1 id="h-hero">Veja onde sua locadora está perdendo dinheiro.</h1>
+            <p class="sub">Envie sua planilha e receba a leitura em minutos. Sem trocar de sistema.</p>
+            <p class="preco">Primeira leitura grátis. Para acompanhar mês a mês: <b>R$ 39,90/mês</b>.</p>
+            <div class="acoes">
+                <a class="btn" href="https://app.oravel.com.br/intelligence/teste-gratis" data-cta data-pos="topo" data-track="Teste grátis: CTA topo">Enviar minha planilha</a>
+                <a class="link-sec" href="modelo-planilha-intelligence.xlsx" download data-track="Teste grátis: baixou o modelo (topo)">Baixar modelo da planilha</a>
+            </div>
+            <p class="micro">Leva 1 minuto. Sem senha e sem cartão.</p>
         </div>
-        <div class="oi-res" aria-live="polite">
-          <div class="oi-dois">
-            <div><div class="oi-lbl">Deixa de entrar por mês</div><div class="oi-big" id="c1-mes">R$ 0</div></div>
-            <div><div class="oi-lbl">Por ano</div><div class="oi-big" id="c1-ano">R$ 0</div></div>
-          </div>
-          <p class="oi-txt" id="c1-txt"></p>
+        <figure class="mock">
+    <div class="tela" role="img" aria-label="Tela de exemplo do Índice de Saúde: nota 77, subiu +16 pontos em dois meses"><div aria-hidden="true"><h4>Índice de Saúde</h4>
+    <div class="nota"><b>77</b><span>+16 em dois meses</span></div>
+    <div class="barras">
+                    <div style="height:79%"><em>61</em></div>
+                    <div style="height:90%"><em>69</em></div>
+                    <div style="height:100%"><em>77</em></div>
+            </div>
+    <div class="meses"><span>Ago</span><span>Set</span><span>Out</span></div>
+    <div class="kpis">
+        <div class="kpi"><small>Disponibilidade</small><b>91%</b><i>+13 pontos</i></div>
+        <div class="kpi"><small>Atraso</small><b>3,9%</b><i>−2,7 pontos</i></div>
+        <div class="kpi"><small>Oficina</small><b>48</b><i>+7</i></div>
+    </div></div></div>
+    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
+</figure>
+    </div>
+</section>
+
+
+<section class="bloco" aria-labelledby="h-descobre">
+    <div class="wrap">
+        <h2 id="h-descobre">O que você descobre</h2>
+        <div class="cards">
+            <article class="card">
+                <h3>Equipamentos parados</h3>
+                <p class="ex">Na locadora de exemplo, <b>11 de 122</b> equipamentos estavam parados. Isso deixa de entrar <b>R$ 75.240 por mês</b>.</p>
+                <figure class="mock">
+    <div class="tela" role="img" aria-label="Exemplo: 11 de 122 equipamentos parados"><div aria-hidden="true"><h4>Disponibilidade da frota</h4>
+    <div class="nota"><b>91%</b><span>+13 pontos desde agosto</span></div>
+    <p>11 de 122 equipamentos parados</p></div></div>
+    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
+</figure>
+            </article>
+            <article class="card">
+                <h3>Manutenção cara</h3>
+                <p class="ex"><b>10 equipamentos</b> já custam mais de 60% do valor em manutenção. Plataforma tesoura 12 m: R$ 118.800 gastos num equipamento de R$ 180.000 (66%).</p>
+                <figure class="mock">
+    <div class="tela" role="img" aria-label="Tela de exemplo de Equipamentos: 10 equipamentos já custam mais de 60% do valor em manutenção"><div aria-hidden="true"><h4>Equipamentos · 122 na frota</h4>
+    <table class="t">
+        <thead><tr><th>Equipamento</th><th>Manutenção ÷ valor</th><th>Situação</th></tr></thead>
+        <tbody>
+                    <tr>
+                <td>Plataforma tesoura 12 m<br><small>PL-014</small></td>
+                <td>66%</td>
+                <td><span class="tag bad">Trocar ou vender</span></td>
+            </tr>
+                    <tr>
+                <td>Empilhadeira 2,5 t<br><small>EM-007</small></td>
+                <td>68%</td>
+                <td><span class="tag bad">Trocar ou vender</span></td>
+            </tr>
+                </tbody>
+    </table></div></div>
+    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
+</figure>
+            </article>
+            <article class="card">
+                <h3>O que vender, trocar ou reformar</h3>
+                <p class="ex">Cada equipamento vem com a situação e o motivo. O plano de 30, 60 e 90 dias diz por onde começar: <b>foco na oficina (nota 48)</b>.</p>
+                <figure class="mock">
+    <div class="tela" role="img" aria-label="Exemplo: lista de decisão e foco do plano"><div aria-hidden="true"><h4>Lista de decisão</h4>
+                    <p><span class="tag bad">Trocar ou vender</span> PL-014, 66% do valor</p>
+                    <div class="foco" style="margin-top:8px"><b>Foco do ciclo:</b> Saúde da Oficina, nota 41 para 48 (+7)</div></div></div>
+    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
+</figure>
+            </article>
         </div>
-        <p class="oi-nota">Valores iniciais são só um exemplo. Troque pelos seus.</p>
-      </div>
-      <div class="oi-calc">
-        <h3>Está na hora de trocar ou vender?</h3>
-        <p>Compare tudo o que já gastou em manutenção com o valor do equipamento. É a mesma regra que o Intelligence usa.</p>
-        <div class="oi-campos">
-          <div class="oi-campo"><label for="c2-valor">Valor do equipamento (R$)</label><input id="c2-valor" type="number" min="0" step="1000" value="120000" inputmode="decimal"></div>
-          <div class="oi-campo"><label for="c2-gasto">Já gasto em manutenção (R$)</label><input id="c2-gasto" type="number" min="0" step="1000" value="58000" inputmode="decimal"></div>
+
+        <div class="calc" aria-labelledby="h-calc">
+            <div>
+                <h3 id="h-calc">Quanto custa deixar equipamento parado?</h3>
+                <p class="lead" style="font-size:15px;margin:6px 0 14px">Troque os valores de exemplo pelos da sua locadora.</p>
+                <div class="campos">
+                    <label for="c-qtd">Equipamentos parados<input id="c-qtd" type="number" min="0" inputmode="numeric" value="11"></label>
+                    <label for="c-diaria">Diária média (R$)<input id="c-diaria" type="number" min="0" inputmode="numeric" value="380"></label>
+                    <label for="c-dias">Dias parados no mês<input id="c-dias" type="number" min="0" max="31" inputmode="numeric" value="18"></label>
+                </div>
+            </div>
+            <div class="res" aria-live="polite">
+                <small>Deixa de entrar por mês</small><b id="c-mes">R$ 75.240</b>
+                <small>Por ano</small><b id="c-ano">R$ 902.880</b>
+                <small style="font-style:italic">Exemplo ilustrativo, com dados fictícios</small>
+            </div>
         </div>
-        <div class="oi-res" aria-live="polite">
-          <div class="oi-lbl">Manutenção acumulada sobre o valor</div>
-          <div class="oi-big" id="c2-pct">0%</div>
-          <div class="oi-faixa"><i id="c2-marca"></i></div>
-          <div class="oi-faixa-leg"><span>0%</span><span>40% revisar</span><span>60% trocar ou vender</span><span>100%</span></div>
-          <p class="oi-txt" id="c2-txt"></p>
+    </div>
+</section>
+
+
+<section class="bloco alt" aria-labelledby="h-como">
+    <div class="wrap">
+        <h2 id="h-como">Como funciona</h2>
+        <div class="passos">
+                            <div class="passo"><h3>Baixe o modelo e preencha</h3><p>Uma linha com os números do mês. Se quiser, uma linha por equipamento.</p></div>
+                            <div class="passo"><h3>Envie</h3><p>A leitura sai sozinha, em minutos.</p></div>
+                            <div class="passo"><h3>Atualizou os dados? Reenvie</h3><p>Quando quiser, sem esperar o fim do mês. Cada envio fica no histórico e você compara com os anteriores.</p></div>
+                    </div>
+        <p class="nota-erp">Já usa o ERP da Oravel? Exporte a planilha com 1 clique.</p>
+    </div>
+</section>
+
+
+<section class="bloco" aria-labelledby="h-leitura">
+    <div class="wrap">
+        <h2 id="h-leitura">O que vem na leitura</h2>
+        <div class="car-wrap">
+            <div class="carrossel" role="region" aria-label="Telas da leitura" tabindex="0">
+                <div class="slide"><figure class="mock">
+    <div class="tela" role="img" aria-label="Tela de exemplo do Índice de Saúde: nota 77, subiu +16 pontos em dois meses"><div aria-hidden="true"><h4>Índice de Saúde</h4>
+    <div class="nota"><b>77</b><span>+16 em dois meses</span></div>
+    <div class="barras">
+                    <div style="height:79%"><em>61</em></div>
+                    <div style="height:90%"><em>69</em></div>
+                    <div style="height:100%"><em>77</em></div>
+            </div>
+    <div class="meses"><span>Ago</span><span>Set</span><span>Out</span></div>
+    <div class="kpis">
+        <div class="kpi"><small>Disponibilidade</small><b>91%</b><i>+13 pontos</i></div>
+        <div class="kpi"><small>Atraso</small><b>3,9%</b><i>−2,7 pontos</i></div>
+        <div class="kpi"><small>Oficina</small><b>48</b><i>+7</i></div>
+    </div></div></div>
+    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
+</figure>
+<p class="leg"><b>Índice de Saúde</b></p><p>Uma nota de 0 a 100 para a locadora e a evolução mês a mês.</p></div>
+                <div class="slide"><figure class="mock">
+    <div class="tela" role="img" aria-label="Tela de exemplo de Equipamentos: 10 equipamentos já custam mais de 60% do valor em manutenção"><div aria-hidden="true"><h4>Equipamentos · 122 na frota</h4>
+    <table class="t">
+        <thead><tr><th>Equipamento</th><th>Manutenção ÷ valor</th><th>Situação</th></tr></thead>
+        <tbody>
+                    <tr>
+                <td>Plataforma tesoura 12 m<br><small>PL-014</small></td>
+                <td>66%</td>
+                <td><span class="tag bad">Trocar ou vender</span></td>
+            </tr>
+                    <tr>
+                <td>Empilhadeira 2,5 t<br><small>EM-007</small></td>
+                <td>68%</td>
+                <td><span class="tag bad">Trocar ou vender</span></td>
+            </tr>
+                    <tr>
+                <td>Gerador 80 kVA<br><small>GE-003</small></td>
+                <td>45%</td>
+                <td><span class="tag warn">Revisar</span></td>
+            </tr>
+                </tbody>
+    </table></div></div>
+    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
+</figure>
+<p class="leg"><b>Equipamentos</b></p><p>A situação de cada equipamento, com o motivo.</p></div>
+                <div class="slide"><figure class="mock">
+    <div class="tela" role="img" aria-label="Tela de exemplo do Plano de 30, 60 e 90 dias"><div aria-hidden="true"><h4>Plano de 30, 60 e 90 dias</h4>
+    <div class="foco"><b>Foco do ciclo: Saúde da Oficina</b> (nota 48)<br>Atraso nas faturas: 3,9% hoje, meta 3,0%</div>
+    <div class="plano">
+        <div class="col"><b>30 dias</b><span>Cobrar logo após o vencimento</span><span>Listar equipamentos parados</span></div>
+        <div class="col"><b>60 dias</b><span>Decidir sobre PL-014</span><span>Subir preventivas</span></div>
+        <div class="col"><b>90 dias</b><span>Medir contra a meta</span><span>Reenviar a planilha</span></div>
+    </div></div></div>
+    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
+</figure>
+<p class="leg"><b>Plano 30/60/90</b></p><p>O que fazer primeiro, com metas.</p></div>
+                <div class="slide"><figure class="mock">
+    <div class="tela" role="img" aria-label="Tela de exemplo do assistente: pergunta sobre disponibilidade e resposta com os números"><div aria-hidden="true"><h4>Pergunte em português</h4>
+    <div class="balao q">Minha disponibilidade aumentou?</div>
+    <div class="balao a"><b>Sim.</b> Sua disponibilidade subiu de 78% para 91% em dois meses (+13 pontos). Hoje 11 dos 122 equipamentos estão parados.</div></div></div>
+    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
+</figure>
+<p class="leg"><b>Pergunte em português</b></p><p>O assistente responde com os seus números e só consulta.</p></div>
+            </div>
+            <div class="car-nav"><button type="button" data-car="ant" aria-label="Tela anterior">‹</button><button type="button" data-car="prox" aria-label="Próxima tela">›</button></div>
         </div>
-        <p class="oi-nota">As faixas de 40% e 60% são referências usadas pela Oravel. A decisão final depende do estado do equipamento e do seu negócio.</p>
-      </div>
     </div>
-    <div class="oi-cta-linha"><a class="oi-btn oi-btn-primary" href="#contato">Quero que a Oravel faça essa conta com os meus números</a><p>O Intelligence faz essa conta para todos os seus equipamentos, todo mês.</p></div>
-  </div>
-</section>
-<section id="comparativo" class="oi-band oi-alt">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">Como a sua locadora decide hoje e como passa a decidir</div>
-    <h2 class="oi-sec-title">Da conversa de palpite para a decisão com número</h2>
-    <div class="oi-comp-wrap" style="margin-top:30px"><table class="oi-comp">
-      <thead><tr><th>Na rotina da locadora</th><th>Hoje: planilhas soltas e palpite</th><th class="oi-nos">Com o Oravel Intelligence</th></tr></thead>
-      <tbody>
-        <tr><td>Saber como a empresa está</td><td class="oi-hoje">Cada um tem a sua impressão</td><td class="oi-nos">Uma nota de 0 a 100 e a nota de cada área</td></tr>
-        <tr><td>Descobrir quais equipamentos custam mais do que rendem</td><td class="oi-hoje">Descobre quando já é tarde</td><td class="oi-nos">Lista de decisão, com o motivo e o número de cada um</td></tr>
-        <tr><td>Comparar com o mês passado</td><td class="oi-hoje">Abrir planilhas e refazer contas</td><td class="oi-nos">Comparação pronta, com o que melhorou e o que piorou</td></tr>
-        <tr><td>Saber o que fazer primeiro</td><td class="oi-hoje">A reunião vira discussão</td><td class="oi-nos">Plano de 30, 60 e 90 dias, com metas</td></tr>
-        <tr><td>Levar o assunto ao sócio</td><td class="oi-hoje">Print e explicação no WhatsApp</td><td class="oi-nos">Relatório em link, no WhatsApp ou impresso</td></tr>
-        <tr><td>Fazer uma pergunta aos números</td><td class="oi-hoje">Pedir para alguém fazer a conta</td><td class="oi-nos">Assistente que responde em português, na hora</td></tr>
-        <tr><td>Manter o histórico</td><td class="oi-hoje">Se perde quando alguém sai</td><td class="oi-nos">Cada mês fica guardado e nunca é sobrescrito</td></tr>
-      </tbody></table></div>
-    <div class="oi-cta-linha"><a class="oi-btn oi-btn-primary" href="#contato">Quero decidir assim</a></div>
-  </div>
-</section>
-
-<section id="entregas" class="oi-band">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">O que você recebe, tela a tela</div>
-    <h2 class="oi-sec-title">Veja o Intelligence em prática</h2>
-    <p class="oi-sec-lead">Cada tela responde a uma pergunta diferente. Você entra e já enxerga o que importa, sem montar planilha e sem caçar número.</p>
-
-    <div class="oi-entrega">
-      <div class="oi-tx"><div class="oi-num">1 · Índice de Saúde da Locadora</div><h3>Uma nota que resume a empresa, e as cores mostram onde olhar</h3>
-        <p>Frota, finanças, comercial, oficina e operação em um índice de 0 a 100, com a nota de cada área. A primeira tela já traz os números do mês: receita, resultado, disponibilidade, utilização e valor em atraso.</p>
-        <ul><li>Nota geral e por área, em cores de semáforo</li><li>Evolução mês a mês e comparação com o mês anterior</li><li>O que melhorou e o que piorou, escrito em português</li></ul></div>
-      <div class="oi-vis"><div class="oi-mk-win"><div class="oi-mk-bar"><i></i><i></i><i></i><b>Índice de Saúde</b></div><div class="oi-mk-app"><div class="oi-mk-kg"><div class="oi-mk-k" style="--k:var(--st-indigo)"><small>Receita do mês</small><b>R$ 468.000</b><span>faturamento <em>▲ R$ 48.000</em></span></div><div class="oi-mk-k" style="--k:var(--st-ok)"><small>Resultado do mês</small><b>R$ 202.000</b><span>receita menos custos <em>▲ R$ 31.000</em></span></div><div class="oi-mk-k" style="--k:var(--st-sky)"><small>Disponibilidade</small><b>90,9%</b><span>frota pronta <em>▲ 6,1%</em></span></div><div class="oi-mk-k" style="--k:var(--st-violet)"><small>Utilização</small><b>72,1%</b><span>frota rendendo <em>▲ 8,4%</em></span></div><div class="oi-mk-k" style="--k:var(--st-bad)"><small>Valor em atraso</small><b>R$ 52.000</b><span>faturas vencidas <em>▲ R$ 21.000</em></span></div><div class="oi-mk-k" style="--k:var(--st-warn)"><small>OS corretivas</small><b>34</b><span>quebras no mês <em>▼ 12</em></span></div></div><div class="oi-mk-row"><div class="oi-mk-card"><h6>Índice geral</h6><div class="oi-mk-c"><svg viewBox="0 0 200 118" class="oi-svg-g" role="img" aria-label="Índice geral 77, Bom"><path d="M20 100A80 80 0 0 1 180 100" class="oi-g-track"/><path d="M20 100A80 80 0 0 1 180 100" class="oi-g-arc oi-s-good" stroke-dasharray="193.5 251.3"/><text x="100" y="86" text-anchor="middle" class="oi-g-num oi-t-good">77</text><text x="100" y="108" text-anchor="middle" class="oi-g-lab oi-t-good">Bom</text></svg></div><p class="oi-mk-up">▲ 8 pontos desde setembro</p></div><div class="oi-mk-card"><h6>Saúde por área</h6><div class="oi-mk-c"><svg viewBox="-30 0 260 200" class="oi-svg-r" role="img" aria-label="Nota de cada área"><polygon class="oi-r-grid" points="100.0,82.5 116.6,94.6 110.3,114.2 89.7,114.2 83.4,94.6"/><polygon class="oi-r-grid" points="100.0,65.0 133.3,89.2 120.6,128.3 79.4,128.3 66.7,89.2"/><polygon class="oi-r-grid" points="100.0,47.5 149.9,83.8 130.9,142.5 69.1,142.5 50.1,83.8"/><polygon class="oi-r-grid" points="100.0,30.0 166.6,78.4 141.1,156.6 58.9,156.6 33.4,78.4"/><line class="oi-r-grid" x1="100" y1="100" x2="100.0" y2="30.0"/><line class="oi-r-grid" x1="100" y1="100" x2="166.6" y2="78.4"/><line class="oi-r-grid" x1="100" y1="100" x2="141.1" y2="156.6"/><line class="oi-r-grid" x1="100" y1="100" x2="58.9" y2="156.6"/><line class="oi-r-grid" x1="100" y1="100" x2="33.4" y2="78.4"/><polygon class="oi-r-ant" points="100.0,48.2 138.6,87.5 127.2,137.4 78.6,129.4 53.4,84.9"/><polygon class="oi-r-now" points="100.0,37.0 141.3,86.6 128.8,139.6 80.3,127.2 45.4,82.3"/><text class="oi-r-lab" x="100.0" y="16.2" text-anchor="middle">Frota</text><text class="oi-r-lab" x="182.6" y="76.2" text-anchor="middle">Finanças</text><text class="oi-r-lab" x="151.0" y="173.2" text-anchor="middle">Comercial</text><text class="oi-r-lab" x="49.0" y="173.2" text-anchor="middle">Oficina</text><text class="oi-r-lab" x="17.4" y="76.2" text-anchor="middle">Operação</text></svg></div></div></div><div class="oi-mk-card" style="margin-top:10px"><h6>Evolução do índice e das áreas</h6><svg viewBox="0 0 340 120" class="oi-svg-l" role="img" aria-label="Evolução em três meses"><line class="oi-l-grid" x1="26" x2="310" y1="102.0" y2="102.0"/><line class="oi-l-grid" x1="26" x2="310" y1="59.0" y2="59.0"/><line class="oi-l-grid" x1="26" x2="310" y1="16.0" y2="16.0"/><polygon class="oi-l-fill" points="26.0,102 26.0,49.5 166.0,42.7 306.0,35.8 306.0,102"/><polyline class="oi-l-line oi-lc-indigo oi-l-main" points="26.0,49.5 166.0,42.7 306.0,35.8"/><circle class="oi-l-dot" cx="26.0" cy="49.5" r="4"/><circle class="oi-l-dot" cx="166.0" cy="42.7" r="4"/><circle class="oi-l-dot" cx="306.0" cy="35.8" r="4"/><polyline class="oi-l-line oi-lc-sky" points="26.0,41.8 166.0,33.2 306.0,24.6"/><polyline class="oi-l-line oi-lc-ok" points="26.0,54.7 166.0,52.1 306.0,48.7"/><polyline class="oi-l-line oi-lc-warn" points="26.0,55.6 166.0,59.0 306.0,60.7"/><text class="oi-l-lab" x="26.0" y="117" text-anchor="middle">ago</text><text class="oi-l-lab" x="166.0" y="117" text-anchor="middle">set</text><text class="oi-l-lab" x="306.0" y="117" text-anchor="middle">out</text></svg></div></div></div><p class="oi-illus">Tela ilustrativa, com dados fictícios.</p></div>
-    </div>
-
-    <div class="oi-entrega oi-rev">
-      <div class="oi-tx"><div class="oi-num">2 · Diagnóstico</div><h3>Os pontos de atenção, do mais grave ao menos grave</h3>
-        <p>Cada indicador fraco aparece com um termômetro: onde você está, o que é crítico e o que é ideal. Ao lado, por que ele importa e se está melhorando ou piorando. Os pontos fortes também aparecem, para você saber o que manter.</p>
-        <ul><li>Termômetro por indicador, com a meta ao lado</li><li>"Por que importa" em linguagem direta</li><li>Mapa de prioridades: urgente é nota baixa e piorando</li></ul></div>
-      <div class="oi-vis"><div class="oi-mk-win"><div class="oi-mk-bar"><i></i><i></i><i></i><b>Diagnóstico</b></div><div class="oi-mk-app"><div class="oi-mk-fx"><div class="oi-bg-bad"><small>Críticos</small><b>1</b></div><div class="oi-bg-warn"><small>Em atenção</small><b>3</b></div><div class="oi-bg-good"><small>Bons</small><b>4</b></div><div class="oi-bg-ok"><small>Excelentes</small><b>4</b></div></div><div class="oi-mk-card oi-mk-al oi-al-bad"><div class="oi-mk-hd"><span>FINANÇAS</span><em class="oi-bg-bad">Crítico · nota 14</em></div><div class="oi-mk-t"><div><b>Atraso sobre a receita</b><span><strong class="oi-t-bad">11,1 %</strong> · meta 2 %</span></div><div class="oi-mk-bar2"><i style="left:calc(24% - 9px)" class="oi-b-bad"></i></div><small><span>15 % (crítico)</span><span>2 % (ideal)</span></small></div><p><b>Por que importa:</b> receita faturada e não recebida aperta o caixa.</p><p class="oi-t-bad oi-sm">▼ Piorou desde a fotografia anterior (6,6% para 11,1%)</p></div><div class="oi-mk-card oi-mk-al oi-al-warn"><div class="oi-mk-hd"><span>OFICINA</span><em class="oi-bg-warn">Atenção · nota 41</em></div><div class="oi-mk-t"><div><b>Manutenção preventiva</b><span><strong class="oi-t-warn">26,9 %</strong> · meta 60 %</span></div><div class="oi-mk-bar2"><i style="left:calc(33% - 9px)" class="oi-b-warn"></i></div><small><span>10 % (crítico)</span><span>60 % (ideal)</span></small></div><p><b>Por que importa:</b> preventiva evita quebra em campo e reduz o custo de manutenção.</p></div></div></div><p class="oi-illus">Tela ilustrativa, com dados fictícios.</p></div>
-    </div>
-
-    <div class="oi-entrega" id="equipamentos">
-      <div class="oi-tx"><div class="oi-num">3 · Análise por equipamento</div><h3>Quais equipamentos explicam os números</h3>
-        <p>Ao enviar também uma linha por equipamento, o Intelligence mostra quem está por trás do problema. Cada equipamento recebe uma situação, com o motivo escrito e o número que levou até ela. Quem usa o ERP da Oravel gera essa planilha com um clique.</p>
-        <ul><li>Lista de decisão: o que revisar, vender ou ofertar</li><li>Pareto: poucos equipamentos concentram boa parte do custo</li><li>Histórico de cada equipamento, mês a mês</li><li>Excel e relatório para levar para a reunião</li></ul></div>
-      <div class="oi-vis"><div class="oi-mk-win"><div class="oi-mk-bar"><i></i><i></i><i></i><b>Equipamentos</b></div><div class="oi-mk-app"><div class="oi-mk-fx oi-mk-fx5"><div class="oi-bg-bad"><small>Trocar ou vender</small><b>10</b></div><div class="oi-bg-warn"><small>Revisar</small><b>11</b></div><div class="oi-bg-violet"><small>Risco de parada</small><b>3</b></div><div class="oi-bg-sky"><small>Subutilizados</small><b>3</b></div><div class="oi-bg-ok"><small>Saudáveis</small><b>95</b></div></div><div class="oi-mk-card"><h6>Pareto do custo de manutenção</h6><div class="oi-mk-pareto"><i class="oi-b-bad" style="height:100%"></i><i class="oi-b-bad" style="height:86%"></i><i class="oi-b-bad" style="height:74%"></i><i class="oi-b-warn" style="height:61%"></i><i class="oi-b-warn" style="height:52%"></i><i class="oi-b-warn" style="height:41%"></i><i class="oi-b-violet" style="height:33%"></i><i class="oi-b-warn" style="height:26%"></i><i class="oi-b-ok" style="height:20%"></i><i class="oi-b-ok" style="height:15%"></i><i class="oi-b-ok" style="height:11%"></i><i class="oi-b-ok" style="height:8%"></i></div><p class="oi-sm oi-mk-soft">Os 24 equipamentos de maior custo concentram 61% da manutenção do mês.</p></div><table class="oi-mk-tb"><tr><th>Equipamento</th><th>Situação</th><th>Custo ÷ valor</th><th>Reincid.</th></tr><tr><td><b class="oi-t-indigo">EMP-001</b><br><span class="oi-sm oi-mk-soft">Empilhadeira 001</span></td><td><span class="oi-chip oi-bg-bad">Trocar ou vender</span></td><td class="oi-t-bad"><b>79%</b></td><td>3/5</td></tr><tr><td><b class="oi-t-indigo">EMP-008</b><br><span class="oi-sm oi-mk-soft">Gerador 008</span></td><td><span class="oi-chip oi-bg-bad">Trocar ou vender</span></td><td class="oi-t-bad"><b>64%</b> ▼</td><td>2/4</td></tr><tr><td><b class="oi-t-indigo">EMP-022</b><br><span class="oi-sm oi-mk-soft">Plataforma 022</span></td><td><span class="oi-chip oi-bg-violet">Risco de parada</span></td><td>18%</td><td>1/4</td></tr></table><p class="oi-mk-why"><b>Por que está aqui:</b> o custo de manutenção acumulado já é de 79% do valor do equipamento (o limite é de 60%).</p></div></div><p class="oi-illus">Tela ilustrativa, com dados fictícios.</p></div>
-    </div>
-    <div class="oi-situ" aria-label="As cinco situações de um equipamento">
-      <div><b><i class="oi-bg-bad"></i>Considerar trocar ou vender</b>A manutenção acumulada já passa de 60% do valor do equipamento, ou o retorno ficou negativo por dois meses com a locação baixa.</div>
-      <div><b><i class="oi-bg-warn"></i>Revisar</b>Manutenção acumulada a partir de 40% do valor, corretivas que voltam pelo mesmo defeito, ou custo do mês alto frente à receita.</div>
-      <div><b><i class="oi-bg-violet"></i>Em risco de parada</b>Passou boa parte do mês indisponível e com corretivas crescendo.</div>
-      <div><b><i class="oi-bg-sky"></i>Subutilizado</b>Em bom estado e parado sem contrato. Vale ofertar ou vender.</div>
-      <div><b><i class="oi-bg-ok"></i>Saudável</b>Nenhum sinal de alerta nos dados informados.</div>
-    </div>
-    <p class="oi-nota">Os limites usados são referências iniciais e a Oravel ajusta com você. A situação é um sinal para avaliar, a decisão de vender ou reformar continua sendo sua.</p>
-
-    <div class="oi-entrega oi-rev">
-      <div class="oi-tx"><div class="oi-num">4 · Comparação interna</div><h3>A sua locadora contra ela mesma</h3>
-        <p>Escolha duas datas, por exemplo este mês e o mesmo mês do ano passado, e veja o que evoluiu e o que ficou para trás. Inclui os equipamentos que mudaram de situação entre as duas datas.</p>
-        <ul><li>Compare quaisquer duas fotografias já enviadas</li><li>Verde melhorou, vermelho piorou</li><li>Só os seus dados: nenhuma outra empresa aparece</li></ul></div>
-      <div class="oi-vis"><div class="oi-mk-win"><div class="oi-mk-bar"><i></i><i></i><i></i><b>Comparação interna</b></div><div class="oi-mk-app"><div class="oi-mk-sel"><span>Comparar <b>agosto</b></span><span class="oi-mk-vs">contra</span><span><b>outubro</b></span></div><div class="oi-mk-row"><div class="oi-mk-card"><h6>Radar das áreas</h6><div class="oi-mk-c"><svg viewBox="-30 0 260 200" class="oi-svg-r" role="img" aria-label="Nota de cada área"><polygon class="oi-r-grid" points="100.0,82.5 116.6,94.6 110.3,114.2 89.7,114.2 83.4,94.6"/><polygon class="oi-r-grid" points="100.0,65.0 133.3,89.2 120.6,128.3 79.4,128.3 66.7,89.2"/><polygon class="oi-r-grid" points="100.0,47.5 149.9,83.8 130.9,142.5 69.1,142.5 50.1,83.8"/><polygon class="oi-r-grid" points="100.0,30.0 166.6,78.4 141.1,156.6 58.9,156.6 33.4,78.4"/><line class="oi-r-grid" x1="100" y1="100" x2="100.0" y2="30.0"/><line class="oi-r-grid" x1="100" y1="100" x2="166.6" y2="78.4"/><line class="oi-r-grid" x1="100" y1="100" x2="141.1" y2="156.6"/><line class="oi-r-grid" x1="100" y1="100" x2="58.9" y2="156.6"/><line class="oi-r-grid" x1="100" y1="100" x2="33.4" y2="78.4"/><polygon class="oi-r-ant" points="100.0,51.0 136.6,88.1 124.7,134.0 77.8,130.6 56.1,85.7"/><polygon class="oi-r-now" points="100.0,37.0 141.3,86.6 128.8,139.6 80.3,127.2 45.4,82.3"/><text class="oi-r-lab" x="100.0" y="16.2" text-anchor="middle">Frota</text><text class="oi-r-lab" x="182.6" y="76.2" text-anchor="middle">Finanças</text><text class="oi-r-lab" x="151.0" y="173.2" text-anchor="middle">Comercial</text><text class="oi-r-lab" x="49.0" y="173.2" text-anchor="middle">Oficina</text><text class="oi-r-lab" x="17.4" y="76.2" text-anchor="middle">Operação</text></svg></div></div><div class="oi-mk-card"><h6>Nota por área</h6><div class="oi-mk-pb"><span>Frota</span><div><i class="oi-bar-ant" style="width:70%"></i><i class="oi-bar-now" style="width:90%"></i></div></div><div class="oi-mk-pb"><span>Finanças</span><div><i class="oi-bar-ant" style="width:55%"></i><i class="oi-bar-now" style="width:62%"></i></div></div><div class="oi-mk-pb"><span>Comercial</span><div><i class="oi-bar-ant" style="width:60%"></i><i class="oi-bar-now" style="width:70%"></i></div></div><div class="oi-mk-pb"><span>Oficina</span><div><i class="oi-bar-ant" style="width:54%"></i><i class="oi-bar-now" style="width:48%"></i></div></div><div class="oi-mk-pb"><span>Operação</span><div><i class="oi-bar-ant" style="width:66%"></i><i class="oi-bar-now" style="width:82%"></i></div></div></div></div><table class="oi-mk-tb"><tr><th>Indicador</th><th>Agosto</th><th>Outubro</th><th>Variação</th></tr><tr><td>Disponibilidade da frota</td><td>78,3%</td><td><b>90,9%</b></td><td class="oi-t-ok">▲ 12,6 pontos</td></tr><tr><td>Margem operacional</td><td>25,8%</td><td><b>43,2%</b></td><td class="oi-t-ok">▲ 17,4 pontos</td></tr><tr><td>Atraso sobre a receita</td><td>3,9%</td><td><b>11,1%</b></td><td class="oi-t-bad">▲ 7,2 pontos</td></tr></table></div></div><p class="oi-illus">Tela ilustrativa, com dados fictícios.</p></div>
-    </div>
-
-    <div class="oi-entrega">
-      <div class="oi-tx"><div class="oi-num">5 · Plano de evolução</div><h3>Do diagnóstico para a ação: o que fazer, em que ordem e até onde chegar</h3>
-        <p>O plano organiza as ações em 30, 60 e 90 dias. Para cada ponto mostra onde você está hoje, a meta que dá para alcançar até a próxima importação e a meta ideal. As ações por equipamento aparecem com o nome dos patrimônios.</p>
-        <ul><li>Ações priorizadas por urgência</li><li>Meta do ciclo e meta ideal de cada indicador</li><li>No mês seguinte, você mede o avanço contra o plano</li></ul></div>
-      <div class="oi-vis"><div class="oi-mk-win"><div class="oi-mk-bar"><i></i><i></i><i></i><b>Plano de evolução</b></div><div class="oi-mk-app"><div class="oi-mk-foco"><small>FOCO DO CICLO</small><b>Saúde da Oficina</b><span>9 ações em 30, 60 e 90 dias</span></div><div class="oi-mk-cols"><div><div class="oi-mk-ch oi-bg-bad">Primeiros 30 dias</div><div class="oi-mk-pl"><div class="oi-mk-hd"><b>Atraso nas faturas</b><em class="oi-bg-bad">Alta</em></div><small>Finanças</small><div class="oi-mk-meta"><span><b>11,1</b><i>hoje</i></span><u class="oi-u-bad"></u><span><b class="oi-t-bad">6,6</b><i>meta do ciclo</i></span><u class="oi-u-ok"></u><span><b class="oi-t-ok">2,0</b><i>ideal</i></span></div><ul><li>Criar rotina de cobrança logo após o vencimento</li><li>Rever o limite de quem atrasa sempre</li></ul></div><div class="oi-mk-pl oi-mk-eq"><div class="oi-mk-hd"><b>Equipamentos para decidir</b><em class="oi-bg-violet">Frota</em></div><p><b>Avaliar a venda ou a reforma dos patrimônios EMP-001, EMP-004, EMP-003 e mais 7.</b></p></div></div><div><div class="oi-mk-ch oi-bg-warn">Até 60 dias</div><div class="oi-mk-pl"><div class="oi-mk-hd"><b>Manutenção preventiva</b><em class="oi-bg-warn">Média</em></div><small>Oficina</small><div class="oi-mk-meta"><span><b>26,9</b><i>hoje</i></span><u class="oi-u-warn"></u><span><b class="oi-t-warn">43,5</b><i>meta do ciclo</i></span><u class="oi-u-ok"></u><span><b class="oi-t-ok">60</b><i>ideal</i></span></div><ul><li>Montar plano de preventiva por tipo de equipamento</li><li>Programar a revisão antes do retorno</li></ul></div></div><div><div class="oi-mk-ch oi-bg-good">Até 90 dias</div><div class="oi-mk-pl"><div class="oi-mk-hd"><b>Entregas no prazo</b><em class="oi-bg-good">Baixa</em></div><small>Operação</small><div class="oi-mk-meta"><span><b>90</b><i>hoje</i></span><u class="oi-u-good"></u><span><b class="oi-t-good">93</b><i>meta do ciclo</i></span><u class="oi-u-ok"></u><span><b class="oi-t-ok">95</b><i>ideal</i></span></div><ul><li>Planejar rota e agenda de entregas</li><li>Registrar o motivo de cada atraso</li></ul></div></div></div></div></div><p class="oi-illus">Tela ilustrativa, com dados fictícios.</p></div>
-    </div>
-
-    <div class="oi-duo">
-      <div><h3>Assistente de IA</h3><p>Pergunte em português: "minha disponibilidade aumentou?", "quais equipamentos devo avaliar vender?". O assistente responde com os números da sua empresa e só consulta. Ele nunca altera nada.</p><div class="oi-mk-win"><div class="oi-mk-bar"><i></i><i></i><i></i><b>Assistente de IA</b></div><div class="oi-mk-app"><div class="oi-mk-chat"><p class="oi-mk-u">Quais equipamentos devo avaliar vender?</p><p class="oi-mk-b">Dez equipamentos já custam mais de 60% do valor em manutenção. Os mais urgentes são EMP-001, EMP-004 e EMP-003. Lembre que é um sinal para avaliar, não uma ordem: confira o estado de cada um antes de decidir.</p><p class="oi-mk-u">O que piorou desde a última fotografia?</p><p class="oi-mk-b">O atraso nas faturas: de R$ 31.000 para R$ 52.000. É hoje o ponto mais crítico da empresa.</p><div class="oi-mk-in">Pergunte sobre indicadores, áreas, equipamentos…<b>Enviar</b></div></div></div></div></div>
-      <div><h3>Para levar à reunião ou ao WhatsApp do sócio</h3><p>O índice, o diagnóstico, o plano e a lista de equipamentos têm um botão de WhatsApp e uma versão simples para imprimir ou salvar em PDF. Quem recebe o link vê só aquele relatório, sem acesso ao sistema, e o link vence em 7 dias.</p><div class="oi-mk-zap"><div class="oi-mk-ph"><div class="oi-mk-bub">Relatório Oravel: Intelligence, equipamentos em 31/10/2026<br><u>oravel.com.br/assistente/r/…</u></div></div><div class="oi-mk-paper"><b>Equipamentos em 31/10/2026</b><small>10 para considerar trocar ou vender, 11 para revisar</small><i></i><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i><span>Imprimir / salvar PDF</span></div></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="pratica" class="oi-band oi-alt">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">Na prática</div>
-    <h2 class="oi-sec-title">Uma segunda-feira com o Intelligence</h2>
-    <p class="oi-sec-lead">Um exemplo de como fica a rotina de um gestor depois que o primeiro mês está importado.</p>
-    <div class="oi-dia">
-      <div class="oi-p"><div class="oi-h">8h00</div><div class="oi-c"><b>Abre o Índice de Saúde</b><span>Em dez segundos vê a nota da empresa, o que mudou desde o mês passado e quais áreas estão em vermelho.</span></div></div>
-      <div class="oi-p"><div class="oi-h">8h10</div><div class="oi-c"><b>Vai ao Diagnóstico</b><span>Lê os três pontos de atenção do mês. O atraso nas faturas está no topo, com a explicação do porquê e o que fazer.</span></div></div>
-      <div class="oi-p"><div class="oi-h">8h20</div><div class="oi-c"><b>Abre Equipamentos</b><span>Vê a lista dos que pedem decisão, com o motivo de cada um. Filtra por categoria para falar com o responsável da oficina.</span></div></div>
-      <div class="oi-p"><div class="oi-h">8h30</div><div class="oi-c"><b>Pergunta ao assistente</b><span>"O que piorou desde a última fotografia?" A resposta vem com os números, sem precisar abrir planilha.</span></div></div>
-      <div class="oi-p"><div class="oi-h">8h40</div><div class="oi-c"><b>Manda para o sócio</b><span>Um clique no botão de WhatsApp gera o link do relatório. Ele abre no celular, sem login.</span></div></div>
-      <div class="oi-p"><div class="oi-h">9h00</div><div class="oi-c"><b>Reunião com o plano na mão</b><span>A equipe sai da sala sabendo o que fazer nos próximos 30, 60 e 90 dias, e quem cuida de cada ponto.</span></div></div>
-    </div>
-  </div>
 </section>
 
 
-<section id="comecar" class="oi-band">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">Como começar</div>
-    <h2 class="oi-sec-title">Quatro etapas. Da planilha à decisão.</h2>
-    <p class="oi-sec-lead">Não precisa integrar sistema, contratar consultoria nem trocar nada. O primeiro resultado sai no mesmo dia, e o time da Oravel acompanha o primeiro envio.</p>
-    <div class="oi-demo-wrap"><div class="oi-demo" id="demo"><div class="oi-mk-win"><div class="oi-mk-bar"><i></i><i></i><i></i><b id="demo-titulo">Índice de Saúde · outubro/2026</b></div><div class="oi-mk-app oi-demo-body"><div class="oi-demo-load" aria-hidden="true"><div class="oi-dl-file"><span class="oi-dl-ico">XLS</span><div><b>planilha-outubro-2026.xlsx</b><small>48 KB · 122 equipamentos</small></div></div><div class="oi-dl-bar"><i></i></div><ul class="oi-dl-list"><li><span class="oi-ok">✓</span> Planilha lida: 122 equipamentos</li><li><span class="oi-ok">✓</span> Indicadores calculados</li><li><span class="oi-ok">✓</span> Diagnóstico montado</li><li><span class="oi-ok">✓</span> Plano de evolução gerado</li></ul></div><div class="oi-demo-dash"><div class="oi-mk-kg oi-demo-kg"><div class="oi-mk-k" style="--k:var(--st-indigo)"><small>Receita do mês</small><b class="oi-cu" data-to="468000" data-pre="R$ " data-pos="" data-dec="0">R$ 468.000</b><span>faturamento <em>▲ R$ 48.000</em></span></div><div class="oi-mk-k" style="--k:var(--st-ok)"><small>Resultado do mês</small><b class="oi-cu" data-to="202000" data-pre="R$ " data-pos="" data-dec="0">R$ 202.000</b><span>receita menos custos <em>▲ R$ 31.000</em></span></div><div class="oi-mk-k" style="--k:var(--st-sky)"><small>Disponibilidade</small><b class="oi-cu" data-to="90.9" data-pre="" data-pos="%" data-dec="1">90,9%</b><span>frota pronta <em>▲ 6,1%</em></span></div><div class="oi-mk-k" style="--k:var(--st-violet)"><small>Utilização</small><b class="oi-cu" data-to="72.1" data-pre="" data-pos="%" data-dec="1">72,1%</b><span>frota rendendo <em>▲ 8,4%</em></span></div></div><div class="oi-mk-row"><div class="oi-mk-card"><h6>Índice geral</h6><div class="oi-mk-c"><svg viewBox="0 0 200 118" class="oi-svg-g" role="img" aria-label="Índice geral 77, Bom"><path d="M20 100A80 80 0 0 1 180 100" class="oi-g-track"/><path d="M20 100A80 80 0 0 1 180 100" class="oi-g-arc oi-s-good" stroke-dasharray="193.5 251.3"/><text x="100" y="86" text-anchor="middle" class="oi-g-num oi-t-good">77</text><text x="100" y="108" text-anchor="middle" class="oi-g-lab oi-t-good">Bom</text></svg></div></div><div class="oi-mk-card"><h6>Saúde por área</h6><div class="oi-mk-c"><svg viewBox="-30 0 260 200" class="oi-svg-r" role="img" aria-label="Nota de cada área"><polygon class="oi-r-grid" points="100.0,82.5 116.6,94.6 110.3,114.2 89.7,114.2 83.4,94.6"/><polygon class="oi-r-grid" points="100.0,65.0 133.3,89.2 120.6,128.3 79.4,128.3 66.7,89.2"/><polygon class="oi-r-grid" points="100.0,47.5 149.9,83.8 130.9,142.5 69.1,142.5 50.1,83.8"/><polygon class="oi-r-grid" points="100.0,30.0 166.6,78.4 141.1,156.6 58.9,156.6 33.4,78.4"/><line class="oi-r-grid" x1="100" y1="100" x2="100.0" y2="30.0"/><line class="oi-r-grid" x1="100" y1="100" x2="166.6" y2="78.4"/><line class="oi-r-grid" x1="100" y1="100" x2="141.1" y2="156.6"/><line class="oi-r-grid" x1="100" y1="100" x2="58.9" y2="156.6"/><line class="oi-r-grid" x1="100" y1="100" x2="33.4" y2="78.4"/><polygon class="oi-r-ant" points="100.0,48.2 138.6,87.5 127.2,137.4 78.6,129.4 53.4,84.9"/><polygon class="oi-r-now" points="100.0,37.0 141.3,86.6 128.8,139.6 80.3,127.2 45.4,82.3"/><text class="oi-r-lab" x="100.0" y="16.2" text-anchor="middle">Frota</text><text class="oi-r-lab" x="182.6" y="76.2" text-anchor="middle">Finanças</text><text class="oi-r-lab" x="151.0" y="173.2" text-anchor="middle">Comercial</text><text class="oi-r-lab" x="49.0" y="173.2" text-anchor="middle">Oficina</text><text class="oi-r-lab" x="17.4" y="76.2" text-anchor="middle">Operação</text></svg></div></div></div><div class="oi-mk-card oi-demo-eq"><h6>Equipamentos para decidir</h6><div class="oi-de-row"><b class="oi-t-indigo">EMP-001</b><span class="oi-chip oi-bg-bad">Trocar ou vender</span><em class="oi-t-bad">79% do valor</em></div><div class="oi-de-row"><b class="oi-t-indigo">EMP-008</b><span class="oi-chip oi-bg-bad">Trocar ou vender</span><em class="oi-t-bad">64% do valor</em></div><div class="oi-de-row"><b class="oi-t-indigo">EMP-022</b><span class="oi-chip oi-bg-violet">Risco de parada</span><em>41% do mês parado</em></div></div></div></div></div><div class="oi-demo-ctl"><button type="button" id="demo-replay" class="oi-btn oi-btn-secondary oi-btn-sm">↻ Ver de novo</button><span>Exemplo ilustrativo, com dados fictícios.</span></div></div></div>
-    <div class="oi-passos">
-      <div class="oi-passo"><div class="oi-quando">Hoje · cerca de 15 minutos</div><h3>Você envia a planilha</h3><p>Baixe o modelo e preencha uma linha com os números do mês: frota, receita, custos, atraso, propostas, oficina e entregas. Só a data é obrigatória. Para a análise por equipamento, acrescente uma linha por equipamento.</p></div>
-      <div class="oi-passo"><div class="oi-quando">No mesmo dia</div><h3>Primeira leitura da empresa</h3><p>Cada envio vira uma fotografia que nunca é alterada. Dela saem a nota de cada área, os pontos de atenção e a situação de cada equipamento, com o motivo escrito.</p></div>
-      <div class="oi-passo"><div class="oi-quando">Na primeira semana</div><h3>Reunião com o plano na mão</h3><p>O plano de 30, 60 e 90 dias diz o que fazer primeiro, com metas. A lista de equipamentos vai para a conversa com a oficina e com o sócio.</p></div>
-      <div class="oi-passo"><div class="oi-quando">Todo mês</div><h3>Nova planilha, evolução à vista</h3><p>O histórico mostra se a empresa melhorou, quais equipamentos mudaram de situação e o que do plano já andou. A inteligência fica mais útil a cada mês.</p></div>
+<section id="depoimentos" class="bloco alt" hidden data-fonte="https://app.oravel.com.br/api/intelligence/depoimentos" aria-label="Depoimentos"><div class="wrap"><div class="deps"></div></div></section>
+
+
+<section class="bloco" aria-labelledby="h-preco">
+    <div class="wrap">
+        <h2 id="h-preco">Preço e confiança</h2>
+        <div class="precocard">
+            <p class="big">Primeira leitura grátis. Plano Básico: <b>R$ 39,90/mês</b>.</p>
+            <p>A cobrança só começa 30 dias após o seu primeiro envio e você cancela quando quiser. Seus dados são privados e usados só para gerar a sua leitura.</p>
+            <p class="fim">Não compara com outras locadoras e não substitui seu contador.</p>
+        </div>
     </div>
-    <div class="oi-box"><b>Já usa o ERP da Oravel?</b><p>Na tela de Ativos existe o botão "Exportar para o Intelligence". Você escolhe o mês e recebe a planilha de equipamentos pronta, com custo de manutenção, corretivas, reincidências e dias locado já calculados. É só conferir e importar.</p></div>
-    <div class="oi-box"><b>Usa outro sistema, ou só planilhas?</b><p>Tudo bem. O modelo de planilha traz instruções em cada coluna, e o time da Oravel ajuda no primeiro envio.</p></div>
-    <div class="oi-cta-linha"><a class="oi-btn oi-btn-primary" href="#contato">Quero começar</a></div>
-  </div>
 </section>
 
-<section id="transparencia" class="oi-band oi-alt">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">Para você decidir com clareza</div>
-    <h2 class="oi-sec-title">O que você pode esperar, e o que ainda não fazemos</h2>
-    <div class="oi-cols2" style="margin-top:30px">
-      <div class="oi-painel oi-sim"><h3>Os seus dados e o que fazemos com eles</h3>
-        <ul>
-          <li><b>Só a sua empresa vê as suas fotografias.</b> Nenhuma outra locadora enxerga os seus números.</li>
-          <li><b>O assistente de IA só consulta.</b> Ele lê os resultados da sua empresa e nunca altera nada no sistema.</li>
-          <li><b>Nada se perde.</b> Cada envio é guardado como uma fotografia e não é sobrescrito, então o histórico só cresce.</li>
-          <li><b>Você controla o compartilhamento.</b> Os links de relatório não exigem login, mostram só aquele relatório e vencem em 7 dias.</li>
-        </ul></div>
-      <div class="oi-painel oi-nao"><h3>O que o Intelligence não faz</h3>
-        <ul>
-          <li><b>Não substitui o seu sistema de operação.</b> Ele analisa os números que você envia, mês a mês.</li>
-          <li><b>Não lê o conteúdo das ordens de serviço.</b> A análise por equipamento usa os números mensais de cada um, não o diagnóstico técnico da oficina.</li>
-          <li><b>Não compara a sua locadora com as outras.</b> Hoje a comparação é da sua empresa com ela mesma, mês contra mês.</li>
-          <li><b>Não toma a decisão por você.</b> As notas e as situações usam referências iniciais que a Oravel ajusta junto com a sua realidade.</li>
-        </ul></div>
-    </div>
-  </div>
+
+<section class="bloco alt faq" aria-labelledby="h-faq">
+    <div class="wrap">
+        <h2 id="h-faq">Perguntas frequentes</h2>
+                    <details><summary>Preciso trocar de sistema?</summary><p>Não. Você envia uma planilha, venham os números de onde vierem. Quem usa o ERP da Oravel exporta a planilha com 1 clique.</p></details>
+                    <details><summary>Quanto custa?</summary><p>Primeira leitura grátis. Para acompanhar mês a mês, o Plano Básico custa R$ 39,90/mês. A cobrança só começa 30 dias após o seu primeiro envio e você cancela quando quiser.</p></details>
+                    <details><summary>E se eu não tiver todos os dados?</summary><p>Comece com o que tiver. Só a data de referência é obrigatória, e é preciso preencher ao menos um bloco completo (por exemplo, total de equipamentos e equipamentos locados). O que você não informar fica fora da leitura, e o sistema diz o que faltou.</p></details>
+                    <details><summary>Meus dados ficam seguros?</summary><p>Sim. O Intelligence roda em infraestrutura do Google Cloud, na região de São Paulo, com conexão criptografada (HTTPS) e proteção da Cloudflare. Os discos do Google Cloud são criptografados por padrão. Os dados são copiados todo dia: backup diário do banco, com um arquivo por cliente guardado por 30 dias, e snapshot diário do disco no Google Cloud. Cada envio fica no histórico e nada é sobrescrito. O assistente de IA só consulta os seus números e nunca altera nada.</p></details>
+                    <details><summary>Posso reenviar a planilha depois?</summary><p>Pode, quando quiser. Cada envio fica no histórico e nada é sobrescrito. Se o arquivo for idêntico a um que você já enviou, o sistema avisa e não grava de novo.</p></details>
+            </div>
 </section>
 
-<section id="faq" class="oi-band">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">Dúvidas frequentes</div>
-    <h2 class="oi-sec-title">O que costumam perguntar antes de começar</h2>
-    <div class="oi-faq" style="margin-top:30px">
-      <details open><summary>Preciso trocar o sistema que uso hoje?</summary><p>Não. O Intelligence é um produto independente: você envia uma planilha com os números da empresa, venham de onde vierem. Quem já usa o ERP da Oravel tem tudo integrado, com o mesmo cadastro e o mesmo login, e gera a planilha de equipamentos com um clique.</p></details>
-      <details><summary>Quanto tempo leva para começar?</summary><p>Você baixa o modelo, preenche uma linha e importa. O índice, o diagnóstico e o plano aparecem na hora. Para a análise por equipamento, o tempo depende de quantos equipamentos você tem e de onde estão os dados.</p></details>
-      <details><summary>Quem da equipe precisa mexer, e quanto tempo por mês?</summary><p>Em geral uma pessoa do financeiro ou da gestão, uma vez por mês, para enviar a planilha. A leitura dos resultados é para o dono, o gestor ou o responsável pela oficina.</p></details>
-      <details><summary>E se eu não tiver os dados de cada equipamento?</summary><p>Você começa só com a planilha da empresa, que tem poucos campos. O índice, o diagnóstico, a comparação e o plano funcionam. A análise por equipamento entra depois, quando você tiver esses dados.</p></details>
-      <details><summary>As notas e as metas são padrão de mercado?</summary><p>São referências iniciais, usadas para acompanhar a sua evolução e apontar prioridades. A Oravel revisa essas metas junto com você. Elas não são um veredito.</p></details>
-      <details><summary>O assistente de IA pode mexer nos meus dados?</summary><p>Não. Ele só consulta o que já foi calculado para a sua empresa e responde. Não cria, altera nem apaga nada.</p></details>
-      <details><summary>Posso compartilhar com meu sócio ou meu contador?</summary><p>Pode. O índice, o diagnóstico, o plano e a lista de equipamentos geram um link para WhatsApp e uma versão para imprimir ou salvar em PDF. Quem recebe vê só aquele relatório, e o link vence em 7 dias.</p></details>
-      <details><summary>Quanto custa?</summary><p>O valor depende do tamanho da operação e dos produtos contratados. Apresentamos na demonstração, sem compromisso.</p></details>
-      <details><summary>Como vejo funcionando antes de decidir?</summary><p>Na demonstração, mostramos o Intelligence com uma planilha de exemplo e, se você quiser, com os seus próprios números.</p></details>
+<section class="final" aria-labelledby="h-final">
+    <div class="wrap">
+        <h2 id="h-final">Veja onde sua locadora está perdendo dinheiro.</h2>
+        <p>Envie sua planilha e receba a leitura em minutos. Sem trocar de sistema.</p>
+        <a class="btn" href="https://app.oravel.com.br/intelligence/teste-gratis" data-cta data-pos="final" data-track="Teste grátis: CTA final">Enviar minha planilha</a>
+        <p class="micro" style="margin-top:12px;font-size:13px;margin-bottom:0">Leva 1 minuto. Sem senha e sem cartão.</p>
     </div>
-  </div>
-</section>
-
-<section id="contato" class="oi-band oi-alt oi-final">
-  <div class="oi-wrap">
-    <div class="oi-eyebrow">Próximo passo</div>
-    <h2 class="oi-sec-title">Veja o que você ainda não sabe sobre a sua locadora</h2>
-    <p class="oi-sec-lead">30 minutos com o nosso time mostram onde a sua locadora está perdendo dinheiro e o que mudaria na rotina da operação. Com os seus números, ou com uma planilha de exemplo.</p>
-    <div class="oi-acts" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-      <a class="oi-btn oi-btn-primary" id="final-zap" href="https://wa.me/5519999332615" target="_blank" rel="noopener noreferrer">Quero ver a minha locadora</a>
-      <a class="oi-btn oi-btn-secondary" href="/contato.php">Agendar uma demonstração</a>
-    </div>
-    <div class="oi-contatos">
-      <div class="oi-ct"><small>WhatsApp</small><div class="oi-v">(19) 99933-2615</div><button type="button" data-copy="(19) 99933-2615">Copiar número</button></div>
-      <div class="oi-ct"><small>E-mail</small><div class="oi-v">contato@oravel.com.br</div><button type="button" data-copy="contato@oravel.com.br">Copiar e-mail</button></div>
-      <div class="oi-ct"><small>Site</small><div class="oi-v">oravel.com.br/intelligence</div><button type="button" data-copy="https://oravel.com.br/intelligence/">Copiar endereço</button></div>
-    </div>
-  </div>
 </section>
 
 </main>
-<footer class="foot"><div class="wrap"><div class="foot-g"><div><a class="logo" href="/">O<i>r</i>avel</a><p>Desenvolvimento e tecnologia</p><p style="margin-top:10px">Gestão de manutenção, estoque, logística e cobrança para locadoras de equipamentos.</p></div><div><h4>Recursos</h4><a href="/recursos/">Todos os recursos</a><a href="/crm/">CRM e vendas</a><a href="/inteligencia-artificial/">IA no campo e na gestão</a><a href="/processo-manutencao/">Preventiva e ordens de serviço</a><a href="/processo-gestao-de-equipes/">Gestão de equipes</a><a href="/processo-gestao-de-estoques/">Gestão de estoques</a><a href="/processo-cobranca-automatica/">Cobrança automática</a><a href="/nr-13-inspecao-equipamentos/">Inspeções NR-13</a><a href="/equipamento-devolvido-com-defeito/">Devolução com defeito</a></div><div><h4>Soluções</h4><a href="/pequenas-locadoras.html">Pequenas locadoras</a><a href="/erp-cmms/">ERP CMMS</a><a href="/modulos-individuais/">Módulos individuais</a></div><div><h4>Conteúdo</h4><a href="/reforma-tributaria/">Reforma tributária</a><a href="/central-de-conhecimento/">Central de conhecimento</a><a href="/academia/">Academia Oravel</a><a href="/faq.php">Perguntas frequentes</a><a href="/novidades.php">Novidades</a><a href="https://oravel.org/" target="_blank" rel="noopener">Oravel.org</a></div><div><h4>Empresa</h4><a href="/sobre/">Sobre a Oravel</a><a href="/contato.php">Contato</a><a href="/politica-de-privacidade/">Privacidade</a><a href="/termos-de-uso/">Termos de uso</a></div></div><div class="foot-b">© 2026 Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30 · (19) 99933-2615 · contato@oravel.com.br</div></div></footer>
-<script>
-(function(){
-  var brl=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
-  var $=function(id){return document.getElementById(id)};
-  var num=function(id){var v=parseFloat($(id).value);return isFinite(v)&&v>0?v:0};
 
-  function c1(){
-    var q=num('c1-qtd'),d=num('c1-diaria'),dias=Math.min(31,num('c1-dias')),p=parseInt($('c1-rec').value,10)||0;
-    var mes=q*d*dias,ano=mes*12,rec=mes*p/100;
-    $('c1-rec-o').textContent=p+'%';
-    $('c1-mes').textContent=brl.format(mes);
-    $('c1-ano').textContent=brl.format(ano);
-    $('c1-txt').textContent=mes>0
-      ?'Se esses equipamentos voltassem a trabalhar '+p+'% desses dias, entrariam cerca de '+brl.format(rec)+' por mês na empresa.'
-      :'Preencha os campos para ver quanto custa deixar equipamento parado.';
-  }
-  function c2(){
-    var v=num('c2-valor'),g=num('c2-gasto');
-    var pct=v>0?g/v*100:0,marca=Math.max(0,Math.min(100,pct));
-    $('c2-pct').textContent=(v>0?pct.toFixed(0):'0')+'%';
-    $('c2-marca').style.left='calc('+marca+'% - 11px)';
-    var t;
-    if(!(v>0)) t='Informe o valor do equipamento para ver em que faixa ele está.';
-    else if(pct>=60) t='Considerar trocar ou vender. A manutenção acumulada já passa de 60% do valor. Compare o custo de reformar com o valor de reposição e o preço de venda antes de decidir.';
-    else if(pct>=40) t='Revisar. A manutenção acumulada passa de 40% do valor. Vale uma revisão técnica completa e acompanhar o custo de perto: perto dos 60%, a troca ou a venda entra na conversa.';
-    else t='Custo sob controle. A manutenção acumulada está abaixo de 40% do valor do equipamento.';
-    $('c2-txt').textContent=t;
-  }
-  ['c1-qtd','c1-diaria','c1-dias','c1-rec'].forEach(function(id){$(id).addEventListener('input',c1)});
-  ['c2-valor','c2-gasto'].forEach(function(id){$(id).addEventListener('input',c2)});
-  c1();c2();
+<footer class="rod"><div class="wrap">
+    <nav aria-label="Rodapé"><a href="/termos-de-uso/">Termos de Uso</a><a href="/politica-de-privacidade/">Política de Privacidade</a><a href="https://oravel.com.br/">Site da Oravel</a></nav>
+    <div>Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30</div>
+</div></footer>
 
-  // cartão de qualificação: monta a mensagem do WhatsApp com as respostas (não envia nada por conta própria)
-  var wa='https://wa.me/5519999332615?text=';
-  function zap(){
-    var f=$('q-frota').value,d=$('q-dor').value,c=$('q-ctrl').value;
-    var t='Olá! Vi o material do Oravel Intelligence e quero ver a minha locadora.';
-    if(f) t+=' Tenho '+f+' equipamentos.';
-    if(d) t+=' O que mais me preocupa hoje: '+d+'.';
-    if(c) t+=' Hoje controlo por '+c+'.';
-    t+=' Podemos marcar uma conversa de 30 minutos?';
-    var h=wa+encodeURIComponent(t);
-    $('q-go').setAttribute('href',h);
-    $('final-zap').setAttribute('href',h);
-  }
-  ['q-frota','q-dor','q-ctrl'].forEach(function(id){$(id).addEventListener('change',zap)});
-  zap();
 
-  // demonstração animada: quando aparece na tela, a planilha "entra" e o painel se monta; o estado final é o que já está na página
-  (function(){
-    var demo=$('demo'); if(!demo) return;
-    var reduz=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var timers=[],raf=0,rodou=false;
-    var fmt=function(v,dec){return v.toLocaleString('pt-BR',{minimumFractionDigits:dec,maximumFractionDigits:dec})};
-    function contar(){
-      demo.querySelectorAll('.oi-cu').forEach(function(el){
-        var to=parseFloat(el.getAttribute('data-to')),dec=parseInt(el.getAttribute('data-dec'),10)||0,pre=el.getAttribute('data-pre')||'',pos=el.getAttribute('data-pos')||'';
-        var ini=null;
-        function passo(t){ if(ini===null) ini=t; var p=Math.min(1,(t-ini)/1300),e=1-Math.pow(1-p,3); el.textContent=pre+fmt(to*e,dec)+pos; if(p<1) raf=requestAnimationFrame(passo); else el.textContent=pre+fmt(to,dec)+pos; }
-        el.textContent=pre+fmt(0,dec)+pos; raf=requestAnimationFrame(passo);
-      });
-      var n=demo.querySelector('.oi-g-num'); if(n){var ini2=null; (function passo2(t){ if(ini2===null) ini2=t; var p=Math.min(1,(t-ini2)/1500); n.textContent=Math.round(77*(1-Math.pow(1-p,3))); if(p<1) requestAnimationFrame(passo2); else n.textContent='77'; })(performance.now());}
-    }
-    function limpar(){ timers.forEach(clearTimeout); timers=[]; cancelAnimationFrame(raf); demo.classList.remove('oi-go','oi-show'); }
-    function tocar(){
-      limpar(); void demo.offsetWidth;
-      demo.classList.add('oi-go');
-      timers.push(setTimeout(function(){ demo.classList.remove('oi-go'); demo.classList.add('oi-show'); contar(); },2800));
-    }
-    $('demo-replay').addEventListener('click',function(){ if(reduz) return; tocar(); });
-    if(reduz||!('IntersectionObserver' in window)) return;
-    new IntersectionObserver(function(es,obs){ es.forEach(function(e){ if(e.isIntersecting&&!rodou){ rodou=true; tocar(); obs.disconnect(); } }); },{threshold:.4}).observe(demo);
-  })();
-
-  // copiar contato (se o navegador não deixar, o texto já está selecionável na página)
-  document.querySelectorAll('[data-copy]').forEach(function(b){
-    b.addEventListener('click',function(){
-      var original=b.textContent;
-      var ok=function(){b.textContent='Copiado';setTimeout(function(){b.textContent=original},1600)};
-      var falha=function(){var r=document.createRange();r.selectNodeContents(b.previousElementSibling);var s=window.getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selecionado: copie com Ctrl+C';setTimeout(function(){b.textContent=original},2400)};
-      try{navigator.clipboard.writeText(b.getAttribute('data-copy')).then(ok,falha)}catch(e){falha()}
-    });
-  });
-})();
-</script>
-<script>
-(function(){var b=document.querySelector('.burger'),m=document.getElementById('mnav');
-if(b&&m){b.addEventListener('click',function(){var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false')})}
-})();
-</script>
-<!-- Tailwind via CDN, so' pra este widget -- preflight desligado de proposito
-     pra nao resetar margin/padding/font do resto do site. -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    corePlugins: { preflight: false },
-  };
-</script>
-
-<div id="wa-widget" class="fixed bottom-6 right-6 z-[9999]" style="font-family: 'Inter', sans-serif;">
-    <!-- Janela de chat -->
-    <div
-        id="wa-chat-panel"
-        class="hidden mb-4 w-80 max-w-[calc(100vw-3rem)] origin-bottom-right flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 sm:w-96"
-    >
-        <!-- Cabecalho -->
-        <div class="flex items-center gap-3 bg-emerald-600 px-4 py-3">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold" style="background:#101010;">
-                <span style="color:#ffffff">O</span><span style="color:#E8541A">r</span>
-            </div>
-            <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-semibold text-white">Oravel</p>
-                <p class="flex items-center gap-1.5 text-xs text-emerald-100">
-                    <span class="relative flex h-2 w-2">
-                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75"></span>
-                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
-                    </span>
-                    Online agora
-                </p>
-            </div>
-            <button
-                type="button"
-                onclick="waToggleChat(false)"
-                aria-label="Fechar chat"
-                class="shrink-0 rounded-full p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-
-        <!-- Corpo (mensagem de boas vindas) -->
-        <div class="flex-1 space-y-2 bg-[#e5ddd5] px-3 py-4" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect width=%2260%22 height=%2260%22 fill=%22%23e5ddd5%22/%3E%3C/svg%3E');">
-            <div class="max-w-[85%] rounded-lg rounded-tl-none bg-white px-3 py-2 shadow-sm">
-                <p class="text-sm text-gray-800">Olá! Como podemos ajudar você hoje?</p>
-                <p class="mt-1 text-right text-[10px] text-gray-400" id="wa-msg-time"></p>
-            </div>
-        </div>
-
-        <!-- Campo de entrada -->
-        <div class="flex items-center gap-2 border-t border-gray-200 bg-white p-2">
-            <input
-                type="text"
-                id="wa-input"
-                placeholder="Digite sua mensagem..."
-                class="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-800 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-                style="background-color:#ffffff; color:#1f2937; color-scheme: light;"
-                onkeydown="if (event.key === 'Enter') { event.preventDefault(); waSendMessage(); }"
-            >
-            <button
-                type="button"
-                onclick="waSendMessage()"
-                aria-label="Enviar mensagem"
-                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-                    <path d="M3.4 20.6l17.45-8.5a1 1 0 000-1.8L3.4 1.8a1 1 0 00-1.44 1.1L4.3 11 1.96 18.9a1 1 0 001.44 1.1z"/>
-                </svg>
-            </button>
-        </div>
-    </div>
-
-    <!-- Botao flutuante -->
-    <button
-        type="button"
-        id="wa-fab"
-        onclick="waToggleChat()"
-        aria-label="Abrir chat do WhatsApp"
-        class="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition duration-200 ease-out hover:scale-110 hover:bg-emerald-600 active:scale-95"
-    >
-        <span class="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-emerald-500 opacity-40" style="animation-duration: 2.5s;"></span>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="relative h-8 w-8">
-            <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.42.687 4.68 1.878 6.598L3.2 28.8l6.876-2.14A12.44 12.44 0 0016 28c6.894 0 12.5-5.607 12.5-12.5S22.894 3 16.001 3zm0 22.7a10.15 10.15 0 01-5.44-1.573l-.39-.232-4.08 1.27 1.293-3.976-.253-.407A10.14 10.14 0 015.8 15.5c0-5.632 4.57-10.2 10.2-10.2 5.63 0 10.2 4.568 10.2 10.2 0 5.632-4.57 10.2-10.199 10.2zm5.58-7.64c-.306-.153-1.81-.893-2.09-.995-.28-.102-.484-.153-.688.153-.204.306-.789.995-.967 1.199-.178.204-.356.23-.662.077-.306-.153-1.293-.477-2.463-1.522-.91-.812-1.524-1.816-1.703-2.123-.178-.306-.019-.472.134-.624.137-.137.306-.357.459-.535.153-.178.204-.306.306-.51.102-.204.051-.383-.026-.535-.077-.153-.688-1.658-.943-2.27-.248-.596-.5-.516-.688-.526l-.586-.011c-.204 0-.535.077-.815.383-.28.306-1.069 1.044-1.069 2.549 0 1.505 1.094 2.958 1.247 3.163.153.204 2.153 3.286 5.216 4.608.729.315 1.297.503 1.74.644.731.232 1.396.2 1.922.121.586-.087 1.81-.74 2.065-1.454.255-.714.255-1.326.178-1.454-.076-.128-.28-.204-.586-.357z"/>
-        </svg>
-    </button>
+<div class="fixo"><a class="btn" href="https://app.oravel.com.br/intelligence/teste-gratis" data-cta data-pos="fixo" data-track="Teste grátis: CTA fixo">Enviar minha planilha</a>
 </div>
 
-<script>
-    (function () {
-        var WA_NUMERO = "5519999332615";
-        var WA_MENSAGEM_PADRAO = "Olá! Vim pelo site da Oravel e gostaria de mais informações.";
 
-        var timeEl = document.getElementById('wa-msg-time');
-        if (timeEl) {
-            var agora = new Date();
-            timeEl.textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        }
+<dialog class="form" id="teste-gratis" aria-labelledby="tg-t">
+    <button type="button" class="fechar" data-fechar aria-label="Fechar">×</button>
+    <form method="post" action="https://app.oravel.com.br/intelligence/teste-gratis">
+        <h2 id="tg-t">Enviar minha planilha</h2>
+        <p class="micro">Leva 1 minuto. Sem senha e sem cartão.</p>
+        <label class="c" for="f-nome">Seu nome<input id="f-nome" type="text" name="nome" required autocomplete="name" maxlength="120"></label>
+        <label class="c" for="f-empresa">Empresa<input id="f-empresa" type="text" name="empresa" required autocomplete="organization" maxlength="120"></label>
+        <label class="c" for="f-whats">WhatsApp<input id="f-whats" type="tel" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="(19) 99999-9999" maxlength="20"></label>
+        <label class="aceite"><input type="checkbox" name="aceite" value="1" required><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> (LGPD).</span></label>
+        <div class="hp" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
+        <button class="btn" type="submit">Continuar</button>
+    </form>
+</dialog>
 
-        window.waToggleChat = function (forceState) {
-            var panel = document.getElementById('wa-chat-panel');
-            var isHidden = panel.classList.contains('hidden');
-            var shouldOpen = (typeof forceState === 'boolean') ? forceState : isHidden;
+<script>(function () {
+  var d = document, $ = function (s, r) { return (r || d).querySelector(s); }, all = function (s) { return [].slice.call(d.querySelectorAll(s)); };
+  var track = function (l) { try { if (window.ovTrack) { window.ovTrack(l); } } catch (e) {} };
+  var dlg = $('#teste-gratis'), form = dlg && $('form', dlg);
 
-            if (shouldOpen) {
-                panel.classList.remove('hidden');
-                panel.classList.add('flex');
-                document.getElementById('wa-input').focus();
-            } else {
-                panel.classList.add('hidden');
-                panel.classList.remove('flex');
-            }
-        };
+  // CTA: abre o formulário sem sair do site. Sem suporte a <dialog> ou sem JS, o link leva à mesma tela de cadastro no app.
+  all('[data-cta]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (!dlg || typeof dlg.showModal !== 'function') { return; }
+      e.preventDefault();
+      track('Teste grátis: abriu o formulário (' + (a.getAttribute('data-pos') || '') + ')');
+      dlg.showModal();
+      var n = $('input[name=nome]', dlg); if (n) { n.focus(); }
+    });
+  });
+  all('[data-fechar]').forEach(function (b) { b.addEventListener('click', function () { dlg.close(); }); });
+  if (dlg) { dlg.addEventListener('click', function (e) { if (e.target === dlg) { dlg.close(); } }); }
+  if (form) {
+    form.addEventListener('submit', function () {
+      track('Teste grátis: enviou o formulário');
+      var b = $('button[type=submit]', form); if (b) { b.disabled = true; b.textContent = 'Enviando...'; }
+    });
+  }
+  all('[data-track-click]').forEach(function (a) { a.addEventListener('click', function () { track(a.getAttribute('data-track-click')); }); });
 
-        window.waSendMessage = function () {
-            var input = document.getElementById('wa-input');
-            var texto = (input.value || '').trim();
+  // Calculadora (equipamento parado). O HTML já vem com a conta feita; aqui só recalcula.
+  var brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+  var q = $('#c-qtd'), di = $('#c-diaria'), ds = $('#c-dias');
+  function calc() {
+    var n = Math.max(0, parseFloat(q.value) || 0), v = Math.max(0, parseFloat(di.value) || 0), x = Math.min(31, Math.max(0, parseFloat(ds.value) || 0));
+    var mes = n * v * x;
+    $('#c-mes').textContent = brl.format(mes); $('#c-ano').textContent = brl.format(mes * 12);
+  }
+  if (q && di && ds) { [q, di, ds].forEach(function (i) { i.addEventListener('input', calc); }); }
 
-            if (texto === '') {
-                texto = WA_MENSAGEM_PADRAO;
-            }
+  // Carrossel
+  var car = $('.carrossel');
+  if (car) {
+    all('[data-car]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var s = $('.slide', car); var w = s ? s.getBoundingClientRect().width + 16 : 300;
+        car.scrollBy({ left: (b.getAttribute('data-car') === 'prox' ? 1 : -1) * w, behavior: 'smooth' });
+      });
+    });
+  }
 
-            var url = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(texto);
-            window.open(url, '_blank');
-            input.value = '';
-        };
-    })();
+  // Depoimentos: só aparecem se existir registro aprovado e autorizado no sistema. Sem registro, a seção continua oculta.
+  var sec = $('#depoimentos');
+  if (sec && window.fetch) {
+    fetch(sec.getAttribute('data-fonte'), { headers: { Accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (lista) {
+        if (!Array.isArray(lista) || !lista.length) { return; }
+        var box = $('.deps', sec);
+        lista.forEach(function (t) {
+          var f = d.createElement('figure'); f.className = 'dep'; f.style.margin = '0';
+          var p = d.createElement('p'); p.textContent = '“' + t.texto + '”';
+          var ft = d.createElement('footer'); ft.textContent = [t.nome, t.cargo, t.empresa].filter(Boolean).join(', ');
+          f.appendChild(p); f.appendChild(ft); box.appendChild(f);
+        });
+        sec.hidden = false;
+      }).catch(function () {});
+  }
+})();
 </script>
-
-<script async src="https://app.oravel.com.br/t.js?v=2"></script>
+<script async src="https://app.oravel.com.br/t.js?v=3"></script>
 <script src="/protecao.js?v=4" defer></script>
-</body></html>
+</body>
+</html>
