@@ -1,673 +1,228 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Oravel Intelligence: o centro de inteligência da sua locadora | Oravel</title>
-<meta name="description" content="Reúne os números da sua locadora e mostra equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Com ou sem sistema. Teste grátis.">
-<link rel="canonical" href="https://oravel.com.br/intelligence/">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="pt_BR">
-<meta property="og:site_name" content="Oravel">
-<meta property="og:title" content="Oravel Intelligence: o centro de inteligência da sua locadora">
-<meta property="og:description" content="Reúne os números da sua locadora e mostra equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Com ou sem sistema. Teste grátis.">
-<meta property="og:url" content="https://oravel.com.br/intelligence/">
-<meta property="og:image" content="https://oravel.com.br/intelligence/og-intelligence.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="O centro de inteligência da sua locadora.">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Oravel Intelligence: o centro de inteligência da sua locadora">
-<meta name="twitter:description" content="Reúne os números da sua locadora e mostra equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Com ou sem sistema. Teste grátis.">
-<meta name="twitter:image" content="https://oravel.com.br/intelligence/og-intelligence.png">
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script type="application/ld+json">{"<?php $__contextArgs = [];\nif (context()->has($__contextArgs[0])) :\nif (isset($value)) { $__contextPrevious[] = $value; }\n$value = context()->get($__contextArgs[0]); ?>":"https://schema.org","@type":"WebPage","name":"Oravel Intelligence: o centro de inteligência da sua locadora","description":"Reúne os números da sua locadora e mostra equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Com ou sem sistema. Teste grátis.","url":"https://oravel.com.br/intelligence/","inLanguage":"pt-BR"}</script>
-<style>:root{--grafite:#0f1720;--grafite-2:#17222e;--grafite-3:#223142;--aco:#eef1f5;--aco-2:#dfe5ec;--branco:#fff;--tinta:#0f1720;--suave:#506070;--linha:#dde3ea;--indigo:#4f46e5;--indigo-claro:#e9e8fd;--laranja:#f97316;--laranja-esc:#c2410c;--laranja-claro:#fff1e4;--ok:#15803d;--ok-claro:#dcfce7;--ruim:#b91c1c;--ruim-claro:#fee2e2;--aviso:#a16207;--aviso-claro:#fef3c7}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;color:var(--tinta);background:var(--branco);line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:84px}
-h1,h2,h3{font-family:"Syne","Inter",sans-serif;font-weight:700;letter-spacing:-.015em;margin:0;text-wrap:balance;line-height:1.12}
-p{margin:0}a{color:inherit}img,svg{max-width:100%}
-:focus-visible{outline:3px solid var(--laranja);outline-offset:2px}
-.skip{position:absolute;left:-9999px}.skip:focus{left:8px;top:8px;background:var(--grafite);color:#fff;padding:10px 14px;border-radius:8px;z-index:200}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-/* topo */
-.top{background:var(--grafite);color:#fff;border-bottom:1px solid rgba(255,255,255,.08)}
-.top .wrap{display:flex;align-items:center;gap:14px;height:64px}
-.logo{font-family:"Syne",sans-serif;font-weight:800;font-size:23px;text-decoration:none;color:#fff;letter-spacing:-.02em}.logo i{font-style:normal;color:var(--laranja)}
-.top small{color:#aab6c4;font-size:13px;margin-right:auto}
-.top .btn{min-height:42px;padding:10px 18px;font-size:14px}
-/* botões */
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:15px 28px;border-radius:12px;border:0;font:700 16px/1 "Inter",sans-serif;background:var(--laranja);color:var(--grafite);text-decoration:none;cursor:pointer;transition:background .15s,transform .15s}
-.btn:hover{background:#ea6a0c;transform:translateY(-1px)}
-.btn[disabled]{opacity:.6;cursor:wait}
-/* HERO: o cadastro é a peça principal. Fundo = grade de planta técnica sobre grafite, com luz índigo no centro. */
-.hero{position:relative;text-align:center;color:#fff;padding:52px 0 60px;background:
-  radial-gradient(55% 60% at 50% 0%,rgba(79,70,229,.42),transparent 72%),
-  linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px) 0 0/44px 44px,
-  linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px) 0 0/44px 44px,
-  var(--grafite)}
-.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,var(--grafite));pointer-events:none}
-.hero .wrap{position:relative;z-index:1}
-.hero h1{font-size:clamp(32px,8vw,60px);max-width:17ch;margin:0 auto 16px}
-.hero .sub{font-size:clamp(16px,2.4vw,19px);color:#d7dee7;max-width:52ch;margin:0 auto}
-.form-hero{margin:30px auto 0;max-width:980px;background:#fff;color:var(--tinta);border-radius:22px;padding:20px 20px 16px;box-shadow:0 30px 70px -30px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.08);text-align:left}
-.form-tit{font:700 17px/1.3 "Inter",sans-serif;margin-bottom:12px;text-align:center}
-.form-hero .micro{margin-top:10px;font-size:13px;color:var(--suave);text-align:center}
-.pontos{list-style:none;margin:26px auto 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:12px 14px;max-width:980px}
-.pontos li{flex:1 1 220px;max-width:300px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);border-radius:14px;padding:12px 14px;display:grid;gap:2px}
-.pontos b{font:700 15px/1.25 "Inter",sans-serif}.pontos span{font-size:13px;color:#b9c4d1}
-/* formulário (hero e pop-up) */
-.cadastro{display:grid;gap:12px}
-.cadastro .campos{display:grid;gap:10px;align-items:start}
-.cadastro label.c small{font-weight:400;font-size:12px;color:var(--suave);line-height:1.35}
-.campo-senha{position:relative;display:block}
-.campo-senha input{padding-right:92px}
-.ver-senha{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-height:36px;padding:0 12px;border:0;border-radius:8px;background:var(--aco);color:var(--tinta);font:600 13px/1 "Inter",sans-serif;cursor:pointer}
-.ver-senha:hover{background:var(--aco-2)}
-.cadastro label.c{display:grid;gap:4px;font-size:13px;font-weight:600;color:var(--suave)}
-.cadastro input[type=text],.cadastro input[type=tel],.cadastro input[type=email],.cadastro input[type=password]{font:inherit;color:var(--tinta);padding:12px 13px;border:1.5px solid #cbd5e1;border-radius:10px;min-height:50px;width:100%;background:#fff}
-.cadastro input:focus{border-color:var(--indigo);outline:3px solid var(--indigo-claro)}
-.cadastro .aceite{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--suave)}
-.cadastro .aceite input{margin-top:3px;width:18px;height:18px;flex:none}
-.cadastro .cf-turnstile{min-height:65px}
-.aviso-ts{color:#b91c1c;font-size:13px}
-.cadastro .btn{width:100%}
-.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-/* blocos: todos centralizados, mesmo ritmo vertical */
-.bloco{padding:64px 0;text-align:center}
-.bloco.alt{background:var(--aco)}
-.bloco.escuro{background:var(--grafite);color:#fff}
-.bloco h2{font-size:clamp(28px,5.4vw,42px);margin:0 auto 12px;max-width:22ch}
-.bloco .lead{font-size:clamp(16px,2.2vw,18px);color:var(--suave);max-width:58ch;margin:0 auto}
-.bloco.escuro .lead{color:#b9c4d1}
-/* o que é: fluxo de três etapas */
-.fluxo{display:flex;flex-direction:column;gap:14px;margin:34px auto 0;max-width:980px}
-.etapa{position:relative;background:var(--grafite-2);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:22px 20px;text-align:left}
-.etapa:nth-child(2){background:linear-gradient(160deg,#2b2a8f,#4f46e5);border-color:transparent}
-.etapa h3{font-size:20px;margin-bottom:6px}.etapa p{font-size:15px;color:#c3cdd9}.etapa:nth-child(2) p{color:#e1e0ff}
-.etapa:not(:last-child)::after{content:"";position:absolute;left:50%;bottom:-14px;width:2px;height:14px;background:rgba(255,255,255,.25)}
-/* dores: pergunta e resposta, com a tela de exemplo ao lado */
-.dores{display:grid;gap:18px;margin:34px auto 0;max-width:1000px}
-.dor{display:grid;gap:18px;align-items:center;background:var(--aco);border-radius:22px;padding:22px 20px;text-align:left}
-.dor h3{font-size:clamp(20px,3.4vw,26px);margin-bottom:8px}
-.dor-txt p{color:var(--suave);font-size:16px}.dor-txt b{color:var(--laranja-esc)}
-.dor-vis{min-width:0;width:100%;max-width:420px;margin:0 auto}
-/* telas de exemplo */
-.mock{margin:0;min-width:0}
-.mock .tela{background:#fff;border:1px solid var(--linha);border-radius:14px;padding:16px;box-shadow:0 18px 40px -26px rgba(15,23,42,.5);color:var(--tinta);font-size:13px;text-align:left}
-.mock .ilustrativo{display:block;margin-top:8px;font-size:12px;color:var(--suave);font-style:italic;text-align:center}
-.tela h4{margin:0 0 10px;font:700 13px/1.2 "Inter",sans-serif;color:var(--suave)}
-.nota{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.nota b{font:800 48px/1 "Syne",sans-serif}.nota span{font-weight:700;color:var(--ok)}
-.barras{display:flex;align-items:flex-end;gap:10px;height:74px;margin:12px 0 4px}
-.barras div{flex:1;background:#c7d2fe;border-radius:6px 6px 0 0;position:relative;min-height:6px}
-.barras div:last-child{background:var(--laranja)}
-.barras em{position:absolute;top:-18px;left:0;right:0;text-align:center;font-style:normal;font-weight:700;font-size:12px}
-.meses{display:flex;gap:10px;font-size:11px;color:var(--suave)}.meses span{flex:1;text-align:center}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.kpi{border:1px solid var(--linha);border-radius:10px;padding:8px}.kpi small{display:block;color:var(--suave);font-size:11px}.kpi b{font:700 17px/1.2 "Inter",sans-serif}.kpi i{display:block;font-style:normal;font-size:11px;font-weight:700;color:var(--ok)}
-table.t{width:100%;border-collapse:collapse}table.t th,table.t td{padding:7px 6px;text-align:left;border-bottom:1px solid var(--linha);font-size:12.5px}table.t th{font-size:11px;color:var(--suave);font-weight:600}
-.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700}.tag.bad{background:var(--ruim-claro);color:var(--ruim)}.tag.warn{background:var(--aviso-claro);color:var(--aviso)}.tag.ok{background:var(--ok-claro);color:var(--ok)}
-.plano{display:grid;gap:8px}.plano .col{border:1px solid var(--linha);border-radius:10px;padding:8px 10px}.plano .col b{display:block;font-size:12px;margin-bottom:4px}.plano .col span{display:block;font-size:12px;color:var(--suave);padding:2px 0}
-.foco{background:var(--laranja-claro);border-radius:10px;padding:8px 10px;margin-bottom:8px;font-size:12.5px}
-.balao{border-radius:14px;padding:10px 12px;font-size:13px;max-width:92%}.balao.q{background:var(--aco);margin-left:auto}.balao.a{background:var(--indigo-claro);margin-top:8px}.balao.a b{color:var(--laranja-esc)}
-/* calculadora */
-.calc{margin:30px auto 0;max-width:860px;background:var(--grafite-2);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:22px;display:grid;gap:18px;text-align:left}
-.calc .campos{display:grid;gap:12px}.calc label{display:grid;gap:4px;font-size:14px;font-weight:600;color:#d7dee7}
-.calc input{font:inherit;color:var(--tinta);padding:11px 12px;border:1.5px solid transparent;border-radius:10px;min-height:48px;width:100%;background:#fff}
-.calc input:focus{border-color:var(--laranja)}
-.calc .res{background:rgba(255,255,255,.07);border-radius:14px;padding:16px;display:grid;gap:4px;align-content:center}.calc .res b{font:800 clamp(26px,5vw,34px)/1.1 "Syne",sans-serif;color:#fdba74}.calc .res small{color:#b9c4d1}
-/* áreas */
-.areas{list-style:none;margin:32px auto 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:14px;max-width:1040px}
-.areas li{flex:1 1 180px;max-width:200px;display:grid;justify-items:center;align-content:start;gap:6px;padding:18px 14px;border-radius:18px;background:var(--indigo-claro);color:var(--tinta)}
-.areas svg{color:var(--indigo)}.areas b{font:700 17px/1.25 "Inter",sans-serif}.areas span{font-size:13px;color:var(--suave)}
-/* carrossel */
-.car-wrap{margin:34px auto 0;max-width:1040px}
-.carrossel{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;scrollbar-width:thin;text-align:left}
-.slide{flex:0 0 min(88%,420px);scroll-snap-align:center;min-width:0;display:flex;flex-direction:column}
-.slide .mock{flex:1;display:flex;flex-direction:column}.slide .mock .tela{flex:1}
-.slide:first-child{margin-left:auto}.slide:last-child{margin-right:auto}
-.slide .leg{font-weight:700;font-family:"Inter",sans-serif;margin-top:12px;font-size:17px}
-.slide p{color:var(--suave);font-size:14px}
-.car-nav{display:flex;justify-content:center;gap:10px;margin-top:12px}.car-nav button{min-height:46px;min-width:46px;border:1.5px solid var(--linha);background:#fff;border-radius:12px;font:700 18px/1 "Inter",sans-serif;cursor:pointer}.car-nav button:hover{border-color:var(--laranja)}
-.em-breve{margin:26px auto 0;display:inline-block;padding:10px 18px;border-radius:99px;background:var(--aco);color:var(--suave);font-size:14px;font-weight:600}
-/* perfis */
-.perfis{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:32px auto 0;max-width:1040px}
-.perfil{flex:1 1 280px;max-width:330px;background:#fff;border-radius:20px;padding:24px 20px;border:1px solid var(--linha);text-align:left}
-.perfil h3{font-size:19px;margin-bottom:8px}.perfil p{color:var(--suave);font-size:15px}
-/* como funciona: sequência com linha de ligação */
-.passos{display:grid;gap:26px;margin:36px auto 0;max-width:1000px;counter-reset:p;text-align:left}
-.passo{position:relative;padding-left:62px}
-.passo::before{counter-increment:p;content:counter(p);position:absolute;left:0;top:0;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--laranja);color:var(--grafite);font:800 19px/1 "Syne",sans-serif;z-index:1}
-.passo:not(:last-child)::after{content:"";position:absolute;left:21px;top:46px;bottom:-26px;width:2px;background:var(--aco-2)}
-.passo h3{font-size:20px;margin-bottom:6px}.passo p{color:var(--suave);font-size:15px;max-width:60ch}
-.link-modelo{display:inline-block;margin-top:10px;font-weight:700;color:var(--indigo);text-underline-offset:3px}
-.nota-erp{margin:30px auto 0;padding:14px 18px;border-radius:14px;background:var(--laranja-claro);font-size:15px;max-width:640px}
-/* depoimentos */
-.deps{margin-top:26px;display:grid;gap:14px;max-width:760px;margin-left:auto;margin-right:auto}.dep{background:#fff;border:1px solid var(--linha);border-radius:18px;padding:20px;text-align:left}.dep p{font-size:16px}.dep footer{margin-top:10px;font-size:13px;color:var(--suave)}
-/* preço e confiança */
-.precocard{margin:28px auto 0;background:linear-gradient(160deg,#2b2a8f,#4f46e5);border-radius:24px;padding:28px 24px;max-width:760px}
-.precocard .big{font:700 clamp(24px,5vw,34px)/1.2 "Syne",sans-serif;color:#fff}.precocard .big b{color:#fdba74;white-space:nowrap}
-.precocard p+p{margin-top:12px;font-size:16px;color:#e1e0ff}
-.confianca{list-style:none;margin:26px auto 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:1040px}
-.confianca li{flex:1 1 210px;max-width:240px;display:grid;justify-items:center;gap:4px;padding:16px 12px;border-radius:16px;background:var(--grafite-2);border:1px solid rgba(255,255,255,.1)}
-.confianca svg{color:#4ade80}.confianca b{font:700 15px/1.25 "Inter",sans-serif}.confianca span{font-size:13px;color:#b9c4d1}
-/* faq */
-.faq-lista{max-width:760px;margin:30px auto 0;text-align:left}
-.faq details{border-bottom:1px solid var(--linha);padding:16px 0}.faq summary{cursor:pointer;font:700 18px/1.35 "Inter",sans-serif;list-style:none;display:flex;justify-content:space-between;gap:12px}.faq summary::-webkit-details-marker{display:none}.faq summary::after{content:"+";font-size:24px;line-height:1;color:var(--laranja)}.faq details[open] summary::after{content:"−"}.faq details p{margin-top:10px;color:var(--suave);font-size:16px}
-.final{position:relative;background:radial-gradient(60% 90% at 50% 100%,rgba(79,70,229,.4),transparent 70%),var(--grafite);color:#fff;text-align:center;padding:68px 0}
-.final h2{font-size:clamp(28px,5.4vw,44px);margin:0 auto 12px;max-width:20ch}.final p{color:#c3cdd9;margin-bottom:22px}.final .micro{margin:12px 0 0;font-size:13px}
-/* rodapé */
-footer.rod{background:#0a1018;color:#94a3b8;padding:28px 0;font-size:13px;text-align:center}footer.rod .wrap{display:grid;gap:10px;justify-items:center}footer.rod nav{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px}footer.rod a{color:#cbd5e1}
-/* botão fixo (mobile) */
-.fixo{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(15,23,32,.97);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(255,255,255,.12)}
-.fixo .btn{width:100%}
-/* pop-up */
-dialog.form{border:0;border-radius:22px;padding:0;width:min(460px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto}
-dialog.form::backdrop{background:rgba(5,10,16,.72)}
-.dlg-corpo{padding:26px 24px 24px;display:grid;gap:12px}
-dialog.form h2{font-size:24px}dialog.form .micro{color:var(--suave);font-size:14px}
-dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer;min-width:44px;min-height:44px;color:var(--suave)}
-@media(min-width:760px){
- body{padding-bottom:0}.fixo{display:none}
- .hero{padding:72px 0 84px}
- .form-hero{padding:24px 26px 18px}
- .cadastro .campos{grid-template-columns:repeat(6,1fr)}
- .cadastro .campos label:nth-child(-n+3){grid-column:span 2}
- .cadastro .campos label:nth-child(n+4){grid-column:span 3}
- .cadastro{grid-template-columns:1fr auto;align-items:end}
- .cadastro .campos{grid-column:1 / -1}
- .cadastro .cf-turnstile{grid-column:1 / -1}
- .cadastro .aceite{grid-column:1;align-self:center}
- .cadastro .btn{grid-column:2;width:auto;min-width:240px}
- dialog.form .cadastro{grid-template-columns:1fr}
- dialog.form .cadastro .campos{grid-template-columns:1fr}
- dialog.form .cadastro .campos label:nth-child(n){grid-column:auto}
- dialog.form .cadastro .btn{grid-column:auto;width:100%}
- .bloco{padding:84px 0}
- .fluxo{flex-direction:row;gap:26px}
- .etapa{flex:1}
- .etapa:not(:last-child)::after{left:auto;right:-26px;bottom:auto;top:50%;width:26px;height:2px}
- .dor{grid-template-columns:1.1fr .9fr;gap:34px;padding:30px 32px}
- .dor:nth-child(even) .dor-txt{order:2}
- .calc{grid-template-columns:1.1fr .9fr;align-items:center;padding:28px}
- .plano{grid-template-columns:repeat(3,1fr)}
- .passos{grid-template-columns:repeat(3,1fr);gap:30px}
- .passo{padding-left:0;padding-top:58px;text-align:center}
- .passo::before{left:50%;margin-left:-22px}
- .passo:not(:last-child)::after{left:calc(50% + 34px);right:calc(-50% + 34px);top:21px;bottom:auto;width:auto;height:2px}
- .passo p{margin:0 auto}
- .car-wrap{max-width:1040px}
- .carrossel{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;overflow:visible;scroll-snap-type:none;padding:4px 0 0}
- .slide:first-child,.slide:last-child{margin:0}
- .car-nav{display:none}
-}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
-</style>
-</head>
-<body>
-<a class="skip" href="#conteudo">Ir para o conteúdo</a>
-<header class="top"><div class="wrap"><a class="logo" href="https://oravel.com.br/" aria-label="Oravel">O<i>r</i>avel</a><small>Oravel Intelligence</small><a class="btn" href="https://app.oravel.com.br/intelligence/teste-gratis" data-cta data-pos="topo" data-track="Teste grátis: CTA topo">Começar teste grátis</a>
-</div></header>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulação — Oravel Intelligence | Inteligência operacional para locadoras</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#111c2b;--ink2:#1b2a3f;--paper:#f6f4ef;--white:#fff;--muted:#586577;--line:#ddd8cd;--or:#f26b1d;--ordk:#b84a08}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font:17px/1.6 'Public Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink)}
+h1,h2{font-family:'Newsreader',Georgia,serif;font-weight:600;line-height:1.12;text-wrap:balance}
+h1{font-size:clamp(2.2rem,5.2vw,3.8rem)}h2{font-size:clamp(1.8rem,3.6vw,2.6rem);margin-bottom:18px}
+h3{font-size:1.12rem;line-height:1.3;margin-bottom:8px}
+.w{max-width:1080px;margin:auto;padding:0 22px}section{padding:84px 0;scroll-margin-top:60px}
+.sim{background:#fde9d9;color:#6b2c05;font-size:.82rem;text-align:center;padding:7px 14px}
+header{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff}
+header .w{display:flex;justify-content:space-between;align-items:center;height:62px;gap:12px}
+.logo{font-weight:700;letter-spacing:.04em}.logo b{color:var(--or)}
+.btn{display:inline-block;background:var(--or);color:#111c2b;font:700 1rem 'Public Sans',sans-serif;padding:15px 26px;border:0;border-radius:6px;text-decoration:none;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}header .btn{padding:8px 15px;font-size:.9rem}
+:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+.dark{background:var(--ink);color:#fff}.dark p,.dark li{color:#c8d1de}
+.hero{padding:76px 0 90px}.hg{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.hero p.sub{font-size:1.2rem;margin:20px 0 22px}
+.ck{list-style:none;margin-bottom:30px}.ck li{padding:7px 0 7px 26px;position:relative}
+.ck li:before{content:"";position:absolute;left:2px;top:17px;width:12px;height:2px;background:var(--or)}
+small{display:block;font-size:.86rem;opacity:.75;margin-top:12px}
+.laudo{background:#fff;color:var(--ink);border-radius:4px;padding:28px;box-shadow:0 24px 60px #0006;border-top:5px solid var(--or)}
+.laudo p{color:var(--muted)}.laudo .t{font:600 1.35rem 'Newsreader',serif;color:var(--ink)}
+.score{display:flex;align-items:baseline;gap:10px;margin:14px 0 6px}.score strong{font:600 4rem/1 'Newsreader',serif}
+.bar{height:8px;background:#ebe7de;border-radius:9px}.bar i{display:block;height:100%;width:77%;background:var(--or);border-radius:9px}
+.row{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding:12px 0;font-size:.94rem}.row b{white-space:nowrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.list{list-style:none}.list li{border-top:1px solid var(--line);padding:16px 0;font-weight:600}
+.calc{background:#fff;border:1px solid var(--line);border-radius:8px;padding:28px}
+label{display:block;font-size:.9rem;font-weight:600;margin-bottom:14px}
+input{display:block;width:100%;margin-top:5px;padding:12px;font:inherit;border:1px solid #bdb7a9;border-radius:6px;background:#fff;color:var(--ink)}
+.res{border-top:2px solid var(--ink);padding-top:14px}.res strong{display:block;font:600 2.3rem 'Newsreader',serif;color:var(--ordk)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:34px}
+.card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--ink);padding:24px 20px;border-radius:4px}.card p{color:var(--muted);font-size:.96rem}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin:34px 0;counter-reset:s}
+.steps div{border-top:2px solid var(--ink);padding-top:18px;counter-increment:s}
+.steps div:before{content:counter(s);display:block;font:600 2.6rem 'Newsreader',serif;color:var(--ordk)}
+.steps p{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}.chips span{border:1px solid var(--ink);padding:9px 18px;border-radius:99px;font-weight:600;font-size:.95rem}
+.eye{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}.eye div{border-top:1px solid #ffffff30;padding:18px 0}.eye p{font-size:.95rem}
+.price{background:#fff;border:1px solid var(--line);border-radius:8px;padding:36px;text-align:center}
+.price strong{font:600 3.4rem 'Newsreader',serif}.price p{color:var(--muted);margin:8px 0 22px}
+.white{background:#fff}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:20px}.three div{border-left:3px solid var(--or);padding-left:18px}
+details{border-top:1px solid var(--line);padding:18px 0}summary{cursor:pointer;font-weight:600}details p{padding-top:10px;color:var(--muted)}
+.narrow{max-width:760px}
+form{background:#fff;color:var(--ink);padding:28px;border-radius:8px}form .btn{width:100%}form small{color:var(--muted)}
+footer{background:#0b131e;color:#aab4c2;padding:30px 0;font-size:.86rem}
+@media(max-width:900px){.hg,.two{grid-template-columns:minmax(0,1fr);gap:36px}.cards{grid-template-columns:1fr 1fr}.three,.steps{grid-template-columns:1fr}section{padding:56px 0}}
+@media(max-width:560px){header .btn{display:none}.cards,.eye{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.kicker{color:#ff9a5c!important;font-weight:600;margin-bottom:16px}
+.acts{display:flex;flex-wrap:wrap;gap:12px}.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 1px #ffffff80}.ghost.dk{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.trust{border-left:3px solid var(--or);padding-left:26px}.trust .q{font:500 1.5rem/1.35 'Newsreader',serif;color:#fff;margin-bottom:22px}.trust .ck{margin:6px 0 0}
+.aviso{display:inline-block;background:#fde9d9;color:#6b2c05;font-weight:600;font-size:.92rem;padding:6px 12px;border-radius:4px;margin-bottom:20px}
+.laudo .t{margin:0}.laudo .sec{margin:26px 0 8px}.lead{margin:24px 0 4px;font-weight:600;color:#fff!important}
+#previa .laudo{box-shadow:0 18px 44px #111c2b24}
+.hero{padding:40px 0 64px}.hero p.sub{margin:16px 0}
+.hero .q{border-left:3px solid var(--or);padding-left:14px;color:#fff;font-weight:600;font-size:.98rem;line-height:1.45;margin-bottom:20px}
+@media(max-width:560px){.hero{padding:22px 0 48px}.hero h1{font-size:1.9rem}.hero p.sub{font-size:1.05rem}.kicker{font-size:.92rem;margin-bottom:10px}.acts .btn{width:100%;text-align:center}}
+.hero h1{font-size:clamp(2rem,4.2vw,3.1rem)}.money{font-size:1.3rem;line-height:1.45;color:#ff9a5c!important;font-weight:600;margin:16px 0}
+.kicker{color:#fff!important;font-weight:400;line-height:1.45}.kicker strong{color:#ff9a5c}.trust .q2{color:#fff;font:500 1.4rem/1.35 'Newsreader',serif}
+.vs{list-style:none;margin-top:12px}.vs li{position:relative;padding:16px 0 16px 34px;border-top:1px solid var(--line);font-weight:600}
+.vs li:before{content:"✓";position:absolute;left:4px;color:var(--ordk);font-weight:700}.score em{font:500 1.4rem 'Newsreader',serif;color:var(--muted)}
+@media(max-width:560px){.hero h1{font-size:1.8rem}.money{font-size:1.1rem}}
+.plano{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid var(--line);padding-top:14px}.plano span{border-top:3px solid var(--or);padding-top:8px;font-weight:600}
+.four{grid-template-columns:repeat(4,1fr)}
+form{background:#fff}fieldset{border:0}legend{font:600 1.8rem/1.2 'Newsreader',serif;margin-bottom:18px;float:left;width:100%}fieldset label{clear:both}
+.op{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:6px;padding:14px;margin-bottom:10px;cursor:pointer}.op input{width:18px;height:18px;margin:4px 0 0;flex:none;accent-color:var(--or)}.op small{margin:2px 0 0;font-weight:400;font-size:.9rem}.op:has(:checked){border-color:var(--or);box-shadow:0 0 0 1px var(--or)}
+#perso{color:var(--ink);font-weight:600;margin:14px 0}#obj .btn{margin-top:8px}#cad h2{margin-bottom:6px}#cad .esc{color:var(--muted);margin-bottom:18px}#voltar{background:none;border:0;text-decoration:underline;cursor:pointer;font:inherit;color:var(--ordk)}
+.caixa{background:#fff;color:var(--ink);padding:28px;border-radius:8px}.caixa p{color:var(--muted)}[hidden]{display:none!important}
+@media(max-width:900px){.four{grid-template-columns:1fr}}
+.forte{margin-top:34px;text-align:center}.forte p{margin-top:16px;color:var(--muted);font-weight:600}.grande{font-size:1.15rem;padding:19px 32px}
+.frase{text-align:center;padding:96px 0}.frase p{font:600 clamp(2.1rem,5vw,3.6rem)/1.2 'Newsreader',serif;text-wrap:balance}.frase em{font-style:normal;color:var(--ordk)}
+.preco{text-align:center}.preco .btn{margin-top:10px}
+dialog{width:min(560px,calc(100% - 24px));max-height:calc(100dvh - 24px);margin:auto;border:0;border-top:5px solid var(--or);border-radius:8px;padding:30px 26px;color:var(--ink);overflow:auto}
+dialog::backdrop{background:#080e17cc}dialog h2{font-size:1.5rem}dialog p{color:var(--muted)}dialog form{padding:0}
+.x{position:absolute;top:6px;right:10px;background:none;border:0;font-size:1.8rem;cursor:pointer;color:var(--muted);line-height:1}.etapa{font-size:.85rem;font-weight:600;margin-bottom:6px}
+button.op{width:100%;justify-content:space-between;text-align:left;background:#fff;font:600 1rem/1.4 'Public Sans',sans-serif;color:var(--ink);padding:16px}button.op:hover{border-color:var(--or);background:#fff8f2}
+.nota{font-size:.88rem;margin-top:14px}.barra{display:none}
+@media(max-width:560px){.barra:not([hidden]){display:block;position:fixed;bottom:0;left:0;right:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--ink);z-index:6}.barra .btn{display:block;text-align:center;padding:13px}footer{padding-bottom:96px}.frase{padding:64px 0}}
+.ganho{margin-top:30px}.ganho-t{font:600 1.35rem/1.3 'Newsreader',serif}.depois{margin-top:26px;font-size:1.08rem}.depois p+p{margin-top:12px;color:var(--muted)}
+dialog .op small{margin-top:4px;opacity:1;color:var(--muted)}dialog button.op{padding:13px 14px}.depois-preco{font-size:1.25rem;color:var(--muted);margin-bottom:16px}
+@media(max-height:700px){dialog{padding:20px 18px}dialog h2{font-size:1.25rem;margin-bottom:12px}dialog button.op{padding:9px 12px;margin-bottom:7px;font-size:.93rem}dialog .op small{font-size:.8rem;line-height:1.35}}
+.plat{font-size:1.1rem;color:#fff!important;margin:0 0 16px}
+.passo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center;border-top:1px solid var(--line);padding:36px 0}.passo p{color:var(--muted);margin-top:10px}.passo p.num{color:var(--ordk);font-weight:700;margin:0 0 6px}.passo h3{font:600 1.55rem/1.25 'Newsreader',serif}
+figure{min-width:0}figcaption{font-size:.8rem;color:var(--muted);text-align:center;margin-top:8px}
+img.tela{display:block;width:100%;height:auto}.tela{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 16px 36px #111c2b1f;font-size:.9rem}
+.tt{background:var(--ink);color:#fff;display:flex;justify-content:space-between;gap:10px;padding:11px 16px;font-size:.8rem}.tt i{font-style:normal;color:var(--or)}
+.tc{padding:18px;min-height:230px}.li{border:1px solid var(--line);border-radius:5px;padding:11px 13px;margin-bottom:9px;font-weight:600}.li.on{border-color:var(--or);background:#fff6ef}.li small{display:inline;margin-right:10px}
+.drop{border:1px dashed #9a9385;border-radius:5px;padding:30px 12px;text-align:center;margin-bottom:9px;font-weight:600}
+.idx{display:flex;gap:12px;align-items:center;margin-bottom:8px}.idx strong{font:600 3rem/1 'Newsreader',serif}.idx span{color:var(--muted)}
+.kv{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding:8px 0}.kv b{white-space:nowrap}
+.evo{display:flex;align-items:flex-end;gap:8px;height:48px;margin-top:8px}.evo i{flex:1;background:var(--or);border-radius:3px 3px 0 0}.tc>small{margin-top:5px}
+@media(max-width:900px){.passo{grid-template-columns:minmax(0,1fr);gap:20px}}
+.formula{margin-top:22px;border-top:2px solid var(--ink);padding-top:14px;font:600 1.3rem/1.35 'Newsreader',serif}.intro{font-size:1.15rem;color:var(--muted);max-width:720px;margin-bottom:28px}
+.tela-t{font-weight:700;margin-bottom:12px}.cartoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cartoes .li{margin:0;min-height:76px;display:flex;align-items:center}
+.hist{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:end;text-align:center}.hist i{display:block;background:var(--or);border-radius:3px 3px 0 0;margin:4px 0 6px}.hist span{font-size:.85rem;color:var(--muted)}
+.acesso{border-top:1px solid var(--line);padding-top:26px}.acesso ol{padding-left:20px;margin:6px 0 12px}
+@media(max-width:560px){.plano{grid-template-columns:1fr}}
+</style></head><body>
+<header><div class="w"><span class="logo">O<b>R</b>AVEL Intelligence</span><a class="btn" data-cta="topo" data-main href="#acesso">Conhecer o Oravel Intelligence</a></div></header>
+<main>
+<!-- 1 HERO -->
+<section class="dark hero"><div class="w hg"><div>
+<p class="kicker"><strong>Oravel Intelligence</strong><br>Uma plataforma de inteligência operacional criada exclusivamente para empresas de locação de equipamentos.</p>
+<h1>Você sabe realmente como está a saúde da sua locadora?</h1>
+<p class="money">Sua empresa pode estar faturando mais e ainda assim perdendo rentabilidade.</p>
+<p class="plat">Transforme os dados da sua operação em indicadores claros para acompanhar rentabilidade, utilização da frota e oportunidades de melhoria.</p>
+<p class="q">Criado por quem viveu os desafios da gestão de locadoras e transformou essa experiência em uma plataforma de inteligência.</p>
+<div class="acts"><a class="btn" data-cta="hero" data-main href="#acesso">Conhecer o Oravel Intelligence</a></div>
+<small>Você escolhe o que acompanhar. Sem trocar seu sistema. Nenhum arquivo é enviado nesta página.</small></div>
+<aside class="trust"><p class="q2">Pequenos problemas operacionais podem representar perdas todos os meses:</p>
+<ul class="ck"><li>equipamentos pouco rentáveis;</li><li>custos crescendo sem percepção;</li><li>baixa utilização da frota;</li><li>decisões tomadas sem visão completa.</li></ul></aside></div></section>
 
-<main id="conteudo">
+<!-- 2 PROBLEMA -->
+<section><div class="w narrow">
+<h2>Os maiores problemas de uma locadora nem sempre aparecem no faturamento.</h2>
+<p>Você pode estar trabalhando muito, com o pátio girando, e ainda assim perder margem sem perceber.</p>
+<div class="ganho"><p class="ganho-t">Com o Oravel Intelligence você poderá identificar:</p><ul class="vs"><li>equipamentos que não geram o retorno esperado;</li><li>custos que reduzem sua margem;</li><li>oportunidades de melhoria operacional;</li><li>pontos de atenção para os próximos meses.</li></ul></div></div></section>
 
 
-<section class="hero" aria-labelledby="h-hero">
-    <div class="wrap">
-        <h1 id="h-hero">O centro de inteligência da sua locadora.</h1>
-        <p class="sub">Reúne os números do seu negócio e mostra onde a locadora perde dinheiro, o que está caro e o que fazer primeiro. Com sistema, sem sistema ou com o ERP da Oravel.</p>
-        <div class="form-hero" id="cadastro">
-            <p class="form-tit">Crie sua conta e comece o teste de 30 dias</p>
-            <form method="post" action="https://app.oravel.com.br/intelligence/teste-gratis" data-cadastro class="cadastro">
-    <div class="campos">
-        <label class="c" for="h-nome">Seu nome<input id="h-nome" type="text" name="nome" required autocomplete="name" maxlength="120"></label>
-        <label class="c" for="h-empresa">Empresa<input id="h-empresa" type="text" name="empresa" required autocomplete="organization" maxlength="120"></label>
-        <label class="c" for="h-whats">WhatsApp<input id="h-whats" type="tel" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="(19) 99999-9999" maxlength="20"></label>
-        <label class="c" for="h-email">E-mail<input id="h-email" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="voce@suaempresa.com.br" maxlength="160"></label>
-        <label class="c senha" for="h-senha">Crie uma senha<span class="campo-senha"><input id="h-senha" type="password" name="senha" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="mínimo 8, com letra e número" aria-describedby="h-senha-ajuda"><button type="button" class="ver-senha" data-ver-senha aria-label="Mostrar a senha" aria-pressed="false">Mostrar</button></span><small id="h-senha-ajuda">É com ela que você entra depois de confirmar o e-mail.</small></label>
-    </div>
-        <label class="aceite"><input type="checkbox" name="aceite" value="1" required><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> (LGPD).</span></label>
-    <div class="hp" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
-    <button class="btn" type="submit">Começar teste grátis</button>
-</form>
-            <p class="micro">Leva 1 minuto. Sem cartão. Você confirma pelo e-mail e entra com a senha que criou.</p>
-        </div>
-        <ul class="pontos">
-                            <li><b>Funciona com qualquer sistema</b><span>Ou sem sistema nenhum</span></li>
-                            <li><b>Leitura em minutos</b><span>Sem projeto e sem TI</span></li>
-                            <li><b>Pergunte em português</b><span>O assistente responde com os seus números</span></li>
-                    </ul>
-    </div>
-</section>
 
+<!-- FRASE -->
+<section class="white frase"><div class="w"><p>O problema não é ter dados.<br><em>É saber o que eles mostram.</em></p></div></section>
 
-<section class="bloco escuro" aria-labelledby="h-oque">
-    <div class="wrap">
-        <h2 id="h-oque">O que é o Oravel Intelligence</h2>
-        <p class="lead">Um centro de inteligência para quem aluga equipamentos. Você traz os números, ele organiza, compara mês a mês e aponta o que fazer.</p>
-        <div class="fluxo">
-                            <div class="etapa"><h3>Seus números</h3><p>De qualquer sistema, de uma planilha feita à mão ou direto do ERP da Oravel.</p></div>
-                            <div class="etapa"><h3>O Intelligence lê</h3><p>Nota por área, alertas, comparação com o mês anterior e um assistente que responde em português.</p></div>
-                            <div class="etapa"><h3>Você decide</h3><p>O que vender, trocar ou reformar, onde a oficina trava e quanto do faturamento está em atraso.</p></div>
-                    </div>
-    </div>
-</section>
+<!-- OBJEÇÃO -->
+<section class="dark"><div class="w two"><h2>“Eu já tenho meus números.”</h2>
+<div><p>Você provavelmente já tem sistema, relatórios, planilhas e experiência.</p>
+<p class="lead">O Intelligence organiza essas informações e ajuda a transformar dados em decisões.</p>
+<p style="margin-top:14px">É uma visão estruturada, que complementa o trabalho da sua equipe e do seu contador. A decisão continua sendo sua.</p></div></div></section>
 
+<!-- DIFERENÇA -->
+<section class="white"><div class="w two"><h2>Não é mais um sistema de gestão.</h2>
+<div><p style="font-size:1.2rem">O Oravel Intelligence não substitui seu ERP. Ele funciona como uma camada de inteligência acima dos dados da sua operação.</p>
+<p style="margin-top:16px;font-weight:600">Você continua usando seu sistema atual. O Oravel Intelligence transforma seus dados em indicadores e visões que ajudam sua gestão.</p>
+<p style="margin-top:12px;color:var(--muted)">Os dados entram pela planilha padrão, enviada na sua área exclusiva.</p>
+<p class="formula">ERP atual + Oravel Intelligence = gestão com inteligência</p></div></div></section>
 
-<section class="bloco" aria-labelledby="h-descobre">
-    <div class="wrap">
-        <h2 id="h-descobre">O que você descobre</h2>
-        <p class="lead">As perguntas que mais pesam no caixa de uma locadora, respondidas com os seus números.</p>
-        <div class="dores">
-            <article class="dor">
-                <div class="dor-txt">
-                    <h3>Quais equipamentos estão parados, e quanto isso custa?</h3>
-                    <p>Na locadora de exemplo, <b>11 de 122</b> equipamentos estavam parados. Isso deixa de entrar <b>R$ 75.240 por mês</b>.</p>
-                </div>
-                <div class="dor-vis"><figure class="mock">
-    <div class="tela" role="img" aria-label="Exemplo: 11 de 122 equipamentos parados"><div aria-hidden="true"><h4>Disponibilidade da frota</h4>
-    <div class="nota"><b>91%</b><span>+13 pontos desde agosto</span></div>
-    <p>11 de 122 equipamentos parados</p></div></div>
-    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
-</figure>
-</div>
-            </article>
-            <article class="dor">
-                <div class="dor-txt">
-                    <h3>Onde a manutenção está cara demais?</h3>
-                    <p><b>10 equipamentos</b> já custam mais de 60% do valor em manutenção. Plataforma tesoura 12 m: R$ 118.800 gastos num equipamento de R$ 180.000 (66%).</p>
-                </div>
-                <div class="dor-vis"><figure class="mock">
-    <div class="tela" role="img" aria-label="Tela de exemplo de Equipamentos: 10 equipamentos já custam mais de 60% do valor em manutenção"><div aria-hidden="true"><h4>Equipamentos · 122 na frota</h4>
-    <table class="t">
-        <thead><tr><th>Equipamento</th><th>Manutenção ÷ valor</th><th>Situação</th></tr></thead>
-        <tbody>
-                    <tr>
-                <td>Plataforma tesoura 12 m<br><small>PL-014</small></td>
-                <td>66%</td>
-                <td><span class="tag bad">Trocar ou vender</span></td>
-            </tr>
-                    <tr>
-                <td>Empilhadeira 2,5 t<br><small>EM-007</small></td>
-                <td>68%</td>
-                <td><span class="tag bad">Trocar ou vender</span></td>
-            </tr>
-                </tbody>
-    </table></div></div>
-    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
-</figure>
-</div>
-            </article>
-            <article class="dor">
-                <div class="dor-txt">
-                    <h3>O que vender, trocar ou reformar?</h3>
-                    <p>Cada equipamento vem com a situação e o motivo. O plano de 30, 60 e 90 dias diz por onde começar: <b>foco na oficina (nota 48)</b>.</p>
-                </div>
-                <div class="dor-vis">
-                    <figure class="mock">
-    <div class="tela" role="img" aria-label="Exemplo: lista de decisão e foco do plano"><div aria-hidden="true"><h4>Lista de decisão</h4>
-                        <p><span class="tag bad">Trocar ou vender</span> PL-014, 66% do valor</p>
-                        <div class="foco" style="margin-top:8px"><b>Foco do ciclo:</b> Saúde da Oficina, nota 41 para 48 (+7)</div></div></div>
-    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
-</figure>
-                </div>
-            </article>
-            <article class="dor">
-                <div class="dor-txt">
-                    <h3>Quanto do faturamento está em atraso?</h3>
-                    <p>O atraso caiu de <b>6,6%</b> para <b>3,9%</b> do faturamento. A meta do próximo ciclo é 3,0%.</p>
-                </div>
-                <div class="dor-vis"><figure class="mock">
-    <div class="tela" role="img" aria-label="Exemplo: faturamento em atraso de 6,6% para 3,9%"><div aria-hidden="true"><h4>Faturamento em atraso</h4>
-    <div class="nota"><b>3,9%</b><span>−2,7 pontos desde agosto</span></div>
-    <p>Meta do próximo ciclo: 3,0%</p></div></div>
-    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
-</figure>
-</div>
-            </article>
-            <article class="dor">
-                <div class="dor-txt">
-                    <h3>A oficina dá conta do recado?</h3>
-                    <p>A nota da oficina foi de <b>41</b> para <b>48</b>. Você vê preventiva contra corretiva, tempo de reparo e defeitos que voltam.</p>
-                </div>
-                <div class="dor-vis"><figure class="mock">
-    <div class="tela" role="img" aria-label="Exemplo: nota da oficina de 41 para 48"><div aria-hidden="true"><h4>Saúde da oficina</h4>
-    <div class="nota"><b>48</b><span>+7 desde agosto</span></div>
-    <p>Era 41. Ainda é a área que mais pede atenção.</p></div></div>
-    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
-</figure>
-</div>
-            </article>
-        </div>
-    </div>
-</section>
+<!-- PRÉVIA -->
+<section id="previa"><div class="w narrow"><h2>Veja algumas informações que o Oravel Intelligence apresenta</h2>
+<p class="aviso">Exemplo ilustrativo. O painel utiliza os dados da sua própria empresa.</p>
+<div class="laudo"><p style="font-size:.85rem">Locadora fictícia</p><h3 class="t">Painel Operacional da Locadora</h3>
+<div class="score"><strong>77%</strong><p>Indicador geral</p></div><div class="bar"><i></i></div>
+<h3 class="t sec">Indicadores e oportunidades</h3><div class="row"><span>Equipamentos com baixa rentabilidade</span></div><div class="row"><span>Custos acima do esperado</span></div><div class="row"><span>Oportunidades de melhoria</span></div>
+<h3 class="t sec">Evolução operacional</h3><div class="plano"><span>Janeiro: 61%</span><span>Fevereiro: 69%</span><span>Março: 77%</span></div></div>
+<div class="depois"><p><b>Este é apenas um exemplo.</b><br>Os indicadores do seu painel refletem a realidade da sua locadora.</p><p>Cada empresa possui desafios diferentes. Por isso você escolhe o principal ponto que deseja acompanhar.</p></div>
+<div class="ganho"><p class="ganho-t">Com o Oravel Intelligence você poderá identificar:</p><ul class="vs"><li>equipamentos que não geram o retorno esperado;</li><li>custos que reduzem sua margem;</li><li>oportunidades de melhoria operacional;</li><li>pontos de atenção para os próximos meses.</li></ul></div>
+<div class="forte"><h2>E na sua locadora, o que apareceria?</h2>
+<a class="btn grande" data-cta="previa" data-main href="#acesso">Conhecer o Oravel Intelligence</a>
+<p>Os números da operação podem mostrar problemas antes que eles apareçam no caixa.</p></div></div></section>
 
+<!-- DADOS -->
+<section class="white"><div class="w narrow"><h2>Seus dados ficam protegidos</h2>
+<p style="font-size:1.2rem">Seus dados são tratados em ambiente seguro. O envio das informações acontece somente após a criação da sua conta e confirmação de identidade.</p>
+<p style="margin-top:14px;font-weight:600">Nesta página, você não envia nenhum arquivo.</p></div></section>
 
-<section class="bloco escuro" aria-labelledby="h-calc">
-    <div class="wrap">
-        <h2 id="h-calc">Quanto custa deixar equipamento parado?</h2>
-        <p class="lead">Troque os valores de exemplo pelos da sua locadora e veja a conta na hora.</p>
-        <div class="calc">
-            <div class="campos">
-                <label for="c-qtd">Equipamentos parados<input id="c-qtd" type="number" min="0" inputmode="numeric" value="11"></label>
-                <label for="c-diaria">Diária média (R$)<input id="c-diaria" type="number" min="0" inputmode="numeric" value="380"></label>
-                <label for="c-dias">Dias parados no mês<input id="c-dias" type="number" min="0" max="31" inputmode="numeric" value="18"></label>
-            </div>
-            <div class="res" aria-live="polite">
-                <small>Deixa de entrar por mês</small><b id="c-mes">R$ 75.240</b>
-                <small>Por ano</small><b id="c-ano">R$ 902.880</b>
-                <small style="font-style:italic">Exemplo ilustrativo, com dados fictícios</small>
-            </div>
-        </div>
-    </div>
-</section>
+<!-- PARA QUEM -->
+<section class="white"><div class="w narrow"><h2>O Oravel Intelligence foi criado para gestores que:</h2><ul class="vs"><li>administram locadoras de equipamentos;</li><li>precisam tomar decisões melhores sobre frota;</li><li>querem entender a rentabilidade real da operação;</li><li>querem acompanhar evolução e melhorias.</li></ul></div></section>
 
+<!-- PRODUTO -->
+<section><div class="w"><h2>Veja a plataforma funcionando</h2><p class="intro">Uma plataforma que transforma os dados da operação da sua locadora em indicadores, informações e visões para melhores decisões.</p><div class="passo"><div><p class="num">Tela 1</p><h3>Escolha sua visão</h3><p>Você escolhe qual área da sua operação deseja acompanhar.</p></div><figure><!-- Para usar captura real: trocar a div .tela por <img src="..." alt="..."> --><img class="tela" src="tela-equipamentos.webp" alt="Tela do Oravel Intelligence: Equipamentos, com o menu das áreas à esquerda e os equipamentos classificados por situação" width="1344" height="862" loading="lazy"><figcaption>Tela ilustrativa, com dados fictícios</figcaption></figure></div><div class="passo"><div><p class="num">Tela 2</p><h3>Painel operacional</h3><p>Transforme informações da operação em uma visão clara do negócio.</p></div><figure><!-- Para usar captura real: trocar a div .tela por <img src="..." alt="..."> --><img class="tela" src="tela-indice.webp" alt="Tela do Oravel Intelligence: Índice de Saúde da Locadora, com indicadores do mês e nota geral" width="1344" height="862" loading="lazy"><figcaption>Tela ilustrativa, com dados fictícios</figcaption></figure></div><div class="passo"><div><p class="num">Tela 3</p><h3>Evolução</h3><p>Acompanhe a evolução da sua operação ao longo do tempo.</p></div><figure><!-- Para usar captura real: trocar a div .tela por <img src="..." alt="..."> --><img class="tela" src="tela-comparacao.webp" alt="Tela do Oravel Intelligence: Comparação interna entre duas fotografias, com a evolução de cada área" width="1344" height="862" loading="lazy"><figcaption>Tela ilustrativa, com dados fictícios</figcaption></figure></div><div class="acesso"><h3>Como acessar</h3><ol><li>Faça seu cadastro.</li><li>Confirme seu e-mail e crie sua senha.</li><li>Entre na sua área exclusiva e baixe a planilha padrão.</li><li>Preencha e envie em ambiente seguro.</li></ol><p><b>Os primeiros indicadores ficam disponíveis no mesmo dia do envio da planilha.</b></p></div>
+<p style="font-weight:600;margin:20px 0 12px">Não exige:</p><div class="chips"><span>Troca de sistema</span><span>Implantação</span><span>Treinamento</span></div>
+<p style="margin-top:28px"><a class="btn" data-cta="como_comecar" data-main href="#acesso">Conhecer o Oravel Intelligence</a></p></div></section>
 
-<section class="bloco" aria-labelledby="h-leitura">
-    <div class="wrap">
-        <h2 id="h-leitura">O que você recebe</h2>
-        <p class="lead">Cinco áreas da empresa, cada uma com a sua nota, e uma leitura que você abre quando quiser.</p>
-        <ul class="areas">
-                            <li>
-                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>
-                    <b>Frota</b><span>Disponibilidade, utilização e quais equipamentos já não valem o que custam.</span>
-                </li>
-                            <li>
-                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9.5 9.5c0-1 1-1.7 2.5-1.7s2.5.7 2.5 1.7-1 1.5-2.5 1.8-2.5.8-2.5 1.8 1 1.7 2.5 1.7 2.5-.7 2.5-1.7"/></svg>
-                    <b>Finanças</b><span>Margem, retorno sobre a frota e quanto do faturamento está em atraso.</span>
-                </li>
-                            <li>
-                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2-.5-.5-2z"/></svg>
-                    <b>Oficina</b><span>Preventiva contra corretiva, tempo de reparo e defeitos que se repetem.</span>
-                </li>
-                            <li>
-                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19v-8M12 19V5M19 19v-10"/></svg>
-                    <b>Comercial</b><span>Propostas que viram contrato e dependência de um único cliente.</span>
-                </li>
-                            <li>
-                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>
-                    <b>Operação</b><span>Entregas no prazo e produtividade da equipe.</span>
-                </li>
-                    </ul>
-        <div class="car-wrap">
-            <div class="carrossel" role="region" aria-label="Telas da leitura" tabindex="0">
-                <div class="slide"><figure class="mock">
-    <div class="tela" role="img" aria-label="Tela de exemplo do Índice de Saúde: nota 77, subiu +16 pontos em dois meses"><div aria-hidden="true"><h4>Índice de Saúde</h4>
-    <div class="nota"><b>77</b><span>+16 em dois meses</span></div>
-    <div class="barras">
-                    <div style="height:79%"><em>61</em></div>
-                    <div style="height:90%"><em>69</em></div>
-                    <div style="height:100%"><em>77</em></div>
-            </div>
-    <div class="meses"><span>Ago</span><span>Set</span><span>Out</span></div>
-    <div class="kpis">
-        <div class="kpi"><small>Disponibilidade</small><b>91%</b><i>+13 pontos</i></div>
-        <div class="kpi"><small>Atraso</small><b>3,9%</b><i>−2,7 pontos</i></div>
-        <div class="kpi"><small>Oficina</small><b>48</b><i>+7</i></div>
-    </div></div></div>
-    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
-</figure>
-<p class="leg">Índice de Saúde</p><p>Uma nota de 0 a 100 para a locadora e a evolução mês a mês.</p></div>
-                <div class="slide"><figure class="mock">
-    <div class="tela" role="img" aria-label="Tela de exemplo de Equipamentos: 10 equipamentos já custam mais de 60% do valor em manutenção"><div aria-hidden="true"><h4>Equipamentos · 122 na frota</h4>
-    <table class="t">
-        <thead><tr><th>Equipamento</th><th>Manutenção ÷ valor</th><th>Situação</th></tr></thead>
-        <tbody>
-                    <tr>
-                <td>Plataforma tesoura 12 m<br><small>PL-014</small></td>
-                <td>66%</td>
-                <td><span class="tag bad">Trocar ou vender</span></td>
-            </tr>
-                    <tr>
-                <td>Empilhadeira 2,5 t<br><small>EM-007</small></td>
-                <td>68%</td>
-                <td><span class="tag bad">Trocar ou vender</span></td>
-            </tr>
-                    <tr>
-                <td>Gerador 80 kVA<br><small>GE-003</small></td>
-                <td>45%</td>
-                <td><span class="tag warn">Revisar</span></td>
-            </tr>
-                </tbody>
-    </table></div></div>
-    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
-</figure>
-<p class="leg">Equipamentos</p><p>A situação de cada equipamento, com o motivo.</p></div>
-                <div class="slide"><figure class="mock">
-    <div class="tela" role="img" aria-label="Tela de exemplo do Plano de 30, 60 e 90 dias"><div aria-hidden="true"><h4>Plano de 30, 60 e 90 dias</h4>
-    <div class="foco"><b>Foco do ciclo: Saúde da Oficina</b> (nota 48)<br>Atraso nas faturas: 3,9% hoje, meta 3,0%</div>
-    <div class="plano">
-        <div class="col"><b>30 dias</b><span>Cobrar logo após o vencimento</span><span>Listar equipamentos parados</span></div>
-        <div class="col"><b>60 dias</b><span>Decidir sobre PL-014</span><span>Subir preventivas</span></div>
-        <div class="col"><b>90 dias</b><span>Medir contra a meta</span><span>Reenviar a planilha</span></div>
-    </div></div></div>
-    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
-</figure>
-<p class="leg">Plano 30/60/90</p><p>O que fazer primeiro, com metas.</p></div>
-                <div class="slide"><figure class="mock">
-    <div class="tela" role="img" aria-label="Tela de exemplo do assistente: pergunta sobre disponibilidade e resposta com os números"><div aria-hidden="true"><h4>Pergunte em português</h4>
-    <div class="balao q">Minha disponibilidade aumentou?</div>
-    <div class="balao a"><b>Sim.</b> Sua disponibilidade subiu de 78% para 91% em dois meses (+13 pontos). Hoje 11 dos 122 equipamentos estão parados.</div></div></div>
-    <figcaption class="ilustrativo">Exemplo ilustrativo, com dados fictícios</figcaption>
-</figure>
-<p class="leg">Pergunte em português</p><p>O assistente responde com os seus números e só consulta.</p></div>
-            </div>
-            <div class="car-nav"><button type="button" data-car="ant" aria-label="Tela anterior">‹</button><button type="button" data-car="prox" aria-label="Próxima tela">›</button></div>
-        </div>
-        <p class="em-breve">Em breve no Intelligence: Suprimentos, Logística e Comercial completo.</p>
-    </div>
-</section>
+<!-- 7 PREÇO -->
+<section><div class="w narrow preco"><h2>Tenha acesso ao Oravel Intelligence para acompanhar a evolução da sua locadora por R$ 39,90/mês.</h2>
+<a class="btn" data-cta="preco" data-main href="#acesso">Conhecer o Oravel Intelligence</a></div></section>
 
+<!-- 9 ORAVEL -->
+<section class="dark"><div class="w narrow"><h2>A Oravel está construindo o Centro de Inteligência do Mercado de Locação de Equipamentos.</h2>
+<p>Uma plataforma criada para reunir indicadores, conhecimento e tecnologia aplicada exclusivamente ao setor de locação.</p>
+<p style="margin-top:12px">Por trás dela está a experiência de quem administrou locadora por muitos anos.</p></div></section>
 
-<section class="bloco alt" aria-labelledby="h-perfis">
-    <div class="wrap">
-        <h2 id="h-perfis">Funciona do jeito que sua locadora já trabalha</h2>
-        <div class="perfis">
-                            <div class="perfil"><h3>Não tenho sistema</h3><p>Preencha o modelo de planilha com os números do mês. É o suficiente para começar.</p></div>
-                            <div class="perfil"><h3>Tenho sistema e quero algo mais rápido</h3><p>Exporte o que o seu sistema já gera e envie. Sem integração, sem projeto, sem esperar a TI.</p></div>
-                            <div class="perfil"><h3>Uso o ERP da Oravel</h3><p>Exporte a planilha pronta com 1 clique e a leitura sai na hora.</p></div>
-                    </div>
-    </div>
-</section>
+<!-- 10 FAQ -->
+<section><div class="w narrow"><h2>Perguntas frequentes</h2>
+<details><summary>É uma consultoria?</summary><p>Não. O Oravel Intelligence é uma plataforma de inteligência operacional para locadoras. Você acessa sua área exclusiva, acompanha indicadores e visualiza oportunidades de melhoria da sua operação.</p></details>
+<details><summary>Preciso trocar meu sistema?</summary><p>Não. Você preenche a planilha padrão com as informações da sua locadora e continua usando o seu sistema.</p></details>
+<details><summary>Quando envio meus dados?</summary><p>Somente dentro da sua área exclusiva, depois de criar a conta e confirmar sua identidade.</p></details>
+<details><summary>Qual planilha devo usar?</summary><p>A planilha padrão, disponível para baixar na sua área exclusiva.</p></details>
+<details><summary>Quanto tempo demora?</summary><p>Os primeiros indicadores ficam disponíveis no mesmo dia do envio da planilha.</p></details>
+<details><summary>Meu contador já não faz isso?</summary><p>O contador é essencial para as áreas contábil e fiscal. O Oravel Intelligence mostra indicadores da operação. Um complementa o outro.</p></details></div></section>
 
-
-<section class="bloco" aria-labelledby="h-como">
-    <div class="wrap">
-        <h2 id="h-como">Como funciona</h2>
-        <div class="passos">
-                            <div class="passo"><h3>Crie sua conta</h3><p>Nome, empresa, WhatsApp, e-mail e uma senha. Você confirma o e-mail pelo link que chega na caixa de entrada e entra com a sua senha.</p></div>
-                            <div class="passo"><h3>Traga seus números</h3><p>Baixe o modelo e preencha, ou exporte do seu sistema. Uma linha com os números do mês e, se quiser, uma linha por equipamento.</p><a class="link-modelo" href="modelo-planilha-intelligence.xlsx" download data-track="Teste grátis: baixou o modelo">Baixar modelo da planilha</a></div>
-                            <div class="passo"><h3>Leia, decida e pergunte</h3><p>A leitura sai em minutos. Atualizou os dados? Reenvie quando quiser: cada envio fica no histórico e você compara com os anteriores.</p></div>
-                    </div>
-        <p class="nota-erp">Já usa o ERP da Oravel? Exporte a planilha com 1 clique.</p>
-    </div>
-</section>
-
-
-<section id="depoimentos" class="bloco alt" hidden data-fonte="https://app.oravel.com.br/api/intelligence/depoimentos" aria-label="Depoimentos"><div class="wrap"><div class="deps"></div></div></section>
-
-
-<section class="bloco escuro" aria-labelledby="h-preco">
-    <div class="wrap">
-        <h2 id="h-preco">Preço e confiança</h2>
-        <div class="precocard">
-            <p class="big">Primeira leitura grátis. Plano Básico: <b>R$ 39,90/mês</b>.</p>
-            <p>A cobrança só começa 30 dias após o seu primeiro acesso e você cancela quando quiser. Seus dados são privados e usados só para gerar a sua leitura.</p>
-        </div>
-        <ul class="confianca">
-                            <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><b>Nuvem no Brasil</b><span>Infraestrutura do Google Cloud, em São Paulo.</span></li>
-                            <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><b>Conexão protegida</b><span>HTTPS em todo o acesso e proteção da Cloudflare.</span></li>
-                            <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><b>Backup todo dia</b><span>Os dados são copiados diariamente.</span></li>
-                            <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><b>Dados só seus</b><span>Usados apenas para gerar a sua leitura.</span></li>
-                    </ul>
-    </div>
-</section>
-
-
-<section class="bloco faq" aria-labelledby="h-faq">
-    <div class="wrap">
-        <h2 id="h-faq">Perguntas frequentes</h2>
-        <div class="faq-lista">
-                            <details><summary>Preciso trocar de sistema?</summary><p>Não. Você envia uma planilha, venham os números de onde vierem, ou nem tenha sistema. Quem usa o ERP da Oravel exporta a planilha com 1 clique.</p></details>
-                            <details><summary>Quanto custa?</summary><p>Primeira leitura grátis. Para acompanhar mês a mês, o Plano Básico custa R$ 39,90/mês. A cobrança só começa 30 dias após o seu primeiro acesso e você cancela quando quiser.</p></details>
-                            <details><summary>E se eu não tiver todos os dados?</summary><p>Comece com o que tiver. Só a data de referência é obrigatória, e é preciso preencher ao menos um bloco completo (por exemplo, total de equipamentos e equipamentos locados). O que você não informar fica fora da leitura, e o sistema diz o que faltou.</p></details>
-                            <details><summary>Meus dados ficam seguros?</summary><p>Sim. O Intelligence roda em infraestrutura do Google Cloud, na região de São Paulo, com conexão criptografada (HTTPS) e proteção da Cloudflare. Os discos do Google Cloud são criptografados por padrão. Os dados são copiados todo dia: backup diário do banco, com um arquivo por cliente guardado por 30 dias, e snapshot diário do disco no Google Cloud. Cada envio fica no histórico e nada é sobrescrito. O assistente de IA só consulta os seus números e nunca altera nada.</p></details>
-                            <details><summary>Posso reenviar a planilha depois?</summary><p>Pode, quando quiser. Cada envio fica no histórico e nada é sobrescrito. Se o arquivo for idêntico a um que você já enviou, o sistema avisa e não grava de novo.</p></details>
-                    </div>
-    </div>
-</section>
-
-<section class="final" aria-labelledby="h-final">
-    <div class="wrap">
-        <h2 id="h-final">Comece pelo teste e veja a sua locadora com outros olhos.</h2>
-        <p>Crie a conta em 1 minuto e receba a primeira leitura.</p>
-        <a class="btn" href="https://app.oravel.com.br/intelligence/teste-gratis" data-cta data-pos="final" data-track="Teste grátis: CTA final">Começar teste grátis</a>
-        <p class="micro">Leva 1 minuto. Sem cartão. Você confirma pelo e-mail e entra com a senha que criou.</p>
-    </div>
-</section>
-
+<!-- CTA FINAL -->
+<section class="dark" id="acesso"><div class="w narrow" style="text-align:center"><h2>Comece a enxergar melhor a sua operação</h2>
+<p style="margin-bottom:24px">Tenha uma visão clara dos indicadores da sua locadora e acompanhe oportunidades de melhoria.</p>
+<a class="btn grande" data-cta="final" data-main href="#acesso">Conhecer o Oravel Intelligence</a></div></section>
 </main>
-
-<footer class="rod"><div class="wrap">
-    <nav aria-label="Rodapé"><a href="/termos-de-uso/">Termos de Uso</a><a href="/politica-de-privacidade/">Política de Privacidade</a><a href="https://oravel.com.br/">Site da Oravel</a></nav>
-    <div>Oravel Desenvolvimento de Software Ltda · CNPJ 65.707.953/0001-30</div>
-</div></footer>
-
-
-<div class="fixo"><a class="btn" href="https://app.oravel.com.br/intelligence/teste-gratis" data-cta data-pos="fixo" data-track="Teste grátis: CTA fixo">Começar teste grátis</a>
-</div>
-
-
-<dialog class="form" id="teste-gratis" aria-labelledby="tg-t">
-    <button type="button" class="fechar" data-fechar aria-label="Fechar">×</button>
-    <div class="dlg-corpo">
-        <h2 id="tg-t">Começar teste grátis</h2>
-        <p class="micro">Leva 1 minuto. Sem cartão. Você confirma pelo e-mail e entra com a senha que criou.</p>
-        <form method="post" action="https://app.oravel.com.br/intelligence/teste-gratis" data-cadastro class="cadastro">
-    <div class="campos">
-        <label class="c" for="f-nome">Seu nome<input id="f-nome" type="text" name="nome" required autocomplete="name" maxlength="120"></label>
-        <label class="c" for="f-empresa">Empresa<input id="f-empresa" type="text" name="empresa" required autocomplete="organization" maxlength="120"></label>
-        <label class="c" for="f-whats">WhatsApp<input id="f-whats" type="tel" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="(19) 99999-9999" maxlength="20"></label>
-        <label class="c" for="f-email">E-mail<input id="f-email" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="voce@suaempresa.com.br" maxlength="160"></label>
-        <label class="c senha" for="f-senha">Crie uma senha<span class="campo-senha"><input id="f-senha" type="password" name="senha" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="mínimo 8, com letra e número" aria-describedby="f-senha-ajuda"><button type="button" class="ver-senha" data-ver-senha aria-label="Mostrar a senha" aria-pressed="false">Mostrar</button></span><small id="f-senha-ajuda">É com ela que você entra depois de confirmar o e-mail.</small></label>
-    </div>
-        <label class="aceite"><input type="checkbox" name="aceite" value="1" required><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> (LGPD).</span></label>
-    <div class="hp" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
-    <button class="btn" type="submit">Começar teste grátis</button>
-</form>
-    </div>
-</dialog>
-
-<script>(function () {
-  var d = document, $ = function (s, r) { return (r || d).querySelector(s); }, all = function (s) { return [].slice.call(d.querySelectorAll(s)); };
-  var track = function (l) { try { if (window.ovTrack) { window.ovTrack(l); } } catch (e) {} };
-  var dlg = $('#teste-gratis'), formsCad = all('form[data-cadastro]');
-
-  // Turnstile (anti-robô): o script só carrega quando alguém mexe num formulário (ou o pop-up abre), para não pesar na página.
-  var tsCarregado = false;
-  function carregarTurnstile() {
-    if (tsCarregado || !$('.cf-turnstile')) { return; }
-    tsCarregado = true;
-    var s = d.createElement('script'); s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js'; s.async = true; s.defer = true; d.head.appendChild(s);
-  }
-
-  // Botões "Começar teste grátis": o do topo leva ao formulário do hero; os demais abrem o pop-up. Sem JS, o link leva à tela de cadastro do app.
-  all('[data-cta]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      var pos = a.getAttribute('data-pos') || '';
-      track('Teste grátis: clicou no botão (' + pos + ')');
-      var hero = $('#cadastro');
-      var noTopo = hero && hero.getBoundingClientRect().top > -hero.offsetHeight * 0.6 && hero.getBoundingClientRect().top < window.innerHeight;
-      if (pos === 'topo' || noTopo) {
-        if (!hero) { return; }
-        e.preventDefault();
-        hero.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        var n = $('input[name=nome]', hero); if (n) { setTimeout(function () { n.focus({ preventScroll: true }); }, 350); }
-        carregarTurnstile();
-        return;
-      }
-      if (!dlg || typeof dlg.showModal !== 'function') { return; }
-      e.preventDefault();
-      dlg.showModal();
-      carregarTurnstile();
-      var n2 = $('input[name=nome]', dlg); if (n2) { n2.focus(); }
-    });
-  });
-  all('[data-fechar]').forEach(function (b) { b.addEventListener('click', function () { dlg.close(); }); });
-  if (dlg) { dlg.addEventListener('click', function (e) { if (e.target === dlg) { dlg.close(); } }); }
-
-  formsCad.forEach(function (form) {
-    // Mostrar/ocultar a senha (ajuda a não errar a digitação, já que o cadastro tem um campo só)
-    [].slice.call(form.querySelectorAll('[data-ver-senha]')).forEach(function (b) {
-      b.addEventListener('click', function () {
-        var campo = b.previousElementSibling, ver = campo.type === 'password';
-        campo.type = ver ? 'text' : 'password'; b.textContent = ver ? 'Ocultar' : 'Mostrar';
-        b.setAttribute('aria-pressed', ver ? 'true' : 'false'); b.setAttribute('aria-label', ver ? 'Ocultar a senha' : 'Mostrar a senha');
-      });
-    });
-    form.addEventListener('focusin', carregarTurnstile, { once: true });
-    form.addEventListener('submit', function (e) {
-      // cada formulário tem o seu próprio desafio: o campo escondido só vem preenchido quando ele termina
-      var widget = $('.cf-turnstile', form), tok = $('[name="cf-turnstile-response"]', form);
-      if (widget && !(tok && tok.value)) {
-        e.preventDefault();
-        var a = $('[data-ts-aviso]', form);
-        if (!a) { a = d.createElement('p'); a.setAttribute('data-ts-aviso', ''); a.setAttribute('role', 'alert'); a.className = 'aviso-ts'; a.textContent = 'Aguarde a verificação anti-robô terminar (alguns segundos) e envie de novo.'; widget.insertAdjacentElement('afterend', a); }
-        a.hidden = false;
-        carregarTurnstile();
-        return;
-      }
-      track('Teste grátis: enviou o formulário');
-      var b = $('button[type=submit]', form); if (b) { b.disabled = true; b.textContent = 'Enviando...'; }
-    });
-  });
-  all('[data-track-click]').forEach(function (a) { a.addEventListener('click', function () { track(a.getAttribute('data-track-click')); }); });
-
-  // Calculadora (equipamento parado). O HTML já vem com a conta feita; aqui só recalcula.
-  var brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
-  var q = $('#c-qtd'), di = $('#c-diaria'), ds = $('#c-dias');
-  function calc() {
-    var n = Math.max(0, parseFloat(q.value) || 0), v = Math.max(0, parseFloat(di.value) || 0), x = Math.min(31, Math.max(0, parseFloat(ds.value) || 0));
-    var mes = n * v * x;
-    $('#c-mes').textContent = brl.format(mes); $('#c-ano').textContent = brl.format(mes * 12);
-  }
-  if (q && di && ds) { [q, di, ds].forEach(function (i) { i.addEventListener('input', calc); }); }
-
-  // Carrossel
-  var car = $('.carrossel');
-  if (car) {
-    all('[data-car]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var s = $('.slide', car); var w = s ? s.getBoundingClientRect().width + 16 : 300;
-        car.scrollBy({ left: (b.getAttribute('data-car') === 'prox' ? 1 : -1) * w, behavior: 'smooth' });
-      });
-    });
-  }
-
-  // Depoimentos: só aparecem se existir registro aprovado e autorizado no sistema. Sem registro, a seção continua oculta.
-  var sec = $('#depoimentos');
-  if (sec && window.fetch) {
-    fetch(sec.getAttribute('data-fonte'), { headers: { Accept: 'application/json' } })
-      .then(function (r) { return r.ok ? r.json() : []; })
-      .then(function (lista) {
-        if (!Array.isArray(lista) || !lista.length) { return; }
-        var box = $('.deps', sec);
-        lista.forEach(function (t) {
-          var f = d.createElement('figure'); f.className = 'dep'; f.style.margin = '0';
-          var p = d.createElement('p'); p.textContent = '“' + t.texto + '”';
-          var ft = d.createElement('footer'); ft.textContent = [t.nome, t.cargo, t.empresa].filter(Boolean).join(', ');
-          f.appendChild(p); f.appendChild(ft); box.appendChild(f);
-        });
-        sec.hidden = false;
-      }).catch(function () {});
-  }
-})();
-</script>
-<script async src="https://app.oravel.com.br/t.js?v=3"></script>
-<script src="/protecao.js?v=4" defer></script>
-</body>
-</html>
+<div class="barra" id="barra" hidden><a class="btn" data-cta="barra_celular" data-main href="#acesso">Conhecer o Oravel Intelligence</a></div>
+<dialog id="dlg" aria-label="Criar acesso ao Oravel Intelligence"><button type="button" class="x" id="fechar" aria-label="Fechar">×</button>
+<div id="e1"><p class="etapa">Etapa 1 de 2</p><h2 tabindex="-1">O que você quer descobrir sobre sua locadora?</h2><button type="button" class="op" value="geral"><span><b>Minha locadora está gerando o resultado que deveria?</b><small>Tenha uma visão geral da eficiência da operação.</small></span><span aria-hidden="true">→</span></button><button type="button" class="op" value="rentabilidade"><span><b>Onde posso melhorar minha rentabilidade?</b><small>Identifique oportunidades nos resultados da empresa.</small></span><span aria-hidden="true">→</span></button><button type="button" class="op" value="frota"><span><b>Tenho equipamentos parados ou improdutivos?</b><small>Analise utilização e produtividade da frota.</small></span><span aria-hidden="true">→</span></button><button type="button" class="op" value="custos"><span><b>Como posso reduzir custos?</b><small>Encontre pontos de desperdício operacional.</small></span><span aria-hidden="true">→</span></button></div>
+<form id="cad" hidden><p class="etapa">Etapa 2 de 2</p><h2 tabindex="-1">Vamos criar seu acesso ao Oravel Intelligence.</h2><p class="esc"><b id="escolha"></b> <button type="button" id="voltar">Alterar</button></p>
+<label>Nome<input required name="nome" autocomplete="name"></label><label>Nome da locadora<input required name="empresa" autocomplete="organization"></label><label>WhatsApp<input required name="whats" type="tel" autocomplete="tel"></label><label>E-mail<input required name="email" type="email" autocomplete="email"></label>
+<button class="btn">Criar minha conta no Oravel Intelligence</button><p class="nota">Nenhum arquivo é pedido aqui. O envio acontece só na sua área exclusiva, após confirmar o e-mail.</p><small>Simulação: nada é enviado.</small></form>
+<div id="ok" hidden><h2 tabindex="-1">Confirme seu e-mail</h2><p>Na versão real, enviaremos um link para <b id="mail"></b>. Por ele, você cria ou confirma sua senha e acessa sua área exclusiva.</p><small>Simulação: nenhum e-mail foi enviado.</small></div></dialog>
+<footer><div class="w">Oravel Desenvolvimento de Software LTDA · CNPJ 65.707.953/0001-30<br>contato@oravel.com.br · WhatsApp (19) 99933-2615</div></footer>
+<script>
+const textos={a:'Conhecer o Oravel Intelligence',b:'Criar minha visão operacional',c:'Acessar minha inteligência operacional'};
+const p=new URLSearchParams(location.search).get('cta'),variante=Object.hasOwn(textos,p)?p:'a';
+document.querySelectorAll('[data-main]').forEach(e=>e.textContent=textos[variante]);
+// Medição: window.dataLayer, no formato lido pelo GTM. Nunca enviar dados pessoais.
+// Para ligar: instalar o contêiner GTM e criar um gatilho por nome de evento (GA4).
+// Eventos: pagina_vista, secao_vista, cta_clique, objetivo_escolhido, cadastro_envio_simulado,
+// janela_fechada, cta_previa_clique, dor_escolhida, cadastro_aberto, cadastro_concluido.
+// email_confirmado: NÃO dispara aqui. O sistema deve registrar após validar o link.
+// Na versão real: remover simulado e cadastro_envio_simulado; cadastro_concluido só após o servidor aceitar.
+// cta_previa_clique repete cta_clique e dor_escolhida repete objetivo_escolhido: não somar os pares.
+const SIMULACAO=true;
+window.dataLayer=window.dataLayer||[];
+const ev=(event,extra={})=>window.dataLayer.push({event,variante,simulado:SIMULACAO,local:undefined,objetivo:undefined,etapa:undefined,secao:undefined,...extra});
+const $=id=>document.getElementById(id),dlg=$('dlg'),e1=$('e1'),cad=$('cad'),ok=$('ok');
+let objetivo='';
+const mostrar=el=>{[e1,cad,ok].forEach(x=>x.hidden=x!==el);dlg.scrollTop=0;el.querySelector('h2').focus()};
+const etapa=()=>!ok.hidden?'confirmacao':!cad.hidden?'cadastro':'objetivo';
+ev('pagina_vista');
+document.querySelectorAll('[data-cta]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();ev('cta_clique',{local:a.dataset.cta});if(a.dataset.cta==='previa')ev('cta_previa_clique',{local:'previa'});dlg.showModal();document.body.style.overflow='hidden';mostrar(!ok.hidden?ok:!cad.hidden?cad:e1)}));
+$('fechar').onclick=()=>dlg.close();
+dlg.addEventListener('close',()=>{document.body.style.overflow='';ev('janela_fechada',{etapa:etapa()})});
+e1.querySelectorAll('.op').forEach(b=>b.onclick=()=>{objetivo=b.value;$('escolha').textContent=b.querySelector('b').textContent;ev('objetivo_escolhido',{objetivo});ev('dor_escolhida',{objetivo});mostrar(cad);ev('cadastro_aberto',{objetivo})});
+$('voltar').onclick=()=>mostrar(e1);
+cad.addEventListener('submit',e=>{e.preventDefault();$('mail').textContent=cad.elements.email.value;ev('cadastro_envio_simulado',{objetivo});ev('cadastro_concluido',{objetivo});mostrar(ok)});
+new IntersectionObserver((l,o)=>l.forEach(x=>{if(x.isIntersecting){ev('secao_vista',{secao:x.target.id});o.unobserve(x.target)}}),{threshold:.3}).observe($('previa'));
+new IntersectionObserver(l=>$('barra').hidden=l[0].isIntersecting).observe(document.querySelector('.hero'));
+</script></body></html>
