@@ -38,4 +38,19 @@ return [
         // divergência (em %) entre o total digitado na aba "Dados" e a soma da aba "Equipamentos" que gera aviso
         'divergencia_aviso_pct' => 5.0,
     ],
+
+    // Módulo Suprimentos (planilha própria). ATENÇÃO: limiares e categorias de REFERÊNCIA, ainda não validados com especialista do setor.
+    'suprimentos' => [
+        // Categorias aceitas na coluna "Categoria" do Inventário. Valor fora da lista entra como "Outros" (com aviso).
+        'categorias' => ['Peças', 'Materiais', 'Itens de Escritório', 'Equipamentos', 'Ferramentas', 'EPI e Uniformes', 'Limpeza e Copa', 'Outros'],
+        'categoria_padrao' => 'Outros',
+        // Item sem nenhuma saída há mais que isto (dias) é "parado".
+        'dias_parado' => 90,
+        // Janela de análise padrão (dias) quando a planilha não informa o período.
+        'periodo_padrao_dias' => 90,
+        'max_linhas' => 20000,
+        'tamanho_lista' => 15,
+        // Sugestão de compra de um item abaixo do mínimo: repor até este múltiplo do estoque mínimo.
+        'alvo_x_minimo' => 2,
+    ],
 ];

@@ -96,7 +96,7 @@ class IntelligenceChat extends ProspectChat
             'subtituloApp' => $cliente ?? 'Saúde e evolução da empresa',
             'placeholder' => 'Pergunte sobre indicadores, áreas, evolução...',
             'mostrarStats' => false,
-            'sugestoes' => [
+            'sugestoes' => $this->sugestoesDeSuprimentos() + [
                 'Como está minha empresa hoje?' => 'panorama',
                 'Minha disponibilidade aumentou?' => 'disponibilidade',
                 'Qual área está pior e por quê?' => 'pior-area',

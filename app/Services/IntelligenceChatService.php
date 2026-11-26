@@ -100,8 +100,12 @@ class IntelligenceChatService extends ProspectChatService
         }
 
         $r = app(EvolucaoService::class)->resumo($this->tenantId);
-        if ($r === null) {
+        $suprimentos = $this->contextoDeSuprimentos();
+        if ($r === null && $suprimentos === null) {
             return 'A empresa ainda não importou nenhuma fotografia (snapshot): não há indicadores nem diagnóstico.';
+        }
+        if ($r === null) {
+            return $suprimentos['aviso']."Situação de SUPRIMENTOS da empresa (já calculada, da última planilha de Suprimentos; a empresa ainda não importou a planilha geral):\n".json_encode($suprimentos['dados'], JSON_UNESCAPED_UNICODE);
         }
 
         $compacto = [
@@ -111,6 +115,10 @@ class IntelligenceChatService extends ProspectChatService
             'areas' => array_map(fn ($a) => ['area' => $a['chave'], 'nota' => $a['nota'], 'faixa' => $a['faixa'], 'variacao' => $a['delta']], $r['areas']),
             'indicadores' => array_map(fn ($i) => ['chave' => $i['chave'], 'valor' => $i['valor'], 'anterior' => $i['anterior'], 'variacao' => $i['delta'], 'sentido' => $i['sentido']], $r['indicadores']),
         ];
+
+        if ($suprimentos !== null) {
+            $compacto['suprimentos'] = $suprimentos['dados'];
+        }
 
         $equip = app(EquipamentosService::class)->snapshot($this->tenantId);
         if ($equip) {
@@ -124,6 +132,10 @@ class IntelligenceChatService extends ProspectChatService
         $aviso = \App\Domain\Intelligence\Services\DadosDeExemplo::soExemplo($this->tenantId)
             ? "ATENÇÃO: todos os dados abaixo são de DEMONSTRAÇÃO (fictícios, gerados para o cliente conhecer o sistema), não da empresa real. Diga isso na resposta e lembre que ele pode limpar os dados de exemplo e enviar a própria planilha.\n\n"
             : '';
+
+        if ($suprimentos !== null && $suprimentos['aviso'] !== '') {
+            $aviso .= $suprimentos['aviso'];
+        }
 
         return $aviso."Situação atual da empresa (já calculada, do último snapshot):\n".json_encode($compacto, JSON_UNESCAPED_UNICODE);
     }

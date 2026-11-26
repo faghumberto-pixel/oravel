@@ -25,7 +25,7 @@ class IntelligenceTrial extends Model
 
     protected $fillable = [
         'tenant_id', 'user_id', 'nome', 'empresa', 'whatsapp', 'access_token_hash', 'access_token_at', 'status',
-        'trial_started_at', 'trial_ends_at', 'last_upload_at', 'extensions', 'plano_nome', 'plano_preco', 'plano_chave', 'plano_proximo_chave', 'plano_proximo_em', 'exemplo_oferecido_em', 'contracted_at',
+        'trial_started_at', 'trial_ends_at', 'last_upload_at', 'extensions', 'plano_nome', 'plano_preco', 'plano_chave', 'plano_proximo_chave', 'plano_proximo_em', 'exemplo_oferecido_em', 'exemplo_suprimentos_oferecido_em', 'contracted_at',
         'billing_starts_on', 'canceled_at', 'access_until', 'overdue_since', 'asaas_customer_id', 'asaas_subscription_id',
         'terms_accepted_at', 'signup_ip', 'signup_user_agent',
     ];
@@ -42,6 +42,7 @@ class IntelligenceTrial extends Model
         'billing_starts_on' => 'date',
         'plano_proximo_em' => 'date',
         'exemplo_oferecido_em' => 'datetime',
+        'exemplo_suprimentos_oferecido_em' => 'datetime',
         'canceled_at' => 'datetime',
         'access_until' => 'date',
         'overdue_since' => 'datetime',

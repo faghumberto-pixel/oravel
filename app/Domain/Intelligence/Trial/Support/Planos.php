@@ -73,7 +73,19 @@ class Planos
 
     public static function temModulo(IntelligenceTrial $trial, string $modulo): bool
     {
-        return in_array($modulo, self::efetivo($trial)['modulos'] ?? ['base'], true);
+        // Teste grátis (sem degrau): só os módulos de config intelligence_trial.modulos_no_teste (padrão: o básico).
+        return in_array($modulo, self::efetivo($trial)['modulos'] ?? (array) config('intelligence_trial.modulos_no_teste', ['base']), true);
+    }
+
+    /**
+     * O cliente pode usar este módulo? Quem tem conta do Intelligence segue o degrau do plano; empresa sem conta de teste (contrato
+     * feito pela Central) segue só as funcionalidades do contrato.
+     */
+    public static function moduloLiberado(?string $tenantId, string $modulo): bool
+    {
+        $trial = $tenantId ? \App\Domain\Intelligence\Trial\Services\TrialCiclo::doTenant($tenantId) : null;
+
+        return $trial === null || self::temModulo($trial, $modulo);
     }
 
     public static function rotuloModulo(string $modulo): string
