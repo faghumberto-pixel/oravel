@@ -14,6 +14,7 @@ use App\Dashboards\Blocks\Manutencao;
 use App\Dashboards\Blocks\MateriaisPecas;
 use App\Dashboards\Blocks\Planejamento;
 use App\Dashboards\Blocks\RecursosHumanos;
+use App\Dashboards\Blocks\Vendas;
 
 /**
  * Catálogo de blocos. Lista explícita (e não descoberta por pasta) para que uma classe nova nunca apareça
@@ -57,6 +58,15 @@ class BlockRegistry
             MateriaisPecas\CoberturaEmDias::class,
             MateriaisPecas\AplicadasEOrcadas::class,
             MateriaisPecas\RequisicoesEmAberto::class,
+
+            Vendas\MetaDoMes::class,
+            Vendas\MetaPorVendedor::class,
+            Vendas\VisitasDoMes::class,
+            Vendas\PropostasEmAbertoValor::class,
+            Vendas\PropostasPorSituacao::class,
+            Vendas\CicloDeVenda::class,
+            Vendas\PerdasPorMotivo::class,
+            Vendas\LeadsParados::class,
 
             Comercial\ContratosAtivos::class,
             Comercial\ContratosVencendo::class,
