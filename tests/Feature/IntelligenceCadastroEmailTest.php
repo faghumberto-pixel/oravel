@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Domain\Intelligence\Trial\Mail\TrialMail;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrialPendente;
+use App\Http\Middleware\IniciaContagemDoTeste;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -178,5 +180,49 @@ class IntelligenceCadastroEmailTest extends TestCase
         auth()->logout();
         $this->get('/intelligence/entrar/'.$trial->novoTokenDeAcesso())->assertRedirect();
         $this->assertSame(25, $trial->fresh()->diasRestantes());
+    }
+
+    private function passarPeloMiddleware($user, bool $novaSessao = true)
+    {
+        $request = Request::create('/admin');
+        $request->setUserResolver(fn () => $user);
+        $request->setLaravelSession(app('session.store'));
+        if ($novaSessao) {
+            $request->session()->forget('intelligence_contagem_checada');
+        }
+
+        return (new IniciaContagemDoTeste)->handle($request, fn () => response('ok'));
+    }
+
+    public function test_qualquer_acesso_com_sessao_aberta_inicia_a_contagem_sem_precisar_sair_e_entrar(): void
+    {
+        $this->cadastrar();
+        $this->post(parse_url($this->link(), PHP_URL_PATH));
+        $trial = $this->conta();
+        $trial->forceFill(['trial_started_at' => null, 'trial_ends_at' => null])->save(); // conta criada antes da regra, já logada no navegador
+
+        $this->assertSame(200, $this->passarPeloMiddleware($trial->user)->getStatusCode());
+        $this->assertSame(30, $trial->fresh()->diasRestantes());
+
+        // com o relógio andando, outro acesso nunca renova
+        $trial->forceFill(['trial_started_at' => now()->subDays(7), 'trial_ends_at' => now()->addDays(23)])->save();
+        $this->passarPeloMiddleware($trial->user);
+        $this->assertSame(23, $trial->fresh()->diasRestantes());
+    }
+
+    public function test_middleware_nao_faz_nada_fora_do_modo_cadastro_nem_para_quem_nao_tem_conta_de_teste(): void
+    {
+        $this->cadastrar();
+        $this->post(parse_url($this->link(), PHP_URL_PATH));
+        $trial = $this->conta();
+        $trial->forceFill(['trial_started_at' => null, 'trial_ends_at' => null])->save();
+
+        config(['intelligence_trial.inicio' => 'primeiro_envio']);
+        $this->passarPeloMiddleware($trial->user);
+        $this->assertNull($trial->fresh()->trial_started_at, 'no modo antigo só o 1º envio inicia a contagem');
+
+        config(['intelligence_trial.inicio' => 'cadastro']);
+        $comum = User::create(['name' => 'Sem teste', 'email' => 'sem@teste.test', 'password' => bcrypt('x')]);
+        $this->assertSame(200, $this->passarPeloMiddleware($comum)->getStatusCode(), 'usuário sem tenant segue normalmente');
     }
 }

@@ -327,6 +327,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                // Teste grátis do Intelligence: qualquer acesso inicia a contagem dos dias (idempotente, 1 checagem por sessão).
+                \App\Http\Middleware\IniciaContagemDoTeste::class,
                 // 2FA obrigatorio (excecao por usuario: users.two_factor_exempt)
                 RequireTwoFactor::class,
                 // Bloqueio real por inadimplência (2026-09-23) -- precisa
