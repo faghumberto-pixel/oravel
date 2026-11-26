@@ -89,6 +89,9 @@ class EditContrato extends EditRecord
             $data[ContratoResource::groupFieldName($groupName)] = $selected->intersect($keys)->values()->all();
         }
 
+        // Caixas de "Dashboards liberados": marcadas quando o contrato já tem tudo de que o dashboard precisa.
+        $data['dashboards_liberados'] = ContratoResource::dashboardsLiberados($selected->all());
+
         return $data;
     }
 }

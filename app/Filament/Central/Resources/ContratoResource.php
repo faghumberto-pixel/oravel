@@ -2,6 +2,8 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Dashboards\BlockRegistry;
+use App\Dashboards\ModuleDashboards;
 use App\Filament\Central\Resources\ContratoResource\Pages;
 use App\Models\DocumentSignature;
 use App\Models\Plan;
@@ -10,6 +12,7 @@ use App\Support\AcademiaDoPlano;
 use App\Support\Colaborador\Modulos;
 use App\Support\MenuModules;
 use App\Support\Pacotes;
+use App\Support\PainelDaArea;
 use App\Support\Precos;
 use App\Support\SaaSRegistry;
 use Filament\Forms;
@@ -103,7 +106,7 @@ class ContratoResource extends Resource
         }
 
         $grouped['Outros']['modulo_dashboard'] = 'Painel: Dashboard (Painel de Controle)';
-        $grouped['Outros'][\App\Support\PainelDaArea::CHAVE_CONTRATO] = 'Painéis por função e Visões gerais (Painel de Controle de cada função e Visão geral de cada módulo)';
+        $grouped['Outros'][PainelDaArea::CHAVE_CONTRATO] = 'Painéis por função e Visões gerais (Painel de Controle de cada função e Visão geral de cada módulo)';
 
         foreach (MenuModules::all() as $chave => $menu) {
             $grouped[$menu['grupo']][$chave] = $menu['label'];
@@ -184,7 +187,7 @@ class ContratoResource extends Resource
             'tabela_bank_reconciliation' => 'Financeiro',
             'tabela_asaas_sync' => 'Financeiro',
             'modulo_dashboard' => 'Painel Inicial',
-            \App\Support\PainelDaArea::CHAVE_CONTRATO => 'Painel Inicial',
+            PainelDaArea::CHAVE_CONTRATO => 'Painel Inicial',
         ];
     }
 
@@ -195,6 +198,54 @@ class ContratoResource extends Resource
             $campo = static::groupFieldName($grupo);
             $set($campo, array_values(array_unique(array_merge((array) ($get($campo) ?? []), Pacotes::featuresDoGrupo($pacote, $grupo)))));
         }
+    }
+
+    /**
+     * Funcionalidades do contrato de que um dashboard precisa para aparecer: o recurso de cada bloco dele, mais o Painel
+     * Inicial (sem ele os dashboards por módulo ficam desligados). A mesma regra do DashboardRenderer/Block::visibleTo.
+     *
+     * @return list<string>
+     */
+    public static function featuresDoDashboard(string $dashboardKey): array
+    {
+        $chaves = [PainelDaArea::CHAVE_CONTRATO, 'modulo_dashboard'];
+        foreach (ModuleDashboards::find($dashboardKey)['blocks'] ?? [] as $bloco) {
+            if ($classe = BlockRegistry::find($bloco)) {
+                $chaves[] = $classe::requiredFeature();
+            }
+        }
+
+        return array_values(array_unique($chaves));
+    }
+
+    /**
+     * Liga no contrato o que os dashboards marcados precisam (união com o que já está marcado: nunca desmarca). O contrato
+     * continua sendo a única fonte de verdade: isto só marca as caixas dos grupos, que são salvas como sempre.
+     *
+     * @param  list<string>  $dashboards
+     */
+    public static function aplicarDashboards(array $dashboards, callable $get, callable $set): void
+    {
+        $desejadas = collect($dashboards)->flatMap(fn ($d) => static::featuresDoDashboard($d))->unique()->all();
+
+        foreach (static::groupedFeatureOptions() as $grupo => $opcoes) {
+            if ($grupo === 'Complementos') {
+                continue;
+            }
+            $novas = array_values(array_intersect($desejadas, array_keys($opcoes)));
+            if ($novas) {
+                $campo = static::groupFieldName($grupo);
+                $set($campo, array_values(array_unique(array_merge((array) ($get($campo) ?? []), $novas))));
+            }
+        }
+    }
+
+    /** Dashboards cujas funcionalidades já estão todas no contrato (para abrir a tela com as caixas certas). */
+    public static function dashboardsLiberados(array $featuresMarcadas): array
+    {
+        return collect(array_keys(ModuleDashboards::all()))
+            ->filter(fn ($d) => array_diff(static::featuresDoDashboard($d), $featuresMarcadas) === [])
+            ->values()->all();
     }
 
     /**
@@ -391,6 +442,20 @@ class ContratoResource extends Resource
                         ->placeholder('Ex.: domínio, páginas do site, quantidade de caixas de e-mail. Se ficar vazio, vale o descrito na proposta comercial aceita.')
                         ->columnSpanFull(),
                 ])->columns(2),
+
+            Forms\Components\Section::make('Dashboards liberados')
+                ->description('Marque para liberar um dashboard neste contrato, mesmo que o cliente não tenha contratado o módulo dele (ex.: Vendas num cliente de manutenção). Isto liga no contrato as funcionalidades de que o dashboard precisa, e elas aparecem marcadas em "Módulos incluídos" abaixo. Desmarcar aqui não retira nada: para tirar, desmarque em "Módulos incluídos".')
+                ->collapsible()
+                ->schema([
+                    Forms\Components\CheckboxList::make('dashboards_liberados')
+                        ->label('')
+                        ->options(fn () => collect(ModuleDashboards::all())->map(fn ($d) => $d['label'])->all())
+                        ->descriptions(fn () => collect(ModuleDashboards::all())->map(fn ($d) => $d['lead'])->all())
+                        ->dehydrated(false)
+                        ->live()
+                        ->afterStateUpdated(fn ($state, Get $get, Set $set) => static::aplicarDashboards((array) $state, $get, $set))
+                        ->columns(2),
+                ]),
 
             Forms\Components\Section::make('Módulos incluídos')
                 ->description('Selecione o que esse contrato específico libera pro cliente, agrupado pelos mesmos menus do painel.')

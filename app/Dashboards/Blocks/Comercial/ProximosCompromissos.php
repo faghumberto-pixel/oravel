@@ -5,6 +5,7 @@ namespace App\Dashboards\Blocks\Comercial;
 use App\Dashboards\Payload;
 use App\Models\Contract;
 use App\Models\CrmLead;
+use App\Models\CrmProposta;
 use App\Models\PropostaComercial;
 use App\Support\Tenancy;
 use Illuminate\Support\Carbon;
@@ -57,6 +58,15 @@ class ProximosCompromissos extends ComercialBlock
             $atrasado = $data->lt($hoje);
             $eventos[] = [$data, 'Retornar para '.($l->company_name ?: $l->name), ($this->etapas()[$l->stage] ?? $l->stage).' · '.$this->compacto((float) $l->estimated_value).' · '.($vendedores[$l->assigned_user_id] ?? 'sem vendedor'),
                 $atrasado ? 'crit' : ($data->isSameDay($hoje) ? 'warn' : 'a'), $atrasado ? 'atrasado' : null];
+        }
+
+        // Propostas do CRM (pacote Vendas) que vencem nos próximos dias.
+        if ($tenant?->hasFeature('tabela_crm_propostas')) {
+            $propostasCrm = CrmProposta::query()->where('status', CrmProposta::STATUS_ENVIADA)
+                ->whereBetween('validade_ate', [$hoje->toDateString(), $hoje->copy()->addDays(10)->toDateString()])->get(['titulo', 'total', 'validade_ate']);
+            foreach ($propostasCrm as $p) {
+                $eventos[] = [Carbon::parse($p->validade_ate), 'Proposta vence — '.$p->titulo, $this->compacto((float) $p->total).' aguardando resposta', 'warn', null];
+            }
         }
 
         if ($tenant?->hasFeature('tabela_contracts')) {
