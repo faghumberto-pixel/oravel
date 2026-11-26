@@ -7,9 +7,10 @@
 return [
     'pacote' => 'intelligence',
 
-    // Prazo do teste e quando ele começa a contar: 'primeiro_envio' (1ª planilha com sucesso) ou 'cadastro'.
+    // Prazo do teste e quando ele começa a contar: 'cadastro' (primeiro acesso, depois de confirmar o e-mail; o cliente sabe desde o
+    // início quanto tempo tem para assinar) ou 'primeiro_envio' (1ª planilha com sucesso).
     'dias' => (int) env('INTELLIGENCE_TRIAL_DIAS', 30),
-    'inicio' => env('INTELLIGENCE_TRIAL_INICIO', 'primeiro_envio'),
+    'inicio' => env('INTELLIGENCE_TRIAL_INICIO', 'cadastro'),
 
     // Últimos N dias do teste = status "trial_expiring" (banner em destaque).
     'aviso_dias' => (int) env('INTELLIGENCE_TRIAL_AVISO_DIAS', 10),

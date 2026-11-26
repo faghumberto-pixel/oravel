@@ -127,6 +127,43 @@ class ProspectChat extends Component
         }
     }
 
+    /**
+     * Imprimir/salvar em PDF a conversa (perguntas e respostas): vira um relatório compartilhável (a mesma página das respostas com
+     * tabela, que já tem "Imprimir / salvar PDF") com uma linha por pergunta. O link entra na própria conversa. Só nas áreas com relatório.
+     */
+    public function imprimirConversa(): void
+    {
+        $this->autorizar(); // o estado do componente vem do navegador: reconfere quem está pedindo
+        if (! $this->comRelatorio()) {
+            return;
+        }
+
+        $linhas = [];
+        $pergunta = null;
+        foreach ($this->messages as $m) {
+            $papel = $m['role'] ?? '';
+            if ($papel === 'user') {
+                $pergunta = (string) ($m['content'] ?? '');
+            } elseif ($papel === 'assistant' && $pergunta !== null) {
+                $linhas[] = ['Pergunta' => Str::limit($pergunta, 2000, '…'), 'Resposta' => Str::limit(trim(str_replace('**', '', (string) ($m['content'] ?? ''))), 8000, '…')];
+                $pergunta = null;
+            }
+        }
+        if ($linhas === []) {
+            $this->dispatch('notify', type: 'warning', message: 'Faça uma pergunta primeiro: ainda não há conversa para imprimir.');
+
+            return;
+        }
+
+        $relatorio = AssistenteRelatorio::criar($this->area(), 'Conversa com o assistente, '.now()->format('d/m/Y H:i'), 'Perguntas e respostas desta conversa.', array_slice($linhas, -100), (string) Auth::id());
+        $this->messages[] = [
+            'role' => 'assistant',
+            'content' => 'Conversa pronta. Abra o relatório e use "Imprimir / salvar PDF". O link vale por '.AssistenteRelatorio::VALIDADE_DIAS.' dias.',
+            'data' => [], 'sql' => '',
+            'relatorio' => ['url' => $relatorio->url(), 'whatsapp' => 'https://wa.me/?text='.rawurlencode("Conversa Oravel\n{$relatorio->url()}")],
+        ];
+    }
+
     public function exportCsv(?int $index = null): ?StreamedResponse
     {
         $data = $index !== null ? ($this->messages[$index]['data'] ?? []) : $this->lastData;

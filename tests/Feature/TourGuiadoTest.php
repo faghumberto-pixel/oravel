@@ -156,7 +156,7 @@ class TourGuiadoTest extends TestCase
         $u = $this->usuario();
         $caminho = $this->caminho($u, 'importacoes');
 
-        Livewire::test(TourGuiado::class, ['caminho' => $caminho])->assertSee('30 dias começa a contar no seu primeiro envio');
+        Livewire::test(TourGuiado::class, ['caminho' => $caminho])->assertSee('30 dias começou no seu primeiro acesso');
     }
 
     public function test_conteudo_do_config_esta_completo_e_as_telas_existem(): void

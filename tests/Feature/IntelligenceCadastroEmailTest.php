@@ -147,4 +147,36 @@ class IntelligenceCadastroEmailTest extends TestCase
         $this->assertSame(0, IntelligenceTrialPendente::count());
         Mail::assertNothingSent();
     }
+
+    public function test_teste_conta_30_dias_a_partir_do_primeiro_acesso_confirmado(): void
+    {
+        $this->assertSame('cadastro', config('intelligence_trial.inicio'), 'padrão: o relógio começa no primeiro acesso');
+
+        $this->cadastrar();
+        $this->assertNull($this->conta(), 'antes de confirmar o e-mail não há conta nem relógio');
+        $this->post(parse_url($this->link(), PHP_URL_PATH));
+
+        $trial = $this->conta();
+        $this->assertNotNull($trial->trial_started_at, 'sem precisar enviar planilha');
+        $this->assertSame(30, $trial->diasRestantes());
+        $this->assertTrue($trial->trial_ends_at->isSameDay(now()->addDays(30)));
+    }
+
+    public function test_conta_antiga_sem_relogio_comeca_no_proximo_acesso_e_nunca_reinicia(): void
+    {
+        $this->cadastrar();
+        $this->post(parse_url($this->link(), PHP_URL_PATH));
+        $trial = $this->conta();
+        $trial->forceFill(['trial_started_at' => null, 'trial_ends_at' => null])->save(); // conta criada antes desta regra
+        auth()->logout();
+
+        $this->get('/intelligence/entrar/'.$trial->novoTokenDeAcesso())->assertRedirect();
+        $this->assertSame(30, $trial->fresh()->diasRestantes());
+
+        // já tinha relógio andando: entrar de novo não renova os dias
+        $trial->forceFill(['trial_started_at' => now()->subDays(5), 'trial_ends_at' => now()->addDays(25)])->save();
+        auth()->logout();
+        $this->get('/intelligence/entrar/'.$trial->novoTokenDeAcesso())->assertRedirect();
+        $this->assertSame(25, $trial->fresh()->diasRestantes());
+    }
 }

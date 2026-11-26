@@ -25,7 +25,7 @@
                 @elseif ($trial->trial_ends_at)
                     <strong>Teste grátis:</strong> {{ $trial->diasRestantes() }} dia(s) restantes (até {{ $trial->trial_ends_at->format('d/m/Y') }}).
                 @else
-                    <strong>Teste grátis de {{ config('intelligence_trial.dias') }} dias.</strong> Os dias começam a contar quando você enviar a primeira planilha.
+                    <strong>Teste grátis de {{ config('intelligence_trial.dias') }} dias.</strong> Os dias começam a contar no seu próximo acesso.
                 @endif
             </p>
             <a href="{{ $contratado ? route('intelligence.trial.plano') : route('intelligence.trial.contratar') }}" class="rounded-lg px-3 py-1.5 font-semibold" style="background:#4f46e5;color:#fff">

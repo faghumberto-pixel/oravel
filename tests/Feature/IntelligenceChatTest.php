@@ -10,6 +10,7 @@ use App\Domain\Intelligence\Services\DadosDeExemplo;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Domain\Intelligence\Trial\Services\CotaDiariaIa;
 use App\Livewire\Assistente\IntelligenceChat;
+use App\Models\AssistenteRelatorio;
 use App\Models\IaConsumo;
 use App\Models\Plan;
 use App\Models\Role;
@@ -211,5 +212,27 @@ class IntelligenceChatTest extends TestCase
         Http::fake(['api.anthropic.com/*' => Http::response(['content' => [['type' => 'text', 'text' => json_encode(['answer' => 'ok', 'sql' => '', 'insights' => [], 'suggested_actions' => []])]], 'usage' => ['input_tokens' => 1, 'output_tokens' => 1]])]);
         Livewire::test(IntelligenceChat::class)->set('question', 'E agora?')->call('send');
         Http::assertNotSent(fn ($r) => str_contains(json_encode($r->data(), JSON_UNESCAPED_UNICODE), 'DEMONSTRAÇÃO'));
+    }
+
+    public function test_imprimir_conversa_gera_relatorio_com_perguntas_e_respostas(): void
+    {
+        $t = $this->tenant('Imprime', [IntelligenceSnapshot::saasFeatureKey()]);
+        $this->fakeIa();
+        $this->actingAs($this->admin($t));
+
+        $c = Livewire::test(IntelligenceChat::class);
+        $c->call('imprimirConversa'); // sem pergunta ainda: nada é criado
+        $this->assertSame(0, AssistenteRelatorio::withoutGlobalScopes()->where('tenant_id', $t->id)->count());
+
+        $c->set('question', 'Como está minha empresa?')->call('send')->call('imprimirConversa');
+
+        $r = AssistenteRelatorio::withoutGlobalScopes()->where('tenant_id', $t->id)->where('titulo', 'like', 'Conversa com o assistente%')->firstOrFail();
+        $this->assertSame(['Pergunta', 'Resposta'], $r->colunas);
+        $this->assertSame('Como está minha empresa?', $r->linhas[0][0]);
+        $this->assertStringContainsString('Tudo certo.', $r->linhas[0][1]);
+        $this->assertSame($t->id, $r->tenant_id);
+        $ultima = collect($c->get('messages'))->last();
+        $this->assertSame($r->url(), $ultima['relatorio']['url']);
+        $this->get($r->url())->assertOk()->assertSee('Imprimir / salvar PDF')->assertSee('Como está minha empresa?');
     }
 }

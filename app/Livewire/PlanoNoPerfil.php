@@ -60,7 +60,7 @@ class PlanoNoPerfil extends MyProfileComponent
             $nome = 'Teste grátis';
             $detalhes[] = $trial->trial_ends_at
                 ? $trial->diasRestantes().' dia(s) restantes, até '.$trial->trial_ends_at->format('d/m/Y').'.'
-                : 'Os '.config('intelligence_trial.dias').' dias começam a contar quando você enviar a primeira planilha.';
+                : 'Os '.config('intelligence_trial.dias').' dias do teste começam no seu próximo acesso.';
         }
 
         return [

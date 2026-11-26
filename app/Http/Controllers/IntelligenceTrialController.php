@@ -6,6 +6,7 @@ use App\Domain\Intelligence\Services\DadosDeExemplo;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Domain\Intelligence\Trial\Services\ConfirmacaoDeEmail;
 use App\Domain\Intelligence\Trial\Services\RecuperacaoDeAcesso;
+use App\Domain\Intelligence\Trial\Services\TrialCiclo;
 use App\Domain\Intelligence\Trial\Services\Turnstile;
 use App\Filament\Resources\IntelligenceImportResource;
 use App\Http\Requests\IntelligenceTrial\CadastroTrialRequest;
@@ -105,6 +106,9 @@ class IntelligenceTrialController extends Controller
     {
         Auth::guard('web')->login($trial->user, true); // lembrar = sessão persistente de longa duração
         $request->session()->regenerate();
+        if (config('intelligence_trial.inicio') === 'cadastro') {
+            app(TrialCiclo::class)->iniciarContagem($trial); // idempotente: conta antiga, sem relógio, começa no próximo acesso; nunca reinicia
+        }
         app(DadosDeExemplo::class)->aoAbrir($trial); // 1ª abertura: mostra os dados de exemplo; fora do prazo: apaga o que sobrou
 
         return redirect(IntelligenceImportResource::getUrl('index'))
