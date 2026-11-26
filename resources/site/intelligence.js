@@ -37,6 +37,14 @@
   if (dlg) { dlg.addEventListener('click', function (e) { if (e.target === dlg) { dlg.close(); } }); }
 
   formsCad.forEach(function (form) {
+    // Mostrar/ocultar a senha (ajuda a não errar a digitação, já que o cadastro tem um campo só)
+    [].slice.call(form.querySelectorAll('[data-ver-senha]')).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var campo = b.previousElementSibling, ver = campo.type === 'password';
+        campo.type = ver ? 'text' : 'password'; b.textContent = ver ? 'Ocultar' : 'Mostrar';
+        b.setAttribute('aria-pressed', ver ? 'true' : 'false'); b.setAttribute('aria-label', ver ? 'Ocultar a senha' : 'Mostrar a senha');
+      });
+    });
     form.addEventListener('focusin', carregarTurnstile, { once: true });
     form.addEventListener('submit', function (e) {
       // cada formulário tem o seu próprio desafio: o campo escondido só vem preenchido quando ele termina

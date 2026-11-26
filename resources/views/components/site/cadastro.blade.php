@@ -6,6 +6,7 @@
         <label class="c" for="{{ $prefixo }}-empresa">Empresa<input id="{{ $prefixo }}-empresa" type="text" name="empresa" required autocomplete="organization" maxlength="120"></label>
         <label class="c" for="{{ $prefixo }}-whats">WhatsApp<input id="{{ $prefixo }}-whats" type="tel" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="(19) 99999-9999" maxlength="20"></label>
         <label class="c" for="{{ $prefixo }}-email">E-mail<input id="{{ $prefixo }}-email" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="voce@suaempresa.com.br" maxlength="160"></label>
+        <label class="c senha" for="{{ $prefixo }}-senha">Crie uma senha<span class="campo-senha"><input id="{{ $prefixo }}-senha" type="password" name="senha" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="mínimo 8, com letra e número" aria-describedby="{{ $prefixo }}-senha-ajuda"><button type="button" class="ver-senha" data-ver-senha aria-label="Mostrar a senha" aria-pressed="false">Mostrar</button></span><small id="{{ $prefixo }}-senha-ajuda">É com ela que você entra depois de confirmar o e-mail.</small></label>
     </div>
     @if (! empty($turnstileKey))
         <div class="cf-turnstile" data-sitekey="{{ $turnstileKey }}" data-language="pt-br"></div>

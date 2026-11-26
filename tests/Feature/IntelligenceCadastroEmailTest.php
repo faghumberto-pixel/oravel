@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Intelligence\Services\DadosDeExemplo;
 use App\Domain\Intelligence\Trial\Mail\TrialMail;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrialPendente;
@@ -28,7 +29,7 @@ class IntelligenceCadastroEmailTest extends TestCase
     private function cadastrar(array $over = [])
     {
         return $this->post('/intelligence/teste-gratis', array_merge([
-            'nome' => 'Carlos', 'empresa' => 'Locadora Carlos', 'whatsapp' => '(19) 98888-7766', 'email' => 'Carlos@Locadora.test', 'aceite' => '1',
+            'nome' => 'Carlos', 'empresa' => 'Locadora Carlos', 'whatsapp' => '(19) 98888-7766', 'email' => 'Carlos@Locadora.test', 'senha' => 'Senha1234', 'aceite' => '1',
         ], $over));
     }
 
@@ -50,7 +51,7 @@ class IntelligenceCadastroEmailTest extends TestCase
         $this->assertNotNull(IntelligenceTrialPendente::first(), 'fica pendente, sem conta');
 
         // leitor de e-mail/antivírus abrindo o link (GET) não cria conta nem gasta o link
-        $this->get(parse_url($link, PHP_URL_PATH))->assertOk()->assertSee('Confirmar e entrar');
+        $this->get(parse_url($link, PHP_URL_PATH))->assertOk()->assertSee('Confirmar e-mail');
         $this->assertNull($this->conta());
 
         $this->post(parse_url($link, PHP_URL_PATH))->assertRedirect();
@@ -170,16 +171,27 @@ class IntelligenceCadastroEmailTest extends TestCase
         $this->post(parse_url($this->link(), PHP_URL_PATH));
         $trial = $this->conta();
         $trial->forceFill(['trial_started_at' => null, 'trial_ends_at' => null])->save(); // conta criada antes desta regra
-        auth()->logout();
 
-        $this->get('/intelligence/entrar/'.$trial->novoTokenDeAcesso())->assertRedirect();
+        $this->passarPeloMiddleware($trial->user); // o próximo acesso autenticado (entrou com e-mail e senha)
         $this->assertSame(30, $trial->fresh()->diasRestantes());
 
-        // já tinha relógio andando: entrar de novo não renova os dias
+        // já tinha relógio andando: acessar de novo não renova os dias
         $trial->forceFill(['trial_started_at' => now()->subDays(5), 'trial_ends_at' => now()->addDays(25)])->save();
-        auth()->logout();
-        $this->get('/intelligence/entrar/'.$trial->novoTokenDeAcesso())->assertRedirect();
+        $this->passarPeloMiddleware($trial->user);
         $this->assertSame(25, $trial->fresh()->diasRestantes());
+    }
+
+    public function test_primeiro_acesso_apos_o_login_mostra_os_dados_de_exemplo_uma_vez(): void
+    {
+        $this->cadastrar();
+        $this->post(parse_url($this->link(), PHP_URL_PATH));
+        $trial = $this->conta();
+        $this->assertFalse(DadosDeExemplo::existe($trial->tenant_id), 'confirmar o e-mail não gera nada: o exemplo vem no 1º acesso');
+
+        $this->passarPeloMiddleware($trial->user);
+
+        $this->assertTrue(DadosDeExemplo::existe($trial->tenant_id));
+        $this->assertNotNull($trial->fresh()->exemplo_oferecido_em);
     }
 
     private function passarPeloMiddleware($user, bool $novaSessao = true)

@@ -6,10 +6,10 @@ use App\Console\Commands\SiteIntelligenceGerar;
 use App\Domain\Intelligence\Models\IntelligenceTestimonial;
 use App\Domain\Intelligence\Trial\Mail\TrialMail;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
-use App\Filament\Resources\IntelligenceImportResource;
 use App\Support\IntelligenceSite\Exemplo;
 use DOMDocument;
 use DOMXPath;
+use Filament\Facades\Filament;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Artisan;
@@ -132,7 +132,7 @@ class IntelligenceSitePaginaTest extends TestCase
         foreach (['wa.me', 'whatsapp.com/send', 'Online agora', 'wa-chat', '#contato', '/contato.php', 'Sem cadastro', 'sem cadastro', 'Quem fez', 'Humberto', 'não substitui seu contador', 'Não compara com outras locadoras'] as $proibido) {
             $this->assertStringNotContainsString($proibido, $h, "não pode aparecer: $proibido");
         }
-        $this->assertStringContainsString('Leva 1 minuto. Sem senha e sem cartão.', $h);
+        $this->assertStringContainsString('Leva 1 minuto. Sem cartão.', $h);
     }
 
     public function test_resposta_de_seguranca_fala_de_nuvem_e_backup_sem_citar_outros_usuarios(): void
@@ -312,7 +312,7 @@ class IntelligenceSitePaginaTest extends TestCase
     private function cadastrarSite(array $over = [], array $headers = [])
     {
         return $this->withHeaders($headers)->post('/intelligence/teste-gratis', array_merge([
-            'nome' => 'Maria Silva', 'empresa' => 'Locadora Site', 'whatsapp' => '(11) 99999-0777', 'email' => 'maria@locadora-site.test', 'aceite' => '1',
+            'nome' => 'Maria Silva', 'empresa' => 'Locadora Site', 'whatsapp' => '(11) 99999-0777', 'email' => 'maria@locadora-site.test', 'senha' => 'Senha1234', 'aceite' => '1',
         ], $over));
     }
 
@@ -323,7 +323,8 @@ class IntelligenceSitePaginaTest extends TestCase
         $this->assertFalse(IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5511999990777')->exists());
 
         $link = Mail::sent(TrialMail::class)->last()->link;
-        $this->post(parse_url($link, PHP_URL_PATH))->assertRedirect(IntelligenceImportResource::getUrl('index'));
+        $this->post(parse_url($link, PHP_URL_PATH))->assertRedirect(Filament::getPanel('admin')->getLoginUrl(['confirmado' => 1]));
+        $this->assertGuest();
         $this->assertTrue(IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5511999990777')->exists());
     }
 

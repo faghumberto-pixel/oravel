@@ -2,7 +2,7 @@
 @section('titulo', 'Teste grátis - Oravel Intelligence')
 @section('conteudo')
     <h1 class="text-2xl font-bold">Teste grátis por {{ config('intelligence_trial.dias') }} dias</h1>
-    <p class="mt-2 text-sm text-white/70">Sem senha e sem cartão. Confirme seu e-mail, envie sua planilha e veja a primeira leitura.</p>
+    <p class="mt-2 text-sm text-white/70">Sem cartão. Crie sua senha, confirme seu e-mail e veja a primeira leitura.</p>
 
     @if ($errors->any())
         <div class="mt-4 rounded-lg bg-red-500/20 p-3 text-sm text-red-100">
@@ -24,7 +24,11 @@
         </label>
         <label class="block text-sm">E-mail
             <input name="email" type="email" value="{{ old('email') }}" required placeholder="voce@suaempresa.com.br" class="mt-1 w-full rounded-lg border-0 bg-white/10 px-3 py-2 text-white" autocomplete="email">
-            <span class="mt-1 block text-xs text-white/60">Vamos enviar um link para você confirmar e entrar.</span>
+            <span class="mt-1 block text-xs text-white/60">Vamos enviar um link para você confirmar o e-mail.</span>
+        </label>
+        <label class="block text-sm">Crie uma senha
+            <input name="senha" type="password" required minlength="8" maxlength="72" autocomplete="new-password" class="mt-1 w-full rounded-lg border-0 bg-white/10 px-3 py-2 text-white">
+            <span class="mt-1 block text-xs text-white/60">Pelo menos 8 caracteres, com letra e número. É com ela que você vai entrar.</span>
         </label>
         @if (config('services.turnstile.site_key'))
             <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="dark"></div>
@@ -36,5 +40,5 @@
         </label>
         <button class="w-full rounded-lg bg-indigo-500 px-4 py-3 font-semibold hover:bg-indigo-400">Receber link de acesso</button>
     </form>
-    <p class="mt-4 text-center text-xs text-white/60">Já tem teste? <a class="underline" href="{{ route('intelligence.trial.novo-link') }}">Receber meu link de acesso</a></p>
+    <p class="mt-4 text-center text-xs text-white/60">Já tem conta? <a class="underline" href="{{ \Filament\Facades\Filament::getPanel('admin')->getLoginUrl() }}">Entrar</a></p>
 @endsection

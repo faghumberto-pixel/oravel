@@ -35,6 +35,12 @@
 
                     <h2 class="oravel-card-title">Acesse sua conta</h2>
 
+                    @if (request()->query('confirmado') === '1')
+                        <p class="mb-4 rounded-lg px-3 py-2 text-sm" style="background:rgba(16,185,129,.16);border:1px solid rgba(16,185,129,.5)" data-confirmado>E-mail confirmado. Entre com o seu e-mail e a senha que você criou.</p>
+                    @elseif (request()->query('confirmado') === '0')
+                        <p class="mb-4 rounded-lg px-3 py-2 text-sm" style="background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.5)" data-link-encerrado>O acesso por link foi encerrado. Entre com o seu e-mail e a sua senha. Se esqueceu a senha, use "Esqueci minha senha".</p>
+                    @endif
+
                     <x-filament-panels::form id="form" wire:submit="authenticate" class="space-y-5">
                         {{ $this->form }}
 
@@ -44,9 +50,10 @@
                                 Lembrar de mim
                             </label>
 
-                            @if (filament()->hasPasswordReset())
-                                <a href="{{ filament()->getRequestPasswordResetUrl() }}" class="oravel-login-muted hover:underline">
-                                    Esqueceu a senha?
+                            {{-- O painel não usa o reset do Filament: a redefinição é a da própria aplicação (/forgot-password), já no tema da Oravel. --}}
+                            @if (Route::has('password.request'))
+                                <a href="{{ route('password.request') }}" class="oravel-login-muted hover:underline" data-esqueci-senha>
+                                    Esqueci minha senha
                                 </a>
                             @endif
                         </div>

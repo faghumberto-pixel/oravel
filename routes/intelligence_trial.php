@@ -6,7 +6,7 @@ use App\Http\Controllers\IntelligenceTrialController;
 use Illuminate\Support\Facades\Route;
 
 /*
- * Teste grátis do Oravel Intelligence: cadastro sem senha, link pessoal de acesso e novo link por WhatsApp.
+ * Teste grátis do Oravel Intelligence: cadastro com e-mail confirmado e senha; o acesso é pela tela de login.
  * Contratação e conta ficam em routes abaixo (autenticadas).
  */
 $limite = 'throttle:'.max(1, (int) config('intelligence_trial.rate_limit_por_minuto', 5)).',1';
@@ -17,9 +17,9 @@ Route::prefix('intelligence')->name('intelligence.trial.')->group(function () us
     Route::get('/verifique-seu-email', [IntelligenceTrialController::class, 'verifique'])->name('verifique');
     Route::get('/confirmar/{token}', [IntelligenceTrialController::class, 'confirmarTela'])->where('token', '[A-Za-z0-9]{48}')->name('confirmar');
     Route::post('/confirmar/{token}', [IntelligenceTrialController::class, 'confirmar'])->middleware($limite)->where('token', '[A-Za-z0-9]{48}')->name('confirmar.enviar');
-    Route::get('/entrar/{token}', [IntelligenceTrialController::class, 'acessar'])->middleware($limite)->where('token', '[A-Za-z0-9]{48}')->name('entrar');
-    Route::get('/novo-link', [IntelligenceTrialController::class, 'novoLink'])->name('novo-link');
-    Route::post('/novo-link', [IntelligenceTrialController::class, 'enviarNovoLink'])->middleware($limite)->name('novo-link.enviar');
+    // Acesso por link (sem senha) NÃO existe mais. Estas rotas só redirecionam quem chega por e-mail ou favorito antigo.
+    Route::get('/entrar/{token}', [IntelligenceTrialController::class, 'acessoPorLinkEncerrado'])->where('token', '[A-Za-z0-9]{48}')->name('entrar');
+    Route::get('/novo-link', [IntelligenceTrialController::class, 'esqueciASenha'])->name('novo-link');
 });
 
 // Dentro do sistema (usuário logado): situação do plano, contratação, cancelamento e contrato aceito.

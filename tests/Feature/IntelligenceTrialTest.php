@@ -10,19 +10,24 @@ use App\Domain\Intelligence\Trial\Mail\ContratoAceitoMail;
 use App\Domain\Intelligence\Trial\Mail\NovoCadastroTrialMail;
 use App\Domain\Intelligence\Trial\Mail\TrialMail;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
+use App\Domain\Intelligence\Trial\Models\IntelligenceTrialPendente;
 use App\Domain\Intelligence\Trial\Models\IntelligenceWebhookEvento;
 use App\Domain\Intelligence\Trial\Services\AssinaturaPlano;
 use App\Domain\Intelligence\Trial\Services\TrialLembretes;
 use App\Domain\Intelligence\Trial\Support\TelefoneBr;
-use App\Filament\Resources\IntelligenceImportResource;
 use App\Models\SalesLead;
 use App\Models\Tenant;
 use App\Models\TenantEvent;
+use Filament\Facades\Filament;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use OpenSpout\Common\Entity\Row;
@@ -48,7 +53,7 @@ class IntelligenceTrialTest extends TestCase
     private function cadastrar(array $over = [])
     {
         return $this->post('/intelligence/teste-gratis', array_merge([
-            'nome' => 'Maria Silva', 'empresa' => 'Locadora Teste', 'whatsapp' => '(19) 99999-1234', 'email' => 'maria@locadora.test', 'aceite' => '1',
+            'nome' => 'Maria Silva', 'empresa' => 'Locadora Teste', 'whatsapp' => '(19) 99999-1234', 'email' => 'maria@locadora.test', 'senha' => 'Senha1234', 'aceite' => '1',
         ], $over));
     }
 
@@ -68,8 +73,10 @@ class IntelligenceTrialTest extends TestCase
     {
         $this->cadastrar();
         $this->confirmar();
+        $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
+        $this->actingAs($trial->user); // a confirmação do e-mail não loga; os testes seguem como cliente já autenticado (entrou com e-mail e senha)
 
-        return IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
+        return $trial;
     }
 
     private function planilha(int $frota = 100): string
@@ -139,9 +146,12 @@ class IntelligenceTrialTest extends TestCase
         $r = $this->confirmar();
 
         $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
-        $r->assertRedirect(IntelligenceImportResource::getUrl('index'));
-        $this->assertAuthenticatedAs($trial->user);
-        $this->assertTrue((bool) $trial->user->two_factor_exempt, 'sem senha/app autenticador: 2FA não pode barrar o cliente do teste');
+        $r->assertRedirect(Filament::getPanel('admin')->getLoginUrl(['confirmado' => 1]));
+        $this->assertGuest(); // confirmar o e-mail NÃO entra sozinho: a pessoa entra pela tela de login, com e-mail e senha
+        $this->assertTrue(Auth::guard('web')->attempt(['email' => 'maria@locadora.test', 'password' => 'Senha1234']), 'entra com a senha que criou');
+        Auth::guard('web')->logout();
+        $this->assertFalse(Auth::guard('web')->attempt(['email' => 'maria@locadora.test', 'password' => 'outra-senha-1']), 'senha errada não entra');
+        $this->assertTrue((bool) $trial->user->two_factor_exempt, 'o cliente do teste não precisa configurar app autenticador para começar');
         $this->assertSame('maria@locadora.test', $trial->user->email, 'o usuário nasce com o e-mail confirmado, não com um provisório');
         $this->assertNotNull($trial->user->email_verified_at);
         $this->assertSame('Locadora Teste', $trial->tenant->name);
@@ -149,7 +159,6 @@ class IntelligenceTrialTest extends TestCase
         $this->assertSame($leads + 1, SalesLead::count());
         $this->assertSame('Intelligence – teste grátis', SalesLead::latest('created_at')->first()->inbound_details['origem']);
         Mail::assertSent(NovoCadastroTrialMail::class, fn ($m) => $m->hasTo('dono@example.test'));
-        $r->assertSessionHas('intelligence_link');
     }
 
     public function test_cadastro_com_sessao_antiga_de_usuario_removido_funciona_e_nao_herda_o_autor(): void
@@ -160,9 +169,8 @@ class IntelligenceTrialTest extends TestCase
         $this->cadastrar();
         $r = $this->withSession([Auth::guard('web')->getName() => $fantasma])->confirmar();
 
-        $r->assertRedirect(IntelligenceImportResource::getUrl('index'));
+        $r->assertRedirect(Filament::getPanel('admin')->getLoginUrl(['confirmado' => 1]));
         $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->firstOrFail();
-        $this->assertAuthenticatedAs($trial->user);
 
         // o evento "cadastro" foi gravado, sem apontar para o usuário fantasma (a chave estrangeira o recusaria)
         $evento = TenantEvent::where('tenant_id', $trial->tenant_id)->where('dedupe_key', 'cadastro')->first();
@@ -181,85 +189,62 @@ class IntelligenceTrialTest extends TestCase
         $this->assertSame($antes, IntelligenceTrial::withoutGlobalScopes()->count());
     }
 
-    public function test_whatsapp_repetido_nao_cria_teste_nao_loga_e_nao_troca_o_link_do_dono(): void
+    public function test_whatsapp_repetido_nao_cria_teste_nao_loga_e_so_avisa_o_dono_no_proprio_email(): void
     {
         $trial = $this->trial();
         $trial->forceFill(['trial_started_at' => now()->subDays(5), 'trial_ends_at' => now()->addDays(25)])->save();
-        $hashDoDono = $trial->fresh()->access_token_hash;
         $tenants = Tenant::withoutGlobalScopes()->count();
         auth()->logout();
 
-        $r = $this->cadastrar(['empresa' => 'Outra Empresa']);
+        $r = $this->cadastrar(['empresa' => 'Outra Empresa', 'email' => 'intruso@outra.test', 'senha' => 'Intruso1234']);
 
-        $r->assertRedirect(route('intelligence.trial.verifique'))->assertSessionMissing('intelligence_link')->assertSessionMissing('link');
-        $this->assertGuest();   // quem digitou o número NÃO entra na conta
-        // quem só sabe o número nunca recebe o link: ele só vai para o e-mail do dono (que continua conseguindo entrar)
-        Mail::assertSent(TrialMail::class, fn ($m) => $m->hasTo('maria@locadora.test') && str_contains((string) $m->link, '/intelligence/entrar/'));
+        $r->assertRedirect(route('intelligence.trial.verifique'));
+        $this->assertGuest(); // quem digitou o número NÃO entra na conta
+        // o aviso vai só para o e-mail do DONO e não traz nenhum link que entre sozinho
+        Mail::assertSent(TrialMail::class, fn ($m) => $m->hasTo('maria@locadora.test') && str_contains($m->assunto, 'Tentaram criar') && ! str_contains((string) $m->link, '/entrar/') && str_contains((string) $m->link, '/login'));
+        Mail::assertNotSent(TrialMail::class, fn ($m) => $m->hasTo('intruso@outra.test'));
         $this->assertSame($tenants, Tenant::withoutGlobalScopes()->count());
         $this->assertSame(1, IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', '+5519999991234')->count());
         $this->assertEqualsWithDelta(25, $trial->fresh()->diasRestantes(), 1);
+        $this->assertTrue(Auth::guard('web')->attempt(['email' => 'maria@locadora.test', 'password' => 'Senha1234']), 'a senha do dono segue valendo');
     }
 
-    public function test_link_pessoal_autentica_e_novo_link_invalida_o_anterior(): void
+    public function test_acesso_por_link_nao_existe_mais_so_leva_a_tela_de_entrada(): void
     {
         $trial = $this->trial();
-        $token = $trial->novoTokenDeAcesso();
         auth()->logout();
+        $login = Filament::getPanel('admin')->getLoginUrl(['confirmado' => 0]);
 
-        $this->get("/intelligence/entrar/{$token}")->assertRedirect();
-        $this->assertAuthenticatedAs($trial->user);
-        auth()->logout();
-
-        $novo = $trial->novoTokenDeAcesso();
-        $this->get("/intelligence/entrar/{$token}")->assertRedirect(route('intelligence.trial.novo-link'));
+        $this->get('/intelligence/entrar/'.str_repeat('a', 48))->assertRedirect($login);
         $this->assertGuest();
-        $this->get("/intelligence/entrar/{$novo}")->assertRedirect();
-        $this->assertAuthenticatedAs($trial->user);
-    }
-
-    public function test_novo_link_nunca_aparece_na_tela_e_a_resposta_nao_revela_se_o_numero_tem_conta(): void
-    {
-        $trial = $this->trial();
-        $hash = $trial->fresh()->access_token_hash;
-        auth()->logout();
-
-        $existe = $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234']);
-        $naoExiste = $this->post('/intelligence/novo-link', ['whatsapp' => '19988887777']);
-
-        foreach ([$existe, $naoExiste] as $r) {
-            $r->assertSessionHas('enviado')->assertSessionMissing('link')->assertSessionHasNoErrors();
-        }
-        $this->get('/intelligence/novo-link')->assertOk()->assertDontSee('/intelligence/entrar/');
-        $this->assertSame($hash, $trial->fresh()->access_token_hash, 'sem canal seguro o link não é trocado');
+        $this->get('/intelligence/novo-link')->assertRedirect(route('password.request'));
+        $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234'])->assertStatus(405); // não existe mais pedido de novo link
         $this->assertGuest();
-        Mail::assertSent(TrialMail::class, fn ($m) => str_contains($m->assunto, 'Pedido de novo link') && ! str_contains(implode(' ', $m->paragrafos), '/intelligence/entrar/'));
+        $this->assertNull($trial->fresh()->access_token_hash, 'nenhum token de acesso é gerado');
     }
 
-    public function test_novo_link_vai_para_o_email_cadastrado_do_dono_e_nunca_para_a_tela(): void
+    public function test_senha_e_validada_nunca_volta_para_o_formulario_e_so_fica_como_hash(): void
     {
-        $trial = $this->trial();
-        $trial->user->forceFill(['email' => 'dono@empresa.test'])->save();
-        $velho = $trial->fresh()->access_token_hash;
-        auth()->logout();
+        $antes = IntelligenceTrial::withoutGlobalScopes()->count();
+        $this->cadastrar(['senha' => null])->assertSessionHasErrors('senha');
+        $this->cadastrar(['senha' => 'curta1'])->assertSessionHasErrors('senha');
+        $this->cadastrar(['senha' => 'somenteletras'])->assertSessionHasErrors('senha');
+        $this->cadastrar(['senha' => '1234567890'])->assertSessionHasErrors('senha');
+        $r = $this->cadastrar(['senha' => 'curta1']);
+        $this->assertNull(session()->getOldInput('senha'), 'a senha nunca volta para o formulário');
+        $this->assertSame($antes, IntelligenceTrial::withoutGlobalScopes()->count());
 
-        $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234'])->assertSessionMissing('link');
-
-        Mail::assertSent(TrialMail::class, fn ($m) => $m->hasTo('dono@empresa.test') && str_contains((string) $m->link, '/intelligence/entrar/'));
-        $this->assertNotSame($velho, $trial->fresh()->access_token_hash);
-    }
-
-    public function test_pedido_de_novo_link_e_limitado_a_um_a_cada_10_minutos(): void
-    {
-        $trial = $this->trial();
-        $trial->user->forceFill(['email' => 'dono@empresa.test'])->save();
+        // senha boa: só o HASH fica guardado enquanto o e-mail não é confirmado
         Cache::flush();
-        auth()->logout();
-
-        $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234']);
-        $this->post('/intelligence/novo-link', ['whatsapp' => '19999991234']);
-
-        Mail::assertSent(TrialMail::class, fn ($m) => $m->hasTo('dono@empresa.test'));
-        $this->assertSame(1, Mail::sent(TrialMail::class, fn ($m) => $m->hasTo('dono@empresa.test'))->count());
+        $this->cadastrar(['senha' => 'Valida12345'])->assertRedirect(route('intelligence.trial.verifique'));
+        $pendente = IntelligenceTrialPendente::first();
+        $this->assertNotNull($pendente);
+        $this->assertNotSame('Valida12345', $pendente->senha_hash);
+        $this->assertTrue(Hash::check('Valida12345', $pendente->senha_hash));
+        $this->assertStringNotContainsString('Valida12345', json_encode(DB::table('intelligence_trial_pendentes')->get()));
+        foreach (Mail::sent(TrialMail::class) as $m) {
+            $this->assertStringNotContainsString('Valida12345', json_encode([$m->paragrafos, $m->link, $m->assunto]), 'a senha nunca vai por e-mail');
+        }
     }
 
     // ---- contagem dos 30 dias e somente leitura ----
@@ -530,7 +515,6 @@ class IntelligenceTrialTest extends TestCase
     public function test_telas_publicas_e_do_plano_renderizam(): void
     {
         $this->get('/intelligence/teste-gratis')->assertOk()->assertSee('Receber link de acesso')->assertSee('E-mail')->assertSee('Termos de Uso');
-        $this->get('/intelligence/novo-link')->assertOk();
 
         $trial = $this->trial();
         $this->get('/intelligence/contratar')->assertOk()->assertSee('Aceitar e contratar')->assertSee('39,90');
@@ -548,5 +532,30 @@ class IntelligenceTrialTest extends TestCase
         $this->assertStringContainsString('Teste grátis:', $html);
         $this->assertStringContainsString('Contratar plano básico', $html);
         $this->assertStringContainsString('30 dia(s) restantes', $html);
+    }
+
+    public function test_esqueci_a_senha_redefine_e_o_cliente_entra_com_a_nova_senha(): void
+    {
+        $trial = $this->trial();
+        auth()->logout();
+        Cache::flush();
+        Notification::fake();
+
+        // a tela de entrada oferece o caminho
+        $this->get('/admin/login')->assertOk()->assertSee('Esqueci minha senha', false);
+
+        $this->post('/forgot-password', ['email' => 'maria@locadora.test'])->assertSessionHas('status');
+        $token = null;
+        Notification::assertSentTo($trial->user, ResetPassword::class, function ($n) use (&$token) {
+            $token = $n->token;
+
+            return true;
+        });
+
+        $this->post('/reset-password', ['token' => $token, 'email' => 'maria@locadora.test', 'password' => 'NovaSenha789', 'password_confirmation' => 'NovaSenha789'])->assertSessionHasNoErrors();
+
+        $this->assertTrue(Auth::guard('web')->attempt(['email' => 'maria@locadora.test', 'password' => 'NovaSenha789']), 'entra com a senha nova');
+        Auth::guard('web')->logout();
+        $this->assertFalse(Auth::guard('web')->attempt(['email' => 'maria@locadora.test', 'password' => 'Senha1234']), 'a senha antiga deixa de valer');
     }
 }

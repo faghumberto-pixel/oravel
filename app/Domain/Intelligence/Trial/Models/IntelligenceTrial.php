@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 /**
  * Conta de teste grátis do Intelligence (1 por tenant, 1 por WhatsApp). `status` guarda o último estado persistido;
@@ -72,20 +71,6 @@ class IntelligenceTrial extends Model
     public function contratou(): bool
     {
         return $this->contracted_at !== null;
-    }
-
-    /** Gera um link de acesso novo (o anterior deixa de valer). Só o hash fica no banco; devolve o token em claro. */
-    public function novoTokenDeAcesso(): string
-    {
-        $token = Str::random(48);
-        $this->forceFill(['access_token_hash' => hash('sha256', $token), 'access_token_at' => now()])->save();
-
-        return $token;
-    }
-
-    public static function porToken(string $token): ?self
-    {
-        return self::withoutGlobalScopes()->where('access_token_hash', hash('sha256', $token))->first();
     }
 
     public function diasRestantes(): ?int

@@ -34,9 +34,14 @@ p{margin:0}a{color:inherit}img,svg{max-width:100%}
 .pontos b{font:700 15px/1.25 "Inter",sans-serif}.pontos span{font-size:13px;color:#b9c4d1}
 /* formulário (hero e pop-up) */
 .cadastro{display:grid;gap:12px}
-.cadastro .campos{display:grid;gap:10px}
+.cadastro .campos{display:grid;gap:10px;align-items:start}
+.cadastro label.c small{font-weight:400;font-size:12px;color:var(--suave);line-height:1.35}
+.campo-senha{position:relative;display:block}
+.campo-senha input{padding-right:92px}
+.ver-senha{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-height:36px;padding:0 12px;border:0;border-radius:8px;background:var(--aco);color:var(--tinta);font:600 13px/1 "Inter",sans-serif;cursor:pointer}
+.ver-senha:hover{background:var(--aco-2)}
 .cadastro label.c{display:grid;gap:4px;font-size:13px;font-weight:600;color:var(--suave)}
-.cadastro input[type=text],.cadastro input[type=tel],.cadastro input[type=email]{font:inherit;color:var(--tinta);padding:12px 13px;border:1.5px solid #cbd5e1;border-radius:10px;min-height:50px;width:100%;background:#fff}
+.cadastro input[type=text],.cadastro input[type=tel],.cadastro input[type=email],.cadastro input[type=password]{font:inherit;color:var(--tinta);padding:12px 13px;border:1.5px solid #cbd5e1;border-radius:10px;min-height:50px;width:100%;background:#fff}
 .cadastro input:focus{border-color:var(--indigo);outline:3px solid var(--indigo-claro)}
 .cadastro .aceite{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--suave)}
 .cadastro .aceite input{margin-top:3px;width:18px;height:18px;flex:none}
@@ -142,7 +147,9 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
  body{padding-bottom:0}.fixo{display:none}
  .hero{padding:72px 0 84px}
  .form-hero{padding:24px 26px 18px}
- .cadastro .campos{grid-template-columns:repeat(4,1fr)}
+ .cadastro .campos{grid-template-columns:repeat(6,1fr)}
+ .cadastro .campos label:nth-child(-n+3){grid-column:span 2}
+ .cadastro .campos label:nth-child(n+4){grid-column:span 3}
  .cadastro{grid-template-columns:1fr auto;align-items:end}
  .cadastro .campos{grid-column:1 / -1}
  .cadastro .cf-turnstile{grid-column:1 / -1}
@@ -150,6 +157,7 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
  .cadastro .btn{grid-column:2;width:auto;min-width:240px}
  dialog.form .cadastro{grid-template-columns:1fr}
  dialog.form .cadastro .campos{grid-template-columns:1fr}
+ dialog.form .cadastro .campos label:nth-child(n){grid-column:auto}
  dialog.form .cadastro .btn{grid-column:auto;width:100%}
  .bloco{padding:84px 0}
  .fluxo{flex-direction:row;gap:26px}

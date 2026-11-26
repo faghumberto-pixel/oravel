@@ -80,6 +80,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        // A senha do cadastro do Intelligence nunca volta para o formulário (old input) numa falha de validação.
+        $exceptions->dontFlash(['senha']);
+
         // API do CRM: toda falha sai como {erro: {codigo, mensagem, campos?}} em JSON.
         $apiCrm = fn (Request $request) => $request->is('api/crm/*');
 

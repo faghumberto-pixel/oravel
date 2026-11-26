@@ -62,9 +62,14 @@ p{margin:0}a{color:inherit}img,svg{max-width:100%}
 .pontos b{font:700 15px/1.25 "Inter",sans-serif}.pontos span{font-size:13px;color:#b9c4d1}
 /* formulário (hero e pop-up) */
 .cadastro{display:grid;gap:12px}
-.cadastro .campos{display:grid;gap:10px}
+.cadastro .campos{display:grid;gap:10px;align-items:start}
+.cadastro label.c small{font-weight:400;font-size:12px;color:var(--suave);line-height:1.35}
+.campo-senha{position:relative;display:block}
+.campo-senha input{padding-right:92px}
+.ver-senha{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-height:36px;padding:0 12px;border:0;border-radius:8px;background:var(--aco);color:var(--tinta);font:600 13px/1 "Inter",sans-serif;cursor:pointer}
+.ver-senha:hover{background:var(--aco-2)}
 .cadastro label.c{display:grid;gap:4px;font-size:13px;font-weight:600;color:var(--suave)}
-.cadastro input[type=text],.cadastro input[type=tel],.cadastro input[type=email]{font:inherit;color:var(--tinta);padding:12px 13px;border:1.5px solid #cbd5e1;border-radius:10px;min-height:50px;width:100%;background:#fff}
+.cadastro input[type=text],.cadastro input[type=tel],.cadastro input[type=email],.cadastro input[type=password]{font:inherit;color:var(--tinta);padding:12px 13px;border:1.5px solid #cbd5e1;border-radius:10px;min-height:50px;width:100%;background:#fff}
 .cadastro input:focus{border-color:var(--indigo);outline:3px solid var(--indigo-claro)}
 .cadastro .aceite{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--suave)}
 .cadastro .aceite input{margin-top:3px;width:18px;height:18px;flex:none}
@@ -170,7 +175,9 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
  body{padding-bottom:0}.fixo{display:none}
  .hero{padding:72px 0 84px}
  .form-hero{padding:24px 26px 18px}
- .cadastro .campos{grid-template-columns:repeat(4,1fr)}
+ .cadastro .campos{grid-template-columns:repeat(6,1fr)}
+ .cadastro .campos label:nth-child(-n+3){grid-column:span 2}
+ .cadastro .campos label:nth-child(n+4){grid-column:span 3}
  .cadastro{grid-template-columns:1fr auto;align-items:end}
  .cadastro .campos{grid-column:1 / -1}
  .cadastro .cf-turnstile{grid-column:1 / -1}
@@ -178,6 +185,7 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
  .cadastro .btn{grid-column:2;width:auto;min-width:240px}
  dialog.form .cadastro{grid-template-columns:1fr}
  dialog.form .cadastro .campos{grid-template-columns:1fr}
+ dialog.form .cadastro .campos label:nth-child(n){grid-column:auto}
  dialog.form .cadastro .btn{grid-column:auto;width:100%}
  .bloco{padding:84px 0}
  .fluxo{flex-direction:row;gap:26px}
@@ -220,12 +228,13 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
         <label class="c" for="h-empresa">Empresa<input id="h-empresa" type="text" name="empresa" required autocomplete="organization" maxlength="120"></label>
         <label class="c" for="h-whats">WhatsApp<input id="h-whats" type="tel" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="(19) 99999-9999" maxlength="20"></label>
         <label class="c" for="h-email">E-mail<input id="h-email" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="voce@suaempresa.com.br" maxlength="160"></label>
+        <label class="c senha" for="h-senha">Crie uma senha<span class="campo-senha"><input id="h-senha" type="password" name="senha" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="mínimo 8, com letra e número" aria-describedby="h-senha-ajuda"><button type="button" class="ver-senha" data-ver-senha aria-label="Mostrar a senha" aria-pressed="false">Mostrar</button></span><small id="h-senha-ajuda">É com ela que você entra depois de confirmar o e-mail.</small></label>
     </div>
         <label class="aceite"><input type="checkbox" name="aceite" value="1" required><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> (LGPD).</span></label>
     <div class="hp" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
     <button class="btn" type="submit">Começar teste grátis</button>
 </form>
-            <p class="micro">Leva 1 minuto. Sem senha e sem cartão. Você confirma pelo e-mail.</p>
+            <p class="micro">Leva 1 minuto. Sem cartão. Você confirma pelo e-mail e entra com a senha que criou.</p>
         </div>
         <ul class="pontos">
                             <li><b>Funciona com qualquer sistema</b><span>Ou sem sistema nenhum</span></li>
@@ -470,7 +479,7 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
     <div class="wrap">
         <h2 id="h-como">Como funciona</h2>
         <div class="passos">
-                            <div class="passo"><h3>Crie sua conta</h3><p>Nome, empresa, WhatsApp e e-mail. Você confirma pelo link que chega no e-mail e já entra, sem senha.</p></div>
+                            <div class="passo"><h3>Crie sua conta</h3><p>Nome, empresa, WhatsApp, e-mail e uma senha. Você confirma o e-mail pelo link que chega na caixa de entrada e entra com a sua senha.</p></div>
                             <div class="passo"><h3>Traga seus números</h3><p>Baixe o modelo e preencha, ou exporte do seu sistema. Uma linha com os números do mês e, se quiser, uma linha por equipamento.</p><a class="link-modelo" href="modelo-planilha-intelligence.xlsx" download data-track="Teste grátis: baixou o modelo">Baixar modelo da planilha</a></div>
                             <div class="passo"><h3>Leia, decida e pergunte</h3><p>A leitura sai em minutos. Atualizou os dados? Reenvie quando quiser: cada envio fica no histórico e você compara com os anteriores.</p></div>
                     </div>
@@ -517,7 +526,7 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
         <h2 id="h-final">Comece pelo teste e veja a sua locadora com outros olhos.</h2>
         <p>Crie a conta em 1 minuto e receba a primeira leitura.</p>
         <a class="btn" href="https://app.oravel.com.br/intelligence/teste-gratis" data-cta data-pos="final" data-track="Teste grátis: CTA final">Começar teste grátis</a>
-        <p class="micro">Leva 1 minuto. Sem senha e sem cartão. Você confirma pelo e-mail.</p>
+        <p class="micro">Leva 1 minuto. Sem cartão. Você confirma pelo e-mail e entra com a senha que criou.</p>
     </div>
 </section>
 
@@ -537,13 +546,14 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
     <button type="button" class="fechar" data-fechar aria-label="Fechar">×</button>
     <div class="dlg-corpo">
         <h2 id="tg-t">Começar teste grátis</h2>
-        <p class="micro">Leva 1 minuto. Sem senha e sem cartão. Você confirma pelo e-mail.</p>
+        <p class="micro">Leva 1 minuto. Sem cartão. Você confirma pelo e-mail e entra com a senha que criou.</p>
         <form method="post" action="https://app.oravel.com.br/intelligence/teste-gratis" data-cadastro class="cadastro">
     <div class="campos">
         <label class="c" for="f-nome">Seu nome<input id="f-nome" type="text" name="nome" required autocomplete="name" maxlength="120"></label>
         <label class="c" for="f-empresa">Empresa<input id="f-empresa" type="text" name="empresa" required autocomplete="organization" maxlength="120"></label>
         <label class="c" for="f-whats">WhatsApp<input id="f-whats" type="tel" name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="(19) 99999-9999" maxlength="20"></label>
         <label class="c" for="f-email">E-mail<input id="f-email" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="voce@suaempresa.com.br" maxlength="160"></label>
+        <label class="c senha" for="f-senha">Crie uma senha<span class="campo-senha"><input id="f-senha" type="password" name="senha" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="mínimo 8, com letra e número" aria-describedby="f-senha-ajuda"><button type="button" class="ver-senha" data-ver-senha aria-label="Mostrar a senha" aria-pressed="false">Mostrar</button></span><small id="f-senha-ajuda">É com ela que você entra depois de confirmar o e-mail.</small></label>
     </div>
         <label class="aceite"><input type="checkbox" name="aceite" value="1" required><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> (LGPD).</span></label>
     <div class="hp" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
@@ -591,6 +601,14 @@ dialog.form .fechar{position:absolute;right:10px;top:10px;border:0;background:tr
   if (dlg) { dlg.addEventListener('click', function (e) { if (e.target === dlg) { dlg.close(); } }); }
 
   formsCad.forEach(function (form) {
+    // Mostrar/ocultar a senha (ajuda a não errar a digitação, já que o cadastro tem um campo só)
+    [].slice.call(form.querySelectorAll('[data-ver-senha]')).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var campo = b.previousElementSibling, ver = campo.type === 'password';
+        campo.type = ver ? 'text' : 'password'; b.textContent = ver ? 'Ocultar' : 'Mostrar';
+        b.setAttribute('aria-pressed', ver ? 'true' : 'false'); b.setAttribute('aria-label', ver ? 'Ocultar a senha' : 'Mostrar a senha');
+      });
+    });
     form.addEventListener('focusin', carregarTurnstile, { once: true });
     form.addEventListener('submit', function (e) {
       // cada formulário tem o seu próprio desafio: o campo escondido só vem preenchido quando ele termina

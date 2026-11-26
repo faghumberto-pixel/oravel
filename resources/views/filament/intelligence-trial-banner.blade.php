@@ -1,7 +1,6 @@
 @php
     $trial = auth()->user()?->tenant_id ? \App\Domain\Intelligence\Trial\Services\TrialCiclo::doTenant(auth()->user()->tenant_id) : null;
     $status = $trial?->statusAtual();
-    $link = session('intelligence_link');
 @endphp
 @if ($trial)
     @php
@@ -32,9 +31,6 @@
                 {{ $contratado ? 'Meu plano' : 'Contratar plano básico' }}
             </a>
         </div>
-        @if ($link)
-            <p class="mt-2 text-xs">Guarde este link para voltar sem senha: <a class="break-all underline" href="{{ $link }}">{{ $link }}</a></p>
-        @endif
     </div>
     @php
         $tenantId = (string) auth()->user()->tenant_id;

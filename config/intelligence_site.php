@@ -47,7 +47,7 @@ return [
         'hero_subtitulo' => 'Reúne os números do seu negócio e mostra onde a locadora perde dinheiro, o que está caro e o que fazer primeiro. Com sistema, sem sistema ou com o ERP da Oravel.',
         'cta' => 'Começar teste grátis',
         'form_titulo' => 'Crie sua conta e comece o teste',
-        'microtexto' => 'Leva 1 minuto. Sem senha e sem cartão. Você confirma pelo e-mail.',
+        'microtexto' => 'Leva 1 minuto. Sem cartão. Você confirma pelo e-mail e entra com a senha que criou.',
         'baixar_modelo' => 'Baixar modelo da planilha',
         'hero_pontos' => [
             ['t' => 'Funciona com qualquer sistema', 'd' => 'Ou sem sistema nenhum'],
@@ -88,7 +88,7 @@ return [
 
         'como_titulo' => 'Como funciona',
         'como_passos' => [
-            ['titulo' => 'Crie sua conta', 'texto' => 'Nome, empresa, WhatsApp e e-mail. Você confirma pelo link que chega no e-mail e já entra, sem senha.'],
+            ['titulo' => 'Crie sua conta', 'texto' => 'Nome, empresa, WhatsApp, e-mail e uma senha. Você confirma o e-mail pelo link que chega na caixa de entrada e entra com a sua senha.'],
             ['titulo' => 'Traga seus números', 'texto' => 'Baixe o modelo e preencha, ou exporte do seu sistema. Uma linha com os números do mês e, se quiser, uma linha por equipamento.'],
             ['titulo' => 'Leia, decida e pergunte', 'texto' => 'A leitura sai em minutos. Atualizou os dados? Reenvie quando quiser: cada envio fica no histórico e você compara com os anteriores.'],
         ],
