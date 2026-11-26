@@ -8,6 +8,7 @@ use App\Filament\Pages\PainelGestao;
 use App\Filament\Resources\CompanyResource;
 use App\Filament\Resources\CourseResource;
 use App\Filament\Resources\IntelligenceImportResource;
+use App\Filament\Resources\UserResource;
 use App\Models\Plan;
 use App\Support\AppProfile;
 use App\Support\Pacotes;
@@ -15,7 +16,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
-/** Acessos do Intelligence: sem Início, Academia Oravel, painéis nem o grupo Configurações. */
+/** Acessos do Intelligence: sem Início, Academia Oravel, painéis nem os grupos Configurações e Equipe. */
 class IntelligenceMenuEnxutoTest extends TestCase
 {
     use DatabaseTransactions;
@@ -27,6 +28,7 @@ class IntelligenceMenuEnxutoTest extends TestCase
             $this->assertNotContains($chave, $intel, $chave.' não pode estar no Intelligence');
         }
         $this->assertSame([], Pacotes::featuresDoGrupo('intelligence', 'Configurações'));
+        $this->assertSame([], Pacotes::featuresDoGrupo('intelligence', 'Equipe'), 'sem o menu Equipe (usuários e perfis)');
         $this->assertNotSame([], Pacotes::featuresDoGrupo('intelligence', 'Intelligence'), 'as telas do produto continuam');
 
         $erp = Pacotes::features('locadora');
@@ -51,6 +53,7 @@ class IntelligenceMenuEnxutoTest extends TestCase
         $this->assertFalse(PainelGestao::canAccess(), 'sem Início/painel');
         $this->assertFalse(CourseResource::canViewAny(), 'sem Academia Oravel');
         $this->assertFalse(CompanyResource::canViewAny(), 'sem o grupo Configurações');
+        $this->assertFalse(UserResource::canViewAny(), 'sem o grupo Equipe');
         $this->assertTrue(IntelligenceImportResource::canViewAny(), 'o produto continua');
         $this->assertSame(IntelligenceImportResource::getUrl('index'), AppProfile::homeUrl($trial->user, AppProfile::ADMIN));
     }
