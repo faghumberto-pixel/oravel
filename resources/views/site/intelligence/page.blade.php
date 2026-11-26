@@ -145,7 +145,7 @@
         <h2 id="h-preco">{{ $t['preco_titulo'] }}</h2>
         <div class="precocard">
             <p class="big">Primeira leitura grátis. Plano Básico: <b>{{ $preco }}/mês</b>.</p>
-            <p>A cobrança só começa {{ $dias }} dias após o seu primeiro envio e você cancela quando quiser. Seus dados são privados e usados só para gerar a sua leitura.</p>
+            <p>A cobrança só começa {{ $dias }} dias após o seu primeiro acesso e você cancela quando quiser. Seus dados são privados e usados só para gerar a sua leitura.</p>
         </div>
     </div>
 </section>
