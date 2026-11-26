@@ -2,7 +2,7 @@
 
 namespace App\Domain\Intelligence\Suprimentos;
 
-use App\Domain\Intelligence\Suprimentos\Models\SuprimentosCarga;
+use App\Domain\Intelligence\Models\SuprimentosCarga;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Models\Tenant;
 use Carbon\Carbon;

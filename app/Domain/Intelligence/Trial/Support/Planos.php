@@ -3,6 +3,7 @@
 namespace App\Domain\Intelligence\Trial\Support;
 
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
+use App\Domain\Intelligence\Trial\Services\TrialCiclo;
 
 /**
  * Degraus de plano do Intelligence (config intelligence_trial.planos), cumulativos: cada um inclui os módulos do anterior.
@@ -83,7 +84,7 @@ class Planos
      */
     public static function moduloLiberado(?string $tenantId, string $modulo): bool
     {
-        $trial = $tenantId ? \App\Domain\Intelligence\Trial\Services\TrialCiclo::doTenant($tenantId) : null;
+        $trial = $tenantId ? TrialCiclo::doTenant($tenantId) : null;
 
         return $trial === null || self::temModulo($trial, $modulo);
     }
