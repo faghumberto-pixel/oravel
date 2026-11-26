@@ -223,7 +223,7 @@ class IntelligenceSuprimentos extends Page
                 ->modalDescription('Use o modelo de Suprimentos (é diferente do modelo geral). Cada importação gera uma fotografia nova e nada é sobrescrito.')
                 ->modalSubmitActionLabel('Importar')
                 ->form([
-                    Forms\Components\FileUpload::make('arquivo')->label('Planilha (.xlsx)')->disk('local')->directory('intelligence-imports')
+                    Forms\Components\FileUpload::make('arquivo')->label('Planilha (.xlsx)')->disk('local')->directory(fn () => 'intelligence-imports/'.(Tenancy::current()?->id ?? 'sem-empresa'))
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])->maxSize(10240)->required(),
                     Forms\Components\Toggle::make('simular')->label('Apenas validar (não grava nada)')
                         ->helperText('Mostra se a planilha está correta e quantos indicadores seriam calculados.')->default(true)->live(),
