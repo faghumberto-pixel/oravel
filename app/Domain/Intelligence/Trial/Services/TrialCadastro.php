@@ -33,8 +33,8 @@ class TrialCadastro
     public function __construct(private TrialCiclo $ciclo) {}
 
     /**
-     * @param  array{nome: string, empresa: string, whatsapp: string, email?: string}  $dados  whatsapp já em E.164; e-mail já confirmado
-     * @return array{trial: IntelligenceTrial, token: ?string, novo: bool} token só existe quando a conta foi criada agora
+     * @param  array{nome: string, empresa: string, whatsapp: string, email?: string, senha_hash?: string}  $dados  whatsapp já em E.164; e-mail já confirmado; senha_hash é o hash da senha escolhida no cadastro
+     * @return array{trial: IntelligenceTrial, novo: bool} novo = a conta foi criada agora
      */
     public function cadastrar(array $dados, ?string $ip = null, ?string $userAgent = null): array
     {
@@ -46,10 +46,10 @@ class TrialCadastro
 
         $existente = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', $dados['whatsapp'])->first();
         if ($existente) {
-            // Saber o WhatsApp não dá acesso: não troca o link do dono nem devolve token (ver RecuperacaoDeAcesso).
+            // Saber o WhatsApp não dá acesso a nada.
             Log::info('Intelligence trial: cadastro repetido, nada criado.', ['trial_id' => $existente->id]);
 
-            return ['trial' => $existente, 'token' => null, 'novo' => false];
+            return ['trial' => $existente, 'novo' => false];
         }
 
         try {
@@ -58,15 +58,14 @@ class TrialCadastro
             // Duas requisições simultâneas com o mesmo número: a segunda cai aqui e usa a conta da primeira.
             $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', $dados['whatsapp'])->firstOrFail();
 
-            return ['trial' => $trial, 'token' => null, 'novo' => false];
+            return ['trial' => $trial, 'novo' => false];
         }
 
-        $token = $trial->novoTokenDeAcesso();
         $this->registrarLead($trial);
         $this->avisarDono($trial);
         Log::info('Intelligence trial: novo cadastro.', ['trial_id' => $trial->id, 'tenant_id' => $trial->tenant_id]);
 
-        return ['trial' => $trial, 'token' => $token, 'novo' => true];
+        return ['trial' => $trial, 'novo' => true];
     }
 
     private function criar(array $d, ?string $ip, ?string $ua): IntelligenceTrial
@@ -83,16 +82,19 @@ class TrialCadastro
             'terms_accepted_at' => now(),
         ]);
 
-        // Sem senha: o acesso é pelo link pessoal. A senha existe só para a coluna não ficar vazia e nunca é mostrada.
-        // O e-mail é o confirmado pelo cliente (ConfirmacaoDeEmail); sem ele (uso interno) vale um provisório .invalid.
+        // O acesso é por e-mail e SENHA (a que o cliente escolheu no cadastro, já em hash). O e-mail é o confirmado pelo cliente
+        // (ConfirmacaoDeEmail); sem ele (uso interno) vale um provisório .invalid e uma senha aleatória que ninguém conhece.
         $user = TenantProvisioner::provision($tenant, [
             'name' => $d['nome'],
             'email' => ! empty($d['email']) ? Str::lower($d['email']) : 'teste-'.Str::lower(Str::random(10)).'@intelligence.oravel.invalid',
             'password' => Str::random(40),
         ]);
-        // two_factor_exempt: o acesso é pelo link pessoal; não existe senha nem app autenticador para exigir 2FA (senão o cliente
-        // cai em "Minha conta" e nunca chega ao upload).
-        $user->forceFill(['is_approved' => true, 'two_factor_exempt' => true, 'email_verified_at' => ! empty($d['email']) ? now() : null])->save();
+        // two_factor_exempt: o cliente do teste não configura app autenticador para começar (senão cai em "Minha conta" e nunca chega ao
+        // upload). Quem contratar pode ligar o 2FA por conta própria.
+        $user->forceFill([
+            'is_approved' => true, 'two_factor_exempt' => true, 'email_verified_at' => ! empty($d['email']) ? now() : null,
+            'password' => $d['senha_hash'] ?? $user->password, // hash pronto: o cast 'hashed' não faz hash duas vezes
+        ])->save();
 
         $trial = IntelligenceTrial::create([
             'tenant_id' => $tenant->id,

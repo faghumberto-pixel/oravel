@@ -144,7 +144,7 @@ class SiteIntelligenceGerar extends Command
                 imagettftext($im, 58, 0, 70, $y, $branco, $fonte, $linha);
                 $y += 80;
             }
-            imagettftext($im, 28, 0, 70, 520, $cinza, is_file($fonteReg) ? $fonteReg : $fonte, 'Primeira leitura grátis. Sem senha e sem cartão.');
+            imagettftext($im, 28, 0, 70, 520, $cinza, is_file($fonteReg) ? $fonteReg : $fonte, 'Primeira leitura grátis. Sem cartão.');
         } else {
             imagestring($im, 5, 70, 100, (string) $t['hero_titulo'], $branco);
         }

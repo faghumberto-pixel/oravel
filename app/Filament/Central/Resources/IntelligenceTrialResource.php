@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
 
 /** Central › Testes do Intelligence: cadastros de teste grátis, dias restantes, status, plano e link da assinatura no Asaas. Só super admin. */
 class IntelligenceTrialResource extends Resource
@@ -83,15 +84,18 @@ class IntelligenceTrialResource extends Resource
                     ->query(fn (Builder $q) => $q->whereBetween('trial_ends_at', [now(), now()->addDays(7)])->whereNull('contracted_at')),
             ])
             ->actions([
-                // Único lugar onde o link aparece em claro, e só para super admin: a Oravel envia ao WhatsApp cadastrado do cliente.
-                Tables\Actions\Action::make('gerar_link')->label('Gerar link de acesso')->icon('heroicon-o-link')
+                // Não existe mais acesso por link: se o cliente perdeu a senha, a Oravel dispara o e-mail oficial de redefinição.
+                Tables\Actions\Action::make('redefinir_senha')->label('Enviar redefinição de senha')->icon('heroicon-o-key')
                     ->requiresConfirmation()
-                    ->modalHeading('Gerar novo link de acesso')
-                    ->modalDescription('O link anterior deixa de valer. Envie o novo somente ao WhatsApp cadastrado do cliente.')
+                    ->modalHeading('Enviar e-mail de redefinição de senha')
+                    ->modalDescription(fn (IntelligenceTrial $r) => 'O cliente recebe, no e-mail da conta, um link para criar uma senha nova. Você não vê a senha nem o link.')
+                    ->visible(fn (IntelligenceTrial $r) => filled($r->user?->email) && ! str_ends_with((string) $r->user->email, '.invalid'))
                     ->action(function (IntelligenceTrial $r) {
-                        $link = route('intelligence.trial.entrar', $r->novoTokenDeAcesso());
-                        Log::info('Intelligence trial: link gerado pela Central.', ['trial_id' => $r->id, 'por' => auth()->id()]);
-                        Notification::make()->title('Link de acesso (envie para '.TelefoneBr::formatar($r->whatsapp).')')->body($link)->persistent()->success()->send();
+                        // O mesmo e-mail de redefinição que o cliente recebe pelo "Esqueci minha senha" (link com validade e uso único).
+                        $status = Password::sendResetLink(['email' => $r->user->email]);
+                        Log::info('Intelligence trial: redefinição de senha enviada pela Central.', ['trial_id' => $r->id, 'por' => auth()->id(), 'status' => $status]);
+                        $enviou = $status === Password::RESET_LINK_SENT;
+                        Notification::make()->title($enviou ? 'E-mail de redefinição enviado' : 'Não foi possível enviar agora')->body($enviou ? 'Para '.$r->user->email : 'Tente de novo em alguns minutos.')->{$enviou ? 'success' : 'warning'}()->send();
                     }),
                 Tables\Actions\Action::make('estender')->label('Estender teste')->icon('heroicon-o-clock')
                     ->form([

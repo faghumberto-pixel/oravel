@@ -43,36 +43,78 @@ return [
 
     'textos' => [
         'marca' => 'Oravel Intelligence',
-        'eyebrow' => 'Para locadoras de equipamentos',
-        'hero_titulo' => 'Veja onde e como sua locadora pode melhorar.',
-        'hero_subtitulo' => 'Envie sua planilha e receba a leitura em minutos. Sem trocar de sistema.',
-        'cta' => 'Enviar minha planilha',
-        'microtexto' => 'Leva 1 minuto. Sem senha e sem cartão. Você confirma pelo e-mail.',
+        'hero_titulo' => 'O centro de inteligência da sua locadora.',
+        'hero_subtitulo' => 'Reúne os números do seu negócio e mostra onde a locadora perde dinheiro, o que está caro e o que fazer primeiro. Com sistema, sem sistema ou com o ERP da Oravel.',
+        'cta' => 'Começar teste grátis',
+        'form_titulo' => 'Crie sua conta e comece o teste',
+        'microtexto' => 'Leva 1 minuto. Sem cartão. Você confirma pelo e-mail e entra com a senha que criou.',
         'baixar_modelo' => 'Baixar modelo da planilha',
+        'hero_pontos' => [
+            ['t' => 'Funciona com qualquer sistema', 'd' => 'Ou sem sistema nenhum'],
+            ['t' => 'Leitura em minutos', 'd' => 'Sem projeto e sem TI'],
+            ['t' => 'Pergunte em português', 'd' => 'O assistente responde com os seus números'],
+        ],
+
+        'oque_titulo' => 'O que é o Oravel Intelligence',
+        'oque_lead' => 'Um centro de inteligência para quem aluga equipamentos. Você traz os números, ele organiza, compara mês a mês e aponta o que fazer.',
+        'fluxo' => [
+            ['t' => 'Seus números', 'd' => 'De qualquer sistema, de uma planilha feita à mão ou direto do ERP da Oravel.'],
+            ['t' => 'O Intelligence lê', 'd' => 'Nota por área, alertas, comparação com o mês anterior e um assistente que responde em português.'],
+            ['t' => 'Você decide', 'd' => 'O que vender, trocar ou reformar, onde a oficina trava e quanto do faturamento está em atraso.'],
+        ],
 
         'descobre_titulo' => 'O que você descobre',
+        'descobre_lead' => 'As perguntas que mais pesam no caixa de uma locadora, respondidas com os seus números.',
+
+        'calc_titulo' => 'Quanto custa deixar equipamento parado?',
+
+        'leitura_titulo' => 'O que você recebe',
+        'leitura_lead' => 'Cinco áreas da empresa, cada uma com a sua nota, e uma leitura que você abre quando quiser.',
+        'areas' => [
+            ['t' => 'Frota', 'd' => 'Disponibilidade, utilização e quais equipamentos já não valem o que custam.'],
+            ['t' => 'Finanças', 'd' => 'Margem, retorno sobre a frota e quanto do faturamento está em atraso.'],
+            ['t' => 'Oficina', 'd' => 'Preventiva contra corretiva, tempo de reparo e defeitos que se repetem.'],
+            ['t' => 'Comercial', 'd' => 'Propostas que viram contrato e dependência de um único cliente.'],
+            ['t' => 'Operação', 'd' => 'Entregas no prazo e produtividade da equipe.'],
+        ],
+        'em_breve' => 'Em breve no Intelligence: Suprimentos, Logística e Comercial completo.',
+
+        'perfis_titulo' => 'Funciona do jeito que sua locadora já trabalha',
+        'perfis' => [
+            ['t' => 'Não tenho sistema', 'd' => 'Preencha o modelo de planilha com os números do mês. É o suficiente para começar.'],
+            ['t' => 'Tenho sistema e quero algo mais rápido', 'd' => 'Exporte o que o seu sistema já gera e envie. Sem integração, sem projeto, sem esperar a TI.'],
+            ['t' => 'Uso o ERP da Oravel', 'd' => 'Exporte a planilha pronta com 1 clique e a leitura sai na hora.'],
+        ],
+
         'como_titulo' => 'Como funciona',
         'como_passos' => [
-            ['titulo' => 'Baixe o modelo e preencha', 'texto' => 'Uma linha com os números do mês. Se quiser, uma linha por equipamento.'],
-            ['titulo' => 'Envie', 'texto' => 'A leitura sai sozinha, em minutos.'],
-            ['titulo' => 'Atualizou os dados? Reenvie', 'texto' => 'Quando quiser, sem esperar o fim do mês. Cada envio fica no histórico e você compara com os anteriores.'],
+            ['titulo' => 'Crie sua conta', 'texto' => 'Nome, empresa, WhatsApp, e-mail e uma senha. Você confirma o e-mail pelo link que chega na caixa de entrada e entra com a sua senha.'],
+            ['titulo' => 'Traga seus números', 'texto' => 'Baixe o modelo e preencha, ou exporte do seu sistema. Uma linha com os números do mês e, se quiser, uma linha por equipamento.'],
+            ['titulo' => 'Leia, decida e pergunte', 'texto' => 'A leitura sai em minutos. Atualizou os dados? Reenvie quando quiser: cada envio fica no histórico e você compara com os anteriores.'],
         ],
         'como_nota_erp' => 'Já usa o ERP da Oravel? Exporte a planilha com 1 clique.',
 
-        'leitura_titulo' => 'O que vem na leitura',
-
         'preco_titulo' => 'Preço e confiança',
+        'confianca' => [
+            ['t' => 'Nuvem no Brasil', 'd' => 'Infraestrutura do Google Cloud, em São Paulo.'],
+            ['t' => 'Conexão protegida', 'd' => 'HTTPS em todo o acesso e proteção da Cloudflare.'],
+            ['t' => 'Backup todo dia', 'd' => 'Os dados são copiados diariamente.'],
+            ['t' => 'Dados só seus', 'd' => 'Usados apenas para gerar a sua leitura.'],
+        ],
 
         'faq_titulo' => 'Perguntas frequentes',
         'faq' => [
-            ['p' => 'Preciso trocar de sistema?', 'r' => 'Não. Você envia uma planilha, venham os números de onde vierem. Quem usa o ERP da Oravel exporta a planilha com 1 clique.'],
+            ['p' => 'Preciso trocar de sistema?', 'r' => 'Não. Você envia uma planilha, venham os números de onde vierem, ou nem tenha sistema. Quem usa o ERP da Oravel exporta a planilha com 1 clique.'],
             ['p' => 'Quanto custa?', 'r' => '__PRECO__'],
             ['p' => 'E se eu não tiver todos os dados?', 'r' => 'Comece com o que tiver. Só a data de referência é obrigatória, e é preciso preencher ao menos um bloco completo (por exemplo, total de equipamentos e equipamentos locados). O que você não informar fica fora da leitura, e o sistema diz o que faltou.'],
             ['p' => 'Meus dados ficam seguros?', 'r' => 'Sim. O Intelligence roda em infraestrutura do Google Cloud, na região de São Paulo, com conexão criptografada (HTTPS) e proteção da Cloudflare. Os discos do Google Cloud são criptografados por padrão. Os dados são copiados todo dia: backup diário do banco, com um arquivo por cliente guardado por 30 dias, e snapshot diário do disco no Google Cloud. Cada envio fica no histórico e nada é sobrescrito. O assistente de IA só consulta os seus números e nunca altera nada.'],
             ['p' => 'Posso reenviar a planilha depois?', 'r' => 'Pode, quando quiser. Cada envio fica no histórico e nada é sobrescrito. Se o arquivo for idêntico a um que você já enviou, o sistema avisa e não grava de novo.'],
         ],
 
-        'titulo_pagina' => 'Oravel Intelligence: veja onde e como sua locadora pode melhorar',
-        'descricao_pagina' => 'Envie sua planilha e receba a leitura da sua locadora em minutos: equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Primeira leitura grátis.',
+        'final_titulo' => 'Comece pelo teste e veja a sua locadora com outros olhos.',
+        'final_texto' => 'Crie a conta em 1 minuto e receba a primeira leitura.',
+
+        'titulo_pagina' => 'Oravel Intelligence: o centro de inteligência da sua locadora',
+        'descricao_pagina' => 'Reúne os números da sua locadora e mostra equipamentos parados, manutenção cara e o que vender, trocar ou reformar. Com ou sem sistema. Teste grátis.',
     ],
 ];

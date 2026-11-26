@@ -16,7 +16,7 @@ class IntelligenceSiteEmailTurnstileTest extends TestCase
 
         $this->assertMatchesRegularExpression('/<input[^>]*type="email"[^>]*name="email"[^>]*required/', $html);
         $this->assertStringContainsString('confirma pelo e-mail', $html);
-        $this->assertStringContainsString('Enviamos um link para você confirmar o e-mail', $html);
+        $this->assertStringContainsString('Você confirma pelo e-mail', $html);
         // os campos que o app exige continuam: nome, empresa, WhatsApp, aceite e o honeypot
         foreach (['nome', 'empresa', 'whatsapp', 'aceite', 'site'] as $campo) {
             $this->assertStringContainsString('name="'.$campo.'"', $html);

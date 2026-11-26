@@ -2,22 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Intelligence\Services\DadosDeExemplo;
-use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Domain\Intelligence\Trial\Services\ConfirmacaoDeEmail;
-use App\Domain\Intelligence\Trial\Services\RecuperacaoDeAcesso;
-use App\Domain\Intelligence\Trial\Services\TrialCiclo;
 use App\Domain\Intelligence\Trial\Services\Turnstile;
-use App\Filament\Resources\IntelligenceImportResource;
 use App\Http\Requests\IntelligenceTrial\CadastroTrialRequest;
-use App\Http\Requests\IntelligenceTrial\NovoLinkRequest;
+use Filament\Facades\Filament;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-/** Cadastro rápido sem senha do teste grátis do Intelligence, entrada por link pessoal e novo link por WhatsApp. */
+/** Cadastro do teste grátis do Intelligence: e-mail confirmado + senha. O acesso é sempre pela tela de login (e-mail e senha). */
 class IntelligenceTrialController extends Controller
 {
     public function create(): View
@@ -41,6 +35,7 @@ class IntelligenceTrialController extends Controller
             'empresa' => trim($request->string('empresa')),
             'whatsapp' => $request->whatsappE164(),
             'email' => trim($request->string('email')),
+            'senha' => (string) $request->input('senha'),
         ], $request->ip(), $request->userAgent());
 
         // Mesma resposta exista conta ou não: a tela nunca revela se o e-mail ou o WhatsApp já têm teste.
@@ -62,58 +57,27 @@ class IntelligenceTrialController extends Controller
         return view('intelligence-trial.confirmar', ['token' => $token]);
     }
 
+    /** Confirma o e-mail e cria a conta. NÃO entra sozinho: a pessoa entra pela tela de login, com o e-mail e a senha que criou. */
     public function confirmar(Request $request, string $token, ConfirmacaoDeEmail $confirmacao): RedirectResponse
     {
         $r = $confirmacao->confirmar($token, $request->ip(), $request->userAgent());
         if ($r === null) {
             return redirect()->route('intelligence.trial.create')->withErrors(['nome' => 'Este link de confirmação não vale mais (venceu ou já foi usado). Faça o cadastro de novo.']);
         }
-        if (! $r['novo']) {
-            return redirect()->route('intelligence.trial.novo-link')->with('enviado', true);
-        }
 
-        return $this->entrar($request, $r['trial'], $r['token'], true);
+        return redirect(Filament::getPanel('admin')->getLoginUrl(['confirmado' => 1]));
     }
 
-    /** Link pessoal: autentica e vai para o upload. */
-    public function acessar(Request $request, string $token): RedirectResponse
+    /** Links antigos de acesso direto (e-mails já enviados) não entram mais: levam à tela de entrada. */
+    public function acessoPorLinkEncerrado(): RedirectResponse
     {
-        $trial = IntelligenceTrial::porToken($token);
-        if (! $trial || ! $trial->user) {
-            return redirect()->route('intelligence.trial.novo-link')->withErrors(['whatsapp' => 'Link inválido ou substituído. Peça um novo link abaixo.']);
-        }
-
-        return $this->entrar($request, $trial, $token, false);
+        return redirect(Filament::getPanel('admin')->getLoginUrl(['confirmado' => 0]));
     }
 
-    public function novoLink(): View
+    /** "Receber um novo link" virou "Esqueci minha senha". */
+    public function esqueciASenha(): RedirectResponse
     {
-        return view('intelligence-trial.novo-link');
-    }
-
-    public function enviarNovoLink(NovoLinkRequest $request, RecuperacaoDeAcesso $recuperacao): RedirectResponse
-    {
-        $trial = IntelligenceTrial::withoutGlobalScopes()->where('whatsapp', $request->whatsappE164())->first();
-        if ($trial) {
-            $recuperacao->solicitar($trial);
-        }
-
-        // Mesma resposta exista a conta ou não: a tela nunca revela se o número tem teste e nunca mostra o link.
-        return back()->with('enviado', true);
-    }
-
-    private function entrar(Request $request, IntelligenceTrial $trial, string $token, bool $novo): RedirectResponse
-    {
-        Auth::guard('web')->login($trial->user, true); // lembrar = sessão persistente de longa duração
-        $request->session()->regenerate();
-        if (config('intelligence_trial.inicio') === 'cadastro') {
-            app(TrialCiclo::class)->iniciarContagem($trial); // idempotente: conta antiga, sem relógio, começa no próximo acesso; nunca reinicia
-        }
-        app(DadosDeExemplo::class)->aoAbrir($trial); // 1ª abertura: mostra os dados de exemplo; fora do prazo: apaga o que sobrou
-
-        return redirect(IntelligenceImportResource::getUrl('index'))
-            ->with('intelligence_link', route('intelligence.trial.entrar', $token))
-            ->with('intelligence_novo', $novo);
+        return redirect()->route('password.request');
     }
 
     /**
