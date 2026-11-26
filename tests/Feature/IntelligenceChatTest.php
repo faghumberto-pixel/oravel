@@ -235,4 +235,15 @@ class IntelligenceChatTest extends TestCase
         $this->assertSame($r->url(), $ultima['relatorio']['url']);
         $this->get($r->url())->assertOk()->assertSee('Imprimir / salvar PDF')->assertSee('Como está minha empresa?');
     }
+
+    public function test_assistente_renderiza_com_e_sem_o_modulo_suprimentos_e_so_oferece_as_perguntas_a_quem_tem(): void
+    {
+        $sem = $this->tenant('Sem suprimentos', [IntelligenceSnapshot::saasFeatureKey()]);
+        $this->actingAs($this->admin($sem));
+        Livewire::test(IntelligenceChat::class)->assertOk()->assertDontSee('Quais itens precisamos repor');
+
+        $com = $this->tenant('Com suprimentos', [IntelligenceSnapshot::saasFeatureKey(), 'menu_intelligence_suprimentos', 'tabela_intelligence_suprimentos']);
+        $this->actingAs($this->admin($com));
+        Livewire::test(IntelligenceChat::class)->assertOk()->assertSee('Quais itens precisamos repor')->assertSee('Quais itens têm maior giro');
+    }
 }

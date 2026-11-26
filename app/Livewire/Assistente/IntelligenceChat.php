@@ -4,6 +4,7 @@ namespace App\Livewire\Assistente;
 
 use App\Domain\Intelligence\Models\IntelligenceSnapshot;
 use App\Domain\Intelligence\Trial\Services\CotaDiariaIa;
+use App\Filament\Pages\IntelligenceSuprimentos;
 use App\Livewire\Central\ProspectChat;
 use App\Models\Tenant;
 use App\Services\IntelligenceChatService;
@@ -85,6 +86,17 @@ class IntelligenceChat extends ProspectChat
     protected function boasVindas(): string
     {
         return "Olá! Sou o assistente do Intelligence. Respondo sobre a saúde e a evolução da sua empresa, com base nas planilhas que você importou, por exemplo:\n\n• **\"Minha disponibilidade aumentou?\"**\n• **\"Qual área da empresa está pior?\"**\n• **\"Como evoluiu o índice geral nos últimos meses?\"**\n• **\"Como estou em relação a empresas parecidas?\"**\n\nSó consulto, não altero nada. Posso gerar uma lista em Excel ou um relatório para compartilhar no WhatsApp.";
+    }
+
+    /** Perguntas rápidas do módulo Suprimentos (só para quem tem o módulo liberado). */
+    private function sugestoesDeSuprimentos(): array
+    {
+        return IntelligenceSuprimentos::canAccess() ? [
+            'Quais itens precisamos repor e quanto custa?' => 'sup-repor',
+            'Quais itens têm maior giro de estoque?' => 'sup-maior-giro',
+            'O que está parado e quanto dinheiro isso é?' => 'sup-parados',
+            'Quais fornecedores mais atrasam?' => 'sup-fornecedores',
+        ] : [];
     }
 
     protected function dadosDaTela(): array
