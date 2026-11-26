@@ -64,7 +64,8 @@ class Pacotes
         }
 
         $base = config('pacotes.base', []);
-        $grupos = array_merge($base['grupos'] ?? [], (array) $pacote['grupos']);
+        // 'sem_grupos_base': grupos do bloco comum que ESTE pacote não leva (ex.: Intelligence não tem o grupo Configurações).
+        $grupos = array_merge(array_diff($base['grupos'] ?? [], (array) ($pacote['sem_grupos_base'] ?? [])), (array) $pacote['grupos']);
 
         return collect($grupos)
             ->flatMap(fn ($g) => array_keys($porGrupo[$g] ?? []))

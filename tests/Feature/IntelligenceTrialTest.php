@@ -39,6 +39,7 @@ class IntelligenceTrialTest extends TestCase
         config([
             'services.asaas.api_key' => 'chave-de-teste', 'services.asaas.base_url' => 'https://asaas.test/v3', 'services.asaas.webhook_token' => 'tok',
             'intelligence_trial.notificar_email' => 'dono@example.test',
+            'intelligence_trial.inicio' => 'primeiro_envio', // o padrão agora é 'cadastro' (ver IntelligenceCadastroEmailTest); aqui segue coberto o outro modo
         ]);
         Mail::fake();
         Storage::fake('local');

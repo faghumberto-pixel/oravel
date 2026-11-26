@@ -5,6 +5,7 @@ use App\Filament\Pages\CrmFunil;
 use App\Filament\Pages\MaintenanceKanban;
 use App\Filament\Pages\ProgramacaoLogistica;
 use App\Filament\Resources\EmployeeResource;
+use App\Filament\Resources\IntelligenceImportResource;
 
 /**
  * Pacotes vendáveis do Oravel. Cada pacote é um conjunto de módulos montado pelos MESMOS grupos de menu da
@@ -120,7 +121,11 @@ return [
             // Tabelas e telas do produto vivem no grupo "Intelligence" (ContratoResource::gruposPadrao + config/menu_modules.php).
             'grupos' => ['Intelligence'],
             'features' => [],
-            'inicio' => null,
+            // Produto enxuto: sem Início, Academia Oravel, painéis (por função e de gestão) nem o grupo Configurações, em todos os acessos.
+            // Esses itens vêm do bloco 'base' (comum a todos os pacotes), por isso aqui são retirados de propósito.
+            'sem_grupos_base' => ['Configurações'],
+            'excluir' => ['modulo_dashboard', 'tabela_courses', 'modulo_paineis_funcao'],
+            'inicio' => IntelligenceImportResource::class,
         ],
     ],
 ];

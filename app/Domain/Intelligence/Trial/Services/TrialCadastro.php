@@ -121,7 +121,7 @@ class TrialCadastro
      * Central abri-lo para venda, e Plan::hasFeature() nega tudo de plano inativo (o cliente cairia em 403). Preço 0 e tag própria
      * mantêm este plano fora da listagem pública e do checkout.
      */
-    private function planoDeTeste(): Plan
+    public function planoDeTeste(): Plan
     {
         $pacote = (string) config('intelligence_trial.pacote');
         $features = array_fill_keys(Pacotes::features($pacote), true);

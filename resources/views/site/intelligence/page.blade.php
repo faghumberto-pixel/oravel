@@ -5,7 +5,7 @@
     $og = $urlPagina.'og-intelligence.png';
     $modelo = 'modelo-planilha-intelligence.xlsx';
     $faq = array_map(fn ($f) => $f['r'] === '__PRECO__'
-        ? ['p' => $f['p'], 'r' => 'Primeira leitura grátis. Para acompanhar mês a mês, o Plano Básico custa '.$preco.'/mês. A cobrança só começa '.$dias.' dias após o seu primeiro envio e você cancela quando quiser.']
+        ? ['p' => $f['p'], 'r' => 'Primeira leitura grátis. Para acompanhar mês a mês, o Plano Básico custa '.$preco.'/mês. A cobrança só começa '.$dias.' dias após o seu primeiro acesso e você cancela quando quiser.']
         : $f, $t['faq']);
 @endphp
 <!DOCTYPE html>

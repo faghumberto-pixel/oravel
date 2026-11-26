@@ -7,7 +7,7 @@
 
     <p class="mt-4 text-sm"><span class="rounded-full bg-white/10 px-3 py-1 font-semibold">{{ $status->rotulo() }}</span></p>
     <div class="mt-4 space-y-1 text-sm text-white/80">
-        @if ($trial->trial_ends_at)<p>Teste até {{ $trial->trial_ends_at->format('d/m/Y') }} ({{ $trial->diasRestantes() }} dia(s)).</p>@else<p>O teste começa quando você enviar a primeira planilha.</p>@endif
+        @if ($trial->trial_ends_at)<p>Teste até {{ $trial->trial_ends_at->format('d/m/Y') }} ({{ $trial->diasRestantes() }} dia(s)).</p>@else<p>O teste começa no seu próximo acesso.</p>@endif
         @if ($trial->contratou() && ! $trial->canceled_at)<p>Plano contratado. Primeira cobrança em {{ $trial->billing_starts_on->format('d/m/Y') }}.</p>@endif
         @if ($trial->canceled_at)<p>Cancelado. Acesso até {{ $trial->access_until?->format('d/m/Y') }}.</p>@endif
         @if ($trial->somenteLeitura())<p class="text-amber-300">Somente leitura: histórico e painéis visíveis, novos envios bloqueados.</p>@endif
