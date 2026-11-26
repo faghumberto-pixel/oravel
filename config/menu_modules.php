@@ -429,6 +429,13 @@ return [
         'slug' => 'intelligence-dashboard',
         'herda' => ['__nunca__'],
     ],
+    'menu_intelligence_suprimentos' => [
+        'label' => 'Tela: Intelligence → Suprimentos',
+        'grupo' => 'Intelligence',
+        'menu' => 'Suprimentos',
+        'slug' => 'intelligence-suprimentos',
+        'herda' => ['__nunca__'],
+    ],
     'menu_intelligence_benchmark' => [
         'label' => 'Tela: Intelligence → Benchmark',
         'grupo' => 'Intelligence',

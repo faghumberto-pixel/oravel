@@ -51,7 +51,11 @@ return [
     ],
     'modulos_rotulos' => ['base' => 'Frota, financeira, oficina e operacional', 'suprimentos' => 'Suprimentos', 'comercial' => 'Comercial', 'logistica' => 'Logística'],
     // Módulos que já existem de verdade. Só planos com todos os módulos prontos podem ser contratados.
-    'modulos_prontos' => ['base'],
+    // Por ambiente (INTELLIGENCE_MODULOS_PRONTOS=base,suprimentos): abrir um módulo para venda é decisão de negócio, não de deploy.
+    'modulos_prontos' => array_values(array_filter(array_map('trim', explode(',', (string) env('INTELLIGENCE_MODULOS_PRONTOS', 'base'))))),
+    // Módulos que o TESTE GRÁTIS (ainda sem plano pago) já pode usar. Os demais aparecem no menu desabilitados, com o plano que os libera.
+    // Para avaliar um módulo sem abrir a venda: INTELLIGENCE_MODULOS_NO_TESTE=base,suprimentos (libera para quem ainda está no teste).
+    'modulos_no_teste' => array_values(array_filter(array_map('trim', explode(',', (string) env('INTELLIGENCE_MODULOS_NO_TESTE', 'base'))))),
 
     // Dados de exemplo (demonstração) mostrados na 1ª abertura: somem de vez N dias depois, sem volta.
     'exemplo_dias' => (int) env('INTELLIGENCE_EXEMPLO_DIAS', 30),

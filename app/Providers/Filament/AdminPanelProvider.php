@@ -107,6 +107,9 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Relatórios'),
             ])
             ->navigationItems([
+                // Módulos do Intelligence por degrau de plano: aparecem sempre, desabilitados para quem ainda não tem (ver ItemDeMenuDoModulo).
+                \App\Domain\Intelligence\Support\ItemDeMenuDoModulo::make('Suprimentos', 'heroicon-o-archive-box', 4, \App\Filament\Pages\IntelligenceSuprimentos::class, 'menu_intelligence_suprimentos', 'Standard'),
+
                 // Tela dedicada de registro de horimetro (offline-first, JS
                 // puro) -- rota comum (HourMeterOfflineController), nao uma
                 // Filament Page, entao entra no menu via NavigationItem em

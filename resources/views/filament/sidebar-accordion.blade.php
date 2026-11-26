@@ -82,3 +82,9 @@
         requestAnimationFrame(syncActiveGroupOnLoad);
     });
 </script>
+
+{{-- Item de menu desabilitado (módulo do Intelligence que o plano ainda não libera): o Filament omite o href quando a URL é nula. --}}
+<style>
+    .fi-sidebar-item > a:not([href]) { opacity: .5; cursor: not-allowed; pointer-events: auto; }
+    .fi-sidebar-item > a:not([href]):hover { background: transparent; }
+</style>
