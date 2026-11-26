@@ -98,7 +98,13 @@ class GaugeChart extends ChartWidget
             'rotation' => -90,
             'cutout' => '72%',
             'layout' => [
-                'padding' => ['top' => 8, 'bottom' => 0],
+                // Embaixo cabe o valor em negrito (ex.: 72%), que o plugin desenha abaixo do centro do arco; nas laterais, o rótulo 100% do fim do arco.
+                'padding' => ['top' => 26, 'bottom' => 58, 'left' => 20, 'right' => 30],
+            ],
+            // Medidor não tem eixos: sem isto aparecem os números 0, 0.2 ... 1 em volta do arco e o "100%" fica cortado.
+            'scales' => [
+                'x' => ['display' => false, 'grid' => ['display' => false]],
+                'y' => ['display' => false, 'grid' => ['display' => false]],
             ],
             'plugins' => [
                 'legend' => ['display' => false],

@@ -23,7 +23,7 @@
                     <div class="odb-wh">
                         <h3>{{ $bloco['title'] }}<small>{{ $bloco['subtitle'] }}</small></h3>
                     </div>
-                    @include('dashboards.types.'.$bloco['payload']['type'], ['p' => $bloco['payload']])
+                    @include('dashboards.types.'.$bloco['payload']['type'], ['p' => $bloco['payload'], 'span' => $bloco['size']])
                 </section>
             @endforeach
         </div>

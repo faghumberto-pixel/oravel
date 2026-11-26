@@ -61,5 +61,17 @@
 .odb-tl li:before{content:"";position:absolute;left:80px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--odb-accent);border:3px solid var(--odb-card);box-shadow:0 0 0 1px var(--odb-border)}
 .odb-tl li.ok:before{background:var(--odb-ok)}.odb-tl li.warn:before{background:var(--odb-warn)}.odb-tl li.crit:before{background:var(--odb-crit)}.odb-tl li.n:before{background:var(--odb-muted)}
 .odb-tl small{display:block;color:var(--odb-muted);font-size:11.5px}
+.odb-resumo-t{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:2px 0 12px}.odb-resumo-t h2{margin:0;font-size:16px;font-weight:800;letter-spacing:.01em}.odb-resumo-t span{color:var(--odb-muted);font-size:12.5px}
+.odb-w.odb-dest{border-top:3px solid var(--tom);gap:8px;container-type:inline-size}
+.odb-dest .odb-kpi{font-size:clamp(18px,11cqw,30px);white-space:nowrap}
+.odb-dest-l{display:flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--tom);font-weight:800}
+.odb .odb-dest-l svg,.odb .odb-sec-i svg{width:16px;height:16px;flex:none}
+.odb-dest h3{margin:0;font-size:13px;font-weight:700}.odb-dest h3 small{display:block;color:var(--odb-muted);font-size:12px;font-weight:400}
+.odb-sec{margin-top:30px}.odb-grupo+.odb-grupo{margin-top:14px}
+.odb-sec-h{display:flex;align-items:center;gap:11px;margin-bottom:12px;padding-bottom:11px;border-bottom:1px solid var(--odb-border)}
+.odb-sec-i{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:color-mix(in srgb,var(--tom) 18%,transparent);color:var(--tom);flex:none}
+.odb-sec-h h2{margin:0;font-size:15px;font-weight:800;letter-spacing:.01em}
+@media (max-width:820px){.odb-w.odb-dest{grid-column:span 6}}
+@media (max-width:520px){.odb-w.odb-dest{grid-column:span 12}}
 @media (max-width:820px){.odb-w{grid-column:span 12}.odb-w[style*="--span: 2"]{grid-column:span 6}}
 </style>
