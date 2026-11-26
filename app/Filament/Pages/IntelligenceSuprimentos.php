@@ -2,13 +2,13 @@
 
 namespace App\Filament\Pages;
 
+use App\Domain\Intelligence\Models\SuprimentosCarga;
 use App\Domain\Intelligence\Services\DiagnosticoCalculator;
 use App\Domain\Intelligence\Suprimentos\Catalogo;
 use App\Domain\Intelligence\Suprimentos\ExemploDeSuprimentos;
 use App\Domain\Intelligence\Suprimentos\ImportadorSuprimentos;
 use App\Domain\Intelligence\Suprimentos\IndicadoresDeSuprimentos;
 use App\Domain\Intelligence\Suprimentos\ModeloSuprimentos;
-use App\Domain\Intelligence\Suprimentos\Models\SuprimentosCarga;
 use App\Domain\Intelligence\Trial\Services\TrialCiclo;
 use App\Domain\Intelligence\Trial\Support\Planos;
 use App\Support\Tenancy;

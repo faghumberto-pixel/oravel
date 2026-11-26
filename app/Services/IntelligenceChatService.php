@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Domain\Intelligence\Services\DadosDeExemplo;
 use App\Domain\Intelligence\Services\EquipamentosService;
 use App\Domain\Intelligence\Services\EvolucaoService;
 use App\Domain\Intelligence\Services\InsightsDeEquipamentos;
@@ -129,7 +130,7 @@ class IntelligenceChatService extends ProspectChatService
             ];
         }
 
-        $aviso = \App\Domain\Intelligence\Services\DadosDeExemplo::soExemplo($this->tenantId)
+        $aviso = DadosDeExemplo::soExemplo($this->tenantId)
             ? "ATENÇÃO: todos os dados abaixo são de DEMONSTRAÇÃO (fictícios, gerados para o cliente conhecer o sistema), não da empresa real. Diga isso na resposta e lembre que ele pode limpar os dados de exemplo e enviar a própria planilha.\n\n"
             : '';
 

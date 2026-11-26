@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Intelligence\Models\SuprimentosCarga;
+use App\Domain\Intelligence\Models\SuprimentosItem;
+use App\Domain\Intelligence\Models\SuprimentosMovimento;
 use App\Domain\Intelligence\Support\ItemDeMenuDoModulo;
 use App\Domain\Intelligence\Support\ModeloExcel;
 use App\Domain\Intelligence\Suprimentos\Catalogo;
@@ -9,9 +12,6 @@ use App\Domain\Intelligence\Suprimentos\ExemploDeSuprimentos;
 use App\Domain\Intelligence\Suprimentos\ImportadorSuprimentos;
 use App\Domain\Intelligence\Suprimentos\IndicadoresDeSuprimentos;
 use App\Domain\Intelligence\Suprimentos\ModeloSuprimentos;
-use App\Domain\Intelligence\Suprimentos\Models\SuprimentosCarga;
-use App\Domain\Intelligence\Suprimentos\Models\SuprimentosItem;
-use App\Domain\Intelligence\Suprimentos\Models\SuprimentosMovimento;
 use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Domain\Intelligence\Trial\Services\TrialCadastro;
 use App\Domain\Intelligence\Trial\Support\Planos;
@@ -312,5 +312,24 @@ class IntelligenceSuprimentosTest extends TestCase
 
         $this->assertFalse(ExemploDeSuprimentos::existe($trial->tenant_id));
         $this->assertFalse(ExemploDeSuprimentos::podeGerar($trial->fresh()), 'passado o prazo não volta');
+    }
+
+    public function test_chaves_do_modulo_estao_no_pacote_intelligence_e_nunca_no_erp(): void
+    {
+        $intel = Pacotes::features('intelligence');
+        $this->assertContains('tabela_intelligence_suprimentos', $intel, 'sem esta chave o acesso aos dados é negado até no plano Standard');
+        $this->assertContains('menu_intelligence_suprimentos', $intel);
+
+        $erp = Pacotes::features('locadora');
+        $this->assertNotContains('tabela_intelligence_suprimentos', $erp, 'produto do Intelligence não vaza para o ERP');
+        $this->assertNotContains('menu_intelligence_suprimentos', $erp);
+    }
+
+    public function test_conta_de_teste_nasce_com_as_chaves_de_suprimentos_no_contrato(): void
+    {
+        $trial = $this->contaDeTeste();
+
+        $this->assertTrue($trial->tenant->fresh()->hasFeature('tabela_intelligence_suprimentos'));
+        $this->assertTrue($trial->tenant->fresh()->hasFeature('menu_intelligence_suprimentos'));
     }
 }

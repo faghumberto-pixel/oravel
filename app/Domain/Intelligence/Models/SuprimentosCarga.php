@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Intelligence\Suprimentos\Models;
+namespace App\Domain\Intelligence\Models;
 
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;

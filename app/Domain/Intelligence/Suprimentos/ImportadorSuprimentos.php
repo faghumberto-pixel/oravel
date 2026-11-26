@@ -2,11 +2,11 @@
 
 namespace App\Domain\Intelligence\Suprimentos;
 
+use App\Domain\Intelligence\Models\SuprimentosCarga;
+use App\Domain\Intelligence\Models\SuprimentosCompra;
+use App\Domain\Intelligence\Models\SuprimentosItem;
+use App\Domain\Intelligence\Models\SuprimentosMovimento;
 use App\Domain\Intelligence\Services\DiagnosticoCalculator;
-use App\Domain\Intelligence\Suprimentos\Models\SuprimentosCarga;
-use App\Domain\Intelligence\Suprimentos\Models\SuprimentosCompra;
-use App\Domain\Intelligence\Suprimentos\Models\SuprimentosItem;
-use App\Domain\Intelligence\Suprimentos\Models\SuprimentosMovimento;
 use App\Domain\Intelligence\Trial\Services\TrialCiclo;
 use App\Models\Tenant;
 use App\Models\User;
