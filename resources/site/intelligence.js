@@ -1,43 +1,58 @@
 (function () {
   var d = document, $ = function (s, r) { return (r || d).querySelector(s); }, all = function (s) { return [].slice.call(d.querySelectorAll(s)); };
   var track = function (l) { try { if (window.ovTrack) { window.ovTrack(l); } } catch (e) {} };
-  var dlg = $('#teste-gratis'), form = dlg && $('form', dlg);
+  var dlg = $('#teste-gratis'), formsCad = all('form[data-cadastro]');
 
-  // CTA: abre o formulário sem sair do site. Sem suporte a <dialog> ou sem JS, o link leva à mesma tela de cadastro no app.
-  all('[data-cta]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      if (!dlg || typeof dlg.showModal !== 'function') { return; }
-      e.preventDefault();
-      track('Teste grátis: abriu o formulário (' + (a.getAttribute('data-pos') || '') + ')');
-      dlg.showModal();
-      carregarTurnstile();
-      var n = $('input[name=nome]', dlg); if (n) { n.focus(); }
-    });
-  });
-  // Turnstile (anti-robô): o script só carrega quando o formulário abre, para não pesar na página. Sem o widget no HTML, nada acontece.
-  var tsOk = false, tsCarregado = false;
-  window.ovTsOk = function () { tsOk = true; var a = $('[data-ts-aviso]', dlg); if (a) { a.hidden = true; } };
-  window.ovTsExp = function () { tsOk = false; };
+  // Turnstile (anti-robô): o script só carrega quando alguém mexe num formulário (ou o pop-up abre), para não pesar na página.
+  var tsCarregado = false;
   function carregarTurnstile() {
-    if (tsCarregado || !$('.cf-turnstile', dlg)) { return; }
+    if (tsCarregado || !$('.cf-turnstile')) { return; }
     tsCarregado = true;
     var s = d.createElement('script'); s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js'; s.async = true; s.defer = true; d.head.appendChild(s);
   }
+
+  // Botões "Começar teste grátis": o do topo leva ao formulário do hero; os demais abrem o pop-up. Sem JS, o link leva à tela de cadastro do app.
+  all('[data-cta]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var pos = a.getAttribute('data-pos') || '';
+      track('Teste grátis: clicou no botão (' + pos + ')');
+      var hero = $('#cadastro');
+      var noTopo = hero && hero.getBoundingClientRect().top > -hero.offsetHeight * 0.6 && hero.getBoundingClientRect().top < window.innerHeight;
+      if (pos === 'topo' || noTopo) {
+        if (!hero) { return; }
+        e.preventDefault();
+        hero.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        var n = $('input[name=nome]', hero); if (n) { setTimeout(function () { n.focus({ preventScroll: true }); }, 350); }
+        carregarTurnstile();
+        return;
+      }
+      if (!dlg || typeof dlg.showModal !== 'function') { return; }
+      e.preventDefault();
+      dlg.showModal();
+      carregarTurnstile();
+      var n2 = $('input[name=nome]', dlg); if (n2) { n2.focus(); }
+    });
+  });
   all('[data-fechar]').forEach(function (b) { b.addEventListener('click', function () { dlg.close(); }); });
   if (dlg) { dlg.addEventListener('click', function (e) { if (e.target === dlg) { dlg.close(); } }); }
-  if (form) {
+
+  formsCad.forEach(function (form) {
+    form.addEventListener('focusin', carregarTurnstile, { once: true });
     form.addEventListener('submit', function (e) {
-      if ($('.cf-turnstile', form) && !tsOk) {
+      // cada formulário tem o seu próprio desafio: o campo escondido só vem preenchido quando ele termina
+      var widget = $('.cf-turnstile', form), tok = $('[name="cf-turnstile-response"]', form);
+      if (widget && !(tok && tok.value)) {
         e.preventDefault();
         var a = $('[data-ts-aviso]', form);
-        if (!a) { a = d.createElement('p'); a.setAttribute('data-ts-aviso', ''); a.setAttribute('role', 'alert'); a.className = 'micro'; a.style.color = '#b91c1c'; a.textContent = 'Aguarde a verificação anti-robô terminar (alguns segundos) e envie de novo.'; $('.cf-turnstile', form).insertAdjacentElement('afterend', a); }
+        if (!a) { a = d.createElement('p'); a.setAttribute('data-ts-aviso', ''); a.setAttribute('role', 'alert'); a.className = 'aviso-ts'; a.textContent = 'Aguarde a verificação anti-robô terminar (alguns segundos) e envie de novo.'; widget.insertAdjacentElement('afterend', a); }
         a.hidden = false;
+        carregarTurnstile();
         return;
       }
       track('Teste grátis: enviou o formulário');
       var b = $('button[type=submit]', form); if (b) { b.disabled = true; b.textContent = 'Enviando...'; }
     });
-  }
+  });
   all('[data-track-click]').forEach(function (a) { a.addEventListener('click', function () { track(a.getAttribute('data-track-click')); }); });
 
   // Calculadora (equipamento parado). O HTML já vem com a conta feita; aqui só recalcula.

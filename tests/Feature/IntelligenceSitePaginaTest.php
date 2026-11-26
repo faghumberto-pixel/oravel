@@ -52,7 +52,7 @@ class IntelligenceSitePaginaTest extends TestCase
     public function test_pagina_tem_titulo_descricao_e_open_graph_para_compartilhar(): void
     {
         $h = $this->html();
-        $this->assertStringContainsString('Veja onde e como sua locadora pode melhorar.', $h);
+        $this->assertStringContainsString('O centro de inteligência da sua locadora.', $h);
         foreach (['<title>', 'name="description"', 'rel="canonical"', 'property="og:title"', 'property="og:description"', 'property="og:image"', 'name="twitter:card"'] as $tag) {
             $this->assertStringContainsString($tag, $h, "falta $tag");
         }
@@ -70,13 +70,20 @@ class IntelligenceSitePaginaTest extends TestCase
         $destinos = [];
         foreach ($ctas as $c) {
             $destinos[] = $c->getAttribute('href');
-            $this->assertSame('Enviar minha planilha', trim($c->textContent));
+            $this->assertSame(config('intelligence_site.textos.cta'), trim($c->textContent));
         }
         $this->assertCount(1, array_unique($destinos), 'todos os CTAs têm de apontar para o mesmo lugar');
         $this->assertSame(rtrim(config('intelligence_site.app_url'), '/').'/intelligence/teste-gratis', $destinos[0]);
 
-        // e o formulário do modal envia para esse mesmo destino
+        // e os formulários (o do hero e o do pop-up) enviam para esse mesmo destino
         $this->assertSame($destinos[0], $x->query('//dialog//form')->item(0)->getAttribute('action'));
+        $forms = $x->query('//form[@data-cadastro]');
+        $this->assertSame(2, $forms->length, 'hero e pop-up');
+        foreach ($forms as $f) {
+            $this->assertSame($destinos[0], $f->getAttribute('action'));
+        }
+        $this->assertSame(1, $x->query('//section[contains(@class,"hero")]//form[@data-cadastro]')->length, 'o cadastro é a peça principal do hero');
+        $this->assertSame(0, $x->query('//section[contains(@class,"hero")]//*[contains(@class,"mock")]')->length, 'o hero não tem mockup');
     }
 
     public function test_nenhum_link_ou_ancora_quebrado(): void
@@ -146,7 +153,7 @@ class IntelligenceSitePaginaTest extends TestCase
     {
         $x = $this->xpath();
         $this->assertSame(1, $x->query('//h1')->length);
-        foreach (['O que você descobre', 'Como funciona', 'O que vem na leitura', 'Preço e confiança', 'Perguntas frequentes'] as $titulo) {
+        foreach (['O que é o Oravel Intelligence', 'O que você descobre', 'O que você recebe', 'Funciona do jeito que sua locadora já trabalha', 'Como funciona', 'Preço e confiança', 'Perguntas frequentes'] as $titulo) {
             $this->assertGreaterThan(0, $x->query('//h2[normalize-space()="'.$titulo.'"]')->length, "falta a seção $titulo");
         }
         $this->assertSame(5, $x->query('//details')->length, 'FAQ com 5 perguntas');
