@@ -2,11 +2,15 @@
 
 namespace App\Services;
 
+use App\Domain\Intelligence\Models\SuprimentosCarga;
 use App\Domain\Intelligence\Services\DadosDeExemplo;
 use App\Domain\Intelligence\Services\EquipamentosService;
 use App\Domain\Intelligence\Services\EvolucaoService;
 use App\Domain\Intelligence\Services\InsightsDeEquipamentos;
 use App\Domain\Intelligence\Support\Catalogo;
+use App\Domain\Intelligence\Suprimentos\ExemploDeSuprimentos;
+use App\Domain\Intelligence\Trial\Support\Planos;
+use App\Models\Tenant;
 use App\Support\Assistente\Resultado;
 use App\Support\Assistente\TenantSql;
 
@@ -150,6 +154,35 @@ class IntelligenceChatService extends ProspectChatService
         }
 
         return implode("\n", $linhas);
+    }
+
+    /**
+     * Última fotografia de Suprimentos (se o módulo está liberado no plano e há planilha): indicadores, nota e listas já calculados.
+     * "aviso" fala quando todos os dados são de demonstração.
+     *
+     * @return ?array{dados: array<string, mixed>, aviso: string}
+     */
+    private function contextoDeSuprimentos(): ?array
+    {
+        $tenant = Tenant::find($this->tenantId);
+        if (! $tenant || ! $tenant->hasFeature('tabela_intelligence_suprimentos') || ! Planos::moduloLiberado($this->tenantId, 'suprimentos')) {
+            return null;
+        }
+        $c = SuprimentosCarga::withoutGlobalScopes()->where('tenant_id', $this->tenantId)->orderByDesc('data_referencia')->orderByDesc('created_at')->first();
+        if (! $c) {
+            return null;
+        }
+        $exemplo = ExemploDeSuprimentos::soExemplo($this->tenantId);
+
+        return [
+            'aviso' => $exemplo ? "ATENÇÃO: os dados de SUPRIMENTOS abaixo são de DEMONSTRAÇÃO (fictícios). Diga isso na resposta e lembre que o cliente pode limpar o exemplo e enviar a própria planilha.\n\n" : '',
+            'dados' => [
+                'data_referencia' => $c->data_referencia->toDateString(), 'periodo_dias' => $c->periodo_dias, 'nota' => $c->diagnostico['pontuacao'] ?? null, 'faixa' => $c->diagnostico['faixa'] ?? null,
+                'indicadores' => array_map(fn ($i) => ['titulo' => $i['titulo'], 'valor' => $i['valor'], 'unidade' => $i['unidade'], 'nota' => $i['nota'] ?? null], $c->indicadores ?? []),
+                'listas' => $c->listas ?? [],
+                'demonstracao' => $exemplo,
+            ],
+        ];
     }
 
     protected function systemPrompt(): string
