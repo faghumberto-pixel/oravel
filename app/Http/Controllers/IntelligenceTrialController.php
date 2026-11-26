@@ -36,6 +36,7 @@ class IntelligenceTrialController extends Controller
             'whatsapp' => $request->whatsappE164(),
             'email' => trim($request->string('email')),
             'senha' => (string) $request->input('senha'),
+            'objetivo' => $request->input('objetivo') ?: null,
         ], $request->ip(), $request->userAgent());
 
         // Mesma resposta exista conta ou não: a tela nunca revela se o e-mail ou o WhatsApp já têm teste.

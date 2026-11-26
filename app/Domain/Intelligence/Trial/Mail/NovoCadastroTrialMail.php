@@ -12,7 +12,7 @@ class NovoCadastroTrialMail extends TrialMail
     {
         parent::__construct(
             'Novo teste grátis do Intelligence: '.$trial->empresa,
-            ['Nome: '.$trial->nome, 'Empresa: '.$trial->empresa, 'WhatsApp: '.TelefoneBr::formatar($trial->whatsapp), 'Origem: Intelligence – teste grátis'],
+            ['Nome: '.$trial->nome, 'Empresa: '.$trial->empresa, 'WhatsApp: '.TelefoneBr::formatar($trial->whatsapp), 'Origem: Intelligence – teste grátis', ...($trial->objetivo ? ['Quer descobrir: '.$trial->objetivoRotulo()] : [])],
         );
     }
 }

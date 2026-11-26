@@ -102,6 +102,7 @@ class TrialCadastro
             'nome' => $d['nome'],
             'empresa' => $d['empresa'],
             'whatsapp' => $d['whatsapp'],
+            'objetivo' => $d['objetivo'] ?? null,
             'status' => 'trial',
             'terms_accepted_at' => now(),
             'signup_ip' => $ip,
@@ -163,7 +164,7 @@ class TrialCadastro
                 'source' => SalesLead::SOURCE_SITE,
                 'pipeline_stage' => SalesLead::STAGE_PROSPECCAO,
                 'decision_makers' => [['name' => $trial->nome, 'role' => null]],
-                'inbound_details' => ['origem' => 'Intelligence – teste grátis', 'whatsapp' => $trial->whatsapp, 'trial_id' => $trial->id],
+                'inbound_details' => ['origem' => 'Intelligence – teste grátis', 'whatsapp' => $trial->whatsapp, 'trial_id' => $trial->id, 'objetivo' => $trial->objetivoRotulo()],
             ]);
 
             $autor = User::withoutGlobalScopes()->whereIn(DB::raw('lower(email)'), array_map('strtolower', (array) config('oravel.super_admins', [])))->orderBy('created_at')->first();
@@ -173,7 +174,7 @@ class TrialCadastro
                     'user_id' => $autor->id,
                     'channel' => 'Site — Intelligence – teste grátis',
                     'contact_date' => now(),
-                    'summary' => 'Cadastro rápido do teste grátis do Intelligence. Responsável: '.$trial->nome.' | WhatsApp: '.$trial->whatsapp,
+                    'summary' => 'Cadastro rápido do teste grátis do Intelligence. Responsável: '.$trial->nome.' | WhatsApp: '.$trial->whatsapp.($trial->objetivo ? ' | Quer descobrir: '.$trial->objetivoRotulo() : ''),
                     'stage_at_time' => SalesLead::STAGE_PROSPECCAO,
                 ]);
             }

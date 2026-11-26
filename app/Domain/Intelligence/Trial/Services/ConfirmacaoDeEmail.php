@@ -92,7 +92,7 @@ class ConfirmacaoDeEmail
             return null;
         }
 
-        return $this->cadastro->cadastrar(['nome' => $p->nome, 'empresa' => $p->empresa, 'whatsapp' => $p->whatsapp, 'email' => $p->email, 'senha_hash' => $p->senha_hash], $p->ip ?? $ip, $p->user_agent ?? $ua);
+        return $this->cadastro->cadastrar(['nome' => $p->nome, 'empresa' => $p->empresa, 'whatsapp' => $p->whatsapp, 'email' => $p->email, 'senha_hash' => $p->senha_hash, 'objetivo' => $p->objetivo], $p->ip ?? $ip, $p->user_agent ?? $ua);
     }
 
     /** Tela de entrada com e-mail e senha (é o único caminho de acesso). */
