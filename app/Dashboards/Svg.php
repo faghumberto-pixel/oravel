@@ -61,9 +61,15 @@ class Svg
         return '<svg viewBox="0 0 120 120" role="img" aria-label="Gráfico em anel" style="max-width:150px;margin:0 auto">'.$s.'</svg>';
     }
 
-    public static function cols(array $labels, array $a, array $b): string
+    /** Largura (em unidades do desenho) que casa com o espaço do bloco: assim o texto fica no tamanho real em vez de encolher. */
+    public static function larguraDoBloco(?int $span): int
     {
-        $W = 520;
+        return $span ? max(280, min(1000, $span * 78)) : 520;
+    }
+
+    public static function cols(array $labels, array $a, array $b, ?int $span = null): string
+    {
+        $W = static::larguraDoBloco($span);
         $H = 190;
         $pl = 36;
         $pb = 22;
@@ -86,19 +92,20 @@ class Svg
         return '<svg viewBox="0 0 '.$W.' '.$H.'" role="img" aria-label="Gráfico de colunas">'.$s.'</svg>';
     }
 
-    public static function line(array $labels, array $values, int|float|null $limit = null): string
+    public static function line(array $labels, array $values, int|float|null $limit = null, ?int $span = null): string
     {
         $values = array_values($values);
         if (count($values) < 2) {
             return '';
         }
 
-        $W = 520;
+        $W = static::larguraDoBloco($span);
         $H = 170;
         $pl = 36;
         $pb = 22;
         $pt = 10;
-        $max = max(1, (int) ceil(max(array_merge($values, [$limit ?? 0])) * 1.15));
+        // Mínimo de 4: com valores pequenos (ex.: 2 admissões) o eixo ganha degraus inteiros (0, 1, 2, 3, 4) em vez de repetir números.
+        $max = max(4, (int) ceil(max(array_merge($values, [$limit ?? 0])) * 1.15));
         $n = count($values);
         $s = static::grid($W, $H, $pl, $pb, $pt, $max);
         $pts = [];
@@ -125,13 +132,26 @@ class Svg
         return '<svg viewBox="0 0 '.$W.' '.$H.'" role="img" aria-label="Gráfico de linha">'.$s.'</svg>';
     }
 
+    /** Número curto para o eixo: 68290 vira 68k, 1250000 vira 1,3 mi. */
+    private static function curto(float $v): string
+    {
+        $abs = abs($v);
+
+        return match (true) {
+            $abs >= 1_000_000 => rtrim(rtrim(number_format($v / 1_000_000, 1, ',', ''), '0'), ',').' mi',
+            $abs >= 10_000 => round($v / 1000).'k',
+            $abs >= 1000 => rtrim(rtrim(number_format($v / 1000, 1, ',', ''), '0'), ',').'k',
+            default => (string) round($v),
+        };
+    }
+
     private static function grid(int $W, int $H, int $pl, int $pb, int $pt, int $max): string
     {
         $s = '';
         for ($g = 0; $g <= 4; $g++) {
             $y = round($pt + ($H - $pt - $pb) * (1 - $g / 4), 1);
             $s .= '<line x1="'.$pl.'" x2="'.$W.'" y1="'.$y.'" y2="'.$y.'" stroke="currentColor" opacity=".13"/>'
-                .'<text x="'.($pl - 6).'" y="'.($y + 4).'" text-anchor="end">'.round($max * $g / 4).'</text>';
+                .'<text x="'.($pl - 6).'" y="'.($y + 4).'" text-anchor="end">'.static::curto($max * $g / 4).'</text>';
         }
 
         return $s;

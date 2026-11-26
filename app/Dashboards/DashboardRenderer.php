@@ -44,6 +44,47 @@ class DashboardRenderer
             ];
         }
 
+        return static::ajustarLinhas($blocos);
+    }
+
+    /**
+     * Fecha as 12 colunas de cada linha. Os blocos têm largura própria (3, 4, 6...), pensada para o dashboard de cada módulo, e quando o
+     * contrato esconde alguns, ou quando blocos de módulos diferentes se juntam, a linha ficava com buraco (3 + 4 + 4 = 11). Cada linha que
+     * fecha ganha as colunas que faltam, uma a uma, sempre para o bloco mais estreito (6 + 4 vira 6 + 6; 3 + 4 + 4 vira 4 + 4 + 4). A última
+     * linha fica como está: sobra no fim da página é natural.
+     *
+     * @param  list<array{key: string, title: string, subtitle: string, size: int, payload: array}>  $blocos
+     * @return list<array{key: string, title: string, subtitle: string, size: int, payload: array}>
+     */
+    public static function ajustarLinhas(array $blocos): array
+    {
+        $linha = [];
+        $soma = 0;
+        $fechadas = [];
+
+        foreach ($blocos as $i => $bloco) {
+            if ($linha && $soma + $bloco['size'] > 12) {
+                $fechadas[] = $linha;
+                $linha = [];
+                $soma = 0;
+            }
+            $linha[] = $i;
+            $soma += $bloco['size'];
+        }
+
+        foreach ($fechadas as $indices) {
+            $falta = 12 - array_sum(array_map(fn ($i) => $blocos[$i]['size'], $indices));
+            while ($falta-- > 0) {
+                $menor = $indices[0];
+                foreach ($indices as $i) {
+                    if ($blocos[$i]['size'] < $blocos[$menor]['size']) {
+                        $menor = $i;
+                    }
+                }
+                $blocos[$menor]['size']++;
+            }
+        }
+
         return $blocos;
     }
 

@@ -43,8 +43,11 @@
 
         {{-- ===================== ÁREA DE CONTEÚDO ===================== --}}
         <div class="w-full flex flex-col gap-3">
-            @if($activeTab === 'gestao')
-                {{-- PAINEL DE GESTAO -- widgets exclusivos do segmento do tenant
+            @if($activeTab === 'gestao' && ($resumoEmpresa = $this->getVisaoEmpresa()))
+                {{-- PAINEL DE GESTAO -- visão da empresa inteira: resumo + uma seção por área que o contrato cobre (App\Dashboards\VisaoEmpresa) --}}
+                @include('dashboards.empresa', ['resumo' => $resumoEmpresa])
+            @elseif($activeTab === 'gestao')
+                {{-- PAINEL DE GESTAO (padrão antigo, só quando os dashboards por área não estão liberados no contrato) -- widgets exclusivos do segmento do tenant
                      (Eventos/Construcao Civil/Industrial-Hospitalar/Generico),
                      ver App\Support\SegmentDashboardWidgets --}}
                 @php
@@ -81,6 +84,9 @@
                         @endforeach
                     </div>
                 @endif
+            @elseif($activeTab === 'comando' && ($gavComercial = $this->getGestaoComercial()))
+                {{-- GESTÃO À VISTA para contrato sem manutenção (ex.: pacote Vendas): indicadores comerciais --}}
+                @include('dashboards.gestao-comercial', ['blocks' => $gavComercial])
             @else
                 {{-- GESTÃO À VISTA -- indicadores de resultado de manutenção. Todos os
                      widgets abaixo recebem os mesmos 4 filtros via @livewire(...) e
@@ -95,9 +101,17 @@
 
                 {{-- Cabeçalho + Filtros --}}
                 <div class="rounded-xl bg-gray-100 dark:bg-gray-800/60 backdrop-blur-sm ring-1 ring-gray-950/5 dark:ring-white/5 p-3">
-                    <div class="mb-2">
-                        <p class="text-[13px] font-bold uppercase tracking-wide text-gray-900 dark:text-gray-100">Indicadores de Resultados – Manutenção</p>
-                        <p class="text-[10px] uppercase tracking-wider text-gray-500">Dados que geram confiabilidade e resultados</p>
+                    <div class="mb-2 flex flex-wrap items-end justify-between gap-2">
+                        <div>
+                            <p class="text-[13px] font-bold uppercase tracking-wide text-gray-900 dark:text-gray-100">Indicadores de Resultados – Manutenção</p>
+                            <p class="text-[10px] uppercase tracking-wider text-gray-500">Dados que geram confiabilidade e resultados</p>
+                        </div>
+                        <div class="inline-flex gap-1 rounded-lg bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10 p-0.5" role="group" aria-label="Período">
+                            @foreach ([1 => 'Este mês', 3 => '3 meses', 6 => '6 meses', 12 => '12 meses'] as $meses => $rotulo)
+                                <button type="button" wire:click="periodo({{ $meses }})"
+                                    class="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide rounded-md transition {{ $this->periodoAtivo() === $meses ? 'bg-amber-500 text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white' }}">{{ $rotulo }}</button>
+                            @endforeach
+                        </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 items-end">
                         <div>
@@ -136,51 +150,64 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-3 items-start">
-                    {{-- SIDEBAR ESQUERDA: resumo de OS, tipos, custo total --}}
-                    <div class="flex flex-col gap-3">
+                {{-- Linhas de largura total (sem coluna lateral fixa: ela espremia os resumos de OS e deixava vazio embaixo).
+                     Cada linha tem colunas de mesma altura e o contêiner .gav faz o cartão de cada widget preencher a célula. --}}
+                <style>
+                    .gav .fi-wi-widget{display:flex;flex-direction:column;min-width:0;grid-column:auto!important}
+                    .gav .fi-wi-widget>*{flex:1 1 auto}
+                    .gav .gav-linha{display:grid;gap:.75rem;grid-template-columns:minmax(0,1fr)}
+                    @media (min-width:640px){.gav .gav-3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+                    @media (min-width:1024px){.gav .gav-3{grid-template-columns:repeat(3,minmax(0,1fr))}.gav .gav-2{grid-template-columns:repeat(2,minmax(0,1fr))}.gav .gav-resumo{grid-template-columns:minmax(0,3fr) minmax(0,1fr)}}
+                    .gav .gav-col{display:flex;flex-direction:column;gap:.5rem;min-width:0}
+                    .gav .gav-col>.fi-wi-widget:last-child{flex:1 1 auto}
+                </style>
+
+                <div class="gav flex flex-col gap-3">
+                    {{-- RESUMO: ordens de serviço (3 números lado a lado) + custo total --}}
+                    <div class="gav-linha gav-resumo">
                         @livewire(\App\Filament\Widgets\GestaoAVista\OsResumoStats::class, $gestaoFiltros, key($gestaoKeyBase.'-resumo'))
-                        @livewire(\App\Filament\Widgets\GestaoAVista\TiposManutencaoAreaChart::class, $gestaoFiltros, key($gestaoKeyBase.'-tipos'))
                         @livewire(\App\Filament\Widgets\GestaoAVista\CustoTotalMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-custo'))
                     </div>
 
-                    {{-- CONTEÚDO PRINCIPAL --}}
-                    <div class="flex flex-col gap-3">
-                        {{-- KPIS DE EXECUÇÃO E DISPONIBILIDADE (3 colunas) --}}
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
-                            <div class="flex flex-col gap-2">
-                                @livewire(\App\Filament\Widgets\GestaoAVista\ManutencaoRealizadaGauge::class, $gestaoFiltros, key($gestaoKeyBase.'-mr-gauge'))
-                                @livewire(\App\Filament\Widgets\GestaoAVista\ManutencaoRealizadaEvolucao::class, $gestaoFiltros, key($gestaoKeyBase.'-mr-evo'))
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                @livewire(\App\Filament\Widgets\GestaoAVista\DisponibilidadeGauge::class, $gestaoFiltros, key($gestaoKeyBase.'-disp-gauge'))
-                                @livewire(\App\Filament\Widgets\GestaoAVista\DisponibilidadeEvolucao::class, $gestaoFiltros, key($gestaoKeyBase.'-disp-evo'))
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                @livewire(\App\Filament\Widgets\GestaoAVista\EfetividadeGauge::class, $gestaoFiltros, key($gestaoKeyBase.'-efet-gauge'))
-                                @livewire(\App\Filament\Widgets\GestaoAVista\EfetividadeEvolucao::class, $gestaoFiltros, key($gestaoKeyBase.'-efet-evo'))
-                            </div>
+                    {{-- INDICADORES PRINCIPAIS: realizada, disponibilidade e efetividade (medidor + evolução) --}}
+                    <div class="gav-linha gav-3">
+                        <div class="gav-col">
+                            @livewire(\App\Filament\Widgets\GestaoAVista\ManutencaoRealizadaGauge::class, $gestaoFiltros, key($gestaoKeyBase.'-mr-gauge'))
+                            @livewire(\App\Filament\Widgets\GestaoAVista\ManutencaoRealizadaEvolucao::class, $gestaoFiltros, key($gestaoKeyBase.'-mr-evo'))
                         </div>
+                        <div class="gav-col">
+                            @livewire(\App\Filament\Widgets\GestaoAVista\DisponibilidadeGauge::class, $gestaoFiltros, key($gestaoKeyBase.'-disp-gauge'))
+                            @livewire(\App\Filament\Widgets\GestaoAVista\DisponibilidadeEvolucao::class, $gestaoFiltros, key($gestaoKeyBase.'-disp-evo'))
+                        </div>
+                        <div class="gav-col">
+                            @livewire(\App\Filament\Widgets\GestaoAVista\EfetividadeGauge::class, $gestaoFiltros, key($gestaoKeyBase.'-efet-gauge'))
+                            @livewire(\App\Filament\Widgets\GestaoAVista\EfetividadeEvolucao::class, $gestaoFiltros, key($gestaoKeyBase.'-efet-evo'))
+                        </div>
+                    </div>
 
-                        {{-- MÉTRICAS OPERACIONAIS E CAUSAS (4 colunas) --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                            @livewire(\App\Filament\Widgets\GestaoAVista\MtbfMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-mtbf'))
-                            @livewire(\App\Filament\Widgets\GestaoAVista\MttrMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-mttr'))
-                            @livewire(\App\Filament\Widgets\GestaoAVista\TempoParadaMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-parada'))
-                            @livewire(\App\Filament\Widgets\GestaoAVista\CausasFalhaBarChart::class, $gestaoFiltros, key($gestaoKeyBase.'-causas'))
-                        </div>
+                    {{-- CONFIABILIDADE: MTBF, MTTR e tempo de parada --}}
+                    <div class="gav-linha gav-3">
+                        @livewire(\App\Filament\Widgets\GestaoAVista\MtbfMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-mtbf'))
+                        @livewire(\App\Filament\Widgets\GestaoAVista\MttrMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-mttr'))
+                        @livewire(\App\Filament\Widgets\GestaoAVista\TempoParadaMetricCard::class, $gestaoFiltros, key($gestaoKeyBase.'-parada'))
+                    </div>
 
-                        {{-- FECHAMENTO: evolução da parada + conclusões --}}
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                            @livewire(\App\Filament\Widgets\GestaoAVista\TempoParadaEvolucaoAreaChart::class, $gestaoFiltros, key($gestaoKeyBase.'-parada-evo'))
-                            @livewire(\App\Filament\Widgets\GestaoAVista\ConclusoesPanel::class, $gestaoFiltros, key($gestaoKeyBase.'-conclusoes'))
-                        </div>
+                    {{-- ONDE ESTÁ O PROBLEMA: tipos de manutenção e causas de falha --}}
+                    <div class="gav-linha gav-2">
+                        @livewire(\App\Filament\Widgets\GestaoAVista\TiposManutencaoAreaChart::class, $gestaoFiltros, key($gestaoKeyBase.'-tipos'))
+                        @livewire(\App\Filament\Widgets\GestaoAVista\CausasFalhaBarChart::class, $gestaoFiltros, key($gestaoKeyBase.'-causas'))
+                    </div>
 
-                        {{-- BANNER DE RODAPÉ --}}
-                        <div class="rounded-xl bg-gradient-to-r from-indigo-950/60 via-gray-800/60 to-indigo-950/60 ring-1 ring-gray-950/5 dark:ring-white/5 p-4 text-center">
-                            <p class="text-[12px] font-bold uppercase tracking-wide text-gray-800 dark:text-gray-200">Dados não tomam decisões. Pessoas informadas, sim.</p>
-                            <p class="text-[10px] uppercase tracking-wider text-indigo-300 mt-1">Gestão à vista, decisão na hora, resultado todo dia.</p>
-                        </div>
+                    {{-- FECHAMENTO: evolução da parada + conclusões --}}
+                    <div class="gav-linha gav-2">
+                        @livewire(\App\Filament\Widgets\GestaoAVista\TempoParadaEvolucaoAreaChart::class, $gestaoFiltros, key($gestaoKeyBase.'-parada-evo'))
+                        @livewire(\App\Filament\Widgets\GestaoAVista\ConclusoesPanel::class, $gestaoFiltros, key($gestaoKeyBase.'-conclusoes'))
+                    </div>
+
+                    {{-- BANNER DE RODAPÉ --}}
+                    <div class="rounded-xl bg-gradient-to-r from-indigo-950/60 via-gray-800/60 to-indigo-950/60 ring-1 ring-gray-950/5 dark:ring-white/5 p-4 text-center">
+                        <p class="text-[12px] font-bold uppercase tracking-wide text-gray-800 dark:text-gray-200">Dados não tomam decisões. Pessoas informadas, sim.</p>
+                        <p class="text-[10px] uppercase tracking-wider text-indigo-300 mt-1">Gestão à vista, decisão na hora, resultado todo dia.</p>
                     </div>
                 </div>
             @endif

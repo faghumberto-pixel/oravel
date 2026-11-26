@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Dashboards\DashboardRenderer;
 use App\Dashboards\ModuleDashboards;
 use App\Dashboards\Personalizacao\DashboardResolver;
+use App\Dashboards\VisaoEmpresa;
 use App\Models\Asset;
 use App\Models\Branch;
 use App\Support\PainelDaArea;
@@ -179,6 +180,27 @@ class PainelGestao extends Page
         $this->activeTab = $tab;
     }
 
+    /** Atalhos de período da Gestão à Vista: este mês (padrão) ou os últimos 3, 6 ou 12 meses, para as evoluções mostrarem tendência. */
+    public function periodo(int $meses): void
+    {
+        $meses = in_array($meses, [1, 3, 6, 12], true) ? $meses : 1;
+        $this->gestaoFrom = now()->startOfMonth()->subMonths($meses - 1)->toDateString();
+        $this->gestaoUntil = now()->endOfMonth()->toDateString();
+        $this->gestaoRefreshTick++;
+    }
+
+    /** Qual atalho está ativo (1, 3, 6 ou 12 meses), ou null se as datas foram escolhidas à mão. */
+    public function periodoAtivo(): ?int
+    {
+        foreach ([1, 3, 6, 12] as $meses) {
+            if ($this->gestaoFrom === now()->startOfMonth()->subMonths($meses - 1)->toDateString() && $this->gestaoUntil === now()->endOfMonth()->toDateString()) {
+                return $meses;
+            }
+        }
+
+        return null;
+    }
+
     public function atualizarDados(): void
     {
         $this->gestaoRefreshTick++;
@@ -214,6 +236,32 @@ class PainelGestao extends Page
     public function getGestaoAssets(): Collection
     {
         return Asset::query()->orderBy('name')->get(['id', 'name', 'patrimonio']);
+    }
+
+    /** Visão da empresa inteira (todas as áreas que o contrato cobre) para a aba "Painel de Gestão"; null = usa os widgets antigos por segmento. */
+    public function getVisaoEmpresa(): ?array
+    {
+        $user = auth()->user();
+
+        return VisaoEmpresa::disponivel($user) ? VisaoEmpresa::resumo($user) : null;
+    }
+
+    /**
+     * Gestão à Vista para contrato SEM manutenção (ex.: pacote Vendas): em vez dos medidores de OS (que ficariam zerados), mostra os
+     * indicadores comerciais do dashboard de Vendas. Contrato com manutenção continua vendo os indicadores de manutenção.
+     *
+     * @return list<array>|null
+     */
+    public function getGestaoComercial(): ?array
+    {
+        $user = auth()->user();
+        $tenant = Tenancy::current();
+
+        if (! $user || ! $tenant || $tenant->hasFeature('tabela_maintenance_orders') || ! DashboardRenderer::available('vendas', $user)) {
+            return null;
+        }
+
+        return DashboardRenderer::blocks('vendas', $user) ?: null;
     }
 
     public function getGestaoWidgets(): array
