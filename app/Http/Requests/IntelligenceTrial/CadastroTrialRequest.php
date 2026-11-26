@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\IntelligenceTrial;
 
+use App\Domain\Intelligence\Trial\Models\IntelligenceTrial;
 use App\Domain\Intelligence\Trial\Support\TelefoneBr;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
@@ -36,6 +37,7 @@ class CadastroTrialRequest extends FormRequest
                 }
             }],
             'senha' => ['required', 'string', 'max:72', Password::min(8)->letters()->numbers()],
+            'objetivo' => ['nullable', 'in:'.implode(',', array_keys(IntelligenceTrial::OBJETIVOS))],
             'aceite' => ['accepted'],
             // Honeypot: humano nunca preenche.
             'site' => ['prohibited'],

@@ -26,8 +26,21 @@ class IntelligenceTrial extends Model
         'tenant_id', 'user_id', 'nome', 'empresa', 'whatsapp', 'access_token_hash', 'access_token_at', 'status',
         'trial_started_at', 'trial_ends_at', 'last_upload_at', 'extensions', 'plano_nome', 'plano_preco', 'plano_chave', 'plano_proximo_chave', 'plano_proximo_em', 'exemplo_oferecido_em', 'exemplo_suprimentos_oferecido_em', 'contracted_at',
         'billing_starts_on', 'canceled_at', 'access_until', 'overdue_since', 'asaas_customer_id', 'asaas_subscription_id',
-        'terms_accepted_at', 'signup_ip', 'signup_user_agent',
+        'terms_accepted_at', 'signup_ip', 'signup_user_agent', 'objetivo',
     ];
+
+    /** Perguntas da etapa 1 do cadastro da landing (chave => o que a pessoa quer descobrir). */
+    public const OBJETIVOS = [
+        'geral' => 'Minha locadora está gerando o resultado que deveria?',
+        'rentabilidade' => 'Onde posso melhorar minha rentabilidade?',
+        'frota' => 'Tenho equipamentos parados ou improdutivos?',
+        'custos' => 'Como posso reduzir custos?',
+    ];
+
+    public function objetivoRotulo(): ?string
+    {
+        return self::OBJETIVOS[$this->objetivo] ?? null;
+    }
 
     protected $casts = [
         'status' => StatusConta::class,

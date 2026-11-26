@@ -81,7 +81,7 @@ dialog{width:min(560px,calc(100% - 24px));max-height:calc(100dvh - 24px);margin:
 dialog::backdrop{background:#080e17cc}dialog h2{font-size:1.5rem}dialog p{color:var(--muted)}dialog form{padding:0}
 .x{position:absolute;top:6px;right:10px;background:none;border:0;font-size:1.8rem;cursor:pointer;color:var(--muted);line-height:1}.etapa{font-size:.85rem;font-weight:600;margin-bottom:6px}
 button.op{width:100%;justify-content:space-between;text-align:left;background:#fff;font:600 1rem/1.4 'Public Sans',sans-serif;color:var(--ink);padding:16px}button.op:hover{border-color:var(--or);background:#fff8f2}
-.nota{font-size:.88rem;margin-top:14px}.barra{display:none}
+.nota{font-size:.88rem;margin-top:14px}.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}.senha-l{position:relative}.ver{position:absolute;right:8px;bottom:8px;background:none;border:0;color:var(--ordk);font:600 .85rem 'Public Sans',sans-serif;cursor:pointer;padding:6px}.aceite{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:.88rem;margin:6px 0 14px}.aceite input{width:18px;height:18px;margin:2px 0 0;flex:none;accent-color:var(--or)}.cf-turnstile{margin:4px 0 12px;min-height:65px}.barra{display:none}
 @media(max-width:560px){.barra:not([hidden]){display:block;position:fixed;bottom:0;left:0;right:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--ink);z-index:6}.barra .btn{display:block;text-align:center;padding:13px}footer{padding-bottom:96px}.frase{padding:64px 0}}
 .ganho{margin-top:30px}.ganho-t{font:600 1.35rem/1.3 'Newsreader',serif}.depois{margin-top:26px;font-size:1.08rem}.depois p+p{margin-top:12px;color:var(--muted)}
 dialog .op small{margin-top:4px;opacity:1;color:var(--muted)}dialog button.op{padding:13px 14px}.depois-preco{font-size:1.25rem;color:var(--muted);margin-bottom:16px}
@@ -193,10 +193,15 @@ img.tela{display:block;width:100%;height:auto}.tela{background:#fff;border:1px s
 <div class="barra" id="barra" hidden><a class="btn" data-cta="barra_celular" data-main href="#acesso">Conhecer o Oravel Intelligence</a></div>
 <dialog id="dlg" aria-label="Criar acesso ao Oravel Intelligence"><button type="button" class="x" id="fechar" aria-label="Fechar">×</button>
 <div id="e1"><p class="etapa">Etapa 1 de 2</p><h2 tabindex="-1">O que você quer descobrir sobre sua locadora?</h2><button type="button" class="op" value="geral"><span><b>Minha locadora está gerando o resultado que deveria?</b><small>Tenha uma visão geral da eficiência da operação.</small></span><span aria-hidden="true">→</span></button><button type="button" class="op" value="rentabilidade"><span><b>Onde posso melhorar minha rentabilidade?</b><small>Identifique oportunidades nos resultados da empresa.</small></span><span aria-hidden="true">→</span></button><button type="button" class="op" value="frota"><span><b>Tenho equipamentos parados ou improdutivos?</b><small>Analise utilização e produtividade da frota.</small></span><span aria-hidden="true">→</span></button><button type="button" class="op" value="custos"><span><b>Como posso reduzir custos?</b><small>Encontre pontos de desperdício operacional.</small></span><span aria-hidden="true">→</span></button></div>
-<form id="cad" hidden><p class="etapa">Etapa 2 de 2</p><h2 tabindex="-1">Vamos criar seu acesso ao Oravel Intelligence.</h2><p class="esc"><b id="escolha"></b> <button type="button" id="voltar">Alterar</button></p>
-<label>Nome<input required name="nome" autocomplete="name"></label><label>Nome da locadora<input required name="empresa" autocomplete="organization"></label><label>WhatsApp<input required name="whats" type="tel" autocomplete="tel"></label><label>E-mail<input required name="email" type="email" autocomplete="email"></label>
-<button class="btn">Criar minha conta no Oravel Intelligence</button><p class="nota">Nenhum arquivo é pedido aqui. O envio acontece só na sua área exclusiva, após confirmar o e-mail.</p><small>Simulação: nada é enviado.</small></form>
-<div id="ok" hidden><h2 tabindex="-1">Confirme seu e-mail</h2><p>Na versão real, enviaremos um link para <b id="mail"></b>. Por ele, você cria ou confirma sua senha e acessa sua área exclusiva.</p><small>Simulação: nenhum e-mail foi enviado.</small></div></dialog>
+<form id="cad" hidden method="post" action="https://app.oravel.com.br/intelligence/teste-gratis"><p class="etapa">Etapa 2 de 2</p><h2 tabindex="-1">Vamos criar seu acesso ao Oravel Intelligence.</h2><p class="esc"><b id="escolha"></b> <button type="button" id="voltar">Alterar</button></p>
+<input type="hidden" name="objetivo" id="objetivo-campo">
+<label>Nome<input required name="nome" autocomplete="name" maxlength="120"></label><label>Nome da locadora<input required name="empresa" autocomplete="organization" maxlength="120"></label><label>WhatsApp<input required name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(19) 99999-9999" maxlength="20"></label><label>E-mail<input required name="email" type="email" autocomplete="email" inputmode="email" maxlength="160"></label>
+<label class="senha-l">Crie uma senha<input required name="senha" id="senha" type="password" minlength="8" maxlength="72" autocomplete="new-password" placeholder="mínimo 8, com letra e número"><button type="button" class="ver" id="ver" aria-pressed="false">Mostrar</button></label>
+<div class="cf-turnstile" data-sitekey="0x4AAAAAAGTPnpRCIaCgKbWt" data-language="pt-br"></div>
+<label class="aceite"><input type="checkbox" name="aceite" value="1" required><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> (LGPD).</span></label>
+<div class="hp" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
+<button class="btn">Criar minha conta no Oravel Intelligence</button><p class="nota">Nenhum arquivo é pedido aqui. O envio da planilha acontece só na sua área exclusiva, após confirmar o e-mail.</p></form>
+</dialog>
 <footer><div class="w">Oravel Desenvolvimento de Software LTDA · CNPJ 65.707.953/0001-30<br>contato@oravel.com.br · WhatsApp (19) 99933-2615</div></footer>
 <script>
 const textos={a:'Conhecer o Oravel Intelligence',b:'Criar minha visão operacional',c:'Acessar minha inteligência operacional'};
@@ -204,25 +209,25 @@ const p=new URLSearchParams(location.search).get('cta'),variante=Object.hasOwn(t
 document.querySelectorAll('[data-main]').forEach(e=>e.textContent=textos[variante]);
 // Medição: window.dataLayer, no formato lido pelo GTM. Nunca enviar dados pessoais.
 // Para ligar: instalar o contêiner GTM e criar um gatilho por nome de evento (GA4).
-// Eventos: pagina_vista, secao_vista, cta_clique, objetivo_escolhido, cadastro_envio_simulado,
-// janela_fechada, cta_previa_clique, dor_escolhida, cadastro_aberto, cadastro_concluido.
+// Eventos: pagina_vista, secao_vista, cta_clique, objetivo_escolhido, cadastro_enviado (ao enviar o formulário;
+// quem aceita o cadastro é o servidor do app), janela_fechada, cta_previa_clique, dor_escolhida, cadastro_aberto.
 // email_confirmado: NÃO dispara aqui. O sistema deve registrar após validar o link.
-// Na versão real: remover simulado e cadastro_envio_simulado; cadastro_concluido só após o servidor aceitar.
 // cta_previa_clique repete cta_clique e dor_escolhida repete objetivo_escolhido: não somar os pares.
-const SIMULACAO=true;
 window.dataLayer=window.dataLayer||[];
-const ev=(event,extra={})=>window.dataLayer.push({event,variante,simulado:SIMULACAO,local:undefined,objetivo:undefined,etapa:undefined,secao:undefined,...extra});
-const $=id=>document.getElementById(id),dlg=$('dlg'),e1=$('e1'),cad=$('cad'),ok=$('ok');
+const ev=(event,extra={})=>window.dataLayer.push({event,variante,local:undefined,objetivo:undefined,etapa:undefined,secao:undefined,...extra});
+const $=id=>document.getElementById(id),dlg=$('dlg'),e1=$('e1'),cad=$('cad');
 let objetivo='';
-const mostrar=el=>{[e1,cad,ok].forEach(x=>x.hidden=x!==el);dlg.scrollTop=0;el.querySelector('h2').focus()};
-const etapa=()=>!ok.hidden?'confirmacao':!cad.hidden?'cadastro':'objetivo';
+const mostrar=el=>{[e1,cad].forEach(x=>x.hidden=x!==el);dlg.scrollTop=0;el.querySelector('h2').focus()};
+let tsCarregado=false;const carregarTurnstile=()=>{if(tsCarregado)return;tsCarregado=true;const t=document.createElement('script');t.src='https://challenges.cloudflare.com/turnstile/v0/api.js';t.async=true;t.defer=true;document.head.appendChild(t)};
+const etapa=()=>!cad.hidden?'cadastro':'objetivo';
 ev('pagina_vista');
-document.querySelectorAll('[data-cta]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();ev('cta_clique',{local:a.dataset.cta});if(a.dataset.cta==='previa')ev('cta_previa_clique',{local:'previa'});dlg.showModal();document.body.style.overflow='hidden';mostrar(!ok.hidden?ok:!cad.hidden?cad:e1)}));
+document.querySelectorAll('[data-cta]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();ev('cta_clique',{local:a.dataset.cta});if(a.dataset.cta==='previa')ev('cta_previa_clique',{local:'previa'});dlg.showModal();document.body.style.overflow='hidden';mostrar(!cad.hidden?cad:e1)}));
 $('fechar').onclick=()=>dlg.close();
 dlg.addEventListener('close',()=>{document.body.style.overflow='';ev('janela_fechada',{etapa:etapa()})});
-e1.querySelectorAll('.op').forEach(b=>b.onclick=()=>{objetivo=b.value;$('escolha').textContent=b.querySelector('b').textContent;ev('objetivo_escolhido',{objetivo});ev('dor_escolhida',{objetivo});mostrar(cad);ev('cadastro_aberto',{objetivo})});
+e1.querySelectorAll('.op').forEach(b=>b.onclick=()=>{objetivo=b.value;$('objetivo-campo').value=objetivo;carregarTurnstile();$('escolha').textContent=b.querySelector('b').textContent;ev('objetivo_escolhido',{objetivo});ev('dor_escolhida',{objetivo});mostrar(cad);ev('cadastro_aberto',{objetivo})});
 $('voltar').onclick=()=>mostrar(e1);
-cad.addEventListener('submit',e=>{e.preventDefault();$('mail').textContent=cad.elements.email.value;ev('cadastro_envio_simulado',{objetivo});ev('cadastro_concluido',{objetivo});mostrar(ok)});
+cad.addEventListener('submit',()=>{ev('cadastro_enviado',{objetivo})});
+$('ver').onclick=()=>{const c=$('senha'),m=c.type==='password';c.type=m?'text':'password';$('ver').textContent=m?'Ocultar':'Mostrar';$('ver').setAttribute('aria-pressed',m)};
 new IntersectionObserver((l,o)=>l.forEach(x=>{if(x.isIntersecting){ev('secao_vista',{secao:x.target.id});o.unobserve(x.target)}}),{threshold:.3}).observe($('previa'));
 new IntersectionObserver(l=>$('barra').hidden=l[0].isIntersecting).observe(document.querySelector('.hero'));
 </script></body></html>

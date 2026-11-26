@@ -12,7 +12,7 @@ class IntelligenceTrialPendente extends Model
 
     protected $table = 'intelligence_trial_pendentes';
 
-    protected $fillable = ['nome', 'empresa', 'whatsapp', 'email', 'senha_hash', 'token_hash', 'ip', 'user_agent', 'expires_at'];
+    protected $fillable = ['nome', 'empresa', 'whatsapp', 'email', 'senha_hash', 'token_hash', 'ip', 'user_agent', 'expires_at', 'objetivo'];
 
     protected $casts = ['expires_at' => 'datetime'];
 
