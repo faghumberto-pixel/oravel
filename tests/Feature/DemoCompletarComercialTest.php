@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /** Popula Clientes, Orçamentos, Propostas Comerciais e Contratos da empresa de teste do Vendas: só adiciona e desfaz só o que fez. */
@@ -140,5 +141,23 @@ class DemoCompletarComercialTest extends TestCase
         $this->assertSame($propostasCrm, $this->n($t, 'crm_propostas'), 'as propostas do CRM continuam');
         $this->assertSame(0, DB::table('crm_contas')->where('tenant_id', $t->id)->whereNotNull('client_id')->count(), 'ligação conta => cliente desfeita');
         $this->assertSame(0, $this->n($outra, 'clients'), 'outra empresa nunca é tocada');
+    }
+
+    public function test_numero_de_contrato_nunca_colide_com_o_de_outra_empresa(): void
+    {
+        // O número do contrato é único no sistema inteiro: em produção já existia DEMO-CT-0001 (outra empresa) e o comando falhou.
+        $outra = $this->empresa('Outra '.uniqid());
+        $clienteId = (string) Str::uuid();
+        DB::table('clients')->insert(['id' => $clienteId, 'tenant_id' => $outra->id, 'name' => 'Cliente', 'created_at' => now(), 'updated_at' => now()]);
+        foreach (range(1, 6) as $n) {
+            DB::table('contracts')->insert(['id' => (string) Str::uuid(), 'tenant_id' => $outra->id, 'client_id' => $clienteId, 'contract_number' => 'DEMO-CT-'.str_pad((string) $n, 4, '0', STR_PAD_LEFT),
+                'start_date' => now()->toDateString(), 'price' => 1, 'created_at' => now(), 'updated_at' => now()]);
+        }
+
+        $t = $this->preparada();
+        $this->assertSame(0, Artisan::call('demo:completar-comercial', ['--tenant' => $this->nome]));
+
+        $this->assertSame(6, $this->n($t, 'contracts'));
+        $this->assertSame(0, DB::table('contracts')->where('tenant_id', $t->id)->where('contract_number', 'like', 'DEMO-CT-%')->count(), 'a numeração do comando é própria');
     }
 }
