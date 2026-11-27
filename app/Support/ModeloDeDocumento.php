@@ -6,6 +6,7 @@ use App\Models\Contract;
 use App\Models\CrmProposta;
 use App\Models\DocumentoModelo;
 use App\Models\Quote;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -64,6 +65,17 @@ class ModeloDeDocumento
         return 'data:'.$mime.';base64,'.base64_encode(Storage::disk('local')->get($caminho));
     }
 
+    /**
+     * Nome da empresa DONA do documento (marcador {{empresa}}). Nunca o emissor do sistema: ele muda conforme quem está logado e, para uma
+     * empresa de demonstração, saía "Oravel" no meio das cláusulas.
+     */
+    private static function nomeDaEmpresa(?string $tenantId): string
+    {
+        $nome = $tenantId ? Tenant::withoutGlobalScopes()->whereKey($tenantId)->value('name') : null;
+
+        return filled($nome) ? (string) $nome : Relatorio::emissor();
+    }
+
     private static function moeda(float|string|null $valor): string
     {
         return 'R$ '.number_format((float) $valor, 2, ',', '.');
@@ -89,7 +101,7 @@ class ModeloDeDocumento
     {
         return [
             'cliente' => $q->client?->name, 'cnpj' => $q->client?->cpf_cnpj, 'endereco_cliente' => $q->client?->address, 'data' => now()->format('d/m/Y'),
-            'numero' => substr((string) $q->id, 0, 8), 'valor_total' => self::moeda($q->total_value), 'validade' => null, 'empresa' => Relatorio::emissor(),
+            'numero' => substr((string) $q->id, 0, 8), 'valor_total' => self::moeda($q->total_value), 'validade' => null, 'empresa' => self::nomeDaEmpresa($q->tenant_id),
         ];
     }
 
@@ -98,7 +110,7 @@ class ModeloDeDocumento
     {
         return [
             'cliente' => $c->client?->name, 'cnpj' => $c->client?->cpf_cnpj, 'endereco_cliente' => $c->client?->address, 'data' => now()->format('d/m/Y'),
-            'numero' => (string) $c->contract_number, 'valor_total' => self::moeda($c->price), 'validade' => $c->end_date?->format('d/m/Y'), 'empresa' => Relatorio::emissor(),
+            'numero' => (string) $c->contract_number, 'valor_total' => self::moeda($c->price), 'validade' => $c->end_date?->format('d/m/Y'), 'empresa' => self::nomeDaEmpresa($c->tenant_id),
         ];
     }
 
@@ -107,7 +119,7 @@ class ModeloDeDocumento
     {
         return [
             'cliente' => $p->destinatarioNome(), 'cnpj' => null, 'endereco_cliente' => null, 'data' => now()->format('d/m/Y'), 'numero' => (string) $p->numero,
-            'valor_total' => self::moeda($p->total), 'validade' => $p->validade_ate?->format('d/m/Y'), 'empresa' => $p->tenant?->name ?? Relatorio::emissor(),
+            'valor_total' => self::moeda($p->total), 'validade' => $p->validade_ate?->format('d/m/Y'), 'empresa' => self::nomeDaEmpresa($p->tenant_id),
         ];
     }
 }

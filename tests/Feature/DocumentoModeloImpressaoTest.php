@@ -133,4 +133,19 @@ class DocumentoModeloImpressaoTest extends TestCase
         $this->assertStringContainsString('Foro de Campinas/SP', $html);
         $this->assertStringStartsWith('%PDF', $p->gerarPdf(), 'o PDF continua sendo gerado com o modelo');
     }
+
+    public function test_marcador_empresa_e_o_nome_da_empresa_dona_do_documento_e_nao_o_emissor_do_sistema(): void
+    {
+        $t = $this->empresa('Locadora Marcador');
+        $this->modelo($t, 'contrato');
+        $this->modelo($t, 'orcamento');
+        $this->modelo($t, 'proposta');
+
+        $contrato = ModeloDeDocumento::doContrato($this->contrato($t));
+        $orcamento = ModeloDeDocumento::doOrcamento($this->orcamento($t));
+
+        $this->assertSame('Termos do modelo para '.$t->name.'.', $contrato['termos']);
+        $this->assertSame('Termos do modelo para '.$t->name.'.', $orcamento['termos']);
+        $this->assertStringNotContainsString('Oravel', (string) $contrato['termos']);
+    }
 }
