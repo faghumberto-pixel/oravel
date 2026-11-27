@@ -189,6 +189,7 @@ class DemoCompletarComercial extends Command
         }
     }
 
+    /** O número do contrato é único no sistema inteiro (não por empresa): leva um pedaço do id da empresa para nunca colidir com outra. */
     private function contratos(array $clientes): void
     {
         $situacoes = ['Ativo', 'Ativo', 'Ativo', 'Ativo', 'Encerrado', 'Draft'];
@@ -196,7 +197,7 @@ class DemoCompletarComercial extends Command
             $status = $situacoes[$i];
             $inicio = $status === 'Draft' ? now()->addDays(10) : now()->subMonths(mt_rand(2, 8));
             $this->mk('contracts', [
-                'client_id' => $clientes[$i % count($clientes)]['id'], 'contract_number' => 'DEMO-CT-'.str_pad((string) ($i + 1), 4, '0', STR_PAD_LEFT), 'status' => $status, 'is_active' => $status !== 'Encerrado',
+                'client_id' => $clientes[$i % count($clientes)]['id'], 'contract_number' => 'VND-'.strtoupper(substr(str_replace('-', '', $this->tid), 0, 6)).'-'.str_pad((string) ($i + 1), 4, '0', STR_PAD_LEFT), 'status' => $status, 'is_active' => $status !== 'Encerrado',
                 'start_date' => $inicio->toDateString(), 'end_date' => ($status === 'Encerrado' ? now()->subMonth() : $inicio->copy()->addMonths(12))->toDateString(), 'price' => $valor,
                 'billing_type' => 'mensal_fixo', 'service_category' => $categoria, 'payment_method' => 'Boleto', 'usage_purpose' => $objeto, 'legal_forum' => 'Foro da comarca de Campinas/SP',
                 'multa_rescisoria' => 10, 'observations' => 'Contrato de demonstração.', 'created_at' => $inicio, 'updated_at' => $inicio,
