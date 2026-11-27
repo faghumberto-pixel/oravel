@@ -12,16 +12,20 @@ use App\Models\EquipmentReplacement;
 use App\Services\CepGeocodingService;
 use App\Services\SignatureService;
 use App\Support\CrmPalette;
+use App\Support\LinkWhatsapp;
+use App\Support\Tenancy;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class ContractResource extends Resource
 {
@@ -46,7 +50,7 @@ class ContractResource extends Resource
     /** Interface simples (padrão de quem não contratou Locadora; a Central pode forçar por empresa). */
     public static function interfaceSimples(): bool
     {
-        return \App\Support\Tenancy::current()?->interfaceSimples() ?? false;
+        return Tenancy::current()?->interfaceSimples() ?? false;
     }
 
     /**
@@ -60,7 +64,7 @@ class ContractResource extends Resource
                 Forms\Components\Select::make('client_id')->label('Cliente')->relationship('client', 'name')->searchable()->preload()->required()
                     ->createOptionForm([Forms\Components\TextInput::make('name')->label('Nome do cliente')->required()->maxLength(255)]),
                 Forms\Components\TextInput::make('contract_number')->label('Número do contrato')->required()->maxLength(60)
-                    ->default(fn () => 'CT-'.now()->format('Ym').'-'.strtoupper(\Illuminate\Support\Str::random(4))),
+                    ->default(fn () => 'CT-'.now()->format('Ym').'-'.strtoupper(Str::random(4))),
                 Forms\Components\TextInput::make('service_category')->label('O que está sendo contratado')->placeholder('Ex.: Manutenção mensal, Revisão anual, Reforma do telhado')->required()->maxLength(160)->columnSpanFull(),
                 Forms\Components\Select::make('asset_id')->label('Item atendido (opcional)')->relationship('asset', 'name')->searchable()->preload(),
                 Forms\Components\Select::make('status')->label('Situação')->options([
@@ -507,6 +511,7 @@ class ContractResource extends Resource
                         ->openUrlInNewTab(),
                     FaturarContratoAction::table(),
                     FaturarContratoAction::custoMargem(),
+                    static::enviarWhatsappAction(),
                     static::generateSignatureAction(),
                     static::copySignatureLinkAction(),
                     static::viewSignatureCertificateAction(),
@@ -581,6 +586,39 @@ class ContractResource extends Resource
                     ->title('Link de assinatura gerado')
                     ->body($link)
                     ->success()
+                    ->send();
+            });
+    }
+
+    /**
+     * Envia o contrato por WhatsApp: a mensagem leva o link de assinatura eletrônica, que mostra o contrato e permite assinar (aceite).
+     * Usa o link pendente que já existe; se não houver, gera um (como "Gerar Link de Assinatura"). Some depois de assinado.
+     */
+    public static function enviarWhatsappAction(): Tables\Actions\Action
+    {
+        $telefone = fn (Contract $c) => $c->client?->whatsapp ?: $c->client?->phone;
+
+        return Tables\Actions\Action::make('enviar_whatsapp')
+            ->label('Enviar por WhatsApp')
+            ->icon('heroicon-o-chat-bubble-left-right')
+            ->color('success')
+            ->visible(fn (Contract $record) => LinkWhatsapp::numero($telefone($record)) !== null && ! $record->signedSignatures()->exists())
+            ->action(function (Contract $record) use ($telefone) {
+                $pendente = $record->pendingSignatures()->notExpired()->latest()->first();
+                $link = $pendente
+                    ? route('signature.sign', ['token' => $pendente->token])
+                    : app(SignatureService::class)->generateSignatureLink($record, ['name' => $record->client?->name ?? 'Cliente', 'document' => $record->client?->cpf_cnpj]);
+
+                $mensagem = 'Olá, '.($record->client?->name ?? 'cliente').'! Segue o contrato nº '.$record->contract_number.' para você ver e assinar: '.$link;
+
+                Notification::make()
+                    ->title('Link do contrato pronto')
+                    ->body('Abra o WhatsApp para enviar o link ao cliente.')
+                    ->success()
+                    ->persistent()
+                    ->actions([
+                        Action::make('abrir')->label('Abrir WhatsApp')->button()->url(LinkWhatsapp::para($telefone($record), $mensagem), shouldOpenInNewTab: true),
+                    ])
                     ->send();
             });
     }

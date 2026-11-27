@@ -5,9 +5,11 @@ namespace App\Filament\Resources\QuoteResource\Pages;
 use App\Filament\Resources\QuoteResource;
 use App\Mail\GenericPdfMail;
 use App\Models\Quote;
+use App\Support\LinkWhatsapp;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Carbon;
@@ -74,6 +76,44 @@ class EditQuote extends EditRecord
                     ));
 
                     Notification::make()->title('Orçamento enviado por e-mail.')->success()->send();
+                }),
+
+            // Já emitido (tem o link público): abre o WhatsApp do cliente com a mensagem e o link prontos.
+            Actions\Action::make('whatsapp')
+                ->label('Enviar por WhatsApp')
+                ->icon('heroicon-o-chat-bubble-left-right')
+                ->color('success')
+                ->visible(fn () => $record->linkWhatsapp() !== null)
+                ->url(fn () => $record->linkWhatsapp())
+                ->openUrlInNewTab(),
+
+            // Ainda em rascunho: emite o orçamento (gera o link público, como "Enviar ao Cliente") e oferece o botão para abrir o WhatsApp.
+            Actions\Action::make('enviar_whatsapp')
+                ->label('Enviar por WhatsApp')
+                ->icon('heroicon-o-chat-bubble-left-right')
+                ->color('success')
+                ->visible(fn () => $record->status === Quote::STATUS_RASCUNHO && LinkWhatsapp::numero($record->telefoneWhatsapp()) !== null)
+                ->requiresConfirmation()
+                ->modalHeading('Emitir e enviar por WhatsApp')
+                ->modalDescription('O orçamento será emitido (passa a Enviado) e você abre o WhatsApp do cliente com a mensagem e o link prontos.')
+                ->action(function () use ($record) {
+                    try {
+                        $record->send();
+                    } catch (\RuntimeException $e) {
+                        Notification::make()->title('Não foi possível enviar')->body($e->getMessage())->warning()->send();
+
+                        return;
+                    }
+
+                    Notification::make()
+                        ->title('Orçamento emitido')
+                        ->body('Abra o WhatsApp para enviar o link ao cliente.')
+                        ->success()
+                        ->persistent()
+                        ->actions([
+                            Action::make('abrir')->label('Abrir WhatsApp')->button()->url($record->fresh()->linkWhatsapp(), shouldOpenInNewTab: true),
+                        ])
+                        ->send();
                 }),
 
             Actions\Action::make('aprovar')

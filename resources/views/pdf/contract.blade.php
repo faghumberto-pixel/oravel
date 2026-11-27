@@ -29,14 +29,19 @@
     </style>
 </head>
 <body>
+@php($modeloDoc = $modeloDoc ?? ($contract instanceof \App\Models\Contract ? \App\Support\ModeloDeDocumento::doContrato($contract) : null))
 @include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Contrato', 'filtrosRelatorio' => ['Contrato Nº '.$contract->contract_number]])
 
     <div class="header">
         <table>
             <tr>
                 <td class="logo-area">
-                    <div class="logo-text">O<span class="accent">r</span>avel</div>
-                    <div class="logo-subtext">{{ \App\Support\Relatorio::detalhe() }}</div>
+                    @if (! empty($modeloDoc) && (! empty($modeloDoc['logo']) || ! empty($modeloDoc['cabecalho'])))
+                        @include('documentos.modelo-topo', ['doc' => $modeloDoc])
+                    @else
+                        <div class="logo-text">O<span class="accent">r</span>avel</div>
+                        <div class="logo-subtext">{{ \App\Support\Relatorio::detalhe() }}</div>
+                    @endif
                 </td>
                 <td class="title-area">
                     <div class="title">Contrato de Locação</div>
@@ -116,8 +121,12 @@
         </table>
     </div>
 
+    @if (! empty($modeloDoc))
+        @include('documentos.modelo-corpo', ['doc' => $modeloDoc])
+    @endif
+
     <div class="footer">
-        {{ \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }} · Oravel
+        {{ $modeloDoc['rodape'] ?? \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }} · Oravel
     </div>
 
 </body>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Concerns\HasSaaSMetadata;
+use App\Support\LinkWhatsapp;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -201,6 +202,25 @@ class Quote extends Model
             'sent_at' => now(),
             'approval_token' => $this->approval_token ?? Str::random(48),
         ]);
+    }
+
+    /** Telefone do cliente para o WhatsApp (o WhatsApp do cadastro, ou o telefone). */
+    public function telefoneWhatsapp(): ?string
+    {
+        return $this->client?->whatsapp ?: $this->client?->phone;
+    }
+
+    /** Link do WhatsApp com a mensagem e o link público de aprovação já escritos. Null sem telefone válido ou sem link (orçamento ainda em rascunho). */
+    public function linkWhatsapp(): ?string
+    {
+        if (! $this->approval_token || $this->status === self::STATUS_RASCUNHO) {
+            return null;
+        }
+
+        $nome = $this->client?->name ?? 'cliente';
+        $texto = "Olá, {$nome}! Segue o nosso orçamento. Para ver, imprimir e aprovar ou recusar, acesse: ".route('quotes.public-approval', $this->approval_token);
+
+        return LinkWhatsapp::para($this->telefoneWhatsapp(), $texto);
     }
 
     /**

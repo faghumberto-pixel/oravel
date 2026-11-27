@@ -8,8 +8,14 @@
  td { padding: 5px; border-bottom: 1px solid #ddd; } .r { text-align: right; }
  .total { text-align: right; font-size: 15px; font-weight: bold; margin-top: 8px; }
  h3 { font-size: 12px; margin: 16px 0 3px; color: #1A3A52; } .txt { white-space: pre-line; }
+    .section-title { font-size: 12px; font-weight: bold; color: #1A3A52; margin: 16px 0 3px; }
 </style></head><body>
+@php($modeloDoc = $modeloDoc ?? \App\Support\ModeloDeDocumento::daPropostaCrm($proposta))
+@if (! empty($modeloDoc) && (! empty($modeloDoc['logo']) || ! empty($modeloDoc['cabecalho'])))
+    @include('documentos.modelo-topo', ['doc' => $modeloDoc])
+@else
 <h1>{{ $proposta->tenant?->name }}</h1>
+@endif
 <div class="sub">{{ $proposta->titulo() }} · emitida em {{ now()->format('d/m/Y') }}@if($proposta->validade_ate) · válida até {{ $proposta->validade_ate->format('d/m/Y') }}@endif</div>
 <p><b>Para:</b> {{ $proposta->destinatarioNome() }}@if($proposta->destinatarioEmail()) · {{ $proposta->destinatarioEmail() }}@endif</p>
 <table>
@@ -24,5 +30,9 @@
 <div class="total">Total: R$ {{ number_format($proposta->total, 2, ',', '.') }}</div>
 @if ($proposta->condicoes)<h3>Condições</h3><div class="txt">{{ $proposta->condicoes }}</div>@endif
 @if ($proposta->observacoes)<h3>Observações</h3><div class="txt">{{ $proposta->observacoes }}</div>@endif
+@if (! empty($modeloDoc))
+    @include('documentos.modelo-corpo', ['doc' => $modeloDoc])
+@endif
 @if ($proposta->vendedor)<p style="margin-top:22px">Responsável: {{ $proposta->vendedor->name }} · {{ $proposta->vendedor->email }}</p>@endif
+@if (! empty($modeloDoc['rodape']))<p style="margin-top:18px; font-size:10px; color:#666; white-space:pre-line">{{ $modeloDoc['rodape'] }}</p>@endif
 </body></html>
