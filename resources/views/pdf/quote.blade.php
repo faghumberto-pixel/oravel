@@ -49,14 +49,19 @@
     </style>
 </head>
 <body>
+@php($modeloDoc = $modeloDoc ?? \App\Support\ModeloDeDocumento::doOrcamento($quote))
 @include('partials.relatorio-cabecalho', ['tituloRelatorio' => 'Orçamento', 'filtrosRelatorio' => ['Orçamento #'.substr($quote->id, 0, 8), 'Cliente: '.($quote->client->name ?? '—')]])
 
     <div class="header">
         <table>
             <tr>
                 <td class="logo-area">
-                    <div class="logo-text">O<span class="accent">r</span>avel</div>
-                    <div class="logo-subtext">{{ \App\Support\Relatorio::detalhe() }}</div>
+                    @if (! empty($modeloDoc) && (! empty($modeloDoc['logo']) || ! empty($modeloDoc['cabecalho'])))
+                        @include('documentos.modelo-topo', ['doc' => $modeloDoc])
+                    @else
+                        <div class="logo-text">O<span class="accent">r</span>avel</div>
+                        <div class="logo-subtext">{{ \App\Support\Relatorio::detalhe() }}</div>
+                    @endif
                 </td>
                 <td class="title-area">
                     <div class="title">Orçamento{{ $quote->type !== \App\Models\Quote::TYPE_INTERNO ? ' — '.\App\Models\Quote::typeLabels()[$quote->type] : '' }}</div>
@@ -140,8 +145,12 @@
         </div>
     @endif
 
+    @if (! empty($modeloDoc))
+        @include('documentos.modelo-corpo', ['doc' => $modeloDoc])
+    @endif
+
     <div class="footer">
-        {{ \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }} · Oravel
+        {{ $modeloDoc['rodape'] ?? \App\Support\Relatorio::emissor() }} · gerado em {{ now()->format('d/m/Y H:i') }} · Oravel
     </div>
 
 </body>
